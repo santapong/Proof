@@ -17,11 +17,13 @@ The **NIST Secure Software Development Framework (SSDF)** and **NIST SP 800-53**
 
 The A06 "vulnerable & outdated components" sweep (see `vulnerability-playbooks.md`) is where these appear. They answer three questions a dependency finding raises: *what is in the build* (SBOM), *can I trust how it was built* (SLSA + signing), and *how healthy is the project* (Scorecard).
 
+The same standards are cited from three different lifecycle moments across this plugin, and this section is the **audit-time dependency-health** read — is this component safe to use, scoped to a diff or a repo, producing a finding with a severity. For the **ship-time** read — a binary pass/fail on one artifact about to be promoted — see `../../loop-ship/references/supply-chain-gate.md`; for the **adoption-time** read, `../../loop-scout/references/standards.md`. Do not run one moment's check and report it as another's.
+
 | Standard | Body | Edition (2026) | How it maps to this skill |
 |---|---|---|---|
-| **SLSA** | OpenSSF | **v1.0** (build track, levels **L0–L3**) | The provenance ladder. When a finding is "artifact built with no verifiable provenance," phrase remediation as a target SLSA build level: **L1** provenance exists, **L2** signed by a hosted builder, **L3** hardened, non-forgeable builder. Escalate integrity findings (OWASP A08) toward L2/L3. |
+| **SLSA** | OpenSSF | **v1.2** (approved Nov 2025; Source track promoted to approved. Build track, levels **L0–L3**) | The provenance ladder. When a finding is "artifact built with no verifiable provenance," phrase remediation as a target SLSA build level: **L1** provenance exists, **L2** signed by a hosted builder, **L3** hardened, non-forgeable builder. Escalate integrity findings (OWASP A08) toward L2/L3. |
 | **SBOM — SPDX** | Linux Foundation / ISO | **SPDX 3.0** (2024); 2.2.1 is the ISO-adopted edition (ISO/IEC 5962:2021), and 2.3 (2022) is still widely deployed | The inventory format an SCA finding assumes exists. If none does, the finding is "no SBOM" — recommend generating SPDX or CycloneDX in CI. |
-| **SBOM — CycloneDX** | OWASP | **v1.6** (current) | The OWASP-native SBOM; richer for vulnerability (VEX) and dependency-relationship data. Prefer it when the report already speaks OWASP. |
+| **SBOM — CycloneDX** | OWASP / Ecma International | **v1.7** (ECMA-424, 2nd ed., Oct 2025) | The OWASP-native SBOM; richer for vulnerability (VEX) and dependency-relationship data. Prefer it when the report already speaks OWASP. |
 | **OpenSSF Scorecard** | OpenSSF | current edition (continuously released checks) | A per-dependency health signal (branch protection, pinned deps, maintained, dangerous-workflow). Use a low Scorecard as *supporting* evidence to raise an "unmaintained component" (CWE-1104) finding — never as the finding by itself. |
 | **Sigstore / in-toto** | OpenSSF / CNCF | Sigstore GA; **in-toto attestation v1** | The signing + attestation layer under SLSA. Cite `cosign`/Sigstore for "artifacts are unsigned" and in-toto for "no build attestation." These are the concrete *how* behind a SLSA-L2+ remediation. |
 
@@ -89,7 +91,7 @@ The Top 25 in `owasp-cwe.md` is a *prevalence-ranked shortlist*, not the whole t
 
 Standards get revised, and a report that mixes editions or cites a retired one reads as careless. Rules:
 
-- **Cite the edition you mapped to, in the finding** — "PCI-DSS 4.0.1 Req. 6", "CVSS:4.0 vector", "SLSA v1.0 L2" — never a bare "PCI" or "CVSS."
+- **Cite the edition you mapped to, in the finding** — "PCI-DSS 4.0.1 Req. 6", "CVSS:4.0 vector", "SLSA v1.2 L2" — never a bare "PCI" or "CVSS."
 - **Do not mix editions inside one report.** If you tag OWASP 2021 (per `owasp-cwe.md`), keep every companion mapping on its 2026-current edition listed here; don't half-upgrade.
 - **Watch the imminent revisions** flagged above: the OWASP web Top 10 2025 refresh (tracked in `owasp-cwe.md`), the **HIPAA Security Rule 2025 NPRM**, **SP 800-218A** moving from draft to final, SPDX 3.0 adoption, and the annual MITRE ATT&CK/CWE re-releases.
 - **Re-check this shelf on a cadence** — at minimum when starting a review for a new regulated client, and otherwise roughly twice a year. When an edition here goes stale, update the row and the closing note together; do not leave a pinned version behind that a reader will trust as current.

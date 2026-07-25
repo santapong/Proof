@@ -6,9 +6,16 @@
 // stood up against the source is aspirational, and this stage is what stops the fan-out
 // from shipping it.
 //
-// Invoke with: Workflow({ script, args: { areas: [...], docType: "reference" } })
+// Model/effort come from the canonical ROUTES block — source of truth:
+// ../../loop-engine/references/execution-modes.md §M8. Never inline a bare model:/effort: literal.
+// The Draft stage is tagged `doc`, so in optimize mode it routes to claude-haiku-4-5 with effort
+// OMITTED — Haiku 4.5 has no effort dial, and writing effort:'low' on it is a no-op at best.
+// Under full mode every node moves to claude-opus-5 (§M3).
+//
+// Invoke with: Workflow({ script, args: { areas: [...], docType: "reference", mode: "optimize" } })
 // input.areas   — modules/paths to document (discover the work-list BEFORE authoring; see loop policy L6)
 // input.docType — Diataxis/artifact type hint the drafters target (reference | how-to | readme | ...)
+// input.mode    — 'optimize' (default) or 'full' (execution-modes.md §M2)
 
 export const meta = {
   name: 'doc-generation-template', // EDIT ME: kebab-case name for this run
@@ -22,6 +29,47 @@ export const meta = {
 
 // Some harnesses deliver args as a JSON-encoded string — normalize before use.
 const input = typeof args === 'string' ? JSON.parse(args) : args
+
+// Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
+// Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
+// access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
+const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const ROUTES = {
+  optimize: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: 'high' },
+    analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
+    synthesize: { model: null,               effort: 'high' },
+    verify:     { model: null,               effort: 'high' },
+    judge:      { model: null,               effort: 'high' },
+    critic:     { model: null,               effort: 'high' },
+    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+  },
+  full: {
+    scout:      { model: 'claude-opus-5', effort: 'high' },
+    doc:        { model: 'claude-opus-5', effort: 'high' },
+    implement:  { model: 'claude-opus-5', effort: 'high' },
+    analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
+    synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
+    verify:     { model: 'claude-opus-5', effort: 'xhigh' },
+    judge:      { model: 'claude-opus-5', effort: 'xhigh' },
+    critic:     { model: 'claude-opus-5', effort: 'xhigh' },
+    gating:     { model: 'claude-opus-5', effort: 'max' },
+    planner:    { model: 'claude-opus-5', effort: 'max' },
+  },
+}
+const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
+function optsFor(node, label) {
+  const r = routeFor(node.taskType)
+  const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
+  if (r.model) opts.model = r.model     // omit → inherit session model (H8)
+  if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  return opts
+}
+// No WIDTH: the Verify stage runs one accuracy checker per area by decomposition, and widening a
+// declared lens set is a decomposition change, not a mode dial (§M5). No DRY_LIMIT: no loop here.
 
 // EDIT ME: doc type the drafters target — see loop-docs SKILL.md §1 (Diataxis + artifact types).
 const DOC_TYPE = (input && input.docType) || 'reference'
@@ -92,7 +140,7 @@ const results = await pipeline(
     agent(
       // EDIT ME: the per-area extraction prompt.
       `Read the code for this area and extract its intent as raw data. Read the actual definitions — treat names and comments as hints to verify, not facts to copy. Return the purpose, the public API (each exported symbol's real signature, summary, and error conditions), and runnable usage examples.\nArea: ${JSON.stringify(area)}`,
-      { label: `extract:${area}`, phase: 'Extract', schema: INTENT_SCHEMA },
+      optsFor({ taskType: 'analyze', phase: 'Extract', schema: INTENT_SCHEMA }, `extract:${area}`),
     ).then((intent) => ({ area, intent })),
   // Stage 2 — Draft: turn extracted intent into prose of the chosen type, in repo conventions.
   // The agent uses Write to create the doc file and returns only its path.
@@ -100,7 +148,7 @@ const results = await pipeline(
     agent(
       // EDIT ME: point the drafter at where docs live and the repo's format/tone/tooling (SKILL.md §3).
       `Write a "${DOC_TYPE}" doc for this area, matching the repo's existing doc conventions (location, format, heading depth, voice). Lead with a working example, use active voice, and do NOT hand-copy facts the code already states. Use the Write tool to create the file, then return its absolute path.\nArea: ${JSON.stringify(prev.area)}\nExtracted intent (JSON): ${JSON.stringify(prev.intent)}`,
-      { label: `draft:${prev.area}`, phase: 'Draft', schema: DRAFT_SCHEMA },
+      optsFor({ taskType: 'doc', phase: 'Draft', schema: DRAFT_SCHEMA }, `draft:${prev.area}`),
     ).then((draft) => ({ ...prev, draft })),
   // Stage 3 — Verify: adversarial accuracy check (harness policy H4). This stage IS the
   // SKILL.md §5 accuracy rule — the checker re-reads the SOURCE and the drafted doc and
@@ -108,7 +156,7 @@ const results = await pipeline(
   (prev) =>
     agent(
       `Try to REFUTE this doc, don't rubber-stamp it. Re-read the source for the area, then read the drafted doc, and check every claim — signatures, return types, error conditions, defaults, example commands — against the actual code. Default accurate=false and list a correction for any claim you cannot confirm or that describes intended rather than provable behavior.\nArea: ${JSON.stringify(prev.area)}\nDrafted doc path: ${prev.draft && prev.draft.path}`,
-      { label: `verify:${prev.area}`, phase: 'Verify', schema: ACCURACY_SCHEMA },
+      optsFor({ taskType: 'verify', phase: 'Verify', schema: ACCURACY_SCHEMA }, `verify:${prev.area}`),
     ).then((accuracy) => ({ ...prev, accuracy })),
 )
 
@@ -118,7 +166,7 @@ const documented = results.filter(Boolean)
 const accurate = documented.filter((r) => r.accuracy && r.accuracy.accurate)
 const needsFixes = documented.filter((r) => !(r.accuracy && r.accuracy.accurate))
 
-log(`docs: ${documented.length}/${input.areas.length} areas drafted — ${accurate.length} verified accurate, ${needsFixes.length} need corrections`)
+log(`docs [mode=${MODE}]: ${documented.length}/${input.areas.length} areas drafted — ${accurate.length} verified accurate, ${needsFixes.length} need corrections`)
 
 return {
   accurate: accurate.map((r) => ({ area: r.area, path: r.draft && r.draft.path })),

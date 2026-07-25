@@ -1,6 +1,7 @@
 ---
 name: loop-autopilot
-description: Run an autonomous engineering loop that improves this project — read feedback (GitHub issues, PR comments, CI failures), act on it as draft pull requests with tests, and when there is no feedback, research improvements (market trends, papers, tech-debt scan) and propose them. Use when the user wants to automate project maintenance, set up a self-improving or autonomous engineering loop, continuously triage and act on issues/PRs, or have Claude propose improvements on a schedule. Composes the plugin's other skills; proposes via draft PR + comment and never merges.
+description: "Run an autonomous engineering loop over this repository: read feedback (GitHub issues, PR comments, CI failures), act on it as draft pull requests with tests, and when there is no feedback, research improvements and propose them. Use when the user wants to automate repository maintenance, set up a self-improving engineering loop, continuously triage issues and PRs, or have Claude propose code improvements on a schedule. The subject is the codebase and the output is a draft PR; it composes the plugin's other skills, proposes only, and never merges. For running and self-healing a live production service rather than improving a repo, use loop-operate. For a single one-off orchestrated job rather than a standing loop, use loop-orchestrate."
+argument-hint: <repo> [--mode <optimize|full>]
 ---
 
 # Automating Improvements
@@ -54,7 +55,7 @@ Work on a `claude/`-prefixed branch only.
 
 ## 6. Run it — supervised or unattended
 
-- **A single supervised pass**: run **`templates/improvement-loop.workflow.js`** (defaults to `mode: "dry"` — produces proposal objects, opens nothing). Flip to live only when you want it to actually open draft PRs.
+- **A single supervised pass**: run **`templates/improvement-loop.workflow.js`** (defaults to `runMode: "dry"` — produces proposal objects, opens nothing). Flip to live only when you want it to actually open draft PRs.
 - **Before deploying unattended, run every row of `references/anti-patterns.md` against the current design** — it's the pre-flight checklist for the five ways an autonomous loop degrades.
 - **Unattended**: deploy as a **Cloud Routine** using **`templates/routine-prompt.md`**, on a schedule plus a `pull_request` trigger. Full setup, safety scopes, and the issue-polling caveat (Routines don't trigger on issues) are in **`references/deployment.md`**, which builds on the `loop-harness` skill's `automation-loops.md`.
 - **Two companion Routines** run separately (both in `references/deployment.md`): the **credit-ledger reconcile** (`templates/credit-ledger.workflow.js`, daily) so the loop learns which proposal kinds get merged, and the **comprehension digest** (`templates/comprehension-digest.routine.md`, weekly) so a human actually reads what shipped.
@@ -77,6 +78,8 @@ Work on a `claude/`-prefixed branch only.
 - **Out-of-band detector — `templates/held-out-eval.workflow.js`.** The one measurement taken entirely outside the loop, against ground truth the loop never sees. Deploy it as a **third companion Routine** (alongside credit-ledger and comprehension-digest) on a weekly / every-N-proposals schedule. It runs a **frozen suite** of tasks with **hidden deterministic oracles** through the loop's *current* verify config, and tracks the **false-accept rate** (loop said safe, oracle says wrong) against a persisted baseline. A false-accept rate **rising across runs** is the self-improvement-reversal signal — the loop pleasing its own judge while diverging from truth (`references/held-out-eval.md`). Meta-overfit here is not weight drift (the model is fixed); it is the accumulated **config** overfitting its own recent history.
 
 **Why this gates SCALE.** Removing the human merge step promotes `safeToPropose` into the merge decision itself. Every reason a human still merges today is a reason to trust that verdict less than the promotion requires. AP6's guards plus a standing held-out measurement of how often the verdict is wrong are the evidence that promotion would need — and even with them, the safe path to autonomous delivery is **merge-behind-canary + agent-driven rollback** (the SCALE mechanism — drafted in `references/deployment.md` §"Advanced: autonomous delivery" and `templates/canary-merge.workflow.js`, **off by default**; the base skill still stops at propose-only), with held-out eval as the tripwire that yanks autonomy back to propose-only the moment divergence rises. A perfect pre-merge gate is not the goal, because no gate catches everything.
+
+**This skill is the autonomy ladder's single definitional home in 1.0.0:** `loop-operate` reuses the same OBSERVE → VERIFY → SUSTAIN → SCALE rungs for a different object — a live service instead of a repository — and cites them here rather than redefining them, so the two skills cannot drift apart while extraction into a shared reference file stays deferred.
 
 ## Reference files
 

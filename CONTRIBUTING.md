@@ -17,6 +17,8 @@ Every skill lives in `.claude/skills/<name>/` and follows one shape:
 
 The plugin is wired via `.claude-plugin/plugin.json` (which points at `./.claude/skills`) and published through `.claude-plugin/marketplace.json`. New skills under `.claude/skills/` are auto-discovered — no manifest edit needed.
 
+A skill's `references/` file may cross-reference a **sibling skill's** `references/` with a relative `../../<skill>/references/<file>.md` path (from `<skill>/references/`, `../../` lands in `.claude/skills/`). Verify the depth by resolving the path from the file you are editing — a `../` vs `../../` error of exactly this kind shipped in 0.4.0 and is recorded in the CHANGELOG.
+
 ## Authoring a `SKILL.md`
 
 - **Frontmatter is required**: a YAML block with `name` and `description`.
@@ -46,6 +48,8 @@ Workflow templates run under the Workflow tool's runtime, which has hard constra
 - Normalize input: `const input = typeof args === 'string' ? JSON.parse(args) : args`.
 - `.filter(Boolean)` every `parallel()` result (dead agents resolve to `null`); pass a `schema` to every consumed `agent()`; `log()` progress.
 - Prefer `pipeline()`; use a `parallel()` barrier only when a stage needs all prior results (dedup/merge, early-exit). See the harness & loop policies under `.claude/skills/loop-engine/references/`.
+- **Every template that sets `model` or `effort` carries the canonical `ROUTES` block verbatim** from `.claude/skills/loop-engine/references/execution-modes.md` §M8, and routes each `agent()` call through `optsFor()`. The duplication is intentional: H10 gives scripts no filesystem and no module access, so the block cannot be imported. §M8 is the single source of truth, and **drift between copies is a defect** — when the block changes, every copy changes in the same commit.
+- **A Haiku-routed node carries no `effort`.** Haiku 4.5 has no effort dial, so `ROUTES` records `effort: null` and `optsFor()` omits the key. Writing `effort: 'low'` on a Haiku node is a no-op at best and an error at worst.
 
 ## Adding a lifecycle framework
 
@@ -67,6 +71,10 @@ done
 
 # No banned clock/random calls in template code (should print nothing)
 grep -rnE 'Date\.now\(|Math\.random\(|new Date\(\)' .claude/skills --include='*.workflow.js' | grep -vE '//'
+
+# Model/effort literals must come from the ROUTES block, not be inlined (should print nothing
+# outside a ROUTES definition)
+grep -rnE "(model|effort):\s*'" .claude/skills --include='*.workflow.js' | grep -vE 'ROUTES|routeFor|// '
 
 # Hook scripts (if you touched them) parse and behave
 bash -n .claude/skills/loop-harness/templates/hooks/*.sh

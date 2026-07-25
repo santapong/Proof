@@ -56,9 +56,16 @@ Scale verification to the ask: "find any bugs" → few finders, single-vote veri
 
 `isolation: 'worktree'` costs ~200–500ms setup plus disk per agent. Use it **only** when agents mutate files concurrently and would otherwise conflict. Read-only agents never need it.
 
-## H8. Model and effort selection
+## H8. Model and effort selection is mode-governed
 
-Omit `model` by default — agents inherit the session model, which is almost always correct. Use `effort: 'low'` for cheap mechanical stages; reserve higher effort tiers for the hardest verify/judge stages.
+The run's `--mode` decides the route; this rule decides how a script expresses it.
+
+- **`--mode optimize` (the default)** — omit `model` and inherit the session model for judgment work. Set `opts.model` only when the router has a reason to leave the session tier: routing *down* to Haiku/Sonnet for a cheap or wide stage, or pinning the top tier on a node whose wrong answer is inherited by everything after it (a gating verify, the decomposition). Set `effort` per node: `low` or omitted for mechanical stages, the higher tiers for the hardest verify/judge stages.
+- **`--mode full`** — pin `model: 'claude-opus-5'` on **every** consumed `agent()` call and lift each node to its full-mode effort floor. Pinning here is not the noise H8 usually warns about; it is the mode's enforcement mechanism. An inherited model silently voids the guarantee the moment a session runs below Opus 5, and the cast ledger must be able to prove what actually ran.
+
+Never hardcode a fleet ceiling into a script, a policy, or a piece of advice — the session model is a fact to read, not a constant to assert. A claim like "the fleet caps at model X" expires, and any rule resting on it expires with it; compare the node's target tier against the session model instead, and pin whenever a silent mismatch would be expensive.
+
+The per-node-kind routing table, both override modifiers, verifier width, the loop-until-dry threshold, the `--planner fable` opt-in, and the full-mode pre-flight are specified in `execution-modes.md`. The routing rationale and the worked example live in `../../loop-orchestrate/references/model-routing.md`.
 
 ## H9. Phase discipline
 

@@ -1,6 +1,7 @@
 ---
 name: loop-debug
-description: Diagnose and fix bugs with a reproduce to localize to root-cause to fix method. Use when the user reports a bug, a failing test, an exception or stack trace, unexpected behavior, a crash, or asks why something is broken or how to fix it. Drives hypothesis-driven debugging and adds a regression test once fixed.
+description: Find the root cause of a specific defective behavior and fix it, using reproduce, localize, hypothesize, eliminate, minimal fix, regression test. Use when the user reports a bug, a failing test, an exception or stack trace, a crash, or unexpected behavior in code they can run, and asks why it happens or how to fix it. Drives hypothesis-driven elimination and delegates the regression test to loop-test. For a production service that is currently degraded or down with users affected, use loop-incident first, which mitigates and hands the root cause back here. For code that is correct but too slow or memory-hungry by design, use loop-algo. For a defect found by reading code rather than by observing a failure, use loop-review.
+argument-hint: <bug> [--mode <optimize|full>]
 ---
 
 # Diagnosing Bugs
@@ -8,6 +9,8 @@ description: Diagnose and fix bugs with a reproduce to localize to root-cause to
 You are about to debug by the scientific method: reproduce the failure, read the evidence, localize the fault, form falsifiable hypotheses, and test each until one survives. The engine is disciplined elimination, not pattern-matching a fix onto a symptom. **A bug you cannot reproduce you cannot verify fixed** — so a green run against a case you never saw fail is not a fix, and a change that "should" help without a confirmed root cause is a guess. Every fix here is anchored to a reproduction that failed before it and passes after.
 
 ## 1. Reproduce reliably first
+
+If a production service is currently degraded with users affected, stop and use `loop-incident` first; it mitigates, builds the reproduction, and hands the root cause back here. Selection happens on the description before this body is ever read, so this interrupt is stated in both places on purpose — diagnosing while customers are down is the one ordering mistake this skill must not make.
 
 Before touching code, make the failure happen on demand. Capture the **exact trigger, inputs, environment, and expected-vs-actual** — the precise command or call, the input values, versions and config, and what should have happened versus what did. **A bug you cannot reproduce you cannot verify fixed**, so invest here first: shrink the trigger to the smallest reliable repro, and note flakiness (timing, order, concurrency, external state) as itself a clue to the fault class. If you genuinely cannot reproduce it, say so and gather more evidence rather than guessing at a fix.
 

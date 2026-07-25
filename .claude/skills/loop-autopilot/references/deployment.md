@@ -56,7 +56,7 @@ Random-samples merged PRs and opens a `comprehension-check` issue so a human act
 - [ ] "Unrestricted branch pushes" is **off**; pushes go to `claude/*`.
 - [ ] Network is **Trusted**; only GitHub (+ optional alphaXiv) connectors are enabled.
 - [ ] Routine prompt is `routine-prompt.md`, with the never-merge rule intact.
-- [ ] You've run `templates/improvement-loop.workflow.js` in `mode:"dry"` once and reviewed the proposals it would make.
+- [ ] You've run `templates/improvement-loop.workflow.js` in `runMode:"dry"` once and reviewed the proposals it would make.
 - [ ] An opt-in label convention limits which issues the loop will act on.
 - [ ] (If using the credit ledger) the pinned `🤖 Credit Ledger` issue exists and its number is wired into the reconcile Routine's `args`.
 - [ ] You ran `references/anti-patterns.md` against the current design (AP5 in particular) before raising concurrency.

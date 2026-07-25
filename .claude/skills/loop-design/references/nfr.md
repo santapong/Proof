@@ -2,7 +2,7 @@
 
 The features say what the system does; the NFRs say whether anyone can rely on it. The engine here is a single discipline: **make the requirements state themselves as numbers before you draw a box, then walk the finished design back against each number and name where it breaks first.** "Fast," "reliable," and "scalable" are not requirements — they are wishes until someone writes down *p99 under 200ms*, *99.9% over 28 days*, *10k rps at launch*. A design you cannot validate against its NFRs is not done; it's a hope with a diagram.
 
-Read this on **step 1** of the workflow (turn the brief into numbers) and again on **step 7** (validate the design against them), or when the user asks "what should my SLOs be?", "how many nines do I need?", "how do I make this observable?", "will this scale?", "should we build or buy this?", or "how much will it cost to run?". Two pillars — Security and the rollout mechanics of Reliability — have deeper homes: security threat-modeling lives in the **loop-review** skill, and caching/resilience/rollback mechanics live in `references/backend.md` and `references/deployment.md`. This file owns the *targets* and cross-references those for the *machinery*.
+Read this on **step 1** of the workflow (turn the brief into numbers) and again on **step 7** (validate the design against them), or when the user asks "what should my SLOs be?", "how many nines do I need?", "will this scale?", "should we build or buy this?", or "how much will it cost to run?". Three things have deeper homes: security threat-modeling in the **loop-review** skill; caching and resilience in `references/backend.md`, with `references/deployment.md` now a stub naming **loop-ship** for rollout and rollback machinery; and **anything whose answer requires reading a live metric** — measuring an SLI, burn-rate alerting, the error-budget policy, instrumentation — in the **loop-operate** skill. This file owns the *targets*.
 
 ## Requirements intake: the numbers that decide the architecture
 
@@ -27,7 +27,7 @@ The intake output is a one-page brief of numbers. **Everything downstream cites 
 
 The AWS Well-Architected Framework's six pillars are a good *review lens* — run the design past each and ask its question. Depth follows below for the ones with real mechanics; treat this as the index.
 
-- **Operational Excellence** — *Can we run, observe, and change this safely?* Everything as code, small reversible changes, observability wired in from day one, post-incident learning without blame. See Observability below and `references/deployment.md`.
+- **Operational Excellence** — *Can we run, observe, and change this safely?* Everything as code, small reversible changes, observability wired in from day one, post-incident learning without blame. Design time only *requires* instrumentation before launch; the instrumentation, its alerts and the runbooks that consume it belong to the **loop-operate** skill (`../../loop-operate/references/observability.md`), and release machinery to `../../loop-ship`.
 - **Security** — *Who can do what, and how would an attacker get in?* Least privilege, defense in depth, encryption in transit and at rest, secrets out of code, an auditable trail. Threat-model it with the **loop-review** skill; do not hand-wave this pillar.
 - **Reliability** — *Does it stay up and recover?* Redundancy, no single points of failure, graceful degradation, tested backups, and a rehearsed recovery path (RTO/RPO). See Availability math below.
 - **Performance Efficiency** — *Are we using the right resource shapes, and do we know when to change?* Right primitives, measured against SLIs, re-evaluated as load shifts. See Scalability and SLOs below.
@@ -68,31 +68,20 @@ Availability is a probability, and probabilities in series multiply. That single
 
 Name the scaling axis and the next bottleneck: *"stateless API scales horizontally to ~50 nodes; past that the shared Postgres write path is the ceiling — the trigger to add read replicas, then shard."*
 
-## SLIs, SLOs, and error budgets
+## SLIs, SLOs, and error budgets — setting the target
 
-This is how you make reliability an engineering quantity instead of an argument.
+Design time needs four definitions and one obligation. Everything else about them requires reading a live metric, and therefore belongs to `loop-operate`.
 
-- **SLI** (Service Level *Indicator*) — a measured ratio of good events to total: `good requests / valid requests`. Availability SLI = fraction of requests that didn't error; latency SLI = fraction served under a threshold (e.g. under 300ms). Measure it where the user feels it (load balancer / client), not deep in the stack where it looks better than reality.
-- **SLO** (Service Level *Objective*) — a target for an SLI over a rolling window: *99.9% of valid requests succeed over 28 days.* Set it **just above what users need, and below 100%.** 100% is the wrong target: unattainable, infinitely expensive, and it removes the room you need to ship.
-- **SLA** (Service Level *Agreement*) — the contractual promise with financial penalties. Always set your internal SLO **stricter** than any external SLA, so you burn your own budget before you breach a customer's.
-- **Error budget** — `100% − SLO`. A 99.9% SLO grants a 0.1% budget: ~43 minutes of failure per month that you are *allowed to spend* — on releases, risky migrations, chaos experiments, load tests. This is the point of the whole apparatus: it turns "how much can we break things to move fast?" from a turf war into arithmetic. Budget healthy → ship. Budget exhausted → freeze feature work and spend engineering on reliability until it recovers. It aligns dev (wants to ship) and ops (wants stability) behind one shared number.
-- **Burn rate** — how fast you're spending the budget. Alert on it with **multi-window, multi-burn-rate** rules: page hard on a fast burn (e.g. 2% of the monthly budget in 1 hour → something is badly wrong *now*), ticket on a slow sustained burn. **Alert on SLO burn (the symptom the user feels), not on causes** like CPU — a saturated CPU that isn't hurting the SLI is not a page.
+- **SLI** is a measured ratio of good events to valid events. **SLO** is a target for an SLI over a rolling window, set just above what users need and below 100% — 100% is unattainable, infinitely expensive, and leaves no room to ship. **SLA** is the contractual promise, and the internal SLO must be **stricter** than it so you burn your own budget before you breach a customer's. **Error budget** is `100% − SLO` — the failure you are permitted to spend on releases, risky migrations and experiments.
+- **The design-time obligation is to choose the number and name the journey it belongs to.** Measuring the SLI, computing burn rate, designing multi-window multi-burn-rate alerts, the error-budget policy that says what happens at 0% budget, and every remediation that follows live in `../../loop-operate/references/slo-model.md` and `../../loop-operate/references/alerting.md`.
 
 **Smell test**: if nobody can say what the SLO *is*, there is no shared definition of "broken," so every incident becomes a debate. Define one SLO per critical user journey before launch, not after the first outage.
 
-## Observability: three pillars, one correlation ID, and OpenTelemetry to carry them
+## Observability
 
-Monitoring answers *"is it broken?"* against questions you knew to ask in advance (dashboards, threshold alerts). **Observability** answers *"why is it broken?"* — the ability to interrogate your telemetry about failures you never anticipated, **without shipping new code to ask the question.** Distributed systems fail in unforeseen ways; build for the unknown-unknowns.
+Observability is a **launch precondition, not a post-launch addition** — a service that ships un-instrumented gets instrumented during its first outage, at the worst possible cost.
 
-The three signal types, each with a job the others can't do:
-
-- **Logs** — discrete timestamped events; the *what happened, in detail*. **Emit them structured** (JSON / key-value), never free-text prose, or they aren't queryable at 3am. Attach a correlation/trace ID to every line. They're the highest-volume, highest-cost signal — **sample or aggregate** the chatty ones; you cannot afford to keep every debug log at scale.
-- **Metrics** — aggregated numbers over time; cheap to store, ideal for dashboards and alerts. The trap is **cardinality**: every unique combination of label values is a distinct time series, and putting a user ID or request ID in a metric label detonates cost. Keep labels low-cardinality; high-cardinality identity belongs in logs and traces. Instrument request-driven services with **RED** (Rate, Errors, Duration) and resources with **USE** (Utilization, Saturation, Errors); Google's **four golden signals** — latency, traffic, errors, saturation — are the minimum any user-facing service should expose.
-- **Traces** — the path of one request across every service it touched, as a tree of timed spans. This is the signal that tells you *where* the latency or error actually originated in a call graph — the thing logs and metrics can't, because they're per-service. Sample deliberately (tail-based sampling keeps the interesting traces — the slow and failed ones — instead of a blind percentage).
-
-**The three are only powerful when correlated.** Thread one **request/trace ID** through logs, trace spans, and metric exemplars so you can pivot: a metric spikes → jump to an exemplar trace → jump to that request's logs. Without the shared ID you have three disconnected haystacks.
-
-**OpenTelemetry (OTel) is the default instrumentation choice.** It's the vendor-neutral standard — a single set of APIs, SDKs, and the Collector — for generating and exporting all three signals. Instrument your code once against OTel and export to *any* backend, swapping vendors by reconfiguring the Collector rather than re-instrumenting the codebase — so it's also your **lock-in hedge** on the observability vendor. It propagates trace context across service boundaries via W3C Trace Context, which is what makes cross-service traces work at all. Reach for a proprietary agent only when it buys something OTel genuinely can't, and know you're buying lock-in when you do.
+Instrument per `../../loop-operate/references/observability.md`, which owns the three signal types, the cardinality trap, the single correlation ID, OpenTelemetry and its pinned Semantic Conventions, and the §5 checklist of what telemetry must carry before alerts can be designed against it.
 
 ## Build vs. buy: TCO, lock-in, and maintenance health
 
@@ -125,8 +114,8 @@ Walk the finished design against this before you call it done. Each unchecked bo
 - [ ] **Each target maps to a mechanism.** For every number, the design names *how* it's met (this cache, this replica set, this autoscaler) — and **where it breaks first** (the next bottleneck and the scale that triggers it).
 - [ ] **Availability math checks out.** Serial critical-path dependencies were counted and multiplied; the composed number meets the SLO, and single points of failure are either removed or consciously accepted.
 - [ ] **RTO/RPO have a tested recovery path.** Backups are restored on a schedule, not assumed; failover has been rehearsed.
-- [ ] **SLOs and error budgets are defined** per critical journey, with burn-rate alerting on symptoms, and the SLO is stricter than any external SLA.
-- [ ] **Observability is wired in, not bolted on.** Structured logs, low-cardinality metrics (RED/USE + golden signals), and cross-service traces, correlated by one trace ID, via OpenTelemetry — before launch, not after the first blind incident.
+- [ ] **SLOs and error budgets are defined** per critical journey, stricter than any external SLA. Setting the target is this step's obligation; the burn-rate alerting against it is `../../loop-operate/references/alerting.md`'s and is a launch task, not a design deliverable.
+- [ ] **Observability is wired in, not bolted on** — instrumented before launch per `../../loop-operate/references/observability.md`, whose §5 checklist is the acceptance test.
 - [ ] **It scales on a named axis.** Stateless where it needs to scale out; the scaling dimension and its ceiling are stated.
 - [ ] **Security pillar was actually threat-modeled** (via **loop-review**), not just asserted: authn/z, least privilege, encryption in transit and at rest, secrets externalized, audit trail.
 - [ ] **Cost has a budget and a per-unit target**, with spend attributable to an owner.

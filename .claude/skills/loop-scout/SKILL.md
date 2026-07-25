@@ -1,6 +1,7 @@
 ---
 name: loop-scout
-description: Find existing frameworks, libraries, tools, or standards that already solve a problem before building it from scratch — a prior-art and build-vs-buy check that prevents reinventing the wheel and over-engineering. Use when the user is about to build a component, feature, or system, asks whether to build or adopt an existing solution, wants to avoid reinventing something, asks whether a library or framework exists for a need, or is scoping work that likely has established solutions.
+description: "Find existing frameworks, libraries, tools, services, or standards that already solve a problem before building it from scratch, a prior-art and build-vs-buy check that prevents reinventing the wheel. Use when the user is about to build a component or feature, asks whether to build or adopt an existing solution, asks whether a library exists for a need, or is choosing between candidate dependencies. Ends at a decision: reuse, adapt, or build, naming the candidate and the runner-up. For using a framework already in the project idiomatically, use loop-pattern. For wiring up a chosen third-party platform or API, use loop-integrate. For a question that needs cited evidence rather than a build-vs-buy decision, use loop-research."
+argument-hint: <capability> [--mode <optimize|full>]
 ---
 
 # Finding Frameworks
@@ -8,6 +9,8 @@ description: Find existing frameworks, libraries, tools, or standards that alrea
 You are about to stop someone from building what already exists. Before any non-trivial thing gets built, this skill runs the reflex a good engineer runs automatically: **does a mature, maintained solution already solve this — and if so, is there a real reason not to use it?** The default answer to "should we build this from scratch?" is *no*. Your job is to find the prior art, evaluate it honestly, and only bless a from-scratch build when reuse genuinely loses.
 
 **The failure mode this skill prevents is over-engineering: building a bespoke solution to a solved problem.** A from-scratch build is a liability you maintain forever; a well-chosen dependency is leverage. Bias toward reuse, and make anyone building from scratch earn it.
+
+**The dependency-manifest test decides whether this is even the right skill.** If answering the question would add a line to `package.json`, `requirements.txt`, `go.mod`, `Cargo.toml`, or the equivalent, it is this skill; if the dependency is already there and the question is how to use it well, it is **`loop-pattern`**; if the provider is already chosen and the question is how to wire it up, it is **`loop-integrate`**.
 
 ## 1. State the need in solution-neutral terms
 

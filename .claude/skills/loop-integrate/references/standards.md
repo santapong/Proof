@@ -1,0 +1,63 @@
+# Authoritative standards — what an integration cites
+
+This is the standards shelf for the *consumer* side of an API relationship. `auth-and-secrets.md`, `webhooks-and-idempotency.md`, `resilience.md`, and `contracts-and-promotion.md` all cite **from this file**, not from memory, because this domain is unusually full of sources that look ratified and are not. Two of the entries below are Internet-Drafts, **one of those has expired**, one is an industry consortium document rather than a standards-body specification, and three are vendor or trade-press opinion. Reporting any of them as if it were a settled RFC is a defect in the report, not a stylistic quibble.
+
+Every row carries an **Authoritative?** column. *Yes* means a recognized standards body ratified it. *No* means it is real, widely followed, and still just somebody's opinion — cite it as practice, name the author or vendor, and never phrase it as a requirement. Entries are pinned as of **2026-07**; the closing note gives the re-check cadence.
+
+## IETF core — authorization and HTTP semantics
+
+| Standard | Body | Pinned edition | Authoritative? | How it maps to this skill |
+|---|---|---|---|---|
+| **OAuth 2.0 Authorization Framework** — RFC 6749 | IETF | **RFC 6749** (Oct 2012) | **Yes** | The grant vocabulary in `auth-and-secrets.md`: authorization code for user-delegated access, client credentials for server-to-server, and the refresh-token mechanics. Cite it for *what a grant is*; cite RFC 9700 below for *which grant you are allowed to use*. |
+| **OAuth 2.0 Security Best Current Practice** — RFC 9700 | IETF | **RFC 9700** (Jan 2025) | **Yes** | The mandatory checklist in `auth-and-secrets.md` — PKCE on every authorization-code flow (public **and** confidential clients), Resource Owner Password Credentials and Implicit grants banned, redirect-URI allow-listing, token-replay defenses. **This BCP supersedes the older RFC 6819 threat model**; if a review or a reference cites 6819 for current guidance, that is a stale citation to correct. |
+| **RateLimit header fields for HTTP** | IETF HTTPAPI Working Group | **draft-ietf-httpapi-ratelimit-headers-11** (23 May 2026) — an **active Internet-Draft**, Standards Track *intended*, **not an RFC** | **Yes** (as IETF working-group output, with the draft caveat stated) | The header-parsing contract in `resilience.md`: `RateLimit-Policy` / `RateLimit` for proactive throttling, `Retry-After` on 429/503 for reactive backoff. Always name it as a draft — "per the IETF RateLimit-headers draft (-11)" — never as a published RFC, and re-check the version number before quoting it, because a draft's field syntax can change between revisions. |
+| **The Idempotency-Key HTTP Header Field** | IETF HTTPAPI Working Group | **draft-ietf-httpapi-idempotency-key-header-07** (15 Oct 2025) — **EXPIRED**; the datatracker shows no successor filed | **Yes** (as IETF working-group output, with the expiry stated) | The outbound idempotency scheme in `webhooks-and-idempotency.md`: client-generated key, server stores `key → (status, response)`, replays on retry. Cite it honestly — a **lapsed IETF proposal that formalized pre-existing Stripe/PayPal-style practice**, not ratified guidance. The practice is real and widely deployed in production; the document is stale. Phrase remediation around the provider's own documented header, with the draft as the vendor-neutral description of the pattern. |
+
+## Identity — when OAuth is not enough
+
+| Standard | Body | Pinned edition | Authoritative? | How it maps to this skill |
+|---|---|---|---|---|
+| **OpenID Connect Core 1.0** | OpenID Foundation | **incorporating errata set 2**, published as **ITU-T Rec. X.1285** (Apr 2025). Errata set 3 exists only as **draft 36** and is not final — do not cite it as current | **Yes** | The "do I need an ID token?" line in `auth-and-secrets.md`. OIDC layers *authentication* on OAuth's *authorization*; reach for it when the integration needs to know **who** the third party says the user is (SSO, login-with-provider), not merely to act on their behalf. Bare OAuth for delegated API access; OIDC when identity is the deliverable. |
+
+## Webhook trust
+
+| Standard | Body | Pinned edition | Authoritative? | How it maps to this skill |
+|---|---|---|---|---|
+| **Standard Webhooks specification** | Standard Webhooks community initiative (Svix-led; adopted across multiple AI and SaaS vendors per the project's own documentation) | **living specification on the `main` branch — no dated release exists to pin**; the reference SDK is at **v1.0.0** | **No** — an industry initiative, not a standards body | The vendor-neutral **fallback** signature scheme in `webhooks-and-idempotency.md`: HMAC-SHA256 over a signed payload plus timestamp-tolerance replay protection. Use it when you are *designing* a webhook contract or the provider dictates nothing. When the provider **does** dictate a scheme (Stripe, GitHub, and most large platforms do), implement theirs — their signature is the one that verifies. Multi-vendor adoption is not ratification; do not present this with RFC-level authority. |
+
+## Contract specifications
+
+| Standard | Body | Pinned edition | Authoritative? | How it maps to this skill |
+|---|---|---|---|---|
+| **OpenAPI Specification** | OpenAPI Initiative / Linux Foundation | **3.1.0** (2021; tooling treats 3.1.x patches as equivalent) is what most providers still publish. **3.2.0** (19 Sep 2025) is the current feature release | **Yes** | Client generation and spec-drift detection in `contracts-and-promotion.md`. **Validate against the version the provider actually publishes.** Naming 3.2.0 is useful context; forcing an upgrade the provider has not made produces a client that matches nothing. |
+| **AsyncAPI Specification** | AsyncAPI Initiative / Linux Foundation | **3.0.0** (Nov 2023) as the baseline; **3.1.0** (31 Jan 2026) is the current minor release, no breaking changes | **Yes** | The same drift discipline for event-driven and webhook-shaped provider contracts, where OpenAPI does not fit. Same rule: match what the provider publishes. |
+| **Pact Specification** | Pact Foundation | **v4** (current major) | **Yes** | Cited here **only to mark where it stops applying.** Consumer-driven contract testing presumes a provider that will verify your pact in *their* CI. That holds for internal services you own both ends of — which is `loop-test`'s territory and already pinned in `../../loop-test/references/standards.md` — and fails for almost every third-party platform. `contracts-and-promotion.md` gives the substitute. |
+
+## Secrets and credential lifecycle
+
+| Standard | Body | Pinned edition | Authoritative? | How it maps to this skill |
+|---|---|---|---|---|
+| **NIST SP 800-57 Part 1 — Recommendation for Key Management** | NIST | **Revision 5** (May 2020). A **Revision 6 initial public draft** circulated Dec 2025 with public comment closed Feb 2026 — Rev. 5 remains the current published edition; do not cite Rev. 6 as in force | **Yes** | Cryptoperiod and rotation-cadence reasoning for third-party credentials in `auth-and-secrets.md` — OAuth client secrets, API keys, and webhook signing secrets each get a lifetime and a rotation trigger rather than living forever by default. |
+| **OWASP Secrets Management Cheat Sheet** | OWASP Foundation | **current edition — continuously updated, with no dated version to pin.** Write "current edition" rather than invent a number | **Yes** | The storage and rotation remediation anchor in `auth-and-secrets.md`. `../../loop-review/references/standards.md` cites the same sheet for *secrets leaked into source*; this skill reuses it for the **lifecycle** angle — minting, storing, rotating without downtime, and keeping sandbox and production credentials apart. Two different questions, one anchor, no duplicated advice. |
+
+## Opinionated practice — real, useful, and not standards
+
+Everything in this section is **`authoritative: false`**. Cite by author or vendor, never as a requirement.
+
+| Source | Publisher | Pinned edition | How it maps to this skill |
+|---|---|---|---|
+| **Cloud Well-Architected frameworks** — AWS Well-Architected Framework, Azure Well-Architected Framework, Google Cloud Architecture Framework | AWS / Microsoft / Google (vendor documentation) | **Living documents, continuously revised, with no dated edition to pin.** State that plainly rather than inventing a version — the same honesty `../../loop-review/references/standards.md` applies to OpenSSF Scorecard. AWS currently presents six pillars, Sustainability having been added in 2021 | Higher-level framing in `resilience.md` and `contracts-and-promotion.md` when the user wants an integration checked against their own cloud vendor's rubric. Use it as a checklist the customer already believes in — reliability, operational excellence, security pillars — not as a source of truth about HTTP behavior. |
+| **"Exponential Backoff and Jitter"** | Amazon Web Services (Architecture Blog), Marc Brooker | **2015 blog post**, undated beyond publication year; still the canonical reference as of this research | The **full jitter** formula in `resilience.md` and the argument for why unjittered backoff synchronizes clients into a thundering herd. Attribute it — "the AWS full-jitter formula" — so a reader knows it is measured engineering advice, not a specification. |
+| **Release It!** | Michael Nygard / Pragmatic Bookshelf | **2nd edition, 2018** | The circuit-breaker state machine (closed / open / half-open) and the stability-pattern vocabulary — bulkhead, timeout, fail fast — used throughout `resilience.md`. The names are Nygard's and are worth using because they are the industry's shared vocabulary; the thresholds are yours to tune. |
+
+## Edition discipline — and the two traps in this shelf
+
+1. **Cite the edition you mapped to.** "RFC 9700 §2.1.1", "the RateLimit-headers draft (-11)", "OpenAPI 3.1.0" — never a bare "the OAuth spec" or "the rate-limit RFC".
+
+2. **Trap 1 — there is no RFC 9331 for rate-limit headers, and there never was.** An earlier planning note in this project's history cited "RFC 9331" as the source for HTTP rate-limit header fields. **RFC 9331 is "The Explicit Congestion Notification (ECN) Protocol for Low Latency, Low Loss, and Scalable Throughput (L4S)"** — a transport-layer congestion-control document with no relationship to HTTP headers whatsoever. The correct source is `draft-ietf-httpapi-ratelimit-headers` above. **RFC 9331 must not appear anywhere in this skill.** This paragraph exists so a future contributor working from the same stale note does not reintroduce the mis-citation.
+
+3. **Trap 2 — the Idempotency-Key draft is expired, and a lapsed draft is easy to mistake for a live one.** `draft-ietf-httpapi-idempotency-key-header-07` lapsed on the normal six-month Internet-Draft clock with no successor filed. **Re-check its datatracker status before 1.0.0 ships** — working-group documents do revive, and if a -08 or an RFC lands, this row and every citation of it in `webhooks-and-idempotency.md` change together. Until then, the wording is "lapsed IETF proposal describing widely deployed practice."
+
+4. **Never upgrade a provider's spec version on paper.** OpenAPI 3.2.0 and AsyncAPI 3.1.0 are the current releases; they are irrelevant to an integration whose provider publishes 3.1.0 and 3.0.0. Pin to what the provider ships and record the mismatch as a drift risk, not as a to-do.
+
+5. **Re-check cadence.** The two drafts: **at the start of any integration work that cites them**, because a draft revision can change field syntax. The remaining rows: roughly **twice a year**, and always before a release that claims these pins are current. When a row goes stale, update the row *and* this closing note in the same change — a shelf whose body and edition note disagree is worse than one that is simply old.

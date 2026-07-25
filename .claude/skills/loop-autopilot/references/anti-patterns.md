@@ -32,7 +32,7 @@ nothing remembers it was already handled.
 **Symptom:** it isn't really a loop — it's a script someone has to remember to run.
 
 **Status here: guarded, but read the default correctly.** A manual `Workflow()` call in
-`mode: "dry"` (`SKILL.md` §6) *is* a Manual Loop, on purpose — that's the safe on-ramp
+`runMode: "dry"` (`SKILL.md` §6) *is* a Manual Loop, on purpose — that's the safe on-ramp
 before you trust it unattended. It only becomes a real loop once deployed as a Cloud
 Routine or Action (`deployment.md`). The anti-pattern isn't the dry-mode default — it's
 still running it by hand three months after "Unattended" was documented and never

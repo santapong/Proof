@@ -10,12 +10,16 @@
 // section rather than re-deriving them here. Keep the boundary sharp — an audit that turns into a
 // bug hunt produces a noisy half-review and a missing report.
 //
-// Invoke with: Workflow({ script, args: { areas: [...], base: "main", head: "HEAD" } })
+// Model/effort come from the canonical ROUTES block — source of truth:
+// ../../loop-engine/references/execution-modes.md §M8. Never inline a bare model:/effort: literal.
+//
+// Invoke with: Workflow({ script, args: { areas: [...], base: "main", head: "HEAD", mode: "optimize" } })
 // input.areas — array of changed file-groups to audit; each item is one unit of work in the
 //               pipeline. Partition the diff BEFORE authoring (SKILL §8). Shape is up to you —
 //               a string path-glob, or an object { name, files:[...], note }.
 // input.base  — base ref of the change set (e.g. a tag, branch, or SHA).
 // input.head  — head ref of the change set.
+// input.mode  — 'optimize' (default) or 'full' (execution-modes.md §M2)
 
 export const meta = {
   name: 'change-audit', // EDIT ME: kebab-case name for this run
@@ -29,6 +33,46 @@ export const meta = {
 
 // Some harnesses deliver args as a JSON-encoded string — normalize before use.
 const input = typeof args === 'string' ? JSON.parse(args) : args
+
+// Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
+// Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
+// access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
+const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const ROUTES = {
+  optimize: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: 'high' },
+    analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
+    synthesize: { model: null,               effort: 'high' },
+    verify:     { model: null,               effort: 'high' },
+    judge:      { model: null,               effort: 'high' },
+    critic:     { model: null,               effort: 'high' },
+    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+  },
+  full: {
+    scout:      { model: 'claude-opus-5', effort: 'high' },
+    doc:        { model: 'claude-opus-5', effort: 'high' },
+    implement:  { model: 'claude-opus-5', effort: 'high' },
+    analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
+    synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
+    verify:     { model: 'claude-opus-5', effort: 'xhigh' },
+    judge:      { model: 'claude-opus-5', effort: 'xhigh' },
+    critic:     { model: 'claude-opus-5', effort: 'xhigh' },
+    gating:     { model: 'claude-opus-5', effort: 'max' },
+    planner:    { model: 'claude-opus-5', effort: 'max' },
+  },
+}
+const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
+function optsFor(node, label) {
+  const r = routeFor(node.taskType)
+  const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
+  if (r.model) opts.model = r.model     // omit → inherit session model (H8)
+  if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  return opts
+}
+// No WIDTH / DRY_LIMIT: this template has no verify stage and no loop (§M8 — omit what you do not use).
 
 const base = (input && input.base) || 'HEAD~1' // EDIT ME: default base ref if the caller omits one
 const head = (input && input.head) || 'HEAD' // EDIT ME: default head ref if the caller omits one
@@ -93,7 +137,7 @@ const assessed = await pipeline(
         `summarize what changed and why, and list the changed symbols. Split a mixed change into the ` +
         `single most-load-bearing class. Inspect the diff with git; return raw data.\n` +
         `Area: ${JSON.stringify(area)}`,
-      { label: `analyze:${areaLabel(area)}`, phase: 'Analyze', schema: ANALYSIS_SCHEMA },
+      optsFor({ taskType: 'analyze', phase: 'Analyze', schema: ANALYSIS_SCHEMA }, `analyze:${areaLabel(area)}`),
     ).then((analysis) => ({ area, analysis })),
   // Stage 2 — Assess: trace blast radius and rate risk. Stage callbacks receive (prevResult, area, index).
   (prev) =>
@@ -107,7 +151,7 @@ const assessed = await pipeline(
             `with no covering test as a coverage gap — do NOT write the tests here.\n` +
             `Area: ${JSON.stringify(prev.area)}\n` +
             `Analysis: ${JSON.stringify(prev.analysis)}`,
-          { label: `assess:${areaLabel(prev.area)}`, phase: 'Assess', schema: ASSESSMENT_SCHEMA },
+          optsFor({ taskType: 'analyze', phase: 'Assess', schema: ASSESSMENT_SCHEMA }, `assess:${areaLabel(prev.area)}`),
         ).then((assessment) => ({ ...prev, assessment }))
       : null, // a dead Analyze stage carries through as null — filtered below (H5)
 )
@@ -131,7 +175,7 @@ const synthesis = await agent(
     `and an explicit open-questions/gaps list. This is a REPORT — do not open PRs, edit code, or ` +
     `write tests. Recommend follow-ups (e.g. delegate coverage gaps to the loop-test skill).\n` +
     `Assessments (JSON): ${JSON.stringify(entries)}`,
-  { label: 'synthesize', phase: 'Synthesize', schema: REPORT_SCHEMA, effort: 'high' },
+  optsFor({ taskType: 'synthesize', phase: 'Synthesize', schema: REPORT_SCHEMA }, 'synthesize'),
 )
 
 return {

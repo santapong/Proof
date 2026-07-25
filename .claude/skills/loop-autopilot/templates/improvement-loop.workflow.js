@@ -6,11 +6,17 @@
 // everything seen + open issues/PRs (L3). Ends every unit of work at a propose gate — it
 // NEVER merges (harness policy H11).
 //
-// SAFETY: defaults to mode:"dry" — it returns proposal objects and opens NOTHING.
+// SAFETY: defaults to runMode:"dry" — it returns proposal objects and opens NOTHING.
 // Only wire the live PR-creation step (marked EDIT ME) once you trust it, and even then
 // open DRAFT PRs on claude/ branches and never merge.
 //
-// Invoke with: Workflow({ script, args: { repo: {owner,name}, mode: "dry"|"live", maxRounds, floor } })
+// Model/effort come from the canonical ROUTES block — source of truth:
+// ../../loop-engine/references/execution-modes.md §M8. Never inline a bare model:/effort: literal.
+// NOTE: `input.mode` is now reserved fleet-wide for the EXECUTION mode ('optimize'|'full'), so this
+// template's dry/live safety switch moved to `input.runMode`. A caller still passing the old
+// `mode: "dry"` gets the safe default (RUN_MODE falls back to 'dry'), never an accidental live run.
+//
+// Invoke with: Workflow({ script, args: { repo: {owner,name}, runMode: "dry"|"live", mode: "optimize"|"full", maxRounds, floor } })
 
 export const meta = {
   name: 'improvement-loop-template', // EDIT ME
@@ -24,11 +30,53 @@ export const meta = {
 }
 
 const input = typeof args === 'string' ? JSON.parse(args) : args
+
+// Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
+// Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
+// access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
+const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const ROUTES = {
+  optimize: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: 'high' },
+    analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
+    synthesize: { model: null,               effort: 'high' },
+    verify:     { model: null,               effort: 'high' },
+    judge:      { model: null,               effort: 'high' },
+    critic:     { model: null,               effort: 'high' },
+    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+  },
+  full: {
+    scout:      { model: 'claude-opus-5', effort: 'high' },
+    doc:        { model: 'claude-opus-5', effort: 'high' },
+    implement:  { model: 'claude-opus-5', effort: 'high' },
+    analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
+    synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
+    verify:     { model: 'claude-opus-5', effort: 'xhigh' },
+    judge:      { model: 'claude-opus-5', effort: 'xhigh' },
+    critic:     { model: 'claude-opus-5', effort: 'xhigh' },
+    gating:     { model: 'claude-opus-5', effort: 'max' },
+    planner:    { model: 'claude-opus-5', effort: 'max' },
+  },
+}
+const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
+const DRY_LIMIT = MODE === 'full' ? 3 : 2
+function optsFor(node, label) {
+  const r = routeFor(node.taskType)
+  const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
+  if (r.model) opts.model = r.model     // omit → inherit session model (H8)
+  if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  return opts
+}
+// DRY_LIMIT above IS loop policy L1's K — 2 in optimize, 3 in full (§M5). No WIDTH: the Verify
+// stage runs one adversarial reviewer per item by decomposition, and widening a declared lens set
+// is a decomposition change, not a mode dial (§M5).
 const REPO = (input && input.repo) || { owner: 'OWNER', name: 'REPO' } // EDIT ME
-const MODE = input && input.mode === 'live' ? 'live' : 'dry' // default dry = safe
+const RUN_MODE = input && input.runMode === 'live' ? 'live' : 'dry' // default dry = safe
 const FLOOR = (input && input.floor) || 60000 // one round + verification headroom (L2)
 const MAX_ROUNDS = (input && input.maxRounds) || 6 // hard backstop (L4)
-const DRY_LIMIT = 2 // stop after K idle rounds (L1)
 
 const ITEMS_SCHEMA = {
   type: 'object',
@@ -87,7 +135,7 @@ const proposals = []
 let dry = 0
 let round = 0
 
-if (MODE === 'dry') log('DRY mode: no branches, PRs, or merges — returning proposal objects only')
+if (RUN_MODE === 'dry') log('DRY run mode: no branches, PRs, or merges — returning proposal objects only')
 if (!budget.total) log('no budget target set — running a single bounded round')
 
 do {
@@ -96,7 +144,7 @@ do {
   // INTAKE — read-only. Reads real issues/PRs via the GitHub tools; dedups against open work.
   const intake = await agent(
     `Repo: ${REPO.owner}/${REPO.name}. Using the GitHub tools, gather ACTIONABLE, deduplicated feedback: open issues (list_issues/search_issues) not already covered by an open PR, plus unresolved review comments and failing CI on open PRs (pull_request_read get_comments/get_review_comments/get_check_runs). Skip anything already tracked by an open issue/PR. Return raw items; [] if none.`,
-    { label: `intake:r${round}`, phase: 'Intake', schema: ITEMS_SCHEMA },
+    optsFor({ taskType: 'scout', phase: 'Intake', schema: ITEMS_SCHEMA }, `intake:r${round}`),
   )
   const fresh = ((intake && intake.items) || []).filter((it) => !seen.has(key(it)))
   fresh.forEach((it) => seen.add(key(it)))
@@ -107,12 +155,12 @@ do {
     dry++
     const research = await agent(
       `Repo: ${REPO.owner}/${REPO.name}. No pending feedback. Propose high-value improvements grounded in the project plus market/ecosystem trends and research (use research tools if available). Verify each idea against a real source; dedup against any open issue proposing the same. Return proposals.`,
-      { label: `research:r${round}`, phase: 'Research', schema: RESEARCH_SCHEMA },
+      optsFor({ taskType: 'analyze', phase: 'Research', schema: RESEARCH_SCHEMA }, `research:r${round}`),
     )
     const ideas = ((research && research.proposals) || []).filter((p) => !seen.has(key({ title: p.title })))
     ideas.forEach((p) => seen.add(key({ title: p.title })))
     proposals.push(...ideas.map((p) => ({ source: 'research', title: p.title, rationale: p.rationale, ref: p.source })))
-    log(`round ${round}: idle -> ${ideas.length} research proposals (dry=${dry})`)
+    log(`round ${round} [mode=${MODE}]: idle -> ${ideas.length} research proposals (dry=${dry}/${DRY_LIMIT})`)
     continue
   }
   dry = 0
@@ -124,18 +172,18 @@ do {
     (it) =>
       agent(
         `Triage this ${it.kind} for ${REPO.owner}/${REPO.name} and decide the approach + which sibling skill owns it (loop-debug, loop-design, loop-test, loop-scout). Item: ${it.title} — ${it.detail || ''} (${it.ref || ''}). Set worthDoing=false to skip.`,
-        { label: `triage:${key(it)}`, phase: 'Act', schema: TRIAGE_SCHEMA },
+        optsFor({ taskType: 'analyze', phase: 'Act', schema: TRIAGE_SCHEMA }, `triage:${key(it)}`),
       ).then((t) => ({ it, triage: t })),
     (prev) => {
       if (!prev || !prev.triage || !prev.triage.worthDoing) return prev
-      const verb = MODE === 'live'
+      const verb = RUN_MODE === 'live'
         ? 'Implement the change on a NEW claude/-prefixed branch (design -> implement -> add a fails-before/passes-after test -> update docs). Do NOT push to main or merge.'
         : 'Describe the change you WOULD make (design, files, the test you would add) without editing anything.'
       // AP5 (Tangled Loop) fix: in live mode the Act stage mutates files and multiple
       // items can run concurrently under pipeline() (H1), so each gets its own git
       // worktree (H7). Dry mode is read-only and needs no isolation.
-      const actOpts = { label: `act:${key(prev.it)}`, phase: 'Act', schema: ACT_SCHEMA }
-      if (MODE === 'live') actOpts.isolation = 'worktree'
+      const actOpts = optsFor({ taskType: 'implement', phase: 'Act', schema: ACT_SCHEMA }, `act:${key(prev.it)}`)
+      if (RUN_MODE === 'live') actOpts.isolation = 'worktree'
       return agent(
         `${verb}\nItem: ${prev.it.title} — ${prev.it.detail || ''}\nApproach: ${prev.triage.approach}`,
         actOpts,
@@ -145,7 +193,7 @@ do {
       if (!prev || !prev.act) return prev
       return agent(
         `Adversarially review this change and write its impact/risk memo (loop-review + loop-audit). Set safeToPropose=false if it is unsafe, unclear, or unverified.\nChange: ${prev.act.summary}\nFiles: ${(prev.act.filesChanged || []).join(', ')}`,
-        { label: `verify:${key(prev.it)}`, phase: 'Verify', schema: VERIFY_SCHEMA },
+        optsFor({ taskType: 'verify', phase: 'Verify', schema: VERIFY_SCHEMA }, `verify:${key(prev.it)}`),
       ).then((v) => ({ ...prev, verify: v }))
     },
   )
@@ -164,5 +212,7 @@ do {
   }
 } while (budget.total && budget.remaining() > FLOOR && round < MAX_ROUNDS && dry < DRY_LIMIT)
 
-log(`done: ${round} round(s), ${proposals.length} proposals (${MODE} mode) — nothing merged`)
-return { mode: MODE, rounds: round, proposals }
+// Ledger line (L5). This template runs UNATTENDED, so the execution mode is recorded explicitly:
+// a transcript with no mode in it is unreadable after the fact.
+log(`done: ${round} round(s), ${proposals.length} proposals · mode=${MODE} runMode=${RUN_MODE} dryLimit=${DRY_LIMIT} maxRounds=${MAX_ROUNDS} — nothing merged`)
+return { mode: RUN_MODE, executionMode: MODE, rounds: round, proposals }

@@ -4,10 +4,17 @@
 // (harness policy H2), per-candidate evaluation (H1 pipeline / parallel), then a decisive
 // build-vs-buy synthesis. Pairs with the loop-research skill for source-verified claims.
 //
-// Invoke with: Workflow({ script, args: { need: "...", constraints: "...", sources: [...] } })
+// Model/effort come from the canonical ROUTES block — source of truth:
+// ../../loop-engine/references/execution-modes.md §M8. Never inline a bare model:/effort: literal.
+// The Decide node is tagged `gating`, so it is pinned to claude-opus-5 at max effort in BOTH
+// modes: its wrong answer picks the wrong dependency for the project, and the team lives with
+// that for years (§M3 — error cost, not token cost, decides the gating row).
+//
+// Invoke with: Workflow({ script, args: { need: "...", constraints: "...", sources: [...], mode: "optimize" } })
 // input.need        — the capability required, stated solution-neutrally (see SKILL.md step 1)
 // input.constraints — hard constraints (language/runtime, license, deployment, scale)
 // input.sources     — optional array of source-lenses to search; falls back to a default set
+// input.mode        — 'optimize' (default) or 'full' (execution-modes.md §M2)
 
 export const meta = {
   name: 'prior-art-search-template', // EDIT ME
@@ -21,6 +28,46 @@ export const meta = {
 
 // Some harnesses deliver args as a JSON-encoded string — normalize before use.
 const input = typeof args === 'string' ? JSON.parse(args) : args
+
+// Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
+// Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
+// access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
+const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const ROUTES = {
+  optimize: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: 'high' },
+    analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
+    synthesize: { model: null,               effort: 'high' },
+    verify:     { model: null,               effort: 'high' },
+    judge:      { model: null,               effort: 'high' },
+    critic:     { model: null,               effort: 'high' },
+    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+  },
+  full: {
+    scout:      { model: 'claude-opus-5', effort: 'high' },
+    doc:        { model: 'claude-opus-5', effort: 'high' },
+    implement:  { model: 'claude-opus-5', effort: 'high' },
+    analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
+    synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
+    verify:     { model: 'claude-opus-5', effort: 'xhigh' },
+    judge:      { model: 'claude-opus-5', effort: 'xhigh' },
+    critic:     { model: 'claude-opus-5', effort: 'xhigh' },
+    gating:     { model: 'claude-opus-5', effort: 'max' },
+    planner:    { model: 'claude-opus-5', effort: 'max' },
+  },
+}
+const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
+function optsFor(node, label) {
+  const r = routeFor(node.taskType)
+  const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
+  if (r.model) opts.model = r.model     // omit → inherit session model (H8)
+  if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  return opts
+}
+// No WIDTH / DRY_LIMIT: this template has no verify stage and no loop (§M8 — omit what you do not use).
 
 // EDIT ME: search the boring options first (see references/where-to-look.md). Each lens is a
 // DIFFERENT place to look, so the sweep isn't a monoculture (harness policy H4).
@@ -85,7 +132,7 @@ const sweeps = await parallel(
   SOURCES.map((src, i) => () =>
     agent(
       `Need (state solution-neutrally): ${input.need}\nConstraints: ${input.constraints || '(none given)'}\nSearch THIS source for existing solutions that already meet the need: ${src}. Use web search/fetch and any research tools available. Return real candidates as raw data — do not evaluate yet.`,
-      { label: `discover:${i}`, phase: 'Discover', schema: CANDIDATES_SCHEMA },
+      optsFor({ taskType: 'scout', phase: 'Discover', schema: CANDIDATES_SCHEMA }, `discover:${i}`),
     ),
   ),
 )
@@ -93,7 +140,7 @@ const sweeps = await parallel(
 // .filter(Boolean): a dead searcher resolves to null (harness policy H5). Dedup by lowercased name.
 const allCandidates = sweeps.filter(Boolean).flatMap((s) => s.candidates)
 const candidates = [...new Map(allCandidates.map((c) => [c.name.toLowerCase(), c])).values()]
-log(`discover: ${allCandidates.length} candidates -> ${candidates.length} after dedup`)
+log(`discover [mode=${MODE}]: ${allCandidates.length} candidates -> ${candidates.length} after dedup`)
 
 // Early-exit: nothing exists -> building is justified (SKILL.md step 4). This is the other
 // legitimate use of the barrier.
@@ -110,7 +157,7 @@ const evaluations = await parallel(
   candidates.map((c) => () =>
     agent(
       `Evaluate this candidate against the need honestly (fit to MUST-haves, maturity, license, security/supply-chain, lock-in, TCO). Do not reject over a nice-to-have — prefer adapt. Verify maturity/security claims against primary sources.\nNeed: ${input.need}\nConstraints: ${input.constraints || '(none given)'}\nCandidate: ${c.name} (${c.kind}) — ${c.whatItDoes} ${c.url || ''}`,
-      { label: `evaluate:${c.name}`, phase: 'Evaluate', schema: EVAL_SCHEMA },
+      optsFor({ taskType: 'analyze', phase: 'Evaluate', schema: EVAL_SCHEMA }, `evaluate:${c.name}`),
     ),
   ),
 )
@@ -122,7 +169,7 @@ log(`evaluate: ${scored.length} scored, ${viable.length} viable (reuse/adapt)`)
 // Phase Decide: one agent makes the decisive build-vs-buy call from the evaluations.
 const decision = await agent(
   `Make the build-vs-buy decision for the need: ${input.need}\nDefault to reuse; the ladder is reuse -> adapt -> build, and building must be earned (no viable candidate, core differentiation, unacceptable license/security/lock-in, or trivial-to-build). Pick decisively, name the strongest counter-argument, and give the runner-up.\nEvaluations (JSON): ${JSON.stringify(scored)}`,
-  { label: 'decide', phase: 'Decide', schema: DECISION_SCHEMA, effort: 'high' },
+  optsFor({ taskType: 'gating', phase: 'Decide', schema: DECISION_SCHEMA }, 'decide'),
 )
 
 return {

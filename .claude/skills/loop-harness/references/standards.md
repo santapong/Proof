@@ -69,7 +69,7 @@ The moment a harness runs *unattended* — Routines, headless `claude -p`, GitHu
 |---|---|
 | **Standard** | **SLSA — Supply-chain Levels for Software Artifacts** |
 | **Issuing body** | OpenSSF (Open Source Security Foundation) / Linux Foundation |
-| **Edition (2026)** | **SLSA v1.0** (2023), Build track levels **L1–L3**. (The pre-1.0 four-level scheme is superseded — do not cite "SLSA 4".) |
+| **Edition (2026)** | **SLSA v1.2** (approved Nov 2025), Build track levels **L1–L3**. (The pre-1.0 four-level scheme is superseded — do not cite "SLSA 4".) |
 
 When the harness *builds or releases* artifacts through automation, SLSA governs how you prove where they came from. Aim for **Build L2+** on anything automation ships: a hosted, trusted build (a Routine or GitHub Action, not a developer laptop) that emits signed **provenance** attesting the source and build steps. In this skill that shapes `automation-loops.md` choices — prefer a durable, isolated runner over an ad-hoc local `/loop` for release-producing work, and have the pipeline generate provenance rather than trusting an unattested artifact.
 
@@ -78,6 +78,6 @@ When the harness *builds or releases* artifacts through automation, SLSA governs
 Standards get revised; a harness cited against a stale edition drifts from what auditors and tools expect. Rules:
 
 - **Pin the edition you designed against** (done per-section above) and record it in the harness's own notes when you ship one.
-- **Re-check on a cadence** — roughly annually, or when a section's issuing body publishes a new edition. Watch especially: OWASP CI/CD Top 10 (a refresh would re-key the mapping table), CIS Benchmarks (revised per-platform, continuously), and SLSA (active track expansion beyond Build).
+- **Re-check on a cadence** — roughly annually, or when a section's issuing body publishes a new edition. Watch especially: OWASP CI/CD Top 10 (a refresh would re-key the mapping table), CIS Benchmarks (revised per-platform, continuously), and SLSA (**v1.2** is the current pin; the Source track was approved in that revision and the track expansion is still active).
 - **Never mix editions inside one harness or one review.** If you update to a newer edition, re-map every affected section, the same discipline `owasp-cwe.md` applies to the OWASP Top 10 2021→2025 transition.
 - **Name-don't-fabricate.** If unsure of an exact version, cite the standard and "current edition" rather than inventing a number.

@@ -20,9 +20,9 @@ The objective signals this skill leans on so a build-vs-buy call rests on publis
 |---|---|
 | **Standard** | SLSA — Supply-chain Levels for Software Artifacts |
 | **Issuing body** | **OpenSSF** (Open Source Security Foundation), Linux Foundation |
-| **Edition (2026)** | SLSA **v1.0** (2023), the current stable track; later drafts extend it but v1.0 is what to map to |
+| **Edition (2026)** | SLSA **v1.2** (approved Nov 2025); the Build track's L0–L3 ladder is unchanged from v1.0, and the Source track is now approved |
 
-**Maps to the security & supply-chain axis.** SLSA grades how trustworthy a build artifact's *origin* is, on **Build Levels L0–L3**: L1 = provenance exists; L2 = signed provenance from a hosted build service; L3 = hardened, non-falsifiable provenance. When a candidate is a shipped binary or package (not just source), check for a provenance attestation and treat its SLSA level as the supply-chain evidence for the "provenance and signing" sub-point in `evaluation-criteria.md`. Higher level = less "did this artifact really come from that repo?" risk.
+**Maps to the security & supply-chain axis.** SLSA grades how trustworthy a build artifact's *origin* is, on **Build Levels L0–L3**: L1 = provenance exists; L2 = signed provenance from a hosted build service; L3 = hardened, non-falsifiable provenance. When a candidate is a shipped binary or package (not just source), check for a provenance attestation and treat its SLSA level as the supply-chain evidence for the "provenance and signing" sub-point in `evaluation-criteria.md`. Higher level = less "did this artifact really come from that repo?" risk. This is the **adoption-time** provenance read — taken before the code is written, as one axis of a build-vs-buy score; for the **ship-time** gate on the single artifact about to be promoted, see `../../loop-ship/references/supply-chain-gate.md`.
 
 ## Objective maturity/health — OpenSSF Scorecard & Criticality Score
 
@@ -61,7 +61,7 @@ The objective signals this skill leans on so a build-vs-buy call rests on publis
 
 Standards get revised; a mapping is only as good as the edition it names.
 
-- **Pin the edition you map to** — SPDX Spec 3.0, SLSA v1.0, SemVer 2.0.0 — and don't silently mix editions across a shortlist.
+- **Pin the edition you map to** — SPDX Spec 3.0, SLSA v1.2, SemVer 2.0.0 — and don't silently mix editions across a shortlist.
 - **Rolling artifacts** (Scorecard, Criticality Score, the SPDX License List, the CNCF Landscape) have no fixed number; always read the **current release** at evaluation time rather than caching a value.
-- **Re-check on a cadence.** SLSA is on a v1.x track with further levels drafted; the SPDX License List changes quarterly. Re-verify roughly every two quarters, and when a new edition lands, update the pins here before relying on them.
+- **Re-check on a cadence.** SLSA v1.2 (Nov 2025) is the current pin on a live v1.x track — the Source track was approved in that revision and further tracks are drafted; the SPDX License List changes quarterly. Re-verify roughly every two quarters, and when a new edition lands, update the pins here before relying on them.
 - **Verify, don't assert.** For any maturity, license, provenance, or version claim that decides a recommendation, confirm it against the primary source (repo, registry, attestation) via the `loop-research` skill — the same rule `evaluation-criteria.md` applies to the scoring axes.

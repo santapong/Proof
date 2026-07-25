@@ -1,6 +1,7 @@
 ---
 name: loop-design
-description: "Design software systems and architecture: architecture-style selection, API design, backend and data modeling, frontend performance, deployment strategy, and non-functional requirements. Use when the user asks to design a system or architecture, choose an architecture pattern, design an API, plan a deployment or rollout strategy, optimize frontend performance, model backend data, or record architecture decisions (ADRs) and C4 diagrams."
+description: "Design software systems and architecture: architecture-style selection, API design, backend and data modeling, frontend performance, and turning non-functional requirements into numbers and SLO targets. Use when the user asks to design a system or architecture, choose an architecture pattern, design an API this system exposes, model backend data, pick a consistency policy, optimize frontend performance, set NFR or capacity targets, or record architecture decisions as ADRs and C4 diagrams. Works at component granularity on a system not yet built. For executing a release or choosing a rollout strategy for a system already running, use loop-ship. For measuring and alerting on the SLOs of a live service, use loop-operate. For the algorithm inside one component, use loop-algo."
+argument-hint: <system> [--mode <optimize|full>]
 ---
 
 # Designing Systems
@@ -56,19 +57,17 @@ REST is the default; reach for GraphQL when clients need to shape wildly varying
 
 If the system has a UI, decide the rendering strategy against the content, not the trend. Default to server-rendering for content and first-paint-critical pages (Next.js or equivalent), client-side for app-shell interactivity; measure against Core Web Vitals (LCP, INP, CLS), not vibes. Cover: rendering strategy (SSR/SSG/ISR/CSR), the caching hierarchy, bundle budgets, and the data-fetching contract with the API from step 4. Rendering-strategy decision table and performance budgets: **`references/frontend.md`**.
 
-### 6. Deployment & delivery
+### 6. Delivery shape (a design-time decision, recorded as an ADR)
 
-Design how changes reach production safely. Defaults:
+Decide exactly one thing here: the **coarse delivery shape the architecture must support** — one deployable or many, whether releasing dark has to be possible at all, and the environment topology that implies. That is an architectural constraint on a system not yet built, so **record it as an ADR** (step 8) and stop.
 
-- **Canary + feature flags** — ship code dark, release with a flag, ramp traffic on a canary, auto-roll-back on SLO regression. This decouples deploy from release, which is the single biggest de-risking move available.
-- **Infrastructure as code** — everything reproducible (Terraform or equivalent); no console-clicked prod.
-- **CI/CD as the only path to prod** (GitHub Actions or equivalent), with the rollback path tested, not assumed.
+**Every execution question belongs to `loop-ship`** — which rollout strategy to run (rolling, blue-green, canary), the feature-flag plan, expand-contract migration steps, the release checklist and go/no-go, and the tested rollback path. Do not choose a rollout strategy here for a system that already runs; that is `loop-ship`'s call on `loop-ship`'s evidence.
 
-Escape hatch: for a low-traffic internal tool, blue-green or even rolling deploys are fine — canary earns its complexity at scale. Rollout strategies, migration/expand-contract patterns, and environment topology: **`references/deployment.md`**.
+Design-time delivery-shape stub: **`references/deployment.md`**. The mechanics of getting a change to production: **`../loop-ship/`**.
 
 ### 7. NFR validation & SLOs
 
-Close the loop: walk back through the design and check it against the numbers from step 1. For each NFR — latency, availability, durability, security, cost — state how the design meets it and where it breaks first (the next bottleneck). Turn the targets into **SLOs with error budgets**, name the caching strategy (default **cache-aside**; escape to write-through/read-through only when the access pattern demands it), and identify the failure modes and their mitigations. A design that can't be validated against its NFRs isn't done. Validation checklist, SLO/error-budget mechanics, caching and resilience patterns: **`references/nfr.md`**.
+Close the loop: walk back through the design and check it against the numbers from step 1. For each NFR — latency, availability, durability, security, cost — state how the design meets it and where it breaks first (the next bottleneck). Turn the targets into **SLOs with error budgets** and hand measurement, burn-rate alerting and remediation to **`loop-operate`**, name the caching strategy (default **cache-aside**; escape to write-through/read-through only when the access pattern demands it), and identify the failure modes and their mitigations. A design that can't be validated against its NFRs isn't done. Validation checklist, SLO/error-budget mechanics, caching and resilience patterns: **`references/nfr.md`**.
 
 ### 8. Record the decisions (ADRs + C4)
 
@@ -90,8 +89,8 @@ Jump straight to the slice the user asked for; each row lists the reference and 
 | Design or version an API | 4 | `references/api-design.md` | ADR (if versioning/contract is load-bearing) |
 | Model backend data / pick consistency | 3 | `references/backend.md` | ADR |
 | Optimize frontend performance | 5 | `references/frontend.md` | — |
-| Plan a deployment / rollout strategy | 6 | `references/deployment.md` | ADR (if strategy is load-bearing) |
-| Define NFRs / SLOs / capacity | 1 then 7 | `references/nfr.md` | — |
+| Fix the delivery shape a design must support | 6 | `references/deployment.md`; for executing the release or picking a rollout strategy, `loop-ship` | ADR (design-time shape only) |
+| Define NFRs / SLOs / capacity | 1 then 7 | `references/nfr.md`; for measuring and alerting on them, `loop-operate` | — |
 | Record a decision or draw C4 | 8 | — | ADR + C4 context/container |
 
 ## Files in this skill
@@ -102,8 +101,8 @@ Jump straight to the slice the user asked for; each row lists the reference and 
 - `references/api-design.md` — contract-first, versioning, pagination, idempotency, error envelopes, REST/GraphQL/gRPC.
 - `references/backend.md` — data modeling, transaction boundaries, per-domain consistency, sharding, outbox.
 - `references/frontend.md` — rendering strategies, Core Web Vitals budgets, caching hierarchy, data-fetching contract.
-- `references/deployment.md` — canary/feature flags, IaC, CI/CD, migrations, environment topology.
-- `references/nfr.md` — requirements intake, SLOs/error budgets, caching, capacity, resilience, cost.
+- `references/deployment.md` — design-time delivery-shape stub; mechanics live in `loop-ship`.
+- `references/nfr.md` — requirements intake, NFR targets, caching, capacity, resilience, cost.
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow
 
 **Templates** (produce concrete artifacts, don't paraphrase them):

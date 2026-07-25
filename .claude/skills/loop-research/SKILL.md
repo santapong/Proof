@@ -1,6 +1,7 @@
 ---
 name: loop-research
-description: Research a topic across multiple sources with adversarial fact-checking and a cited synthesis. Use when the user asks to research a topic, do a literature or market review, gather and verify evidence, answer a question that needs multiple sources, compare options with citations, or produce a fact-checked report — anything where breadth of sources and verified claims matter more than a single-shot answer.
+description: Research a question across multiple sources with adversarial fact-checking and a cited synthesis. Use when the user asks to research a topic, do a literature or market review, gather and verify evidence, answer a question that needs multiple sources, compare options with citations, or produce a fact-checked report, anything where breadth of sources and verified claims matter more than a single-shot answer. Every claim carries a source. For a build-vs-buy or prior-art decision about something the user is about to build, use loop-scout, which delegates its searching here.
+argument-hint: <question> [--mode <optimize|full>]
 ---
 
 # Researching Topics

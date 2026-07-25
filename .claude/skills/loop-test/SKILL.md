@@ -1,6 +1,7 @@
 ---
 name: loop-test
-description: "Write and repair automated tests: design cases, match the project test framework, and verify tests run and fail for the right reason. Use when the user asks to write, add, generate, or fix tests, improve coverage, add a regression test for a bug, or set up testing for a module. Matches the repo existing test stack and conventions."
+description: "Write and repair automated correctness tests: design cases, match the project's test framework and conventions, and verify each test runs and fails for the right reason before it passes. Use when the user asks to write, add, generate, or fix tests, improve coverage, add a regression test for a bug, or set up testing for a module. Covers happy-path, edge, error, and property-based cases. For performance benchmarks and complexity validation, use loop-algo. For contract tests against a third-party provider, use loop-integrate, which specifies the contract this skill then authors. For finding the bug a regression test should lock in, use loop-debug."
+argument-hint: <target> [--mode <optimize|full>]
 ---
 
 # Writing Tests
@@ -53,6 +54,8 @@ Case-design heuristics, the boundary checklist, and when property-based earns it
 3. **For a regression test: show it goes red on the unfixed code first.** Add the failing test before (or with the fix reverted), watch it fail with the expected error, then apply/restore the fix and watch it pass. A regression test that was never red proves nothing.
 
 Pair this with the Claude Code built-in **verify** skill to exercise the change end-to-end, not just at the unit boundary.
+
+**A reproduction harness for a live outage is `loop-incident`'s artifact, not a suite entry** — it exists to pin down a failure while service is being restored, and it is committed as a regression test here only once the incident is closed and the root cause is known.
 
 ## 6. Coverage: target behaviors, not a percentage
 
