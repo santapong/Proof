@@ -45,9 +45,9 @@ It propagates trace context across service boundaries via **W3C Trace Context**,
 
 Reach for a proprietary agent only when it buys something OTel genuinely cannot, and know you are buying lock-in when you do.
 
-**The pin, and its caveat.** Emit attributes and metric names under the **OpenTelemetry Semantic Conventions, v1.42.0 (12 June 2026)** for the stable main specification, so the telemetry this skill's runbooks and rollback templates produce composes with whatever OTel-native backend you run instead of inventing a private naming scheme. Two things about that pin are load-bearing:
+**The pin, and its caveat.** Emit attributes and metric names under the **OpenTelemetry Semantic Conventions, v1.43.0 (3 July 2026)** for the stable main specification, so the telemetry this skill's runbooks and rollback templates produce composes with whatever OTel-native backend you run instead of inventing a private naming scheme. Two things about that pin are load-bearing:
 
-- **Re-confirm the exact minor before citing it.** Semantic Conventions releases land at a near-monthly cadence; the version above is current as of this writing and will not stay current for long. `../../loop-incident/references/standards.md` currently records **1.43.0** on the same shelf — that gap is exactly the drift the cadence produces, and whoever re-confirms the minor updates every skill that pins it in the same commit (see `standards.md`, which carries the propagation obligation).
+- **Re-confirm the exact minor before citing it.** Semantic Conventions releases land at a near-monthly cadence; the version above will not stay current for long. `standards.md` carries the propagation obligation — three skills pin this spec, and whoever advances one advances the others in the same commit. Check what they record rather than trusting a claim here about what they say.
 - **The GenAI semantic conventions split into their own repository** in this release. If you are instrumenting an LLM-backed service, the attributes you need are no longer in the main convention set; follow the split rather than pinning a stale main-spec version that still appears to contain them.
 
 **A pinned convention is not a claim that the attributes exist in your system.** It says what to emit, not what is already there. §5 is how you find out which.

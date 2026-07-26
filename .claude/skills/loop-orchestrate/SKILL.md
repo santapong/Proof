@@ -1,6 +1,6 @@
 ---
 name: loop-orchestrate
-description: Plan multi-agent project work: decompose a project into a typed task DAG, choose pipeline or parallel shapes per phase, route the right Claude model and effort tier to each task, and produce a cost ledger. Use when the user asks to plan or orchestrate a project, break a large job into subtasks across agents, decide which model to use for which task, or drive a multi-phase build, audit, or migration at scale. Produces the plan; loop-engine executes it. For a single task that needs one workflow script rather than a multi-phase plan, use loop-engine directly. For a standing scheduled loop over a repository, use loop-autopilot.
+description: "Plan multi-agent project work: decompose a project into a typed task DAG, choose pipeline or parallel shapes per phase, route the right Claude model and effort tier to each task, and produce a cost ledger. Use when the user asks to plan or orchestrate a project, break a large job into subtasks across agents, decide which model to use for which task, or drive a multi-phase build, audit, or migration at scale. Produces the plan; loop-engine executes it. For a single task that needs one workflow script rather than a multi-phase plan, use loop-engine directly. For a standing scheduled loop over a repository, use loop-autopilot."
 argument-hint: <project> [--mode <optimize|full>] [--planner <opus|fable>] [--budget <tokens>] [--dry-run]
 ---
 

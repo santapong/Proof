@@ -1,6 +1,6 @@
 ---
 name: loop-debug
-description: Find the root cause of a specific defective behavior and fix it, using reproduce, localize, hypothesize, eliminate, minimal fix, regression test. Use when the user reports a bug, a failing test, an exception or stack trace, a crash, or unexpected behavior in code they can run, and asks why it happens or how to fix it. Drives hypothesis-driven elimination and delegates the regression test to loop-test. For a production service that is currently degraded or down with users affected, use loop-incident first, which mitigates and hands the root cause back here. For code that is correct but too slow or memory-hungry by design, use loop-algo. For a defect found by reading code rather than by observing a failure, use loop-review.
+description: "Find the root cause of a specific defective behavior and fix it, using reproduce, localize, hypothesize, eliminate, minimal fix, regression test. Use when the user reports a bug, a failing test, an exception or stack trace, a crash, or unexpected behavior in code they can run, and asks why it happens or how to fix it. Drives hypothesis-driven elimination and delegates the regression test to loop-test. For a production service that is currently degraded or down with users affected, use loop-incident first, which mitigates and hands the root cause back here. For code that is correct but too slow or memory-hungry by design, use loop-algo. For a defect found by reading code rather than by observing a failure, use loop-review."
 argument-hint: <bug> [--mode <optimize|full>]
 ---
 
@@ -47,6 +47,8 @@ A bug with an obvious cause you debug inline in this session. For a **hard bug w
 3. **Fix + verify** — apply the minimal fix for the surviving cause, then the §6–§7 regression-test and end-to-end verify.
 
 This is the parallel fan-out → converge pattern from the **`loop-engine`** skill (see its `templates/parallel.workflow.js` and harness policy H2 earned barrier, H4 adversarial/diverse-lens verify, H5 null handling). Each hypothesis agent is prompted to *eliminate* its assigned cause and default to "not the cause" when the evidence is inconclusive — the debugging analogue of the adversarial verifier. Invoke the `loop-engine` skill to author and execute the run. For a bug with one or two candidate causes, skip the workflow and debug directly — do not fan out agents for a one-line off-by-one.
+
+**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
 
 ## Reference files
 

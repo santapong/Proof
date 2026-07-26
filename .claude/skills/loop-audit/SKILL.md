@@ -77,7 +77,7 @@ Assemble the report from **`references/report-template.md`**: summary and overal
 
 This is the parallel-analyze → barrier → synthesis pattern from the **`loop-engine`** skill (see its `templates/parallel.workflow.js` and harness policy H2's earned barrier and H4 adversarial verify). Invoke the `loop-engine` skill to author and execute the run; the change-audit template pre-wires the classification, blast-radius, and risk schema. For a small diff, skip the workflow and audit directly — do not spin up agents for a two-file change.
 
-**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `loop-engine/references/execution-modes.md`.
+**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
 
 ## Reference files
 

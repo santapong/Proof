@@ -1,6 +1,6 @@
 ---
 name: loop-engine
-description: Author and execute a multi-agent Workflow script (pipeline, parallel with an earned barrier, or a guarded loop) governed by the harness and loop engineering policies and a pluggable lifecycle framework (default AIDLC). Use when the user asks to run a task as a workflow, orchestrate with subagents, fan out agents, or execute a phase-structured job (audit, migration, review sweep, feature build) at multi-agent scale. This is the execution engine every other skill's templates target. For decomposing a whole project into a phased DAG with model routing before execution, use loop-orchestrate.
+description: "Author and execute a multi-agent Workflow script (pipeline, parallel with an earned barrier, or a guarded loop) governed by the harness and loop engineering policies and a pluggable lifecycle framework (default AIDLC). Use when the user asks to run a task as a workflow, orchestrate with subagents, fan out agents, or execute a phase-structured job (audit, migration, review sweep, feature build) at multi-agent scale. This is the execution engine every other skill's templates target. For decomposing a whole project into a phased DAG with model routing before execution, use loop-orchestrate."
 argument-hint: <task> [--mode <optimize|full>] [--planner <opus|fable>] [--framework <name>] [--dry-run]
 ---
 
@@ -99,3 +99,17 @@ Then:
 ## Adding frameworks
 
 Frameworks are pluggable: drop a new `<Name>.md` into `frameworks/` following `frameworks/_TEMPLATE.md`. See `frameworks/README.md`. No changes to this file are needed.
+
+## Reference files
+
+- `references/harness-policy.md` — the Harness Engineering Policy: H1–H12, the orchestration-shape and verification rules every script obeys
+- `references/loop-policy.md` — the Loop Engineering Policy: L1–L8, the iteration, budget-guard and convergence rules
+- `references/execution-modes.md` — the execution-mode contract: the routing table (§M3), both override modifiers (§M4), verifier width and the loop-until-dry threshold (§M5), the full-mode pre-flight (§M6), the `--planner fable` opt-in (§M7), and the canonical `ROUTES` block (§M8)
+- `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow
+- `templates/pipeline.workflow.js` — known items flowing through independent stages; the default shape
+- `templates/parallel.workflow.js` — fan-out finders whose results are merged and deduped at an earned barrier
+- `templates/loop-until-dry.workflow.js` — unknown-size discovery, guarded by the dry counter
+- `templates/loop-until-budget.workflow.js` — depth scaled against a user-supplied token target
+- `frameworks/AIDLC.md` — the default lifecycle framework (Inception → Construction → Operation, with human gates)
+- `frameworks/README.md` — how framework files are structured, selected, and contributed
+- `frameworks/_TEMPLATE.md` — the skeleton for a new framework file

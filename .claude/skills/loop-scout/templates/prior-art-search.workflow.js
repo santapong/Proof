@@ -33,6 +33,7 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
 const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
   optimize: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
@@ -65,9 +66,16 @@ function optsFor(node, label) {
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
   if (r.model) opts.model = r.model     // omit → inherit session model (H8)
   if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  if (PLANNER && node.taskType === 'planner') opts.model = PLANNER // §M7 override — planner nodes only
   return opts
 }
-// No WIDTH / DRY_LIMIT: this template has no verify stage and no loop (§M8 — omit what you do not use).
+// No DRY_LIMIT: this template has no loop stage. No plannerAgent: no node carries taskType
+// 'planner'. No WIDTH: the only correctness-critical node is the Decide node at the end, and
+// under §M5's GATING-DECISION carve-out a single decision node is width 1 in BOTH modes —
+// replicating it produces N decisions with no defined reduce, and a vote over decisions is a
+// decomposition change, not a mode dial. Its error cost is answered instead by the pinned
+// claude-opus-5 / max routing the 'gating' route already guarantees in both modes (§M3).
+// (§M8 — omit what you do not use, and say which and why.)
 
 // EDIT ME: search the boring options first (see references/where-to-look.md). Each lens is a
 // DIFFERENT place to look, so the sweep isn't a monoculture (harness policy H4).
@@ -166,7 +174,11 @@ const scored = evaluations.filter(Boolean)
 const viable = scored.filter((e) => e.verdict !== 'reject')
 log(`evaluate: ${scored.length} scored, ${viable.length} viable (reuse/adapt)`)
 
-// Phase Decide: one agent makes the decisive build-vs-buy call from the evaluations.
+// Phase Decide: ONE agent makes the decisive build-vs-buy call from the evaluations. This is a
+// gating DECISION node, not a gating verify: it consumes evaluations that are already scored and
+// emits a single recommendation. §M5's gating-decision carve-out puts it at width 1 in both
+// modes; full mode does not widen it. A dead decision node is a no-verdict — the caller sees
+// nulls below and must never read that as a recommendation.
 const decision = await agent(
   `Make the build-vs-buy decision for the need: ${input.need}\nDefault to reuse; the ladder is reuse -> adapt -> build, and building must be earned (no viable candidate, core differentiation, unacceptable license/security/lock-in, or trivial-to-build). Pick decisively, name the strongest counter-argument, and give the runner-up.\nEvaluations (JSON): ${JSON.stringify(scored)}`,
   optsFor({ taskType: 'gating', phase: 'Decide', schema: DECISION_SCHEMA }, 'decide'),

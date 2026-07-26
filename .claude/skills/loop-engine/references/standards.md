@@ -4,6 +4,14 @@ The harness and loop policies in this skill are **homegrown by design** — deli
 
 This is not a compliance checklist. Unlike a versioned standard (see `../../loop-review/references/owasp-cwe.md` for that shape), these are **foundational papers and named patterns**: the canonical citation is stable, and what actually moves is the implementation ecosystem and the fast-churning LLM-orchestration literature. Read `harness-policy.md` and `loop-policy.md` first; this file is the "why it's shaped that way" layer beneath them.
 
+**Read the authority grade before you cite.** Every standards shelf in this plugin uses the same three grades, with the same meanings — see `../../loop-integrate/references/standards.md` for the shelf where all three are in play:
+
+- **Authoritative — yes.** A recognized standards body ratified and published it. On this shelf, exactly one entry: the **FIPA agent specifications (2002)**, standardized through IEEE — and they are cited for the *messaging vocabulary's* provenance, not as a contract this engine implements.
+- **Authoritative — draft.** Real, citable working-group output that nothing has ratified. *No entry on this shelf carries this grade.*
+- **Authoritative — no.** Everything else: peer-reviewed papers, a pattern catalogue, and textbooks. **Hohpe & Woolf**, **Dean & Ghemawat**, **Kahn**, **Hewitt/Agha**, **Hearsay-II/Nii**, and **Smith's Contract Net** are seminal and none of them is a specification.
+
+**This shelf's grade distribution is the point of the file.** The harness and loop policies are **homegrown** — H1–H12 and L1–L8 are this project's rules, and no external body ratified any of them. What the sources below supply is *why the shape is sound*, not *authority to impose it*. Cite them to explain a policy rule; never write "per the actor model" as though it were a conformance requirement. If a policy rule cannot be defended by the concrete cost it avoids, the citation is decoration.
+
 ## The lineage at a glance
 
 | Workflow primitive | Prior art it formalizes | Canonical source (issuing body) | Policy rule |
@@ -29,7 +37,7 @@ This is not a compliance checklist. Unlike a versioned standard (see `../../loop
 
 ## DAG execution & topological scheduling
 
-**What it is.** Modeling a job as a directed acyclic graph and running nodes in **topological order** so every task starts only after its dependencies finish. Rooted in **Kahn's algorithm** (A.B. Kahn, *CACM* 1962) and the dataflow-execution line (Dryad, Isard et al., EuroSys 2007); the modern living implementation is **Apache Airflow's** DAG scheduler (current major line 3.x as of 2026).
+**What it is.** Modeling a job as a directed acyclic graph and running nodes in **topological order** so every task starts only after its dependencies finish. Rooted in **Kahn's algorithm** (A.B. Kahn, *CACM* 1962) and the dataflow-execution line (Dryad, Isard et al., EuroSys 2007); the modern living implementation is **Apache Airflow's** DAG scheduler — **3.x is the current major line, confirmed 2026-07-26** (3.0 GA in 2025; 3.3.0 released 6 July 2026). That version is a moving implementation detail, not part of the citation: pin the paper, and read the scheduler's current docs before leaning on a specific behavior.
 
 **How the skill applies it.** `pipeline(items, s1, s2, …)` is a linear DAG per item; `meta.phases` plus `phase()` ordering is the coarse-grained DAG across the run. **H9** (phase-title discipline, per-agent `opts.phase` inside fan-outs) is topological-scheduling hygiene: it keeps the dependency graph legible and race-free. When you sketch a task's shape before authoring, you are drawing this DAG.
 
@@ -71,3 +79,10 @@ These are **foundational sources, not reissued standards** — there is no "2025
 - **LLM multi-agent orchestration** — the Contract Net descendants being re-derived for language agents. This is genuinely unsettled and fast-churning; treat any named framework or vocabulary here as provisional, and re-scan roughly **every 6–12 months**. When it consolidates into something citable, add it as its own section rather than retrofitting a paper's meaning.
 
 Rule of thumb, mirroring the loop-review skill's edition handling: **cite the stable seminal source for the concept, and pin the moving implementation separately** — never blur the timeless pattern with the version of the tool that happens to implement it this year. When you update this file, update `harness-policy.md` / `loop-policy.md` cross-references in lockstep so a policy rule and its prior-art anchor never drift apart.
+
+Two more rules, shared with every standards shelf in this plugin:
+
+- **Carry the authority grade with the citation.** All but one entry here is graded *no*, and the policies they ground are homegrown. Defend a rule by the cost it avoids — an unearned barrier's wall-clock, a shared-state race — and cite the source for the *name*.
+- **Never invent a version number.** None of the sources above has an edition beyond its publication year, and the one moving pin (Airflow) is deliberately marked as an implementation detail. If you cannot confirm something, write "unconfirmed as of \<date\>" rather than asserting it.
+
+**Confirmation log — 2026-07-26.** Verified against the primary source: **Apache Airflow 3.x** as the current major line (3.3.0, 6 July 2026), the only moving pin on this shelf. **Not independently re-confirmed, and not requiring it:** every other entry is a fixed bibliographic citation whose facts do not age — Hohpe & Woolf (2003), Dean & Ghemawat (OSDI 2004, revised *CACM* 2008), Kahn (*CACM* 1962), Dryad (EuroSys 2007), Hewitt (1973) and Agha (MIT Press, 1986), Hearsay-II (*ACM Computing Surveys* 1980) and Nii (*AI Magazine* 1986), Smith's Contract Net (*IEEE Trans. Computers* 1980), and the **FIPA specifications (2002, the last ratified set)**. The **LLM multi-agent orchestration** layer is deliberately left unpinned because it has no settled edition to pin — that is a stated absence, not an omission.

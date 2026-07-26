@@ -1,6 +1,6 @@
 ---
 name: loop-integrate
-description: Integrate a third-party, cloud, or SaaS platform: OAuth 2.0 and OIDC flows, token and secret handling, webhook receipt and verification, idempotency keys, rate limits, retry and backoff, contract tests against the provider, and sandbox-to-production promotion. Use when the user asks to integrate, connect, or wire up an external API, provider, or SaaS, implement OAuth or SSO, receive or send webhooks, handle a provider's rate limits or retries, or move an integration from sandbox to live credentials. For choosing which provider or library to adopt, use loop-scout. For designing an API this system exposes to others, use loop-design. For auditing the security of an integration already written, use loop-review.
+description: "Integrate a third-party, cloud, or SaaS platform: OAuth 2.0 and OIDC flows, token and secret handling, webhook receipt and verification, idempotency keys, rate limits, retry and backoff, contract tests against the provider, and sandbox-to-production promotion. Use when the user asks to integrate, connect, or wire up an external API, provider, or SaaS, implement OAuth or SSO, receive or send webhooks, handle a provider's rate limits or retries, or move an integration from sandbox to live credentials. For choosing which provider or library to adopt, use loop-scout. For designing an API this system exposes to others, use loop-design. For auditing the security of an integration already written, use loop-review."
 argument-hint: <integration> [--mode <optimize|full>]
 ---
 
@@ -83,7 +83,7 @@ For **anything larger — an integration spanning many call sites, an inherited 
 
 This is a specialization of `loop-review/templates/security-review.workflow.js` — the same finder → dedup barrier → adversarial-verify shape, with the readiness categories, the already-handled-elsewhere refutation, and the review hand-off pre-wired. Invoke the **`loop-engine`** skill to author and execute the run.
 
-**Execution flags.** `--mode <optimize|full>` is advertised here and **parsed by `loop-engine`, never by this skill** — pass the raw argument string through when you invoke it. See `loop-engine/references/execution-modes.md`.
+**Execution flags.** `--mode <optimize|full>` is advertised here and **parsed by `loop-engine`, never by this skill** — pass the raw argument string through when you invoke it. See `../loop-engine/references/execution-modes.md`.
 
 ## Reference files
 

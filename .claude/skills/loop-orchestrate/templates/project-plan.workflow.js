@@ -53,6 +53,7 @@ const ESTIMATE = { agents: 0, tokensLow: 0, tokensHigh: 0, mode: 'optimize' }
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
 const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
   optimize: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
@@ -86,7 +87,24 @@ function optsFor(node, label) {
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
   if (r.model) opts.model = r.model     // omit → inherit session model (H8)
   if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  if (PLANNER && node.taskType === 'planner') opts.model = PLANNER // §M7 override — planner nodes only
   return opts
+}
+// §M7 fallback. A Fable refusal and the HTTP 400 a zero-retention org gets on every Fable request
+// both surface the same way — agent() resolves to null — so one `||`-shaped retry covers both.
+// Planner nodes dispatch through this; nothing else does. There is no latency trigger: H10 forbids
+// a script reading a clock, so elapsed time is not measurable in here (§M7).
+async function plannerAgent(prompt, node, label) {
+  const opts = optsFor(node, label)
+  if (!PLANNER) return agent(prompt, opts)
+  log('--planner fable routes the decompose node to claude-fable-5. Tradeoffs: markedly higher latency (a minutes-long turn on a gate-blocking node), a broader class of refusals than the rest of the fleet, and a 30-day data-retention requirement — an organization with zero data retention receives an HTTP 400 rather than a degraded result. On a refusal or a 400, this node falls back to claude-opus-5 at max effort and the fallback is logged.')
+  const out = await agent(prompt, opts)
+  if (out) {
+    log(`cast · node=${label || node.label} kind=planner mode=${MODE} model=claude-fable-5 effort=${routeFor('planner').effort} width=1 · --planner fable`)
+    return out
+  }
+  log('planner fallback: claude-fable-5 returned nothing (refusal, or HTTP 400 under zero data retention) → claude-opus-5 at max (§M7)')
+  return agent(prompt, Object.assign({}, opts, { model: 'claude-opus-5', effort: 'max' }))
 }
 // This phase has no loop, so DRY_LIMIT is omitted (§M8). No other local variation is permitted.
 // ---------------------------------------------------------------------------
@@ -186,18 +204,22 @@ const TASKS = [
     schema: INVENTORY_SCHEMA,
   },
 
-  // --- Plan phase: ONE synthesis node. It consumes the FULL scout set, which is what
+  // --- Plan phase: ONE decompose node. It consumes the FULL scout set, which is what
   // earns the barrier below (harness policy H2).
-  // NOTE ON taskType: this is a WITHIN-PHASE synthesis (group an inventory into batches),
-  // not the project-level decompose. The project decompose is the 'planner' kind and is
-  // PINNED in both modes (§M3, and ../references/model-routing.md worked example task 3).
-  // If you retarget this node to produce the project's sub-DAG, change taskType to 'planner'.
+  // NOTE ON taskType: this is the phase's SINGLE decompose/planning node — the one node whose
+  // output every later node is authored against — so it takes the 'planner' kind, which §M3
+  // PINS in both modes (claude-opus-5 at xhigh in optimize, max in full). It is also the one
+  // place `--planner fable` may land (§M7): a single node, never a fan-out, never inside a
+  // loop, so preconditions 1 and 2 hold structurally. It dispatches through plannerAgent()
+  // below, which prints the §M7 disclosure and falls back to claude-opus-5 at max on a refusal
+  // or an HTTP 400. If you retarget this node to plain within-phase summarizing that nothing
+  // downstream depends on, change taskType back to 'synthesize' and dispatch with agent().
   {
     id: 'plan-batches',
     label: 'plan:batches',
-    taskType: 'synthesize',
+    taskType: 'planner',
     phase: 'Plan',
-    rationale: 'batch synthesis over the full scout set → synthesize route: inherit at high in optimize, pinned xhigh in full (H8)',
+    rationale: 'single decompose over the full scout set; every Build node is authored against it → planner route: pinned claude-opus-5 at xhigh in optimize, max in full, and the only node --planner fable may override (§M3/§M7)',
     prompt: 'Group the inventory into dependency-safe batches for the Build phase. Return raw data only.',
     schema: PLAN_SCHEMA,
   },
@@ -246,9 +268,12 @@ const byId = (id) => TASKS.find((t) => t.id === id)
 // coverage is silently narrowed (harness policy H6, no silent caps). 'inherit' = model omitted.
 // The mode is on every row: the same model value means opposite things in the two columns,
 // and this row is the only evidence of which one happened.
+// A planner node under `--planner fable` reports claude-fable-5 here, not the table's default:
+// §M7's ledger requirement is that a reader never has to guess which model produced the DAG.
 for (const n of TASKS) {
   const r = routeFor(n.taskType)
-  log(`cast ${n.id} [${n.taskType}] @${n.phase} mode:${MODE} → model:${r.model || 'inherit'} effort:${r.effort || '—'} width:${WIDTH(n.taskType)} — ${n.rationale}`)
+  const model = (PLANNER && n.taskType === 'planner' ? PLANNER : r.model) || 'inherit'
+  log(`cast ${n.id} [${n.taskType}] @${n.phase} mode:${MODE} → model:${model} effort:${r.effort || '—'} width:${WIDTH(n.taskType)} — ${n.rationale}`)
 }
 if (MODE === 'full') {
   log(`ESTIMATE approved at the §M6 pre-flight: ${ESTIMATE.agents} agents, ${ESTIMATE.tokensLow}–${ESTIMATE.tokensHigh} output tokens`)
@@ -275,12 +300,16 @@ const inventory = liveScouts.flatMap((s) => s.items || [])
 log(`Scout [mode=${MODE}]: ${liveScouts.length}/${scoutNodes.length} nodes live, ${inventory.length} inventory items`)
 
 // ---------------------------------------------------------------------------
-// Plan phase — single synthesis over the full scout set (consumes the barrier above).
+// Plan phase — single decompose over the full scout set (consumes the barrier above).
+// Dispatched through plannerAgent() so `--planner fable` reaches this node and only this node:
+// the §M7 disclosure prints before it spawns, and a refusal or an HTTP 400 falls back to
+// claude-opus-5 at max instead of losing the DAG. Under the default `--planner opus` this is
+// exactly `agent(prompt, optsFor(planNode))`.
 // ---------------------------------------------------------------------------
 const planNode = byId('plan-batches')
-const plan = await agent(
+const plan = await plannerAgent(
   `Task: ${input.task}\n${planNode.prompt}\nInventory: ${JSON.stringify(inventory)}`,
-  optsFor(planNode),
+  planNode,
 )
 const batches = plan ? plan.batches : []
 log(`Plan [mode=${MODE}]: ${batches.length} dependency-safe batch(es) over ${inventory.length} items`)
@@ -371,7 +400,8 @@ return {
     taskType: n.taskType,
     phase: n.phase,
     mode: MODE,
-    model: routeFor(n.taskType).model || 'inherit',
+    // §M7 ledger requirement: a run whose planner was Fable says so in its cast row.
+    model: (PLANNER && n.taskType === 'planner' ? PLANNER : routeFor(n.taskType).model) || 'inherit',
     effort: routeFor(n.taskType).effort || 'default',
     width: WIDTH(n.taskType),
     modifierA: MODE === 'full' ? 'suppressed' : 'active',

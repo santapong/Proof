@@ -4,6 +4,14 @@ The audit in `methodology.md` runs on a homegrown model: classify each change, t
 
 Use this file to *justify* the audit's structure to a skeptical reader ("why this risk matrix? why call this breaking?") and to keep the report's vocabulary aligned with frameworks a release manager already trusts.
 
+**Authority grades — the plugin's three, identical on every standards shelf here.** Carry the grade with the citation.
+
+- **Authoritative — yes.** A recognized standards body, government agency, or licensed framework owner **ratified and published** it. On this shelf: **ISO 31000:2018**, **IEC 31010:2019**, and **ITIL** (a licensed framework). A finding may rest on one of these on its own.
+- **Authoritative — draft.** Real, citable committee output that **nothing has ratified**. *No entry on this shelf carries this grade.*
+- **Authoritative — no.** Influential, widely followed, and still not a specification. On this shelf: **DORA** (an annual research publication with a survey behind it — the same grade `../../loop-ship/references/standards.md` assigns it) and **SemVer** (a community-stewarded convention, not a standards-body document, however universal it is).
+
+In the report's methodology footnote this matters exactly once: a risk rating framed in ISO 31000's vocabulary is defensible as a recognized method; a verdict framed as "DORA says this is a change failure" is not, because DORA has no normative force. Cite DORA for what it measures, not for what you are allowed to ship.
+
 ## ISO 31000 — the risk model behind Step 4
 
 **Standard:** ISO 31000, *Risk management — Guidelines*. **Issuing body:** International Organization for Standardization (ISO). **Edition to pin:** **ISO 31000:2018** (current edition; it superseded the 2009 first edition and has no announced successor as of 2026).
@@ -48,7 +56,9 @@ The rule to carry into the report: **blast radius is bounded by the smallest cor
 
 ## ITIL change enablement — the change-type frame
 
-**Standard:** ITIL (IT Infrastructure Library), *Change Enablement* practice. **Issuing body:** AXELOS / PeopleCert. **Edition to pin:** **ITIL 4** (current; it renamed the v3 "Change Management" process to **Change Enablement**).
+**Standard:** ITIL (IT Infrastructure Library), *Change Enablement* practice. **Issuing body:** AXELOS / PeopleCert. **Edition to pin:** **ITIL 4** — the edition the change-type mapping below was drawn against, and the edition that renamed the v3 "Change Management" process to **Change Enablement**.
+
+**Live transition, stated because ITIL 4 is no longer the newest edition.** **PeopleCert published ITIL Foundation (Version 5) on 12 February 2026**, followed by the advanced modules through March and April 2026, and states that roughly **40% of ITIL 4 content is retained** (with ~24% updated and ~36% new). ITIL 4 and Version 5 run alongside each other during the transition, and ITIL 4 certifications remain valid — so ITIL 4 is still a legitimate thing to cite, but **not as "the current framework."** The change-type table below is keyed to ITIL 4 wording and **should be re-verified against Version 5 practice material** before you present it as current guidance. `../../loop-incident/references/standards.md` carries the same caveat for the incident/problem boundary; the two entries move together, and a plugin that ships two answers to "what is the current ITIL?" is worse than one that ships a dated answer.
 
 ITIL 4 classifies changes into three types. Stamping each audited change set with its ITIL type tells the reader *what review path it should travel* and calibrates how much scrutiny the audit itself owes it:
 
@@ -72,6 +82,8 @@ Standards revise on their own schedules; a citation without an edition rots. Pin
 - **IEC 31010:2019** — the current risk-assessment-techniques edition (superseded the 2009 first edition); re-check alongside ISO 31000.
 - **DORA** — the *State of DevOps Report* is **annual** with a fall release, so a newer edition than the one you remember may already be current; do not assert a specific year is "the most recent." Benchmark thresholds (elite/high/medium/low) shift year to year, so verify the latest published year and quote it before citing a number, not just the metric name.
 - **SemVer 2.0.0** — stable spec; unlikely to move, but confirm the major version if you cite clause text.
-- **ITIL 4** — current framework; note that older reports may reference the v3 term "Change Management" — treat it as the same practice, renamed, and do not present the two as separate standards.
+- **ITIL 4** — the mapping baseline here, **not the newest edition**: **ITIL (Version 5) Foundation published 12 February 2026** and is in live transition alongside ITIL 4. Re-verify the Change Enablement wording against Version 5 material before citing it as current, and update this entry and `../../loop-incident/references/standards.md` in the same commit. Note also that older reports may reference the v3 term "Change Management" — treat it as the same practice, renamed, and do not present the two as separate standards.
 
 Cite the edition you mapped to in the report's methodology footnote. When any of these publishes a new edition, update the mapping tables here in one pass rather than mixing editions across a single audit — the same discipline `loop-review`'s `owasp-cwe.md` applies to the OWASP Top 10 refresh.
+
+**Confirmation log — 2026-07-26.** Verified against the primary source: **ITIL Foundation (Version 5) published 12 Feb 2026** with ~40% of ITIL 4 retained (this pass corrected an unqualified "ITIL 4 is current" here), and the **2025 DORA report**, which pilots **Rework Rate** as a fifth metric alongside the four keys. **Not independently re-confirmed and therefore left as-is rather than re-asserted with new precision:** ISO 31000:2018 and IEC 31010:2019 are cited here as current with no announced successor — check the ISO catalogue before quoting clause text; **SemVer 2.0.0** is stable and has not moved since 2013.

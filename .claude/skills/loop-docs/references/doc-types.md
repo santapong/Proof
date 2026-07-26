@@ -145,5 +145,9 @@ Read the reader's sentence, match the verb, pick the mode. When a request spans 
 | "What changed in the latest release?" | Changelog entry | information |
 | "What is this project and should I use it?" | README | routing (multi-mode) |
 | "Help me understand the whole system's shape" | Explanation + C4/architecture doc | understanding |
+| "Write the runbook for the disk-full alert" | **Not a doc type — `../../loop-operate/references/runbooks.md`** | *(no mode: the steps are executed, not read)* |
+| "Write the postmortem for yesterday's outage" | **Not a doc type — `../../loop-incident/references/postmortem.md`** | *(no mode: the analysis method, not the prose, is the artifact)* |
+
+**Two artifacts that are markdown but are not documentation.** A **runbook** looks like a how-to guide and is not one: its steps are *executed*, possibly unattended, and must be deterministic, idempotent and testable rather than explanatory — it belongs to `loop-operate`. A **postmortem / correction-of-error** document belongs to `loop-incident`, which owns the timeline data and the blameless-analysis method; this skill may be delegated the final prose pass, but it is never the entry point. Taking either request here yields a well-written artifact that fails at the job it exists for.
 
 When in doubt, name the reader's verb — *learn*, *do*, *look up*, *understand* — and the mode falls out. If two verbs are present, you have found a place where a single page was trying to do two jobs; split it and cross-link, per the harness's single-responsibility discipline (see the sibling `loop-engine` skill's H1 pipeline-default: one stage, one job).

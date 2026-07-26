@@ -27,6 +27,7 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
 const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
   optimize: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
@@ -60,12 +61,16 @@ function optsFor(node, label) {
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
   if (r.model) opts.model = r.model     // omit → inherit session model (H8)
   if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  if (PLANNER && node.taskType === 'planner') opts.model = PLANNER // §M7 override — planner nodes only
   return opts
 }
 // The block above is byte-identical to §M8 except for the one line §M8 explicitly says to drop:
 // `DRY_LIMIT` is omitted because this template has no loop stage. `WIDTH` is kept — the Verify
 // stage below resolves its lens count from it. Every line that IS here is verbatim; drift on any
 // of them is a defect (see CONTRIBUTING's ROUTES grep), and §M8 is the single source of truth.
+// No plannerAgent: no node in this template carries taskType 'planner', so §M8's third
+// optional member is dropped too. `PLANNER` and its `optsFor()` line stay — they are invariant
+// core, and the flag is simply inert here.
 
 // One finder per readiness category, mapped 1:1 onto loop-integrate's references (H4: diversity
 // beats redundancy — each finder hunts a DIFFERENT failure class, not the same code four times).

@@ -71,6 +71,8 @@ A handful of modules you can test inline in this session. For **a whole package 
 
 This is the **pipeline** pattern (design → write → run per module, no barrier between modules) from the **`loop-engine`** skill (see its `templates/pipeline.workflow.js` and harness policy H1 pipeline-default, H4 adversarial verify). Invoke the `loop-engine` skill to author and execute the run; the test-generation template pre-wires the case schema, the convention-matching step, and the run-and-report gate. For a module or two you can hold in context, skip the workflow and write the tests directly.
 
+**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
+
 ## Reference files
 
 | File | Read it when |

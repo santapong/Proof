@@ -42,7 +42,15 @@ The last line is the one to remember as a sanity check: **at the optimal hash co
 
 **Three practical traps.**
 
-- **n is the count you sized for.** Insert 2n elements into that filter and p rises to ≈ 8.5%, not 2%. Bloom filters do not degrade gracefully past their design point — size for the maximum, or use a scalable/partitioned variant.
+- **n is the count you sized for.** Insert 2n elements into the filter sized above and p rises to **≈ 15.7%** — not to 2%, and not linearly in anything. Recompute it exactly as steps 1–4 did, because the formula does not care what you *intended* n to be, only how many elements are actually in it:
+
+  ```
+  kn′/m  = 7 × 2×10⁷ / 9.585×10⁷ = 1.4606
+  e^(−1.4606)                    = 0.2321
+  p = (1 − 0.2321)⁷ = 0.7679⁷    = 0.157   →  ≈ 15.7%
+  ```
+
+  A 2× overshoot costs **~16× the design error rate**, and it cannot be repaired afterwards: k and m were fixed at build time. Even re-optimizing k for the new load (`m/n′ = 4.79`, `k_opt = 0.693 × 4.79 = 3.32 → 3`) only recovers to `p = 2^(−3.32) ≈ 10%`, and you cannot re-hash the bits you already set. Bloom filters do not degrade gracefully past their design point — size for the maximum, or use a scalable/partitioned variant.
 - **You cannot delete.** Clearing bits would create false negatives, since bits are shared. Use a **counting Bloom filter** (counters instead of bits, ~4× the space) or a **cuckoo filter** (supports deletion, and is often smaller below ~3% target error).
 - **k independent hashes are not k hash computations.** Use double hashing — `g_i(x) = h₁(x) + i·h₂(x)` — from two independent hashes. This is standard, and its effect on p is negligible.
 

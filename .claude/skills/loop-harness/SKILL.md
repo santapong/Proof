@@ -1,7 +1,7 @@
 ---
 name: loop-harness
 description: "Engineer a project's Claude Code harness: permissions, hooks, MCP servers, and in-repo automation, from reusable scaffolds. Use when the user wants to set up or harden .claude/settings.json, add or design hooks, configure permissions (allow/deny/ask), wire up MCP servers via .mcp.json, or schedule recurring Claude work (SessionStart setup, /loop, scheduled tasks, PR-watch, headless runs, Cloud Routines). The subject is Claude's own configuration, not the product's runtime. For operating the deployed service the repo produces, use loop-operate. For the content of the autonomous loop the harness schedules, use loop-autopilot."
-argument-hint: <project> [--mode <optimize|full>]
+argument-hint: <project>
 ---
 
 # Engineering Harnesses
@@ -80,6 +80,8 @@ Copy the scaffolds, then adapt:
 ```
 
 Commit `settings.json`, `hooks/`, `loop.md`, and `.mcp.json`; gitignore `settings.local.json`. Validate the result with `claude` (it will report invalid settings) and test each hook script by piping it a sample event.
+
+**No execution flags.** This skill deliberately advertises no `--mode` / `--planner` flags. It ships no workflow template and never invokes `loop-engine`: every step above is a configuration edit made inline in this session, so a run-level routing dial would have nothing to route. Its `argument-hint` is `<project>` only. If a harness task genuinely needs multi-agent execution, invoke `loop-engine` directly and give it the flags there — see `../loop-engine/references/execution-modes.md`.
 
 ## Reference files
 

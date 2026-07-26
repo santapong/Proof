@@ -10,6 +10,8 @@ You are about to run a project's **autonomous engineering loop**: read what need
 
 This is a **composition layer over the `loop-engine` skill, not a new engine** (same pattern as `loop-orchestrate`). Every stage below is an existing skill invoked inside a budget-guarded loop.
 
+**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through when you invoke it for `templates/improvement-loop.workflow.js` (or any companion template) and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
+
 **Because an unattended runner (a Cloud Routine) has no per-run approval prompt, the guardrails are structural, not interactive: draft-PR-on-a-`claude/`-branch, an explicit never-merge rule, budget/round caps, and dedup against what already exists.** Those are non-negotiable — see §6.
 
 ## 1. The loop
@@ -79,7 +81,7 @@ Work on a `claude/`-prefixed branch only.
 
 **Why this gates SCALE.** Removing the human merge step promotes `safeToPropose` into the merge decision itself. Every reason a human still merges today is a reason to trust that verdict less than the promotion requires. AP6's guards plus a standing held-out measurement of how often the verdict is wrong are the evidence that promotion would need — and even with them, the safe path to autonomous delivery is **merge-behind-canary + agent-driven rollback** (the SCALE mechanism — drafted in `references/deployment.md` §"Advanced: autonomous delivery" and `templates/canary-merge.workflow.js`, **off by default**; the base skill still stops at propose-only), with held-out eval as the tripwire that yanks autonomy back to propose-only the moment divergence rises. A perfect pre-merge gate is not the goal, because no gate catches everything.
 
-**This skill is the autonomy ladder's single definitional home in 1.0.0:** `loop-operate` reuses the same OBSERVE → VERIFY → SUSTAIN → SCALE rungs for a different object — a live service instead of a repository — and cites them here rather than redefining them, so the two skills cannot drift apart while extraction into a shared reference file stays deferred.
+**This skill is the autonomy ladder's single definitional home in 1.0.0, and the definitions live in `references/deployment.md` §"The autonomy ladder":** that section defines OBSERVE, VERIFY, SUSTAIN and SCALE rung by rung, states who does what at each, and states the degradation guarantee. `loop-operate` reuses the same four rungs for a different object — a live service instead of a repository — and cites that section rather than redefining them, so the two skills cannot drift apart while extraction into a shared reference file stays deferred to v1.1. Neither skill treats the repo README as a content dependency: the README's ladder table is a summary of that section, not its source.
 
 ## Reference files
 

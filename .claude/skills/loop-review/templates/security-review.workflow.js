@@ -31,6 +31,7 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
 const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
   optimize: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
@@ -64,9 +65,13 @@ function optsFor(node, label) {
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
   if (r.model) opts.model = r.model     // omit → inherit session model (H8)
   if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  if (PLANNER && node.taskType === 'planner') opts.model = PLANNER // §M7 override — planner nodes only
   return opts
 }
 // No DRY_LIMIT: this template has no loop-until-dry stage (§M8 — omit what you do not use).
+// No plannerAgent: no node in this template carries taskType 'planner', so §M8's third
+// optional member is dropped too. `PLANNER` and its `optsFor()` line stay — they are invariant
+// core, and the flag is simply inert here.
 
 // EDIT ME: one finder per category from SKILL §4. Diversity beats redundancy (harness policy
 // H4): each finder hunts a DIFFERENT weakness class, not the same code from N identical angles.

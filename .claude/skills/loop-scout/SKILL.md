@@ -52,6 +52,8 @@ Even when building is justified, keep it small. From **`references/build-vs-buy.
 
 Deliver a short, decisive recommendation, not a survey: the pick (reuse X / adapt X / build), the rationale against the must-haves, the **strongest counter-argument named**, and the runner-up so the decision is auditable. When the choice is architecturally significant, record it as an ADR using the **`loop-design`** skill's `templates/adr-template.md`. For a wide search across many candidates, run **`templates/prior-art-search.workflow.js`** to fan out discovery and evaluation in parallel, then synthesize the decision.
 
+**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — invoke the `loop-engine` skill to author and execute `templates/prior-art-search.workflow.js`, passing the raw argument string straight through and carrying no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
+
 ## Reference files
 
 - `references/where-to-look.md` — where to find prior art (stdlib/platform first, registries, managed services, standards, internal code) and how to search each

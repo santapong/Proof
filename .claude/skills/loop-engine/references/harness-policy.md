@@ -48,7 +48,8 @@ Scale verification to the ask: "find any bugs" → few finders, single-vote veri
 
 ## H6. Budget and concurrency
 
-- The token target from a user's "+500k"-style directive is a **hard ceiling** exposed as `budget`: once `budget.spent()` reaches `budget.total`, further `agent()` calls throw. Guard budget-scaled loops with `budget.total &&` (see loop policy L2).
+- The token target from a user's "+500k"-style directive is a **hard ceiling** exposed as `budget`: once `budget.spent()` reaches `budget.total`, further `agent()` calls throw. Guard budget-scaled loops with `budget.total &&` (see loop policy L2). That is the *runtime* ceiling, and in `--mode optimize` it is the whole rule.
+- **`--mode full` makes `--budget` stricter than the bullet above, and this is the exception the mode contract names by name — do not read H6's runtime ceiling as the whole story.** When both flags are present, the full-mode pre-flight (`execution-modes.md` §M6) compares the estimate's **high** end against the ceiling **before the first agent spawns** and **refuses to start** if it exceeds it, offering exactly three exits: re-run at `--mode optimize`, raise the budget to a stated figure, or narrow the phase's scope. Nothing partially starts. This is a deliberate behaviour change to `--budget` in full mode — burning 80% of a ceiling and then throwing mid-run is precisely the failure a pre-flight exists to prevent — so a full-mode run never reaches the mid-run throw described above by way of an estimate it could have refused.
 - Concurrency is capped (min(16, cores − 2) per workflow); excess calls queue. Total lifetime agents are capped at 1000. Design fan-outs assuming queuing, not unlimited parallelism.
 - **No silent caps**: if the script bounds coverage (top-N, sampling, no-retry), `log()` what was dropped. Silent truncation reads as "covered everything" when it didn't.
 

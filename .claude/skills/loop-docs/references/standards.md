@@ -4,6 +4,12 @@ The external standards behind the practices in this skill. `doc-types.md` tells 
 
 Reach for these to justify a convention, to settle a house-style dispute, or to configure tooling — not to pad a doc with standards-name-dropping. When a repo already commits to one (a Vale config, a `CONTRIBUTING.md` naming a style guide), that choice wins over the defaults here; match it, per SKILL §3.
 
+**Authority grades — the plugin's three, identical on every standards shelf here.** Carry the grade with the citation.
+
+- **Authoritative — yes.** A recognized standards body ratified and published it. On this shelf: **ISO/IEC/IEEE 26514:2022** and **ISO/IEC 82079-1:2019** only. A project bound by one of these is bound; everything else here is a choice.
+- **Authoritative — draft.** Real, citable committee output that nothing has ratified. *No entry on this shelf carries this grade.* **CommonMark 0.31.2 is deliberately pre-1.0**, which is a maturity statement by its own community rather than a draft status — cite it as the published spec version it is.
+- **Authoritative — no.** Everything else: **Diátaxis** (one author's open framework), the **Google** and **Microsoft** style guides (house styles), **Conventional Commits** (an open convention), **MADR** (a community template), and **Vale** (a tool). These are excellent defaults and none of them is a requirement. Write *"this doc set follows the Google developer documentation style guide"*, never *"this violates the style standard."*
+
 ## The standards at a glance
 
 | Standard | Issuing body | Edition to cite (2026) | Where it bites in this skill |
@@ -11,11 +17,11 @@ Reach for these to justify a convention, to settle a house-style dispute, or to 
 | **Diátaxis** | Daniele Procida (open framework) | Living framework, continuously revised | §1 pick the type — see `doc-types.md` |
 | **Google developer documentation style guide** | Google | Online, continuously updated | §4 draft prose — see `style.md` |
 | **Microsoft Writing Style Guide** | Microsoft | Online, continuously updated | §4 draft prose — see `style.md` |
-| **CommonMark** | CommonMark community | Spec **0.31.2** (pre-1.0) | §3 match format; every Markdown file |
+| **CommonMark** | CommonMark community | Spec **0.31.2** (pre-1.0), dated **2024-01-28** | §3 match format; every Markdown file |
 | **Conventional Commits** | open spec (conventionalcommits.org) | **1.0.0** | §6 sync; feeds the changelog |
-| **MADR** (Markdown ADR) | ADR community | **4.x** (current major) | ADR authoring — `doc-types.md §9` |
-| **Vale** | Vale / errata-ai | **3.x** (CLI) | §6 sync; §7 verify stage enforcement |
-| **ISO/IEC/IEEE 26514, ISO/IEC 82079-1** | ISO/IEC/IEEE | **26514:2022**, **82079-1:2019** | Process/governance framing (name-level) |
+| **MADR** (Markdown ADR) | ADR community | **4.x** — latest release **4.0.0**, Sep 2024 | ADR authoring — `doc-types.md §9` |
+| **Vale** | Vale / errata-ai | **3.x** (CLI) — latest release **3.15.2**, 23 Jul 2026 | §6 sync; §7 verify stage enforcement |
+| **ISO/IEC/IEEE 26514, ISO/IEC 82079-1** | ISO/IEC/IEEE | **26514:2022** (Edition 1, 2022-01; it replaced ISO/IEC 26514:2008), **82079-1:2019** | Process/governance framing (name-level) |
 
 ## Diátaxis — the doc-type model
 
@@ -71,4 +77,6 @@ Standards get revised; a citation is only as good as its pinned edition. Rules:
 - **Living frameworks** (Diátaxis, the Google and Microsoft guides) have no edition to pin — cite them by name and **re-read the source on a cadence**, because they change silently without a version bump.
 - **Re-check this file periodically** (a yearly pass is reasonable). When you confirm an edition, stamp the check. Watch specifically for a CommonMark 1.0, a new MADR major, and any ISO 265xx revision.
 
-Verified against published editions as of **2026-07**.
+**Confirmation log — 2026-07-26.** Verified against the primary source: **CommonMark 0.31.2** dated 2024-01-28 on `spec.commonmark.org` (still the latest); **MADR 4.0.0**, the newest release on `adr/madr` (so "4.x current major" holds); **Vale 3.15.2**, released 23 Jul 2026 on `errata-ai/vale` (so "3.x" holds and the tool is actively maintained); **Conventional Commits 1.0.0** on `conventionalcommits.org`; **ISO/IEC/IEEE 26514:2022** as Edition 1, published 2022-01, superseding ISO/IEC 26514:2008.
+
+**Not independently re-confirmed in this pass, and named rather than dated:** **ISO/IEC 82079-1:2019** — cited here at name level only, as the entry says; check the ISO catalogue before treating it as current for a compliance argument. **Diátaxis** and the **Google / Microsoft** style guides are living documents with nothing to pin — the honest form is a dated re-read, not a version number, and this file does not print one for them.

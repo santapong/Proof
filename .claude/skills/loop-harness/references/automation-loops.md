@@ -2,6 +2,8 @@
 
 The "loop engineering" side of the harness: how to make Claude Code do recurring or unattended work without a human re-typing the prompt. Several mechanisms exist; the skill is choosing the *lightest* one that meets the durability need.
 
+**The subject of every mechanism below is Claude's own configuration, never the product's runtime.** What a *service* does when it goes unhealthy — the self-healing runbook, the burn-rate trigger, the autonomy rung at which it may act without asking — is `../../loop-operate`, even when such a runbook is scheduled by a mechanism configured here. That is composition, and it is one-directional: this file supplies the scheduler, `loop-operate` supplies the action and the authority to take it. The standing loop that improves a *repository* on a schedule is `../../loop-autopilot`, whose `references/deployment.md` picks from exactly this menu.
+
 ## The mechanisms
 
 ### SessionStart hook — run setup on every session

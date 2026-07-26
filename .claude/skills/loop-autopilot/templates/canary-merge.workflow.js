@@ -5,16 +5,38 @@
 // that already passed the SUSTAIN in-band gate (verifier-canary.workflow.js). See
 // deployment.md §"Advanced: autonomous delivery (SCALE)".
 //
-// CONTROL FLOW (this part is portable):
+// WHAT THIS TEMPLATE OWNS, AND WHAT IT DOES NOT.
+// This script owns exactly one thing: the AUTONOMY DECISION — may the loop merge this candidate
+// without a human, and what does it do when the bake says no. The rollout mechanism and the SLO
+// gate are OTHER SKILLS' subject matter and are CITED here, never restated, so there is one
+// definition of each in the plugin and this file cannot drift away from it:
+//
+//   • ROLLOUT MECHANISM → **loop-ship**. `../../loop-ship/references/rollout-strategies.md` owns
+//     canary vs blue-green vs rolling, the risk→strategy table, and the four feature-flag kinds;
+//     `../../loop-ship/references/migrations.md` owns expand-contract, which is why 'migration' is
+//     on the NEVER list below; `../../loop-ship/references/rollback-playbook.md` owns what a
+//     TESTED rollback path is. Pass the chosen mechanism in via args (BAKE_MECHANISM /
+//     ROLLBACK_SPEC) — do not re-derive it here, and do not describe it here.
+//   • SLO GATE → **loop-operate**. `../../loop-operate/references/slo-model.md` owns SLIs, SLOs,
+//     error budgets and burn-rate math; `../../loop-operate/references/alerting.md` owns
+//     multi-window multi-burn-rate evaluation. The bake below asks loop-operate's question
+//     ("is the burn rate inside the budget for this window?") and takes its answer; it does not
+//     define what healthy means. Pass the gate in via args (HEALTH_SPEC).
+//   • AUTONOMY LADDER + audit trail → `../../loop-operate/references/autonomy-and-rollback.md`,
+//     cited by `references/deployment.md §"Advanced: autonomous delivery (SCALE)"`.
+//
+// CONTROL FLOW (this part is portable, and is what this template actually contributes):
 //   read autonomy state -> eligibility gate -> merge behind canary -> bake -> promote|rollback -> update state
-// INFRA-SPECIFIC (you must supply — marked EDIT ME): the merge-behind-a-guard mechanism
-//   (feature flag / canary slice / staged rollout), the health-signal reads during bake,
-//   and the rollback command. Auto-merge WITHOUT a real canary is not SCALE — it's just
-//   removing the safety net. If you can't supply these, return {action:'propose'}.
+// INFRA-SPECIFIC (you must supply — marked EDIT ME): the three args above. Auto-merge WITHOUT a
+//   real canary is not SCALE — it's just removing the safety net. If you cannot supply them,
+//   return {action:'propose'} and let loop-ship run the rollout with a human at the gate.
 //
 // SAFETY: any gate miss, any active held-out alarm, any ineligible kind -> fall back to
 // propose-only (return {action:'propose'}), never merge. A bad bake -> autonomous
 // rollback + escalate. Rollback-rate over threshold -> trip autonomy OFF for all kinds.
+// An un-cleared breach after rollback is an INCIDENT, not a deploy problem: hand it to
+// loop-operate's health-response template, which escalates to loop-incident when no runbook
+// restores the SLI.
 //
 // H10: no clock / no Math.random in-script; time is passed via args.nowIso.
 //
@@ -46,12 +68,24 @@ const LEDGER_ISSUE = (input && input.ledgerIssueNumber) || null
 const BASELINE_ISSUE = (input && input.baselineIssueNumber) || null // held-out alarm source
 const TRUST_MIN = (input && input.trustThreshold) || 0.9
 const ROLLBACK_TRIP = (input && input.rollbackRateTrip) || 0.34 // >1/3 of recent merges rolled back -> trip
-const BAKE_MECHANISM = (input && input.bakeMechanism) || 'EDIT_ME flag/canary/staged-rollout: how the merged change ships guarded'
-const HEALTH_SPEC = (input && input.healthCheckSpec) || 'EDIT_ME: CI-on-main + canary error/latency SLO + no new failing held-out'
-const ROLLBACK_SPEC = (input && input.rollbackSpec) || 'EDIT_ME: git revert the merge commit + flip flag off / redeploy'
+// The three infra specs below are loop-ship's and loop-operate's to define; this template only
+// carries them through to the agents. Choose them THERE, then pass them in.
+// EDIT ME — pick the guard per loop-ship/references/rollout-strategies.md (canary slice, flag, or
+// staged rollout) and name it here. Never 100% on merge; that is the whole point of the rung.
+const BAKE_MECHANISM = (input && input.bakeMechanism) || 'EDIT_ME — name the guard chosen per loop-ship/references/rollout-strategies.md (canary slice / feature flag / staged rollout)'
+// EDIT ME — the SLO gate, defined per loop-operate/references/slo-model.md (SLI, objective, error
+// budget) and evaluated per loop-operate/references/alerting.md (multi-window multi-burn-rate).
+// "Healthy" means what loop-operate says it means; do not invent a second definition here.
+const HEALTH_SPEC = (input && input.healthCheckSpec) || 'EDIT_ME — the SLO gate per loop-operate/references/slo-model.md + alerting.md (SLI, objective, burn-rate windows), plus CI-on-main and no new failing held-out'
+// EDIT ME — the TESTED rollback path from loop-ship/references/rollback-playbook.md. An untested
+// rollback is not a rollback, and SCALE is not licensed without one.
+const ROLLBACK_SPEC = (input && input.rollbackSpec) || 'EDIT_ME — the tested rollback path per loop-ship/references/rollback-playbook.md (revert the merge commit / flip the flag off / redeploy the prior digest)'
 const NOW_ISO = (input && input.nowIso) || null
 
-// Change classes that NEVER auto-merge, regardless of every gate (deployment.md §Eligibility).
+// Change classes that NEVER auto-merge, regardless of every gate (references/deployment.md
+// §Eligibility). The reason each is on the list belongs to loop-ship, not here: 'migration' is
+// expand-contract work (loop-ship/references/migrations.md), 'release' is a go/no-go gate
+// (loop-ship/references/release-gates.md), and both are human-gated by design.
 const NEVER_KINDS = ['migration', 'infra', 'secret', 'api-break', 'release']
 const propose = (reason) => { log(`FALL BACK to propose-only: ${reason}`); return { action: 'propose', reason } }
 
@@ -98,15 +132,20 @@ if (LEDGER_ISSUE) {
 }
 
 // --- PHASE 2: MERGE (behind a guard, never 100%) ---------------------------------
+// The guard is loop-ship's mechanism, applied here — rollout-strategies.md decides WHICH guard and
+// at what slice; this template only requires that one is applied and that it is not 100%.
 const merged = await agent(
-  `Repo: ${REPO.owner}/${REPO.name}. Merge PR #${C.prNumber} (branch ${C.branch}) into main, but SHIP IT GUARDED, not to everyone: ${BAKE_MECHANISM}. Record the merge commit SHA. Do NOT roll out to 100%. Report the merge SHA and the guard you applied.`,
+  `Repo: ${REPO.owner}/${REPO.name}. Merge PR #${C.prNumber} (branch ${C.branch}) into main, but SHIP IT GUARDED, not to everyone, using the rollout mechanism loop-ship selected (see loop-ship/references/rollout-strategies.md): ${BAKE_MECHANISM}. Record the merge commit SHA. Do NOT roll out to 100%. Report the merge SHA and the guard you applied.`,
   { label: `merge:${C.id}`, phase: 'Merge', schema: { type: 'object', properties: { mergeSha: { type: 'string' }, guard: { type: 'string' }, ok: { type: 'boolean' } }, required: ['ok'] } },
 )
 if (!merged || !merged.ok || !merged.mergeSha) return propose('merge did not complete cleanly — nothing to promote')
 
 // --- PHASE 3: BAKE (watch health for the window) ---------------------------------
+// The gate is loop-operate's, applied here verbatim: this template asks whether the SLO gate in
+// HEALTH_SPEC holds and takes the answer. It does not define healthy, does not pick the burn-rate
+// windows, and does not second-guess a breach — slo-model.md and alerting.md own all three.
 const health = await agent(
-  `Repo: ${REPO.owner}/${REPO.name}. For merge ${merged.mergeSha}, evaluate health over the bake window: ${HEALTH_SPEC}. Return healthy=true ONLY if every signal is within bounds; otherwise healthy=false with the breached signal.`,
+  `Repo: ${REPO.owner}/${REPO.name}. For merge ${merged.mergeSha}, evaluate health over the bake window against the SLO gate as loop-operate defines it (see loop-operate/references/slo-model.md for the SLI/objective/error-budget model and alerting.md for multi-window multi-burn-rate evaluation): ${HEALTH_SPEC}. Return healthy=true ONLY if every signal is within bounds; otherwise healthy=false with the breached signal. An alert that went quiet while the SLI is unchanged is NOT healthy.`,
   { label: `bake:${C.id}`, phase: 'Bake', schema: { type: 'object', properties: { healthy: { type: 'boolean' }, breach: { type: 'string' } }, required: ['healthy'] } },
 )
 
@@ -122,8 +161,9 @@ if (health && health.healthy) {
   rollbacks.push(0)
 } else {
   // Autonomous rollback — cheap, reversible; the whole reason canary beats a perfect gate.
+  // The path itself is loop-ship's tested rollback (rollback-playbook.md), executed here.
   await agent(
-    `Repo: ${REPO.owner}/${REPO.name}. Bake FAILED for ${merged.mergeSha} (breach: ${(health && health.breach) || 'unknown'}). Roll back now: ${ROLLBACK_SPEC}. Then open a loud issue titled "🚨 Auto-rollback ${merged.mergeSha}" describing the breach. Confirm the revert landed.`,
+    `Repo: ${REPO.owner}/${REPO.name}. Bake FAILED for ${merged.mergeSha} (breach: ${(health && health.breach) || 'unknown'}). Roll back now using the tested rollback path loop-ship defined (see loop-ship/references/rollback-playbook.md): ${ROLLBACK_SPEC}. Then open a loud issue titled "🚨 Auto-rollback ${merged.mergeSha}" describing the breach. If the SLI does NOT recover after the rollback, this is no longer a deploy problem — hand it to loop-operate (health-response), which escalates to loop-incident when no runbook restores it. Confirm the revert landed.`,
     { label: `rollback:${C.id}`, phase: 'Decide', schema: { type: 'object', properties: { reverted: { type: 'boolean' } }, required: ['reverted'] } },
   )
   action = 'rolled-back'; detail = `${merged.mergeSha}: ${(health && health.breach) || 'breach'}`

@@ -64,6 +64,7 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
 const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
   optimize: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
@@ -96,14 +97,19 @@ function optsFor(node, label) {
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
   if (r.model) opts.model = r.model     // omit → inherit session model (H8)
   if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  if (PLANNER && node.taskType === 'planner') opts.model = PLANNER // §M7 override — planner nodes only
   return opts
 }
 
-// The block above is byte-identical to §M8 except for the two lines §M8 explicitly says to drop:
-// `DRY_LIMIT` is omitted because this template has no loop stage, and `WIDTH` is omitted because
-// the Verify stage is a single deterministic re-query of the SLI against the monitoring backend,
-// not an adversarial lens fan-out — so there is no verifier width for mode to resolve. Every line
-// that IS here is verbatim; drift on any of them is a defect, and §M8 is the source.
+// The block above is byte-identical to §M8 except for the members §M8 explicitly says to drop:
+// `DRY_LIMIT` is omitted because this template has no loop stage; `plannerAgent` is omitted
+// because no node here carries taskType 'planner'; and `WIDTH` is omitted under §M5's
+// DETERMINISTIC-MEASUREMENT carve-out — the Verify stage re-queries the SLI against the
+// monitoring backend and reports what it reads. It is not a skeptic, no part of it is reduced
+// by majority-refute, and three agents asking one backend the same question is the redundancy
+// H4 ranks below diversity. It is therefore width 1 in BOTH modes by decision, not by oversight,
+// and full mode does not widen it. Every line that IS here is verbatim; drift on any of them is
+// a defect, and §M8 is the source.
 
 const SERVICE = (input && input.service) || 'EDIT_ME: the service or user journey under operation'
 const RUNG = (input && input.rung) || 'observe' // safest default; never assume a higher rung

@@ -56,6 +56,8 @@ A single doc you write inline in this session. For **documenting many modules, p
 
 This is the per-item **pipeline → adversarial-verify** pattern from the **`loop-engine`** skill (see its `templates/pipeline.workflow.js` and harness policy H1 pipeline-default, H4 adversarial-verify). Invoke the `loop-engine` skill to author and execute the run; the doc-generation template pre-wires the extract/draft/verify stages and the accuracy schema. For one or two modules you can hold in context, skip the workflow and write directly — don't spin up agents for a single README.
 
+**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
+
 ## Reference files
 
 | File | Read it when |

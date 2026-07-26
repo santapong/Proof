@@ -4,6 +4,8 @@ Two things live here and nothing else: **the decision** (revert or fix forward) 
 
 The one sentence that governs everything below: **an untested rollback is not a rollback, it is a hope, and it fails dimension 4 of the pre-deploy checklist.**
 
+**Mechanism here, trigger elsewhere.** This skill *authors* the way back and proves by drill that it works — the button. What presses that button **unattended** — the burn-rate signal wired to it, and the autonomy rung at which it is allowed to fire without a human — is `../../loop-operate/references/autonomy-and-rollback.md`; the SLI those abort criteria are evaluated against is `../../loop-operate/references/slo-model.md`. The temporal seam is the bake: from deploy start until bake completes the rollout is this skill's, and after bake the running service is `loop-operate`'s. Two consequences follow — an automated trigger may only fire into a revert this file records a current drill for, and a drill record with no owning signal is a manual rollback, which is a legitimate answer that must be stated rather than assumed. A design-time RTO/RPO target that *depends* on this drill is set in `../../loop-design/references/nfr.md`.
+
 ## 1. Decision factors
 
 Four factors decide it. Work them in this order — the first one that answers stops the analysis.

@@ -1,7 +1,7 @@
 ---
 name: loop-design
 description: "Design software systems and architecture: architecture-style selection, API design, backend and data modeling, frontend performance, and turning non-functional requirements into numbers and SLO targets. Use when the user asks to design a system or architecture, choose an architecture pattern, design an API this system exposes, model backend data, pick a consistency policy, optimize frontend performance, set NFR or capacity targets, or record architecture decisions as ADRs and C4 diagrams. Works at component granularity on a system not yet built. For executing a release or choosing a rollout strategy for a system already running, use loop-ship. For measuring and alerting on the SLOs of a live service, use loop-operate. For the algorithm inside one component, use loop-algo."
-argument-hint: <system> [--mode <optimize|full>]
+argument-hint: <system>
 ---
 
 # Designing Systems
@@ -9,6 +9,8 @@ argument-hint: <system> [--mode <optimize|full>]
 You are about to design a system, or one slice of one. The engine is you reasoning from requirements to a defensible architecture — not a template you fill in. Your job is to make the fewest, most reversible decisions that satisfy the requirements, justify each against a named alternative, and record what you chose and why so the next person can undo it.
 
 **The failure mode this skill exists to prevent is premature complexity**: microservices for a three-person team, Kafka for 100 events a day, eventual consistency for a bank balance. Default to the simplest thing that meets the stated non-functional requirements, and make the requirements state themselves before you draw a box.
+
+**Granularity boundary against `loop-algo`.** This skill's deliverable is a box-and-arrow diagram, a contract, or a deployable topology; `loop-algo`'s is a Big-O, a stated invariant, a memory-ordering argument, or a benchmark table. The worked case both skills carry, because it is the one that splits every time: **"shard the queue across N nodes" is `loop-design` — that is topology. "Which lock-free queue structure, and what are its progress guarantees" is `loop-algo` — that is mechanism.** The same feature request produces both, in that order: this skill decides that a queue exists and what crosses its boundary, `loop-algo` decides what runs inside it and proves what it costs.
 
 ## Stance on tech stack: principles, not mandates
 
@@ -67,7 +69,7 @@ Design-time delivery-shape stub: **`references/deployment.md`**. The mechanics o
 
 ### 7. NFR validation & SLOs
 
-Close the loop: walk back through the design and check it against the numbers from step 1. For each NFR — latency, availability, durability, security, cost — state how the design meets it and where it breaks first (the next bottleneck). Turn the targets into **SLOs with error budgets** and hand measurement, burn-rate alerting and remediation to **`loop-operate`**, name the caching strategy (default **cache-aside**; escape to write-through/read-through only when the access pattern demands it), and identify the failure modes and their mitigations. A design that can't be validated against its NFRs isn't done. Validation checklist, SLO/error-budget mechanics, caching and resilience patterns: **`references/nfr.md`**.
+Close the loop: walk back through the design and check it against the numbers from step 1. For each NFR — latency, availability, durability, security, cost — state how the design meets it and where it breaks first (the next bottleneck). Turn the targets into **SLOs with error budgets** and hand measurement, burn-rate alerting and remediation to **`loop-operate`**, name the caching strategy (default **cache-aside**; escape to write-through/read-through only when the access pattern demands it), and identify the failure modes and their mitigations. A design that can't be validated against its NFRs isn't done. Validation checklist, SLO and error-budget **targets**, capacity and cost: **`references/nfr.md`** (caching and resilience patterns live in **`references/backend.md`**, which `nfr.md` delegates to). The measurement, burn-rate alerting and remediation **mechanics**: **`../loop-operate/`**.
 
 ### 8. Record the decisions (ADRs + C4)
 
@@ -92,6 +94,10 @@ Jump straight to the slice the user asked for; each row lists the reference and 
 | Fix the delivery shape a design must support | 6 | `references/deployment.md`; for executing the release or picking a rollout strategy, `loop-ship` | ADR (design-time shape only) |
 | Define NFRs / SLOs / capacity | 1 then 7 | `references/nfr.md`; for measuring and alerting on them, `loop-operate` | — |
 | Record a decision or draw C4 | 8 | — | ADR + C4 context/container |
+
+## Execution flags
+
+`--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here**. This skill ships no workflow template — design work runs inline in this session — so there is no mode logic to carry. When the work hands off to a sibling that does run a workflow (`loop-ship` for the release, `loop-operate` for the live service, `loop-algo` for the mechanism inside a component), pass the raw argument string straight through unchanged so the flag reaches the one parser that honours it. See `../loop-engine/references/execution-modes.md`.
 
 ## Files in this skill
 

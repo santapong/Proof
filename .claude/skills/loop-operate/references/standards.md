@@ -2,10 +2,11 @@
 
 The sources behind this skill's define → instrument → alert → remediate → escalate loop. `slo-model.md` gets its vocabulary from the first two entries, `alerting.md` its taxonomy from the next three, `observability.md` its naming layer from OpenTelemetry, and `autonomy-and-rollback.md` its validation framing from the chaos manifesto. This file names each source, pins the edition to cite, **states plainly whether it is authoritative**, and maps it to the exact section where it earns its keep.
 
-**Read the authority grade before you cite.** This shelf is unusually lopsided and pretending otherwise would be dishonest: **most of reliability engineering's canon is practitioner doctrine, not specification.** The two grades are cited differently:
+**Read the authority grade before you cite.** Every standards shelf in this plugin uses the same three grades, with the same meanings. This shelf is unusually lopsided and pretending otherwise would be dishonest: **most of reliability engineering's canon is practitioner doctrine, not specification.**
 
-- **Authoritative — yes.** A published specification or a licensed standard issued by a standards body. Cite it as a normative reference: *"per OpenTelemetry Semantic Conventions v1.42.0"*, *"ISO/IEC 20000-1:2018 clause 8"*.
-- **Authoritative — no.** An influential practitioner book, a personal essay, a community manifesto, or a vendor research programme. It is the best available description of a practice and it is **not** a specification. Cite it as attributed doctrine: *"following the SRE Workbook's multi-window multi-burn-rate design"*, never *"as required by"*. The four golden signals, RED, USE, and the burn-rate table are all in this category — universally adopted, and still someone's opinion with a good track record.
+- **Authoritative — yes.** A recognized standards body, government agency, or licensed framework owner **ratified and published** it. Cite it as a normative reference: *"per OpenTelemetry Semantic Conventions v1.43.0"*, *"ISO/IEC 20000-1:2018 clause 8"*. Exactly two entries here qualify.
+- **Authoritative — draft.** Real, citable working-group or committee output that **nothing has ratified**. Name it as a draft with its revision and status. *No entry on this shelf carries this grade.*
+- **Authoritative — no.** An influential practitioner book, a personal essay, a community manifesto, a community project, or a vendor research programme. It is the best available description of a practice and it is **not** a specification. Cite it as attributed doctrine: *"following the SRE Workbook's multi-window multi-burn-rate design"*, never *"as required by"*. The four golden signals, RED, USE, and the burn-rate table are all in this category — universally adopted, and still someone's opinion with a good track record.
 
 Every entry is pinned to the edition current **as of 2026**; the closing edition-discipline note carries the re-check cadence and names the shortest-cycle entry on the shelf.
 
@@ -18,7 +19,11 @@ Every entry is pinned to the edition current **as of 2026**; the closing edition
 
 **Maps to the skill.** This is the origin of the SLI / SLO / error-budget vocabulary that `slo-model.md` §1–§3 is built on, and of the **four golden signals** (chapter 6, "Monitoring Distributed Systems") that open `alerting.md` §1. The error-budget-as-shared-currency framing — the thing that turns "how much can we break to move fast?" into arithmetic — is this book's contribution and is why `slo-model.md` §4 treats the policy rather than the number as the operative artifact.
 
-**Honesty requirement — there is no confirmed second edition, do not cite one.** A listing for *"Site Reliability Engineering, 2nd Edition"* carrying **ISBN 979-8-341607675** surfaces in search. It **could not be confirmed** against Google's own listing at `sre.google/books`, which still shows only the 2016 first edition, and the `979-8` ISBN prefix is atypical for O'Reilly's Google SRE titles. **Cite the 2016 first edition and the web edition only.** This non-confirmation is recorded identically in `../../loop-incident/references/standards.md`; if a genuine second edition is later confirmed through Google's or O'Reilly's own listing, both entries update in the same commit. A fabricated edition number is exactly the error that makes a whole shelf untrustworthy.
+**Edition watch — a second edition is confirmed and announced, but has not shipped.** O'Reilly's own catalogue carries *Site Reliability Engineering, **2nd Edition***, eds. **Betsy Beyer, Chris Jones, Christof Leng, David Huska, Jennifer Petoff, Niall Richard Murphy**, as an **Early Release** ebook — **ISBN 979-8-341607675** — with the print edition, **ISBN 979-8-341607682**, 771 pp., dated **3 November 2026**. Confirmed against O'Reilly's listing on **2026-07-26**. `sre.google/books` shows only the 2016 edition; that is expected for an unpublished book and is not evidence against the edition.
+
+**Until it ships, cite the 2016 first edition and the web edition.** An Early Release is unpaginated and its chapter numbering is still moving, so a chapter citation against 2e may not survive to print. This edition watch is recorded identically in `../../loop-incident/references/standards.md`; when the print edition lands on 3 Nov 2026, both entries and every chapter citation they govern update in the same commit.
+
+**RECORDED AND REJECTED — the `979-8` prefix argument.** An earlier draft of this shelf treated the `979-8` ISBN prefix as evidence the 2e listing was not genuine. That reasoning was **fabricated and is deleted**: `979-8` is simply the ISBN range Bowker has issued to United States publishers since 2020, as the `978` stock ran down. It carries no signal about a listing's authenticity. Recorded so nobody reinstates it from a stale note — inventing a heuristic to justify a non-confirmation is the same class of error as inventing an edition number.
 
 ## The Site Reliability Workbook — the implementation chapters
 
@@ -52,7 +57,7 @@ Every entry is pinned to the edition current **as of 2026**; the closing edition
 ## OpenTelemetry Semantic Conventions — the telemetry naming layer
 
 **Standard.** **Semantic Conventions for OpenTelemetry** — the attribute, metric, and resource naming specification.
-**Edition.** **v1.42.0 (12 June 2026)** for the stable main specification, semver-governed.
+**Edition.** **v1.43.0 (3 July 2026)** for the stable main specification, semver-governed. Confirmed against `opentelemetry.io/docs/specs/semconv` on **2026-07-26**; it supersedes v1.42.0 (12 June 2026).
 **Publisher.** OpenTelemetry (CNCF).
 **Authoritative: yes** — a published, versioned specification under formal governance. The only entry on this shelf that is a specification in the strict sense alongside ISO/IEC 20000-1.
 
@@ -60,9 +65,9 @@ Every entry is pinned to the edition current **as of 2026**; the closing edition
 
 **Three caveats, all of which change how you cite it:**
 
-1. **Confirm the exact minor before citing.** Semantic Conventions releases land at a **near-monthly cadence**. The pin above is current as of this writing and will not be current for long.
-2. **The GenAI conventions split into their own repository** in this release. If you are instrumenting an LLM-backed service, the attributes are no longer in the main convention set.
-3. **Propagation obligation — three skills pin this spec.** `../../loop-incident/references/standards.md` currently records **Semantic Conventions 1.43.0**, and `../../loop-debug/references/standards.md` pins the core specification at **stable 1.x**. That 1.42/1.43 gap is precisely what a monthly cadence produces between two files written weeks apart, and it is recorded here rather than smoothed over. **When any of the three advances its pin, the other two advance in the same commit.** Two skills reading the same telemetry while citing two different convention versions is a drift defect, not a difference of scope.
+1. **Confirm the exact minor before citing.** Semantic Conventions releases land at a **near-monthly cadence**. The pin above was confirmed on 2026-07-26 and will not be current for long — treat it as a starting point for verification, not as a durable fact.
+2. **The GenAI conventions split into their own repository.** If you are instrumenting an LLM-backed service, the attributes are no longer in the main convention set.
+3. **Propagation obligation — three skills pin this spec.** `../../loop-incident/references/standards.md` for cross-service timeline correlation, `../../loop-debug/references/standards.md` for single-process evidence reading, and this file for `observability.md`'s naming layer. **When any of the three advances its pin, the other two advance in the same commit — and so does `observability.md`, which restates the pin at the point of use.** Two skills reading the same telemetry while citing two different convention versions is a drift defect, not a difference of scope. Do not assert here what the other files currently record — read them. A claim about a sibling file's contents is false the moment that file is edited, which is how a 1.42/1.43 gap opened between this shelf and the very file it delegates to.
 
 **A pinned convention is not a claim that the attributes exist in your system.** It says what to emit. `observability.md` §5 is the checklist that tells you what actually is emitted.
 
@@ -78,7 +83,7 @@ Every entry is pinned to the edition current **as of 2026**; the closing edition
 ## ISO/IEC 20000-1 — the service-management process backdrop
 
 **Standard.** **ISO/IEC 20000-1**, *Information technology — Service management — Part 1: Service management system requirements*.
-**Edition.** **2018 (3rd edition)**, current as of 2026.
+**Edition.** **2018 (3rd edition)**, plus **Amendment 1:2024**. Confirmed current on 2026-07-26 — ISO reviewed and confirmed the 2018 edition in 2023 and has published no 4th edition.
 **Publisher.** ISO/IEC.
 **Authoritative: yes** — a certifiable international management-system standard.
 
@@ -112,8 +117,11 @@ Use it when an organization needs the practice framed as a certifiable managemen
 
 A shelf that mixes editions, or that cites a retired one, reads as careless — and an ops recommendation that cites carelessly gets discounted along with the threshold it was defending. Rules:
 
-- **Cite the edition you mapped to**: "SRE Workbook (2018), *Alerting on SLOs*", "OpenTelemetry Semantic Conventions v1.42.0", "ISO/IEC 20000-1:2018". Never a bare "SRE book" or "OTel".
+- **Cite the edition you mapped to**: "SRE Workbook (2018), *Alerting on SLOs*", "OpenTelemetry Semantic Conventions v1.43.0", "ISO/IEC 20000-1:2018". Never a bare "SRE book" or "OTel".
 - **Carry the authority grade with the citation.** Most of this shelf is doctrine, and doctrine is attributed, never asserted as a requirement. "The Workbook's burn-rate table" is defensible; "the standard burn-rate thresholds" is not — there is no such standard.
-- **Never invent a version for an unversioned source.** Ewaschuk's essay, RED, USE, and the chaos manifesto have none. Cite them as current with a retrieval date. **Never cite an unconfirmed *Site Reliability Engineering, 2nd Edition*** — see the non-confirmation recorded above.
+- **Never invent a version for an unversioned source.** Ewaschuk's essay, RED, USE, and the chaos manifesto have none. Cite them as current with a retrieval date. **Do not cite *Site Reliability Engineering, 2nd Edition* for a page or chapter number until it ships on 3 Nov 2026** — see the edition watch recorded above.
 - **OpenTelemetry Semantic Conventions is the shortest-cycle entry on this shelf** and the one most likely to be stale when you read it. Its near-monthly cadence means the pin above should be treated as a *starting point for verification*, not as a fact — and its three-way coupling with `loop-incident` and `loop-debug` means a bump is never a single-file edit.
+- **ISO/IEC 20000-1:2018 (3rd edition) confirmed current on 2026-07-26** — reviewed and confirmed by ISO in 2023, with **Amendment 1:2024** (Feb 2024) layered on top rather than a 4th edition. Cite the amendment explicitly if you are relying on text it changed.
 - **Re-check this shelf roughly twice a year**, and additionally after any real incident where a citation was contested or a threshold was disputed. When an edition here goes stale, update the entry and this closing note together; a pinned version left behind is worse than no pin, because a reader will trust it.
+
+**Confirmation log — 2026-07-26.** Verified against the primary source: ***Site Reliability Engineering, 2nd Edition*** as a **real, announced O'Reilly title** — Early Release ebook **ISBN 979-8-341607675**, print **ISBN 979-8-341607682**, 771 pp., **3 Nov 2026**, editors Beyer/Jones/Leng/Huska/Petoff/Murphy (this pass replaced a fabricated non-confirmation and **deleted the invented `979-8`-prefix heuristic** — see the rejected-argument note above); **OpenTelemetry Semantic Conventions v1.43.0 (3 Jul 2026)**, which **corrected this file's stale v1.42.0 pin that had been asserted as current in the same paragraph that recorded a newer one elsewhere**, and which now matches `loop-incident` and `loop-debug`; and **ISO/IEC 20000-1:2018 (3rd ed.) + Amendment 1:2024** as current with no 4th edition. **Not independently re-confirmed in this pass, and deliberately left unpinned rather than given invented precision:** **Ewaschuk's alerting essay**, the **RED** and **USE** methods, the **Principles of Chaos Engineering** manifesto, and the **current DORA annual report** — none has a version to confirm, so the honest pin is the name, the originator, and the date you read it. The **SRE Book (2016)**, the **SRE Workbook (2018)** and **Hidalgo (2020)** are fixed bibliographic facts. **If you cannot confirm an edition, write "unconfirmed as of \<date\>" rather than asserting one** — this shelf shipped both failure modes at once, a stale pin called current and a non-confirmation stated as a fact, and they are the same error wearing different clothes.

@@ -27,6 +27,7 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
 const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
   optimize: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
@@ -60,9 +61,14 @@ function optsFor(node, label) {
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
   if (r.model) opts.model = r.model     // omit → inherit session model (H8)
   if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  if (PLANNER && node.taskType === 'planner') opts.model = PLANNER // §M7 override — planner nodes only
   return opts
 }
-// No DRY_LIMIT: this template has no loop-until-dry stage (§M8 — omit what you do not use).
+// No DRY_LIMIT: this template has no loop-until-dry stage. No plannerAgent: no node carries
+// taskType 'planner'. WIDTH is kept — the Verify stage re-derives thin-evidence passes through
+// mode-resolved diverse lenses and reduces them by majority refute (§M5). The Decide node at the
+// end is a gating DECISION, not a gating verify, so §M5's gating-decision carve-out leaves it at
+// width 1 in both modes; see the comment there. (§M8 — omit what you do not use, and say why.)
 
 // The six gate dimensions from release-gates.md §1. `blocking: true` means a fail here vetoes the
 // release outright regardless of the other five — that veto is what makes the barrier below earned.
@@ -245,6 +251,12 @@ const effectiveFails = [
   })),
 ]
 
+// ONE gating DECISION node: it consumes dimension results the verify stage has already
+// adjudicated and renders a single go/no-go. §M5's gating-decision carve-out puts it at width 1
+// in BOTH modes — replicating it would produce N verdicts with no defined reduce, and a vote over
+// go/no-go calls is a decomposition change, not a mode dial. Its error cost is answered by the
+// width-resolved verify stage that FEEDS it plus the pinned claude-opus-5 / max routing the
+// 'gating' route guarantees in both modes (§M3). A dead node is handled below as a no-go.
 const decision = await agent(
   `${CONTEXT}\nRender the go/no-go call for this release.\n\n` +
     `Dimension results:\n` +

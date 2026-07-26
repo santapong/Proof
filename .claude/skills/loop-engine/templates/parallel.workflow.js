@@ -20,10 +20,23 @@ export const meta = {
 // Some harnesses deliver args as a JSON-encoded string — normalize before use.
 const input = typeof args === 'string' ? JSON.parse(args) : args
 
+// ---------------------------------------------------------------------------
+// EDIT ME — the figures the user APPROVED at the full-mode pre-flight
+// (../references/execution-modes.md §M6). The orchestrating session computes them at
+// authoring time and stamps them here as a PURE LITERAL, because a script may not read a
+// clock, roll dice, or prompt a human (harness policy H10).
+// Leave the zeros under --mode optimize: no pre-flight fires and nothing was approved.
+// They are echoed into the return value so the gate can diff approved-vs-actual against
+// <transcriptDir>/journal.jsonl instead of taking the estimate on faith — loop-engine/SKILL.md
+// step 7 and loop-orchestrate/SKILL.md both require that diff, and this literal is its left side.
+// ---------------------------------------------------------------------------
+const ESTIMATE = { agents: 0, tokensLow: 0, tokensHigh: 0, mode: 'optimize' }
+
 // Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
 const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
   optimize: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
@@ -57,7 +70,19 @@ function optsFor(node, label) {
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
   if (r.model) opts.model = r.model     // omit → inherit session model (H8)
   if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  if (PLANNER && node.taskType === 'planner') opts.model = PLANNER // §M7 override — planner nodes only
   return opts
+}
+// No DRY_LIMIT: this template has no loop stage (§M8 — omit what you do not use). WIDTH is
+// kept — the Verify stage is an adversarial lens fan-out that mode resolves (§M5).
+// No plannerAgent: no node in this template carries taskType 'planner', so §M8's third
+// optional member is dropped too. `PLANNER` and its `optsFor()` line stay — they are invariant
+// core, and the flag is simply inert here.
+
+// The full-mode pre-flight (§M6) approved these figures before anything spawned; echo them into
+// the transcript so the gate's approved-vs-actual diff against journal.jsonl has both sides.
+if (MODE === 'full') {
+  log(`ESTIMATE approved at the §M6 pre-flight: ${ESTIMATE.agents} agents, ${ESTIMATE.tokensLow}–${ESTIMATE.tokensHigh} output tokens`)
 }
 
 // EDIT ME: multi-modal sweep — each finder searches a DIFFERENT way (harness policy H4).
@@ -123,7 +148,7 @@ log(`[mode=${MODE}] ${all.length} raw findings → ${deduped.length} after dedup
 
 // Early-exit is the other legitimate use of the barrier.
 if (deduped.length === 0) {
-  return { confirmed: [], mode: MODE, note: 'no findings from any lens' }
+  return { confirmed: [], mode: MODE, estimate: ESTIMATE, note: 'no findings from any lens' }
 }
 
 // Verifier width is mode-resolved (§M5): 1 in optimize, 3 in full, 5 on a gating node.
@@ -155,4 +180,4 @@ const verified = await parallel(
 
 const confirmed = verified.filter(Boolean).filter((f) => f.isReal)
 log(`[mode=${MODE}] ${confirmed.length}/${deduped.length} findings survived ${width}-lens verification`)
-return { confirmed, mode: MODE }
+return { confirmed, mode: MODE, estimate: ESTIMATE }

@@ -52,7 +52,7 @@ Availability is a probability, and probabilities in series multiply. That single
 
 **Redundancy multiplies nines back up.** Two independent replicas where either can serve the request fail only when *both* fail: `1 − (0.01 × 0.01) = 99.99%` from two 99% components. This is why redundancy, multi-AZ, and load-balanced fleets buy availability — provided the replicas are genuinely independent (shared dependency = shared failure, and the math evaporates).
 
-**RTO and RPO are the recovery half of availability.** *RTO* (Recovery Time Objective) is how long you may be down after a disaster; *RPO* (Recovery Point Objective) is how much data you may lose. RPO of five minutes forces continuous or near-continuous replication; RPO of a day permits nightly backups. RTO of minutes forces warm standby; RTO of hours permits restore-from-backup. Untested backups have an *infinite* effective RTO — see `references/deployment.md`.
+**RTO and RPO are the recovery half of availability.** *RTO* (Recovery Time Objective) is how long you may be down after a disaster; *RPO* (Recovery Point Objective) is how much data you may lose. RPO of five minutes forces continuous or near-continuous replication; RPO of a day permits nightly backups. RTO of minutes forces warm standby; RTO of hours permits restore-from-backup. Untested backups have an *infinite* effective RTO: a restore path nobody has exercised is a hope, not a recovery time. What makes a restore "tested" is a recorded, dated drill — the checklist is `../../loop-ship/references/rollback-playbook.md` §2, and `../../loop-ship/references/release-gates.md` treats a current drill record as a release precondition.
 
 **Smell test**: every nine past three roughly 10x's the cost (redundancy, ops maturity, faster detection). If you can't name the business reason a request needs four nines, you're gold-plating. Set the target from what users actually need, then stop.
 
@@ -113,7 +113,7 @@ Walk the finished design against this before you call it done. Each unchecked bo
 - [ ] **Every NFR is a number.** Latency, availability, durability, throughput, and cost each have a target from intake — no "fast/reliable/cheap."
 - [ ] **Each target maps to a mechanism.** For every number, the design names *how* it's met (this cache, this replica set, this autoscaler) — and **where it breaks first** (the next bottleneck and the scale that triggers it).
 - [ ] **Availability math checks out.** Serial critical-path dependencies were counted and multiplied; the composed number meets the SLO, and single points of failure are either removed or consciously accepted.
-- [ ] **RTO/RPO have a tested recovery path.** Backups are restored on a schedule, not assumed; failover has been rehearsed.
+- [ ] **RTO/RPO have a tested recovery path.** Backups are restored on a schedule, not assumed; failover has been rehearsed against `../../loop-ship/references/rollback-playbook.md` §2's drill checklist, with a dated record.
 - [ ] **SLOs and error budgets are defined** per critical journey, stricter than any external SLA. Setting the target is this step's obligation; the burn-rate alerting against it is `../../loop-operate/references/alerting.md`'s and is a launch task, not a design deliverable.
 - [ ] **Observability is wired in, not bolted on** — instrumented before launch per `../../loop-operate/references/observability.md`, whose §5 checklist is the acceptance test.
 - [ ] **It scales on a named axis.** Stateless where it needs to scale out; the scaling dimension and its ceiling are stated.
