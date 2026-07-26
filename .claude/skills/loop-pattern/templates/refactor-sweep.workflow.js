@@ -27,7 +27,7 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 
 // Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
-// access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
+// access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
 const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
 const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
@@ -70,7 +70,7 @@ function optsFor(node, label) {
 // The block above is byte-identical to §M8 except for the one line §M8 explicitly says to drop:
 // `DRY_LIMIT` is omitted because this template has no loop stage. `WIDTH` is kept — the verify
 // sub-stage below resolves its lens count from it. Every line that IS here is verbatim; drift on
-// any of them is a defect (see CONTRIBUTING's ROUTES grep), and §M8 is the single source of truth.
+// any of them is a defect (see scripts/validate.mjs), and §M8 is the single source of truth.
 // No plannerAgent: no node in this template carries taskType 'planner', so §M8's third
 // optional member is dropped too. `PLANNER` and its `optsFor()` line stay — they are invariant
 // core, and the flag is simply inert here.

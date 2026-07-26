@@ -38,7 +38,7 @@ const ESTIMATE = { agents: 0, tokensLow: 0, tokensHigh: 0, mode: 'optimize' }
 
 // Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
-// access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
+// access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
 const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
 const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {

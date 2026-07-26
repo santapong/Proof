@@ -254,7 +254,7 @@ Name the conflict first, because burying it is how a caveat gets lost: **`model-
 ```js
 // Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
-// access, so duplication is intentional; drift is a defect (see CONTRIBUTING's ROUTES grep).
+// access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
 const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
 const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
@@ -316,7 +316,7 @@ async function plannerAgent(prompt, node, label) {
 
 `MODE`, `PLANNER`, `ROUTES`, `routeFor` and `optsFor` — including the `PLANNER` line inside `optsFor` — are the **invariant core** and appear in every copy, whether or not the template declares a planner node. `optsFor` references `PLANNER`, so dropping the const breaks the block; and keeping the override central is precisely what stops eighteen skills from each inventing a local `--planner` branch. **No other local variation is permitted.**
 
-**The duplication is a rule, not an apology.** Scripts have no filesystem and no module access (H10), so this block **cannot** be factored into a shared import. It is duplicated verbatim into every `*.workflow.js` that sets `model` or `effort`, and this file is its single source of truth. Duplication is therefore *correct here*, and **drift is a defect**: a verify lens diffs the blocks byte-for-byte across templates, and `CONTRIBUTING.md`'s validation block greps for any bare `model:` / `effort:` literal outside `ROUTES`. When this block changes, it changes in every copy in the same commit.
+**The duplication is a rule, not an apology.** Scripts have no filesystem and no module access (H10), so this block **cannot** be factored into a shared import. It is duplicated verbatim into every `*.workflow.js` that sets `model` or `effort`, and this file is its single source of truth. Duplication is therefore *correct here*, and **drift is a defect**: a verify lens diffs the blocks byte-for-byte across templates, and `scripts/validate.mjs` fails on any bare `model:` / `effort:` literal outside `ROUTES`. When this block changes, it changes in every copy in the same commit.
 
 **Ledger line format.** Every routed node records what actually ran, so mode is provable after the fact rather than assumed:
 
