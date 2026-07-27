@@ -369,6 +369,28 @@
           "condition": "you are refactoring existing code rather than authoring a plugin artifact"
         }
       ]
+    },
+    {
+      "skill": "loop-frontend",
+      "scope": "Crafts how an interface feels frame by frame \u2014 motion choreography, easing and duration budgets, type scale, perceived performance \u2014 in a UI that already renders.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-design",
+          "condition": "the deliverable changes a number the PAGE is measured by \u2014 rendering strategy, first-load JS budget, Core Web Vitals target, caching tier \u2014 rather than a number the EYE is measured by"
+        },
+        {
+          "otherSkill": "loop-pattern",
+          "condition": "the diff is behaviour-preserving structure (extract a component, apply a pattern, make it idiomatic) rather than behaviour-changing presentation"
+        },
+        {
+          "otherSkill": "loop-scout",
+          "condition": "the question is which animation library this project should adopt, as a build-vs-buy with a named winner, rather than which rung of the escalation ladder one specific motion sits on"
+        },
+        {
+          "otherSkill": "loop-algo",
+          "condition": "the answer is a Big-O or a benchmark table \u2014 loop-algo's milliseconds are measured and provable, loop-frontend's are perceptual and chosen"
+        }
+      ]
     }
   ],
   "overlaps": [
@@ -546,6 +568,27 @@
       "risk": "A SKILL.md is markdown, so 'write the docs for this skill' will catch loop-docs' how-to trigger.",
       "severity": "medium",
       "resolution": "Split on the artifact and its contract: loop-docs writes for a HUMAN READER seeking understanding (Diataxis); loop-skill emits a directory that must pass scripts/validate.mjs and whose description field is machine-consumed at selection time. A SKILL.md is an executable contract that happens to be markdown."
+    },
+    {
+      "skillA": "loop-frontend",
+      "skillB": "loop-design",
+      "risk": "loop-design/references/frontend.md already owns frontend performance, so 'make the UI faster/smoother' plausibly matches both.",
+      "severity": "high",
+      "resolution": "Split PAGE-LOADING performance (loop-design: rendering strategy, bundle budget, LCP/INP/CLS targets, caching) from PER-ANIMATION FRAME COST (loop-frontend: compositor-only properties, FLIP, will-change hygiene). Field test: 'the page takes 4s to appear' is loop-design; 'the drawer stutters when it opens' is loop-frontend. This is the weakest of the four boundaries and both files must say so plainly rather than pretend it is crisp."
+    },
+    {
+      "skillA": "loop-frontend",
+      "skillB": "loop-scout",
+      "risk": "'Should I use anime.js?' reads as a library-selection question, which is loop-scout's territory.",
+      "severity": "medium",
+      "resolution": "loop-frontend walks its own escalation ladder (CSS transition -> keyframes -> View Transitions -> scroll-driven -> WAAPI -> library) and answers 'does THIS motion need a library, and which rung is it?' \u2014 most often 'no library'. A project-wide adoption evaluation with criteria, a winner and a runner-up is loop-scout, which loop-frontend hands off to."
+    },
+    {
+      "skillA": "loop-frontend",
+      "skillB": "loop-pattern",
+      "risk": "Both edit component files in a frontend codebase.",
+      "severity": "medium",
+      "resolution": "Split on what a screenshot can see: loop-pattern's output is a behaviour-preserving refactor backed by tests that a screenshot cannot distinguish; loop-frontend's output is visible by definition and no unit test catches its regression. If both touch one file, loop-pattern decides where the component boundary goes and loop-frontend decides what crosses it in 240ms."
     }
   ],
   "descriptionRewrites": [

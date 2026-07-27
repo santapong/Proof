@@ -1,6 +1,6 @@
 # Installing TheLoopSkill
 
-TheLoopSkill ships nineteen Claude Code skills:
+TheLoopSkill ships twenty Claude Code skills:
 
 | Skill | What it does |
 |---|---|
@@ -23,6 +23,7 @@ TheLoopSkill ships nineteen Claude Code skills:
 | `loop-operate` | Operate a running service in steady state: SLIs/SLOs/error budgets, burn-rate alerts, self-healing runbooks, SLO-gated auto-rollback |
 | `loop-incident` | Respond to a live, user-impacting failure: severity triage, comms, mitigate before diagnosing, reproduction harness, blameless postmortem |
 | `loop-skill` | Author a new skill for this plugin or bring an existing one up to contract — boundary, standards shelf, router, references, template, gate |
+| `loop-frontend` | Luxury UI craft: motion choreography, easing and duration budgets, stagger, shared-element continuity, type scale, perceived performance — with the motion accessibility gates enforced |
 
 The **canonical location** is `.claude/skills/<name>/` — a single source of truth that works for all three install paths below. The plugin references these same files via the `skills` field in `.claude-plugin/plugin.json`, so nothing is duplicated.
 
@@ -74,7 +75,7 @@ Install the bundle into any project or user scope via the plugin system.
 # add this repo as a marketplace
 /plugin marketplace add santapong/TheLoopSkill
 
-# install the bundled plugin (all nineteen skills)
+# install the bundled plugin (all twenty skills)
 /plugin install theloopskill@theloopskill
 ```
 

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`loop-frontend`** — luxury UI craft: motion choreography, easing and duration budgets, stagger, shared-element continuity, type scale and optical sizing, restraint, and perceived-performance patterns. Enforces `prefers-reduced-motion` and the WCAG 2.2 flash limits as **gates rather than advice** — SC 2.3.1 is Level A seizure risk, so a flashing effect is a refusal, not a warning.
+
+  **It deliberately does not pin an animation library.** Research confirmed anime.js **v4.5.0, MIT, 2026-06-22** live from the npm registry, and it is the default *at the rung where a library is earned* — but the skill's body carries an **escalation ladder** (CSS transition → keyframes → View Transitions → scroll-driven → WAAPI → library) and climbs to the top rung only for one of five named reasons: orchestrated timelines with seeking, genuine interruptible springs, SVG morphing, scroll-scrubbed pinning, or gesture-driven motion. The full default import is 40.3 KB gzipped against a critical-path budget `loop-design` sets at ~130–170 KB, and most luxury motion needs no library at all.
+
+  Also records a licence correction worth having: **GSAP became free for commercial use in April 2025** after Webflow's acquisition of GreenSock — but it is **proprietary, not OSI-approved**, and bars use in competing no-code animation tools. Both "GSAP costs money" and "GSAP is open source" are now wrong.
+
 - **`loop-skill`** — the skill that authors skills. Drafts the discriminating description and registers the boundary, researches and grades the standards shelf, writes the thin router / on-demand references / ROUTES-carrying template, and proves conformance with the validation gate. Its scaffold template handles three-or-more skills at once, with the boundary check as an earned barrier because descriptions must be read side by side. Adding a skill is a **minor** bump; renaming one is major, because skill names are API from 1.0.0.
 - **`docs/c4/skill-anatomy.md`** — why a skill has the shape it has: the three loading regimes, the `description` field as API, the standards-shelf honesty convention, the sandbox contract, and the lifecycle of adding a skill. `CONTRIBUTING.md` covers the mechanics; this covers the reasoning.
 - Boundary-audit rows and overlap resolutions for `loop-skill` against `loop-harness` (permitted-to-do vs knows-how-to-do) and `loop-docs` (prose for a reader vs a directory that must pass the gate).
