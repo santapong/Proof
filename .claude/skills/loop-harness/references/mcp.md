@@ -69,3 +69,10 @@ claude mcp remove <name>
 ```
 
 Keep secrets out of the committed `.mcp.json` by using `${VAR}` expansion and providing the actual values via the environment (or `.claude/settings.local.json` `env`, which is gitignored).
+
+
+## Browser control — when a skill needs eyes
+
+`loop-frontend` specifies runtime checks it cannot perform by reading source (reduced-motion substitution, focus after a view transition, flash thresholds). Those normally run as **tests in the target project**, authored by `loop-test` — no MCP involved, and no dependency added to this plugin.
+
+Wire a **browser MCP server** only when you want Claude itself to drive a browser as a standing capability — exploratory checking, or reading a rendered page it cannot fetch statically. It is a real cost: a browser binary, a running server, and a broad tool surface. Prefer the project's own test runner for anything repeatable, and reach for this for the interactive loop where you are iterating on *feel* rather than gating CI.

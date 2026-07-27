@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [1.3.0] — 2026-07-27
+
+`loop-frontend` gets eyes. It wrote motion and never observed a rendered frame — the same defect class this plugin already shipped once, when `node --check` proved every workflow template *parsed* and four turned out silently mode-inert the moment anything actually ran them.
+
+### Added
+
+- **`loop-frontend/references/verifying-motion.md`** — the runtime check catalogue. Opens by sorting the skill's own rules into statically checkable and not: **six of seven need a browser** — whether the reduced-motion branch *substitutes* rather than deletes, whether focus lands after `startViewTransition()`, whether a pinned scene traps focus, flash thresholds, CLS across a scroll scene, and the sequence budget. Eight checks with runnable assertions, plus an explicit section on **what automation cannot check**: whether it feels expensive, whether the motion earned its place, whether the curve is right, and the fiftieth encounter. A green suite proves the motion is not broken or harmful; it does not prove it is good.
+- **`motion-audit.workflow.js` emits a `runtimeCheckSpec`** — per interaction, which checks apply — and now returns an explicit caveat that every verdict in it was read from *source*. Auditors are told to flag where their own verdict is a static guess rather than an observation.
+- **`loop-harness/references/mcp.md` gains a browser-control note** — when a browser MCP server is worth its cost (interactive checking, iterating on feel) versus when the project's own test runner is the right answer (anything repeatable).
+
+### Changed
+
+- `loop-frontend/SKILL.md` gains a step that specifies the runtime checks, and its report step now requires stating which checks are in CI and that a green suite does not mean the motion is good.
+
+### Not changed, deliberately
+
+- **The plugin still has zero npm dependencies.** No Playwright, no `package.json`, no lockfile — `validate.mjs` and `smoke.mjs` remain stdlib-only. The checks run against *your* project, in whatever stack it already has: `loop-frontend` specifies them, `loop-test` authors them. A skill library with no frontend of its own has no business carrying a browser binary.
+
 ## [1.2.1] — 2026-07-27
 
 Fills two gaps in `loop-frontend` that an audit found: idea sourcing had **zero** coverage across all eight files, and cinematic scroll had two lines — both merely triggers for "you will need a library", nothing on how to compose one.
@@ -172,7 +190,8 @@ Initial release: the 12-skill TheLoopSkill plugin, built and merged across PRs #
 - **`automating-improvements`** — a propose-only autonomous engineering loop that composes the other skills, plus the **credit-horizon** self-learning extension (per-kind trust ledger), an anti-patterns checklist, and a comprehension-rot digest.
 - **Plugin packaging** — `.claude-plugin/plugin.json` + `marketplace.json`, web enablement via `.claude/settings.json`, the MIT `LICENSE`, and `INSTALL.md` covering local, web, and marketplace install paths.
 
-[Unreleased]: https://github.com/santapong/TheLoopSkill/compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/santapong/TheLoopSkill/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/santapong/TheLoopSkill/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/santapong/TheLoopSkill/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/santapong/TheLoopSkill/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/santapong/TheLoopSkill/compare/v1.0.0...v1.1.0

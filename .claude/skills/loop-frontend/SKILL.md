@@ -100,9 +100,17 @@ Animate **`transform` and `opacity` only** — the two confirmed compositor-only
 
 `will-change` goes on shortly before the animation and comes off when it ends. Never leave it standing across many elements — every promoted layer costs GPU memory, and the spec's own warning is that misuse "can cause the page to slow down or even crash".
 
-### 9. Report
+### 9. Specify the runtime checks
 
-State the budget you set, the rung you stopped at and why, the reduced-motion branch for every animation, and any pin you could not confirm. If you declined a flashing effect, say so and name the criterion.
+Reading the source cannot confirm most of what this skill asserts. Six of the seven rules in `references/verifying-motion.md` need a browser: whether the reduced-motion branch **substitutes** rather than deletes, whether focus lands after a view transition, whether a pinned scene traps focus, whether anything breaches the flash thresholds, whether motion wrecks CLS, whether the sequence lands inside its budget.
+
+Emit the check list — **this skill specifies, `loop-test` authors** the files in whatever stack the project already runs. Put the three accessibility checks in CI; they have a named WCAG criterion behind them and no legitimate reason to fail.
+
+Adding no dependency to the plugin is deliberate: these run against the user's project, not against TheLoopSkill, which is stdlib-only by design.
+
+### 10. Report
+
+State the budget you set, the rung you stopped at and why, the reduced-motion branch for every animation, **which runtime checks you specified and which are in CI**, and any pin you could not confirm. Be explicit that a green suite proves the motion is not broken or harmful — it does not prove it is good, and nothing here checks whether it feels expensive. If you declined a flashing effect, say so and name the criterion.
 
 ## Orchestration
 
@@ -118,6 +126,7 @@ Inline for a single interaction. For a whole surface, `templates/motion-audit.wo
 |---|---|
 | `references/sourcing-ideas.md` | Turning "make it feel like that site" into a mechanism: where to look and each source's bias, the five deconstruction questions, the evaluation filters |
 | `references/scroll-cinema.md` | Scroll-driven narrative: trigger vs scrub, scene decomposition, the scroll budget, pinning vs scroll-jacking, the per-frame performance traps, and why reduced motion must collapse the cinema entirely |
+| `references/verifying-motion.md` | The runtime check catalogue — what only a browser can confirm, how to assert each one, and what automation still cannot tell you |
 | `references/standards.md` | The pinned authority shelf — and the honest note that only two entries in this whole domain are ratified |
 | `references/motion-toolkit.md` | The escalation ladder, the rung-6 routing table, pinned versions and licences |
 | `references/choreography.md` | Easing, duration budgets, stagger, shared-element continuity, the asymmetry rule |

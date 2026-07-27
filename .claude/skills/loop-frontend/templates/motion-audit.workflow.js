@@ -110,6 +110,11 @@ const AUDIT_SCHEMA = {
     rungJustified: { type: 'string', description: 'If rung 6, WHICH of the five reasons. If none applies, say so — that is a finding.' },
     compositorSafe: { type: 'boolean', description: 'true only if it animates transform/opacity alone. filter, box-shadow and layout properties are NOT compositor-only.' },
     reducedMotion: { type: 'string', enum: ['substitutes', 'removes', 'absent'] },
+    runtimeChecks: {
+      type: 'array',
+      description: 'Which checks from ../references/verifying-motion.md this interaction needs. Static reading cannot confirm most of them.',
+      items: { type: 'string', enum: ['reduced-motion-substitutes', 'no-layout-property-animated', 'focus-follows-view-transition', 'no-focus-trap-in-pin', 'layout-shift-under-scroll', 'flash-threshold', 'sequence-budget', 'visual-checkpoint'] },
+    },
     findings: {
       type: 'array',
       items: {
@@ -176,7 +181,10 @@ const audits = await parallel(items.map((it) => () => agent(
   'Absent is a blocker. For scroll-, pointer- or parallax-driven motion, the branch must disable it by default.\n' +
   '6. FLASH — anything flashing more than three times per second is a BLOCKER under WCAG 2.2 SC 2.3.1 Level A.\n' +
   '7. AUTO-START — if it auto-starts and runs over 5s alongside other content, or auto-updates at all, ' +
-  'it needs a pause/stop/hide control (SC 2.2.2 Level A).',
+  'it needs a pause/stop/hide control (SC 2.2.2 Level A).\n' +
+  '8. RUNTIME CHECKS — list which checks from ../references/verifying-motion.md this interaction needs. ' +
+  'You are reading SOURCE; most of the rules above cannot be confirmed that way, so say what a browser would ' +
+  'have to assert. Be honest where your own verdict above is a static guess rather than an observation.',
   optsFor({ taskType: 'analyze', phase: 'Audit', schema: AUDIT_SCHEMA }, 'audit:' + it.id)
 )))
 
@@ -209,4 +217,8 @@ return {
   reconcile,
   blockers,
   unaudited: items.length - got.length,
+  // The check spec hands off to loop-test, which authors the files in the project's own stack.
+  runtimeCheckSpec: got.map((a) => ({ id: a.id, checks: a.runtimeChecks || [] })).filter((c) => c.checks.length),
+  caveat: 'Every verdict above is read from SOURCE. Reduced-motion substitution, focus behaviour, flash thresholds, ' +
+          'CLS and sequence budgets are only confirmable in a browser — see ../references/verifying-motion.md.',
 }
