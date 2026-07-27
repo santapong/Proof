@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [1.2.1] — 2026-07-27
+
+Fills two gaps in `loop-frontend` that an audit found: idea sourcing had **zero** coverage across all eight files, and cinematic scroll had two lines — both merely triggers for "you will need a library", nothing on how to compose one.
+
 ### Added
 
 - **`loop-frontend/references/scroll-cinema.md`** — the cinematic scroll genre, which the skill previously mentioned only as a one-line trigger for reaching a library. Carries the distinction the whole genre turns on — **trigger** (scroll as a switch: cheap, native, reversible-never) versus **scrub** (scroll as the animation's playhead: expensive, reversible, usually needs a library) — plus scene decomposition, the scroll budget in viewport heights, the rule that **pinning is legitimate and scroll-jacking never is**, the per-frame performance traps (`will-change` churn across scenes, layout reads in a scroll handler), mobile/touch differences, and the requirement that `prefers-reduced-motion` **collapses the cinema to a document** rather than merely slowing it.
@@ -166,7 +172,8 @@ Initial release: the 12-skill TheLoopSkill plugin, built and merged across PRs #
 - **`automating-improvements`** — a propose-only autonomous engineering loop that composes the other skills, plus the **credit-horizon** self-learning extension (per-kind trust ledger), an anti-patterns checklist, and a comprehension-rot digest.
 - **Plugin packaging** — `.claude-plugin/plugin.json` + `marketplace.json`, web enablement via `.claude/settings.json`, the MIT `LICENSE`, and `INSTALL.md` covering local, web, and marketplace install paths.
 
-[Unreleased]: https://github.com/santapong/TheLoopSkill/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/santapong/TheLoopSkill/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/santapong/TheLoopSkill/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/santapong/TheLoopSkill/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/santapong/TheLoopSkill/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/santapong/TheLoopSkill/compare/v0.4.0...v1.0.0
