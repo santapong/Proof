@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [1.1.0] — 2026-07-27
+
+Two new skills and the architecture documentation for authoring more of them. Additive only — **no breaking changes**, and every 1.0.0 skill name, flag and reserved argument is unchanged.
+
 ### Added
 
 - **`loop-frontend`** — luxury UI craft: motion choreography, easing and duration budgets, stagger, shared-element continuity, type scale and optical sizing, restraint, and perceived-performance patterns. Enforces `prefers-reduced-motion` and the WCAG 2.2 flash limits as **gates rather than advice** — SC 2.3.1 is Level A seizure risk, so a flashing effect is a refusal, not a warning.
@@ -17,7 +23,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`loop-skill`** — the skill that authors skills. Drafts the discriminating description and registers the boundary, researches and grades the standards shelf, writes the thin router / on-demand references / ROUTES-carrying template, and proves conformance with the validation gate. Its scaffold template handles three-or-more skills at once, with the boundary check as an earned barrier because descriptions must be read side by side. Adding a skill is a **minor** bump; renaming one is major, because skill names are API from 1.0.0.
 - **`docs/c4/skill-anatomy.md`** — why a skill has the shape it has: the three loading regimes, the `description` field as API, the standards-shelf honesty convention, the sandbox contract, and the lifecycle of adding a skill. `CONTRIBUTING.md` covers the mechanics; this covers the reasoning.
-- Boundary-audit rows and overlap resolutions for `loop-skill` against `loop-harness` (permitted-to-do vs knows-how-to-do) and `loop-docs` (prose for a reader vs a directory that must pass the gate).
+- **`docs/c4/skills.md`** — the C4 view of the fleet: one *skill container view* (what is inside any single skill, and why the three parts are separate — they load differently), plus six component diagrams, one per role group, each closing with the checkable question that separates its members. Deliberately not twenty near-identical per-skill diagrams; what differs between skills is their relationships, not their internals.
+- **Boundary-audit rows and overlap resolutions** for both new skills: `loop-skill` against `loop-harness` (what Claude is *permitted* to do vs what it *knows how* to do) and `loop-docs` (prose for a reader vs a directory that must pass the gate); `loop-frontend` against `loop-design`, `loop-pattern`, `loop-scout` and `loop-algo`. The matrix is now 20 rows and 28 rated overlaps.
+
+### Changed
+
+- **Every architecture diagram is now native C4 notation.** The README System Context and composition diagram, `docs/c4/context.md`, and both the blank template and worked example in `loop-design/templates/c4-context.md` moved from generic `graph`/`flowchart` with hand-written `classDef`s to `C4Context` / `C4Component`. The `loop-design` template's rationale is inverted accordingly: native C4 is now the default and generic `graph` the last resort, because a generic graph will let you draw two systems in focus or an actor with no role, and the native form makes those mistakes hard to express. 15 of the repo's 16 diagrams are C4; the autonomy ladder stays a flowchart because a rung is not a component and "degrades one rung down" is a state transition, not a dependency.
+- **README restructured around the C4 model** — Level 1 Context inline, Level 2 summarised, Level 3 redrawn with all twenty skills and the operational cycle (`operate → incident → debug → test → ship → operate`) that justifies those five being separate skills.
+- Skill count updated fleet-wide: **18 → 20**.
+
+### Known gaps
+
+- No skill owns **"audit this existing app for WCAG conformance."** `loop-frontend` enforces the motion criteria at *authoring* time on code it is writing and stops there. Recorded rather than quietly annexed.
+- The `loop-frontend` ↔ `loop-design` boundary is rated **HIGH** and is the weakest of the four: page-loading performance is `loop-design`'s, per-animation frame cost is `loop-frontend`'s. Both files say so plainly rather than pretending it is crisp.
+- The **autonomy ladder** remains defined in one skill and cited from another, deferred from 1.0.0. Still no shared home.
 
 ## [1.0.0] — 2026-07-27
 
@@ -125,7 +144,8 @@ Initial release: the 12-skill TheLoopSkill plugin, built and merged across PRs #
 - **`automating-improvements`** — a propose-only autonomous engineering loop that composes the other skills, plus the **credit-horizon** self-learning extension (per-kind trust ledger), an anti-patterns checklist, and a comprehension-rot digest.
 - **Plugin packaging** — `.claude-plugin/plugin.json` + `marketplace.json`, web enablement via `.claude/settings.json`, the MIT `LICENSE`, and `INSTALL.md` covering local, web, and marketplace install paths.
 
-[Unreleased]: https://github.com/santapong/TheLoopSkill/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/santapong/TheLoopSkill/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/santapong/TheLoopSkill/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/santapong/TheLoopSkill/compare/v0.4.0...v1.0.0
 [0.4.0]: https://github.com/santapong/TheLoopSkill/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/santapong/TheLoopSkill/compare/v0.2.0...v0.3.0
