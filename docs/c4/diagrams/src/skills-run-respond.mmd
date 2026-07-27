@@ -1,21 +1,25 @@
-C4Component
-    title Component diagram — Run & respond
+---
+title: "Skill group — run & respond"
+---
+flowchart TB
+    subgraph g["<b>Run &amp; respond</b>"]
+        ops["<b>loop-operate</b><br/><i>«component» steady state</i><br/>AUTOMATED mitigation of KNOWN conditions:<br/>SLIs/SLOs, burn-rate alerts, runbooks, auto-rollback"]
+        inc["<b>loop-incident</b><br/><i>«component» exception state</i><br/>HUMAN-COORDINATED mitigation of NOVEL failures:<br/>triage, comms, mitigate first, postmortem"]
+    end
 
-    Container_Boundary(g, "Run & respond") {
-        Component(ops, "loop-operate", "Steady state", "AUTOMATED mitigation of KNOWN conditions: SLIs, SLOs, error budgets, burn-rate alerts, self-healing runbooks, SLO-gated auto-rollback")
-        Component(inc, "loop-incident", "Exception state", "HUMAN-COORDINATED mitigation of NOVEL failures: triage, comms, mitigate before diagnosing, reproduction, postmortem")
-    }
+    ship["<b>loop-ship</b><br/><i>«external» release</i>"]
+    dbg["<b>loop-debug</b><br/><i>«external» root cause</i>"]
+    auto["<b>loop-autopilot</b><br/><i>«external» autonomous loop</i>"]
+    harn["<b>loop-harness</b><br/><i>«external» Claude's harness</i>"]
 
-    Component_Ext(ship, "loop-ship", "Release", "")
-    Component_Ext(dbg, "loop-debug", "Root cause", "")
-    Component_Ext(auto, "loop-autopilot", "Autonomous loop", "")
-    Component_Ext(harn, "loop-harness", "Claude's harness", "")
+    ship <-- "ship hands over after bake;<br/>ops owns the rollback signal" --> ops
+    ops -- "no runbook, or impact<br/>beyond its scope" --> inc
+    inc -- "service restored —<br/>hand the defect over" --> dbg
+    ops -- "cites the autonomy ladder;<br/>never redefines it" --> auto
+    harn -- "may deploy a runbook's schedule —<br/>composition, one-directional" --> ops
 
-    Rel(ship, ops, "Rollout baked — hands the service over")
-    Rel(ops, ship, "Owns the SIGNAL that presses the rollback button ship authored")
-    Rel(ops, inc, "No runbook, or impact beyond its scope")
-    Rel(inc, dbg, "Service restored — hand the defect over")
-    Rel(ops, auto, "Cites the autonomy ladder; never redefines it")
-    Rel(harn, ops, "May deploy a runbook's schedule — composition, one-directional")
-
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+    classDef component fill:#85BBF0,stroke:#5D82A8,color:#000
+    classDef extc fill:#BFBFBF,stroke:#8A8A8A,color:#000
+    class ops,inc component
+    class ship,dbg,auto,harn extc
+    style g fill:none,stroke:#444444,stroke-dasharray:5 5

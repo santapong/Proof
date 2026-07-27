@@ -1,64 +1,72 @@
-C4Component
-    title Component diagram — how the twenty skills compose
+---
+title: "Component diagram — how the twenty skills compose"
+---
+flowchart TB
+    subgraph gov["<b>Governance</b> — read-only law"]
+        pol["<b>Engineering policies</b><br/><i>harness H1–H12 · loop L1–L8 · modes M1–M9</i>"]
+        fw["<b>Lifecycle frameworks</b><br/><i>AIDLC — phases and human gates</i>"]
+    end
 
-    Container_Boundary(gov, "Governance — read-only law") {
-        Component(pol, "Engineering policies", "harness H1–H12 · loop L1–L8 · modes M1–M9", "Orchestration shape, iteration, and per-node model routing")
-        Component(fw, "Lifecycle frameworks", "AIDLC", "Phases and the human gates between them")
-    }
+    eng["<b>loop-engine</b><br/><i>«component» orchestration engine</i><br/>pipeline · parallel · loop"]
+    orch["<b>loop-orchestrate</b><br/><i>«component» planning layer</i>"]
+    auto["<b>loop-autopilot</b><br/><i>«component» autonomous loop</i><br/>draft PRs, never merges"]
+    mk["<b>loop-skill</b><br/><i>«component» meta</i>"]
 
-    Component(eng, "loop-engine", "Orchestration engine", "pipeline · parallel · loop — authors and runs the workflow script")
-    Component(orch, "loop-orchestrate", "Planning layer", "Decomposes a project into a task DAG and routes a model to each node")
-    Component(auto, "loop-autopilot", "Autonomous loop", "Reads feedback, acts as draft PRs, never merges")
-    Component(mk, "loop-skill", "Meta", "Authors a conforming skill and proves it with the gate")
+    subgraph build["<b>Design · build · verify</b>"]
+        design["<b>loop-design</b><br/><i>architecture</i>"]
+        algo["<b>loop-algo</b><br/><i>mechanism</i>"]
+        pat["<b>loop-pattern</b><br/><i>refactoring</i>"]
+        fe["<b>loop-frontend</b><br/><i>UI craft</i>"]
+        rev["<b>loop-review</b><br/><i>security + quality</i>"]
+        test["<b>loop-test</b><br/><i>tests</i>"]
+        aud["<b>loop-audit</b><br/><i>change impact</i>"]
+        dbg["<b>loop-debug</b><br/><i>root cause</i>"]
+    end
 
-    Container_Boundary(build, "Design · build · verify") {
-        Component(design, "loop-design", "Architecture", "Components, APIs, NFR and SLO targets")
-        Component(algo, "loop-algo", "Mechanism", "Algorithms, complexity, invariants, benchmarks")
-        Component(pat, "loop-pattern", "Refactoring", "Patterns and idioms — emits a diff")
-    Component(fe, "loop-frontend", "UI craft", "Motion, type and perceived performance — enforces the motion a11y gates")
-        Component(rev, "loop-review", "Security + quality", "OWASP / CWE / ASVS — emits findings")
-        Component(test, "loop-test", "Tests", "Designs and writes them; verifies each fails for the right reason")
-        Component(aud, "loop-audit", "Change impact", "Blast radius, risk rating, coverage")
-        Component(dbg, "loop-debug", "Root cause", "Reproducible defects only")
-    }
+    subgraph run["<b>Integrate · ship · run</b>"]
+        intg["<b>loop-integrate</b><br/><i>platform integration</i>"]
+        ship["<b>loop-ship</b><br/><i>release</i>"]
+        ops["<b>loop-operate</b><br/><i>steady state</i>"]
+        inc["<b>loop-incident</b><br/><i>live failure</i>"]
+    end
 
-    Container_Boundary(run, "Integrate · ship · run") {
-        Component(intg, "loop-integrate", "Platform integration", "OAuth/OIDC, webhooks, idempotency, resilience")
-        Component(ship, "loop-ship", "Release", "Rollout strategy, migrations, tested rollback")
-        Component(ops, "loop-operate", "Steady state", "SLOs, alerts, runbooks, auto-rollback")
-        Component(inc, "loop-incident", "Live failure", "Triage, mitigate, reproduce, postmortem")
-    }
+    subgraph know["<b>Knowledge</b>"]
+        res["<b>loop-research</b><br/><i>cited research</i>"]
+        scout["<b>loop-scout</b><br/><i>prior art</i>"]
+        docs["<b>loop-docs</b><br/><i>documentation</i>"]
+        harn["<b>loop-harness</b><br/><i>Claude Code harness</i>"]
+    end
 
-    Container_Boundary(know, "Knowledge") {
-        Component(res, "loop-research", "Cited research", "Search, deep-read, refute-first verify")
-        Component(scout, "loop-scout", "Prior art", "Build-vs-buy before building")
-        Component(docs, "loop-docs", "Documentation", "Diátaxis; verified against code")
-        Component(harn, "loop-harness", "Claude Code harness", "Permissions, hooks, MCP, automation")
-    }
+    pol -. "governs" .-> eng
+    fw -. "phases + gates" .-> eng
+    orch -- "plans the DAG,<br/>routes models" --> eng
+    auto -- "runs the loop on" --> eng
+    mk -. "authors against" .-> pol
+    mk -- "emits templates for" --> eng
 
-    Rel(pol, eng, "Governs")
-    Rel(fw, eng, "Supplies phases and gates")
-    Rel(orch, eng, "Plans the DAG, routes models")
-    Rel(auto, eng, "Runs the loop on")
-    Rel(mk, pol, "Authors against")
-    Rel(mk, eng, "Emits templates for")
+    rev -- "remediation" --> pat
+    aud -- "security dimension" --> rev
+    aud -- "risk memo as go/no-go" --> ship
+    docs -- "consumes ADR / C4" --> design
+    scout -- "delegates search" --> res
+    scout -- "hands over a<br/>named provider" --> intg
+    intg -- "specifies contract tests" --> test
+    design -- "mechanism inside<br/>a component" --> algo
+    design -- "renderer + budget vs<br/>curve + duration" --> fe
+    fe -- "which library<br/>to adopt at all" --> scout
+    harn -- "unattended substrate" --> auto
 
-    Rel(rev, pat, "Remediation")
-    Rel(aud, rev, "Security dimension")
-    Rel(aud, ship, "Risk memo as go/no-go")
-    Rel(docs, design, "Consumes ADR / C4")
-    Rel(scout, res, "Delegates search")
-    Rel(scout, intg, "Hands over a named provider")
-    Rel(intg, test, "Specifies contract tests")
-    Rel(design, algo, "Mechanism inside a component")
-    Rel(design, fe, "Renderer and budget vs curve and duration")
-    Rel(fe, scout, "Which library to adopt at all")
-    Rel(harn, auto, "Unattended substrate")
+    ops -- "no runbook, or<br/>beyond its scope" --> inc
+    inc -- "service restored —<br/>now find the defect" --> dbg
+    dbg -- "lock it with<br/>a regression" --> test
+    test -- "ready to release" --> ship
+    ship -- "bake complete —<br/>the service is yours" --> ops
 
-    Rel(ops, inc, "No runbook, or beyond its scope")
-    Rel(inc, dbg, "Service restored — now find the defect")
-    Rel(dbg, test, "Lock it with a regression")
-    Rel(test, ship, "Ready to release")
-    Rel(ship, ops, "Bake complete — the service is yours")
-
-    UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="2")
+    classDef component fill:#85BBF0,stroke:#5D82A8,color:#000
+    classDef law fill:#BFBFBF,stroke:#8A8A8A,color:#000
+    class eng,orch,auto,mk,design,algo,pat,fe,rev,test,aud,dbg,intg,ship,ops,inc,res,scout,docs,harn component
+    class pol,fw law
+    style gov fill:none,stroke:#444444,stroke-dasharray:5 5
+    style build fill:none,stroke:#444444,stroke-dasharray:5 5
+    style run fill:none,stroke:#444444,stroke-dasharray:5 5
+    style know fill:none,stroke:#444444,stroke-dasharray:5 5

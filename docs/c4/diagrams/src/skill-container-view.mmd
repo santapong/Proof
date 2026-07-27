@@ -1,27 +1,34 @@
-C4Container
-    title Container diagram — inside any one skill
+---
+title: "Container diagram — inside any one skill"
+---
+flowchart TB
+    dev["<b>Developer</b><br/><i>«person»</i>"]
+    host["<b>Claude Code</b><br/><i>«external system»</i><br/>Selects the skill, loads context,<br/>runs the Workflow tool"]
 
-    Person(dev, "Developer", "Invokes the skill")
+    subgraph skill["<b>A skill</b> — .claude/skills/&lt;name&gt;/ &nbsp;[SYSTEM]"]
+        router["<b>SKILL.md</b><br/><i>«container» Markdown + frontmatter, 6–13 KB</i><br/>Thin router; description = the selection API;<br/>loaded on EVERY invocation"]
+        refs["<b>references/*.md</b><br/><i>«container» 5–7 files, ~100 KB</i><br/>Deep knowledge + pinned standards.md;<br/>loaded ON DEMAND"]
+        tmpl["<b>templates/*.workflow.js</b><br/><i>«container» plain JavaScript</i><br/>EXECUTED by the Workflow tool,<br/>never read into context"]
+    end
 
-    System_Boundary(skill, "A skill — .claude/skills/<name>/") {
-        Container(router, "SKILL.md", "Markdown + YAML frontmatter, 6–13 KB", "Thin router. Its description is the sole input to skill selection; its body is a numbered flow that points at references rather than inlining them. Loaded into agent context on EVERY invocation")
-        Container(refs, "references/*.md", "Markdown, 5–7 files, ~100 KB", "The deep knowledge, including a version-pinned standards.md. Loaded ON DEMAND — costs nothing until the router asks")
-        Container(tmpl, "templates/*.workflow.js", "Plain JavaScript", "A runnable multi-agent script. EXECUTED by the Workflow tool, never read into agent context")
-    }
+    law["<b>Governance</b><br/><i>«external system»</i><br/>harness H1–H12 · loop L1–L8 · modes M1–M9"]
+    gate["<b>scripts/validate.mjs</b><br/><i>«external system» CI</i><br/>Fails the build on a contract breach"]
+    fleet["<b>Claude Model Fleet</b><br/><i>«external system»</i><br/>The agents the template spawns"]
 
-    System_Ext(host, "Claude Code", "Selects the skill, loads context, runs the Workflow tool")
-    System_Ext(law, "Governance", "harness H1–H12 · loop L1–L8 · modes M1–M9")
-    System_Ext(gate, "scripts/validate.mjs", "CI — fails the build on a contract breach")
-    System_Ext(fleet, "Claude Model Fleet", "The agents the template spawns")
+    dev -- "types /loop-&lt;name&gt;" --> host
+    host -- "matches on description,<br/>loads body" --> router
+    router -- "reads only what<br/>this task needs" --> refs
+    router -- "authors from" --> tmpl
+    law -. "binds (read-only)" .-> router
+    host -- "executes in a sandbox:<br/>no FS, clock or modules" --> tmpl
+    tmpl -- "spawns agents at the<br/>tier ROUTES selects" --> fleet
+    gate -- "validates frontmatter,<br/>name, paths" --> router
+    gate -- "validates H10 + ROUTES<br/>byte-identity" --> tmpl
 
-    Rel(dev, host, "Types /loop-<name>")
-    Rel(host, router, "Matches on description, loads body", "Markdown")
-    Rel(router, refs, "Reads only what this task needs", "Markdown")
-    Rel(router, tmpl, "Authors from", "JavaScript")
-    Rel(law, router, "Binds", "read-only")
-    Rel(host, tmpl, "Executes in a sandbox with no FS, clock or modules", "Workflow tool")
-    Rel(tmpl, fleet, "Spawns agents at the tier ROUTES selects", "agent() opts")
-    Rel(gate, router, "Validates frontmatter, name, paths", "CI")
-    Rel(gate, tmpl, "Validates H10 rules and ROUTES byte-identity", "CI")
-
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+    classDef person fill:#08427B,stroke:#052E56,color:#fff
+    classDef container fill:#438DD5,stroke:#2E6295,color:#fff
+    classDef ext fill:#999999,stroke:#6B6B6B,color:#fff
+    class dev person
+    class router,refs,tmpl container
+    class host,law,gate,fleet ext
+    style skill fill:none,stroke:#444444,stroke-dasharray:5 5

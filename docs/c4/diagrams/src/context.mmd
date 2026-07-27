@@ -1,24 +1,29 @@
-C4Context
-    title System Context — TheLoopSkill
+---
+title: "System Context — TheLoopSkill"
+---
+flowchart TB
+    dev["<b>Developer</b><br/><i>«person»</i><br/>Invokes a skill; answers gate questions"]
+    maint["<b>Plugin Maintainer</b><br/><i>«person»</i><br/>Adds skills and standards shelves;<br/>approves at lifecycle gates"]
 
-    Person(dev, "Developer", "Invokes a skill to review, design, debug, ship, or operate software")
-    Person(maint, "Plugin Maintainer", "Adds skills and standards shelves; approves at the lifecycle gates")
+    tls["<b>TheLoopSkill</b><br/><i>«system»</i><br/>Turns an engineering task into a<br/>governed multi-agent workflow"]
 
-    System(tls, "TheLoopSkill", "Turns an engineering task into a governed multi-agent workflow, with the model matched to each job and a human at every phase gate")
+    cc["<b>Claude Code</b><br/><i>«external system»</i><br/>Host runtime: skills, context,<br/>Workflow tool, permissions"]
+    fleet["<b>Claude Model Fleet</b><br/><i>«external system»</i><br/>Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5"]
+    repo["<b>Target Repository</b><br/><i>«external system»</i><br/>The developer's codebase and git history"]
+    forge["<b>GitHub</b><br/><i>«external system»</i><br/>Issues, PRs and CI signals"]
+    web["<b>Web &amp; Standards Sources</b><br/><i>«external system»</i><br/>Specs and RFCs behind version-pinned citations"]
 
-    System_Ext(cc, "Claude Code", "Host runtime: discovers skills, loads context, executes the Workflow tool, enforces permissions")
-    System_Ext(fleet, "Claude Model Fleet", "Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5 — the agents a workflow spawns")
-    System_Ext(repo, "Target Repository", "The developer's own codebase and git history — read, and mutated only by implement nodes")
-    System_Ext(forge, "GitHub", "Issues, PRs and CI signals consumed by the autonomous loop; draft PRs opened back")
-    System_Ext(web, "Web & Standards Sources", "Specs, RFCs and publisher catalogues that version-pinned citations are confirmed against")
+    dev -- "invokes a skill,<br/>answers gate questions" --> tls
+    maint -- "authors skills and<br/>standards shelves" --> tls
+    cc <-- "loads the plugin; spawns<br/>agents on its behalf" --> tls
+    tls -- "routes each node<br/>to a model tier" --> fleet
+    tls -- "reads code; implement<br/>nodes write patches" --> repo
+    tls -- "reads feedback; draft PRs,<br/>never merges" --> forge
+    tls -- "confirms every version pin<br/>before citing it" --> web
 
-    Rel(dev, tls, "Invokes a skill, answers gate questions")
-    Rel(maint, tls, "Authors skills and standards shelves")
-    Rel(tls, cc, "Is discovered and loaded as a plugin", "plugin.json")
-    Rel(cc, tls, "Spawns agents and runs workflow scripts on its behalf", "Workflow tool")
-    Rel(tls, fleet, "Routes each node to a model tier", "ROUTES → agent() opts")
-    Rel(tls, repo, "Reads code; implement nodes write patches", "tool calls")
-    Rel(tls, forge, "Reads feedback; opens draft PRs, never merges", "REST")
-    Rel(tls, web, "Confirms every version pin before citing it", "HTTPS")
-
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+    classDef person fill:#08427B,stroke:#052E56,color:#fff
+    classDef system fill:#1168BD,stroke:#0B4884,color:#fff
+    classDef ext fill:#999999,stroke:#6B6B6B,color:#fff
+    class dev,maint person
+    class tls system
+    class cc,fleet,repo,forge,web ext
