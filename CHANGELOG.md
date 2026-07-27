@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_Nothing yet._
+### Added
+
+- **`loop-frontend/references/scroll-cinema.md`** — the cinematic scroll genre, which the skill previously mentioned only as a one-line trigger for reaching a library. Carries the distinction the whole genre turns on — **trigger** (scroll as a switch: cheap, native, reversible-never) versus **scrub** (scroll as the animation's playhead: expensive, reversible, usually needs a library) — plus scene decomposition, the scroll budget in viewport heights, the rule that **pinning is legitimate and scroll-jacking never is**, the per-frame performance traps (`will-change` churn across scenes, layout reads in a scroll handler), mobile/touch differences, and the requirement that `prefers-reduced-motion` **collapses the cinema to a document** rather than merely slowing it.
+- **`loop-frontend/references/sourcing-ideas.md`** — turning "make it feel like *that* site" into a mechanism you can specify. Where to look and what each source is biased toward (awards galleries reward novelty over usability; a library's showcase is an argument for that library), the five deconstruction questions, the three evaluation filters, and the delegation contract: `loop-research` finds references, `loop-scout` chooses dependencies, this skill deconstructs and evaluates. Includes the rule that **a reference failing this skill's own accessibility gates is a warning, not a reference** — take the mechanism, leave the negligence.
+- `loop-frontend/SKILL.md` gains a reference-sourcing step ahead of budgeting, and routes scroll-driven pages to `scroll-cinema.md` before the rung choice.
 
 ## [1.2.0] — 2026-07-27
 

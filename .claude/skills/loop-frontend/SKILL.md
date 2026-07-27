@@ -37,7 +37,15 @@ These are in the body, not a reference, because a reader must not be able to mis
 - **surface** — the page, component or interaction to work on. If empty, ask which surface and what it should feel like.
 - **`--mode`** — advertised here, parsed by `loop-engine`; pass the raw argument string through.
 
-### 2. Establish the budget before choosing anything
+### 2. Source and deconstruct the references
+
+Most of this work starts as "make it feel like *that* site". Per `references/sourcing-ideas.md`, convert that into a **mechanism you can specify** rather than an appearance you copy — five questions per reference: what actually moves (name the properties), what triggers it, how long and on what curve, what rung it needs, and what it is *for*.
+
+Hand the actual searching to `loop-research`, and a library-adoption decision to `loop-scout`. Come back here with references; the deconstruction and the evaluation happen in this skill.
+
+**Check every reference against this skill's own gates before adopting it.** Most gallery work has no reduced-motion branch at all — emulate it in DevTools and look. A reference that fails is not a reference, it is a warning: take the mechanism, leave the negligence.
+
+### 3. Establish the budget before choosing anything
 
 Motion without a stated budget is decoration. Per `references/choreography.md`:
 
@@ -47,7 +55,7 @@ Motion without a stated budget is decoration. Per `references/choreography.md`:
 
 Write the numbers down before picking a curve. Both figures are research-backed but **not standards** — cite them as such, and never as equivalent to a W3C criterion.
 
-### 3. Climb the escalation ladder — stop at the first rung that works
+### 4. Climb the escalation ladder — stop at the first rung that works
 
 This is the skill's central discipline and the answer to "should I use anime.js?". Per `references/motion-toolkit.md`:
 
@@ -68,29 +76,31 @@ This is the skill's central discipline and the answer to "should I use anime.js?
 4. A scroll-scrubbed scene with pinning.
 5. Gesture- or drag-driven motion.
 
+**If the page is a scroll-driven narrative**, read `references/scroll-cinema.md` before choosing a rung. It carries the distinction the rest of this genre turns on — **trigger** (scroll as a switch, cheap, native, rung 4) versus **scrub** (scroll as the animation's playhead, expensive, usually rung 6) — plus scene decomposition, the scroll budget, and the rule that pinning is legitimate while scroll-jacking never is.
+
 Absent one of the five, **recommending a library is over-engineering**, and `loop-scout` exists to prevent exactly that. Rungs 1–5 cost zero bytes on a critical path where anime.js's full default import measures **40.3 KB gzipped** — budget that belongs to `loop-design`.
 
 At rung 6, route by stack, not preference — the pinned table with versions and licences is in `references/motion-toolkit.md`. In short: **anime.js** (MIT) is the default for framework-agnostic work; **GSAP** for large orchestrated timelines and SVG morphing *if the team accepts a free-but-proprietary licence*; **Motion** (MIT) when the app is already React-shaped and wants springs.
 
-### 4. Choose the curve, then the choreography
+### 5. Choose the curve, then the choreography
 
 Per `references/choreography.md`. Linear reads mechanical; the expensive feel comes from **asymmetry** — decelerate on entry, accelerate on exit — and from motion that respects where an element came from. Shared-element continuity beats a cross-fade wherever the same object persists across states.
 
-### 5. Set type and space
+### 6. Set type and space
 
 Per `references/typography-and-restraint.md`: a modular scale rather than ad-hoc sizes, optical sizing where a variable font offers it, and restraint as an active choice. Most "cheap" interfaces are over-decorated, not under-decorated.
 
-### 6. Make the wait feel shorter
+### 7. Make the wait feel shorter
 
 Per `references/perceived-performance.md`: skeletons that match final layout (a spinner tells the user nothing), optimistic UI where the failure path is cheap, and never animating a layout property to fake progress.
 
-### 7. Verify against the frame budget
+### 8. Verify against the frame budget
 
 Animate **`transform` and `opacity` only** — the two confirmed compositor-only properties. `filter` is not one, nor is `box-shadow` or `background-position`. Anything that looks like a layout change (list reorder, card expand, hero move) goes through **FLIP** or View Transitions, never a direct animation of `width`, `height`, `top`, `left`, `margin` or `flex-basis`. This is simultaneously the frame-cost rule and the CLS-safety rule.
 
 `will-change` goes on shortly before the animation and comes off when it ends. Never leave it standing across many elements — every promoted layer costs GPU memory, and the spec's own warning is that misuse "can cause the page to slow down or even crash".
 
-### 8. Report
+### 9. Report
 
 State the budget you set, the rung you stopped at and why, the reduced-motion branch for every animation, and any pin you could not confirm. If you declined a flashing effect, say so and name the criterion.
 
@@ -106,6 +116,8 @@ Inline for a single interaction. For a whole surface, `templates/motion-audit.wo
 
 | File | What it holds |
 |---|---|
+| `references/sourcing-ideas.md` | Turning "make it feel like that site" into a mechanism: where to look and each source's bias, the five deconstruction questions, the evaluation filters |
+| `references/scroll-cinema.md` | Scroll-driven narrative: trigger vs scrub, scene decomposition, the scroll budget, pinning vs scroll-jacking, the per-frame performance traps, and why reduced motion must collapse the cinema entirely |
 | `references/standards.md` | The pinned authority shelf — and the honest note that only two entries in this whole domain are ratified |
 | `references/motion-toolkit.md` | The escalation ladder, the rung-6 routing table, pinned versions and licences |
 | `references/choreography.md` | Easing, duration budgets, stagger, shared-element continuity, the asymmetry rule |
