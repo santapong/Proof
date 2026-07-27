@@ -96,6 +96,9 @@ claude plugin validate . --strict
 
 # Hook scripts (if you touched them) parse and behave
 bash -n .claude/skills/loop-harness/templates/hooks/*.sh
+
+# Templates actually RUN, and route as intended in both modes (should print 0 failed)
+node scripts/smoke.mjs
 ```
 
 To parse a single template by hand without the script — note the temp file. `node --check` stats the path it is given rather than reading the stream, so piping into `node --check /dev/stdin` fails with `ENOENT … /proc/<pid>/fd/pipe:[…]` on every input, including valid ones:

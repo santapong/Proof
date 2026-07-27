@@ -28,6 +28,62 @@ export const meta = {
 }
 
 const input = typeof args === 'string' ? JSON.parse(args) : args
+
+// Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
+// Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
+// access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
+const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
+const ROUTES = {
+  optimize: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: 'high' },
+    analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
+    synthesize: { model: null,               effort: 'high' },
+    verify:     { model: null,               effort: 'high' },
+    judge:      { model: null,               effort: 'high' },
+    critic:     { model: null,               effort: 'high' },
+    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+  },
+  full: {
+    scout:      { model: 'claude-opus-5', effort: 'high' },
+    doc:        { model: 'claude-opus-5', effort: 'high' },
+    implement:  { model: 'claude-opus-5', effort: 'high' },
+    analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
+    synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
+    verify:     { model: 'claude-opus-5', effort: 'xhigh' },
+    judge:      { model: 'claude-opus-5', effort: 'xhigh' },
+    critic:     { model: 'claude-opus-5', effort: 'xhigh' },
+    gating:     { model: 'claude-opus-5', effort: 'max' },
+    planner:    { model: 'claude-opus-5', effort: 'max' },
+  },
+}
+const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
+const WIDTH = (kind) => (MODE === 'full' ? (kind === 'gating' ? 5 : 3) : (kind === 'gating' ? 3 : 1))
+function optsFor(node, label) {
+  const r = routeFor(node.taskType)
+  const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
+  if (r.model) opts.model = r.model     // omit → inherit session model (H8)
+  if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  if (PLANNER && node.taskType === 'planner') opts.model = PLANNER // §M7 override — planner nodes only
+  return opts
+}
+
+// Route an EXISTING opts literal through ROUTES without restructuring it. Same routing decision as
+// optsFor(); it just takes the opts object this template already builds. Permitted under §M8 because
+// it reads ROUTES and adds no routing of its own — every model/effort still comes from the block above.
+const withRoute = (kind, opts) => {
+  const r = routeFor(kind)
+  const o = Object.assign({}, opts)
+  if (r.model) o.model = r.model                                  // omit → inherit session model (H8)
+  if (r.effort) o.effort = r.effort
+  if (PLANNER && kind === 'planner') o.model = PLANNER            // §M7 override — planner nodes only
+  return o
+}
+// §M8 omission note: WIDTH and DRY_LIMIT omitted — no verify stage and no loop.
+
 const REPO = (input && input.repo) || { owner: 'OWNER', name: 'REPO' } // EDIT ME
 const LEDGER_ISSUE = (input && input.ledgerIssueNumber) || null // EDIT ME: the pinned ledger issue #
 const NOW_MS = (input && input.nowMs) || 0 // current time (epoch ms), supplied by the Routine
@@ -74,7 +130,7 @@ if (!LEDGER_ISSUE) {
     `Repo: ${REPO.owner}/${REPO.name}. Using the GitHub tools, list ALL pull requests labeled "automated" ` +
       `(any state). For each return: number, merged (bool), state, updatedAt, labels, body, and ` +
       `commitsAfterFirstReview (commits pushed after the first review-requesting comment, 0 if none/unclear).`,
-    {
+    withRoute('scout', {
       label: 'fetch-automated-prs',
       phase: 'Fetch',
       schema: {
@@ -99,13 +155,13 @@ if (!LEDGER_ISSUE) {
         },
         required: ['items'],
       },
-    },
+    }),
   )
 
   // 2. Read current ledger from the pinned issue body (heal if missing/corrupt).
   const current = await agent(
     `Repo: ${REPO.owner}/${REPO.name}. Read issue #${LEDGER_ISSUE} and return its body verbatim as "json".`,
-    { label: 'read-ledger', phase: 'Update', schema: { type: 'object', properties: { json: { type: 'string' } }, required: ['json'] } },
+    withRoute('scout', { label: 'read-ledger', phase: 'Update', schema: { type: 'object', properties: { json: { type: 'string' } }, required: ['json'] } }),
   )
   let ledger
   try { ledger = JSON.parse((current && current.json) || '') } catch { ledger = null }
@@ -156,7 +212,7 @@ if (!LEDGER_ISSUE) {
   await agent(
     `Repo: ${REPO.owner}/${REPO.name}. Replace issue #${LEDGER_ISSUE}'s body with exactly this JSON, ` +
       `no commentary before or after it:\n${JSON.stringify(ledger, null, 2)}`,
-    { label: 'write-ledger', phase: 'Update', schema: { type: 'object', properties: { updated: { type: 'boolean' } }, required: ['updated'] } },
+    withRoute('doc', { label: 'write-ledger', phase: 'Update', schema: { type: 'object', properties: { updated: { type: 'boolean' } }, required: ['updated'] } }),
   )
 }
 

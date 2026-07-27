@@ -23,3 +23,11 @@ jobs:
       # H10 determinism, and cross-reference paths.
       - name: Validate plugin
         run: node scripts/validate.mjs
+
+      # Static validation proves a template PARSES. This executes all 25 against stubbed
+      # Workflow globals and asserts on the agent() options they actually ask for — that
+      # --mode full really pins the fleet, that optimize really routes below the ceiling,
+      # and that --planner fable reaches a planner node. Four templates shipped mode-inert
+      # before this existed.
+      - name: Smoke-test workflow templates
+        run: node scripts/smoke.mjs

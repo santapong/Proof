@@ -61,6 +61,63 @@ export const meta = {
 }
 
 const input = typeof args === 'string' ? JSON.parse(args) : args
+
+// Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
+// Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
+// access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
+const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
+const ROUTES = {
+  optimize: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: 'high' },
+    analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
+    synthesize: { model: null,               effort: 'high' },
+    verify:     { model: null,               effort: 'high' },
+    judge:      { model: null,               effort: 'high' },
+    critic:     { model: null,               effort: 'high' },
+    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+  },
+  full: {
+    scout:      { model: 'claude-opus-5', effort: 'high' },
+    doc:        { model: 'claude-opus-5', effort: 'high' },
+    implement:  { model: 'claude-opus-5', effort: 'high' },
+    analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
+    synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
+    verify:     { model: 'claude-opus-5', effort: 'xhigh' },
+    judge:      { model: 'claude-opus-5', effort: 'xhigh' },
+    critic:     { model: 'claude-opus-5', effort: 'xhigh' },
+    gating:     { model: 'claude-opus-5', effort: 'max' },
+    planner:    { model: 'claude-opus-5', effort: 'max' },
+  },
+}
+const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
+const WIDTH = (kind) => (MODE === 'full' ? (kind === 'gating' ? 5 : 3) : (kind === 'gating' ? 3 : 1))
+function optsFor(node, label) {
+  const r = routeFor(node.taskType)
+  const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
+  if (r.model) opts.model = r.model     // omit → inherit session model (H8)
+  if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  if (PLANNER && node.taskType === 'planner') opts.model = PLANNER // §M7 override — planner nodes only
+  return opts
+}
+
+// Route an EXISTING opts literal through ROUTES without restructuring it. Same routing decision as
+// optsFor(); it just takes the opts object this template already builds. Permitted under §M8 because
+// it reads ROUTES and adds no routing of its own — every model/effort still comes from the block above.
+const withRoute = (kind, opts) => {
+  const r = routeFor(kind)
+  const o = Object.assign({}, opts)
+  if (r.model) o.model = r.model                                  // omit → inherit session model (H8)
+  if (r.effort) o.effort = r.effort
+  if (PLANNER && kind === 'planner') o.model = PLANNER            // §M7 override — planner nodes only
+  return o
+}
+// §M8 omission note: WIDTH and DRY_LIMIT omitted — promote/rollback is a single gating DECISION
+// node (§M5 carve-out: width 1 in both modes), and there is no loop.
+
 const REPO = (input && input.repo) || { owner: 'OWNER', name: 'REPO' } // EDIT ME
 const C = (input && input.candidate) || null
 const AUTONOMY_ISSUE = (input && input.autonomyIssueNumber) || null
@@ -96,7 +153,7 @@ if (!AUTONOMY_ISSUE) return propose('no 🔒 Autonomy State issue wired — SCAL
 // 1a. Autonomy state: is SCALE on, for THIS kind, and not currently tripped?
 const stateRead = await agent(
   `Repo: ${REPO.owner}/${REPO.name}. Read issue #${AUTONOMY_ISSUE} and return its body verbatim as "json".`,
-  { label: 'read-autonomy', phase: 'Gate', schema: { type: 'object', properties: { json: { type: 'string' } }, required: ['json'] } },
+  withRoute('scout', { label: 'read-autonomy', phase: 'Gate', schema: { type: 'object', properties: { json: { type: 'string' } }, required: ['json'] } }),
 )
 let state
 try { state = JSON.parse((stateRead && stateRead.json) || '') } catch { state = null }
@@ -113,7 +170,7 @@ if (C.risk === 'high') return propose('risk memo rated high')
 if (BASELINE_ISSUE) {
   const b = await agent(
     `Repo: ${REPO.owner}/${REPO.name}. Read issue #${BASELINE_ISSUE} (held-out baseline) and return its body verbatim as "json".`,
-    { label: 'read-heldout', phase: 'Gate', schema: { type: 'object', properties: { json: { type: 'string' } }, required: ['json'] } },
+    withRoute('scout', { label: 'read-heldout', phase: 'Gate', schema: { type: 'object', properties: { json: { type: 'string' } }, required: ['json'] } }),
   )
   let hb; try { hb = JSON.parse((b && b.json) || '') } catch { hb = null }
   const lastRun = hb && hb.history && hb.history.length ? hb.history[hb.history.length - 1] : null
@@ -124,7 +181,7 @@ if (BASELINE_ISSUE) {
 if (LEDGER_ISSUE) {
   const l = await agent(
     `Repo: ${REPO.owner}/${REPO.name}. Read issue #${LEDGER_ISSUE} (credit ledger) and return its body verbatim as "json".`,
-    { label: 'read-ledger', phase: 'Gate', schema: { type: 'object', properties: { json: { type: 'string' } }, required: ['json'] } },
+    withRoute('scout', { label: 'read-ledger', phase: 'Gate', schema: { type: 'object', properties: { json: { type: 'string' } }, required: ['json'] } }),
   )
   let led; try { led = JSON.parse((l && l.json) || '') } catch { led = null }
   const tw = led && led.kinds && led.kinds[C.kind] ? led.kinds[C.kind].trustWeight : 0
@@ -136,7 +193,7 @@ if (LEDGER_ISSUE) {
 // at what slice; this template only requires that one is applied and that it is not 100%.
 const merged = await agent(
   `Repo: ${REPO.owner}/${REPO.name}. Merge PR #${C.prNumber} (branch ${C.branch}) into main, but SHIP IT GUARDED, not to everyone, using the rollout mechanism loop-ship selected (see loop-ship/references/rollout-strategies.md): ${BAKE_MECHANISM}. Record the merge commit SHA. Do NOT roll out to 100%. Report the merge SHA and the guard you applied.`,
-  { label: `merge:${C.id}`, phase: 'Merge', schema: { type: 'object', properties: { mergeSha: { type: 'string' }, guard: { type: 'string' }, ok: { type: 'boolean' } }, required: ['ok'] } },
+  withRoute('implement', { label: `merge:${C.id}`, phase: 'Merge', schema: { type: 'object', properties: { mergeSha: { type: 'string' }, guard: { type: 'string' }, ok: { type: 'boolean' } }, required: ['ok'] } }),
 )
 if (!merged || !merged.ok || !merged.mergeSha) return propose('merge did not complete cleanly — nothing to promote')
 
@@ -146,7 +203,7 @@ if (!merged || !merged.ok || !merged.mergeSha) return propose('merge did not com
 // windows, and does not second-guess a breach — slo-model.md and alerting.md own all three.
 const health = await agent(
   `Repo: ${REPO.owner}/${REPO.name}. For merge ${merged.mergeSha}, evaluate health over the bake window against the SLO gate as loop-operate defines it (see loop-operate/references/slo-model.md for the SLI/objective/error-budget model and alerting.md for multi-window multi-burn-rate evaluation): ${HEALTH_SPEC}. Return healthy=true ONLY if every signal is within bounds; otherwise healthy=false with the breached signal. An alert that went quiet while the SLI is unchanged is NOT healthy.`,
-  { label: `bake:${C.id}`, phase: 'Bake', schema: { type: 'object', properties: { healthy: { type: 'boolean' }, breach: { type: 'string' } }, required: ['healthy'] } },
+  withRoute('verify', { label: `bake:${C.id}`, phase: 'Bake', schema: { type: 'object', properties: { healthy: { type: 'boolean' }, breach: { type: 'string' } }, required: ['healthy'] } }),
 )
 
 // --- PHASE 4: DECIDE (promote or autonomous rollback) ----------------------------
@@ -155,7 +212,7 @@ let action, detail
 if (health && health.healthy) {
   await agent(
     `Repo: ${REPO.owner}/${REPO.name}. Bake passed for ${merged.mergeSha}. Promote to full rollout (widen the flag / complete the staged rollout). Confirm done.`,
-    { label: `promote:${C.id}`, phase: 'Decide', schema: { type: 'object', properties: { done: { type: 'boolean' } }, required: ['done'] } },
+    withRoute('gating', { label: `promote:${C.id}`, phase: 'Decide', schema: { type: 'object', properties: { done: { type: 'boolean' } }, required: ['done'] } }),
   )
   action = 'promoted'; detail = merged.mergeSha
   rollbacks.push(0)
@@ -164,7 +221,7 @@ if (health && health.healthy) {
   // The path itself is loop-ship's tested rollback (rollback-playbook.md), executed here.
   await agent(
     `Repo: ${REPO.owner}/${REPO.name}. Bake FAILED for ${merged.mergeSha} (breach: ${(health && health.breach) || 'unknown'}). Roll back now using the tested rollback path loop-ship defined (see loop-ship/references/rollback-playbook.md): ${ROLLBACK_SPEC}. Then open a loud issue titled "🚨 Auto-rollback ${merged.mergeSha}" describing the breach. If the SLI does NOT recover after the rollback, this is no longer a deploy problem — hand it to loop-operate (health-response), which escalates to loop-incident when no runbook restores it. Confirm the revert landed.`,
-    { label: `rollback:${C.id}`, phase: 'Decide', schema: { type: 'object', properties: { reverted: { type: 'boolean' } }, required: ['reverted'] } },
+    withRoute('implement', { label: `rollback:${C.id}`, phase: 'Decide', schema: { type: 'object', properties: { reverted: { type: 'boolean' } }, required: ['reverted'] } }),
   )
   action = 'rolled-back'; detail = `${merged.mergeSha}: ${(health && health.breach) || 'breach'}`
   rollbacks.push(1)
@@ -186,7 +243,7 @@ const nextState = {
 if (trip) nextState.trippedAt = NOW_ISO
 await agent(
   `Repo: ${REPO.owner}/${REPO.name}. Replace issue #${AUTONOMY_ISSUE}'s body with exactly this JSON, no commentary:\n${JSON.stringify(nextState, null, 2)}`,
-  { label: 'write-autonomy', phase: 'Decide', schema: { type: 'object', properties: { updated: { type: 'boolean' } }, required: ['updated'] } },
+  withRoute('doc', { label: 'write-autonomy', phase: 'Decide', schema: { type: 'object', properties: { updated: { type: 'boolean' } }, required: ['updated'] } }),
 )
 
 log(`SCALE ${action} ${C.id} (${C.kind}); rollbackRate=${rate.toFixed(2)}${trip ? ' — TRIPPED to propose-only' : ''}`)
