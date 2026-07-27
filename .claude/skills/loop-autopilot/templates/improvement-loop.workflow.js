@@ -72,7 +72,7 @@ const ROUTES = {
   },
 }
 const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
-const WIDTH = (kind) => (MODE === 'full' ? (kind === 'gating' ? 5 : 3) : 1)
+const WIDTH = (kind) => (MODE === 'full' ? (kind === 'gating' ? 5 : 3) : (kind === 'gating' ? 3 : 1))
 const DRY_LIMIT = MODE === 'full' ? 3 : 2
 function optsFor(node, label) {
   const r = routeFor(node.taskType)

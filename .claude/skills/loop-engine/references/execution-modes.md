@@ -11,7 +11,7 @@ There are two modes — **`optimize`**, the default, and **`full`** — plus one
 | Node routing (§M3) | Per node kind: Haiku 4.5 mechanical, Sonnet 5 implement, inherit for judgment, pinned Opus 5 on gating and planner | Every node kind pinned to `claude-opus-5` |
 | Override modifier A — wide fan-out pushes DOWN (§M4) | Active | **Disabled**, and the suppression is logged |
 | Override modifier B — error cost pushes UP (§M4) | Active | Active, but already at ceiling on model |
-| Verifier width (§M5) | 1 verifier; 3 perspective-diverse when the ask is thorough/audit/comprehensive | Always diverse-lens: **3** for a standard node, **5** for a correctness-critical/gating verify. Two node shapes stay at 1 in both modes — a gating *decision* and a deterministic *measurement* — see §M5 |
+| Verifier width (§M5) | 1 verifier on an ordinary ask; **3** when the ask is thorough/audit/comprehensive, and **3** on a correctness-critical/gating verify regardless of ask (modifier B) | Always diverse-lens: **3** for a standard node, **5** for a correctness-critical/gating verify. Two node shapes stay at 1 in both modes — a gating *decision* and a deterministic *measurement* — see §M5 |
 | Loop-until-dry threshold K (§M5) | 2 | 3 |
 | Pinning discipline (§M3) | Omit and inherit the session model, pin only where the table says pin | Pin `claude-opus-5` on every consumed `agent()` call |
 | Pre-flight (§M6) | None | Deterministic estimate + exactly one confirmation, before anything spawns |
@@ -169,6 +169,11 @@ items(n) = n.fanOut                        for a known work-list
 width(n) = 1                               for a non-verify node
          = 1                               for a gating DECISION or a deterministic
                                            measurement, in BOTH modes (§M5 carve-outs)
+         = 1                               optimize, standard verify/judge/critic on an
+                                           ordinary ask ("find any bugs")
+         = 3                               optimize, standard verify/judge/critic when the
+                                           ask is thorough / audit / comprehensive (H4)
+         = 3                               optimize, correctness-critical/gating VERIFY
          = 3                               full mode, standard verify/judge/critic
          = 5                               full mode, correctness-critical/gating VERIFY
 
@@ -176,6 +181,10 @@ tokens(n) = agents(n) × BAND[kind][mode] × SIZE[n.size]   summed componentwise
 ```
 
 `BAND` is indexed by both `kind` and `mode`; both columns are tabulated below, and the pre-flight evaluates the whole expression twice — once at `mode = 'full'` for the headline figure and once at `mode = 'optimize'` for the comparison the human is actually shown. Estimating a full-mode run against the optimize band understates it and is the single easiest way to under-price the bill the human is about to approve.
+
+**One `kind` is not a `taskType`.** `planner on Fable` is selected by the *flag*, not by the node: it applies when `n.taskType === 'planner'` **and** `input.planner === 'fable'`, and it replaces the plain `planner` row for that one node. Every other `kind` in the table below is the node's `taskType` verbatim. Without this rule the Fable row is unreachable and a `--planner fable` run is priced as though it were running Opus 5 — which is precisely the run where the human most needs an honest number, because it is the slowest and the least familiar.
+
+Both `width(n)` and `BAND` therefore depend on `input.planner` as well as on mode. A pre-flight that ignores the flag prices the wrong DAG.
 
 `MAX_ROUNDS` and `ANGLES` are declared `const`s in the script, so a discovery loop's **upper bound** is known even though its actual length is not. **State the result explicitly as a strict upper bound**: a loop that goes dry early comes in under it, and the pre-flight says so.
 
@@ -200,6 +209,12 @@ Same discipline as `SIZE` below: these are calibration, not physics (see the clo
 **Confirmation contract — one question, three answers, before anything spawns.**
 
 > Full mode: N agents across P phases, est. X–Y output tokens (optimize would be A–B). Modifier A disabled · verifier width 3 (5 on gating nodes) · loop-until-dry K=3 · every node pinned to claude-opus-5. Proceed?
+
+**Under `--planner fable`, the last clause is false and must be replaced**, because the one node the human is being asked to approve most carefully is the one not running Opus 5:
+
+> …loop-until-dry K=3 · every node pinned to claude-opus-5 **except the planner, which runs claude-fable-5 (see the §M7 disclosure above)**. Proceed?
+
+The §M7 disclosure prints immediately before this question, so the human reads the tradeoff and the price together. A confirmation string that claims a uniform fleet while one node runs a slower, refusal-prone model on a 30-day-retention path is a misstatement on the exact screen where consent is given.
 
 - **yes** → author and call the Workflow tool, stamping the approved figures into the script's pure-literal block so the gate can diff approved-vs-actual against `<transcriptDir>/journal.jsonl`:
 
@@ -284,7 +299,7 @@ const ROUTES = {
   },
 }
 const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
-const WIDTH = (kind) => (MODE === 'full' ? (kind === 'gating' ? 5 : 3) : 1)
+const WIDTH = (kind) => (MODE === 'full' ? (kind === 'gating' ? 5 : 3) : (kind === 'gating' ? 3 : 1))
 const DRY_LIMIT = MODE === 'full' ? 3 : 2
 function optsFor(node, label) {
   const r = routeFor(node.taskType)
