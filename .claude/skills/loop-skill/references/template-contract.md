@@ -58,7 +58,7 @@ An omission with no note is indistinguishable from drift.
 
 ## Reserved argument names
 
-`input.mode` and `input.planner` are **reserved fleet-wide**. A template that means something else by `mode` silently mis-routes every node in the run, because `ROUTES[MODE]` falls back to `optimize` for an unrecognized value rather than failing loudly.
+`input.mode` and `input.planner` are **reserved fleet-wide**. A template that means something else by `mode` silently mis-routes every node in the run, because `ROUTES[MODE]` falls back to `balanced` for an unrecognized value rather than failing loudly.
 
 This is not hypothetical: `loop-autopilot`'s improvement loop used `input.mode` for its own dry/live switch and had to rename it to `input.runMode` in 1.0.0 — a breaking change to an unattended template, forced by a name collision. Pick a qualified name (`runMode`, `execution`, `reviewDepth`) and say so in a comment. Adding a reservation is a fleet-wide contract change: it goes in `execution-modes.md` §M9 **and** `CONTRIBUTING.md`, in the same commit.
 

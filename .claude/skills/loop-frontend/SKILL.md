@@ -1,7 +1,7 @@
 ---
 name: loop-frontend
 description: "Craft how an interface feels frame by frame: motion choreography, easing and duration budgets, stagger and shared-element continuity, typographic scale and optical sizing, restraint, and perceived-performance patterns. Use when the user asks to make a UI feel premium, expensive, polished or high-end, to add, tune or slow down animation and transitions, to choose an easing curve, to decide between CSS and an animation library (anime.js, GSAP, Motion), to set a type scale, or to fix motion that reads as cheap, janky or nauseating. Enforces prefers-reduced-motion and the WCAG flash limits as gates rather than advice, and operates on pixels and milliseconds in a UI that already renders. For rendering strategy, Core Web Vitals budgets or bundle size, use loop-design. For component structure or framework idioms, use loop-pattern. For a build-vs-buy evaluation of candidate libraries, use loop-scout. For an algorithm's complexity, use loop-algo."
-argument-hint: <surface> [--mode <optimize|full>]
+argument-hint: <surface> [--mode <lite|balanced|all-out>]
 ---
 
 # loop-frontend

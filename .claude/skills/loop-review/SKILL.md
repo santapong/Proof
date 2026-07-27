@@ -1,7 +1,7 @@
 ---
 name: loop-review
 description: "Review code for security vulnerabilities and quality defects using OWASP Top 10, CWE Top 25, and ASVS, and report them without changing the code. Use when the user asks to review code, scan for vulnerabilities, do a security or code-quality review, or assess a diff, PR, or repo for injection, auth, crypto, secrets, SSRF, or dependency risk. Reports HIGH and MEDIUM findings at confidence at or above 0.8; it judges, it does not refactor. For applying the refactoring that fixes a reported smell, use loop-pattern. For a change-impact and release-risk report rather than a defect hunt, use loop-audit. For diagnosing a failure that was actually observed at runtime, use loop-debug."
-argument-hint: <target> [--mode <optimize|full>]
+argument-hint: <target> [--mode <lite|balanced|all-out>]
 ---
 
 # Reviewing Code
@@ -80,7 +80,7 @@ A small diff you can review inline in this session. For **anything larger — a 
 
 This is the parallel finder → dedup → adversarial-verify pattern from the **`loop-engine`** skill (see its `templates/parallel.workflow.js` and harness policy H2/H4). Invoke the `loop-engine` skill to author and execute the run; the security template is a specialization of that pattern with the categories, severity model, and false-positive suppression pre-wired. For a diff small enough to hold in context, skip the workflow and review directly — do not spin up agents for a two-file change.
 
-**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. Under `--mode full` step 3's adversarial verify widens from one skeptic per candidate to **three perspective-diverse lenses** (five when the review is gating), and a candidate dies on a majority refute at ⌈N/2⌉. See `../loop-engine/references/execution-modes.md` §M5.
+**Execution flags.** `--mode <lite|balanced|all-out>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. Under `--mode all-out` step 3's adversarial verify widens from one skeptic per candidate to **three perspective-diverse lenses** (five when the review is gating), and a candidate dies on a majority refute at ⌈N/2⌉. See `../loop-engine/references/execution-modes.md` §M5.
 
 ## Reference files
 

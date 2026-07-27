@@ -1,7 +1,7 @@
 ---
 name: loop-incident
 description: "Run the response to a live, user-impacting production failure: severity triage, comms and roles, mitigate before diagnosing, build a reproduction harness, keep the timeline, and write the blameless postmortem or correction-of-error. Use when the user says production is down or degraded, an outage or sev is declared, customers are affected, an alert has escalated past its runbook, or asks for a postmortem, incident timeline, or CoE. Restores service first and hands root-cause analysis to loop-debug. For steady-state SLOs, alert design, and runbooks that resolve a condition without declaring an incident, use loop-operate. For redeploying or rolling back the fix once it exists, use loop-ship."
-argument-hint: <incident> [--mode <optimize|full>]
+argument-hint: <incident> [--mode <lite|balanced|all-out>]
 ---
 
 # Running an Incident

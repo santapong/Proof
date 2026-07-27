@@ -32,11 +32,25 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
-const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const RAW_MODE = (input && input.mode) || 'balanced'
+const MODE_ALIAS = { optimize: 'balanced', full: 'all-out' }          // v1.1 names — still accepted (§M9.6)
+const MODE = MODE_ALIAS[RAW_MODE] || (['lite', 'balanced', 'all-out'].indexOf(RAW_MODE) >= 0 ? RAW_MODE : 'balanced')
 const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
-  optimize: {
+  lite: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: null },
+    analyze:    { model: 'claude-sonnet-5',  effort: 'medium' },
+    synthesize: { model: 'claude-sonnet-5',  effort: 'medium' },
+    verify:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    judge:      { model: 'claude-sonnet-5',  effort: 'medium' },
+    critic:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    gating:     { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — error cost
+    planner:    { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — gates the run
+  },
+  balanced: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },
     doc:        { model: 'claude-haiku-4-5', effort: null },
     implement:  { model: 'claude-sonnet-5',  effort: 'high' },
     analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
@@ -44,13 +58,13 @@ const ROUTES = {
     verify:     { model: null,               effort: 'high' },
     judge:      { model: null,               effort: 'high' },
     critic:     { model: null,               effort: 'high' },
-    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
-    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+    gating:     { model: 'claude-opus-5',    effort: 'max' },
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },
   },
-  full: {
-    scout:      { model: 'claude-opus-5', effort: 'high' },
-    doc:        { model: 'claude-opus-5', effort: 'high' },
-    implement:  { model: 'claude-opus-5', effort: 'high' },
+  'all-out': {
+    scout:      { model: 'claude-opus-5', effort: 'xhigh' },
+    doc:        { model: 'claude-opus-5', effort: 'xhigh' },
+    implement:  { model: 'claude-opus-5', effort: 'xhigh' },
     analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
     synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
     verify:     { model: 'claude-opus-5', effort: 'xhigh' },
@@ -61,6 +75,7 @@ const ROUTES = {
   },
 }
 const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
+const WIDTH = (kind) => (MODE === 'all-out' ? (kind === 'gating' ? 5 : 3) : MODE === 'lite' ? 1 : (kind === 'gating' ? 3 : 1))
 function optsFor(node, label) {
   const r = routeFor(node.taskType)
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
@@ -74,7 +89,7 @@ function optsFor(node, label) {
 // under §M5's GATING-DECISION carve-out a single decision node is width 1 in BOTH modes —
 // replicating it produces N decisions with no defined reduce, and a vote over decisions is a
 // decomposition change, not a mode dial. Its error cost is answered instead by the pinned
-// claude-opus-5 / max routing the 'gating' route already guarantees in both modes (§M3).
+// claude-opus-5 / max routing the 'gating' route already guarantees in all three modes (§M3).
 // (§M8 — omit what you do not use, and say which and why.)
 
 // EDIT ME: search the boring options first (see references/where-to-look.md). Each lens is a
@@ -177,7 +192,7 @@ log(`evaluate: ${scored.length} scored, ${viable.length} viable (reuse/adapt)`)
 // Phase Decide: ONE agent makes the decisive build-vs-buy call from the evaluations. This is a
 // gating DECISION node, not a gating verify: it consumes evaluations that are already scored and
 // emits a single recommendation. §M5's gating-decision carve-out puts it at width 1 in both
-// modes; full mode does not widen it. A dead decision node is a no-verdict — the caller sees
+// modes; all-out mode does not widen it. A dead decision node is a no-verdict — the caller sees
 // nulls below and must never read that as a recommendation.
 const decision = await agent(
   `Make the build-vs-buy decision for the need: ${input.need}\nDefault to reuse; the ladder is reuse -> adapt -> build, and building must be earned (no viable candidate, core differentiation, unacceptable license/security/lock-in, or trivial-to-build). Pick decisively, name the strongest counter-argument, and give the runner-up.\nEvaluations (JSON): ${JSON.stringify(scored)}`,

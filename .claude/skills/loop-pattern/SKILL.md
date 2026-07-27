@@ -1,7 +1,7 @@
 ---
 name: loop-pattern
 description: "Apply design patterns, refactorings, and language or framework idioms to existing code, and remove the smells that motivate them: GoF patterns, Fowler's Refactoring catalog, SOLID, and the framework's own idiomatic usage. Use when the user asks to refactor, restructure, or clean up code, apply or choose a design pattern, fix a code smell, make code idiomatic or conventional for its language or framework, or improve maintainability by changing the code. Produces a behavior-preserving diff backed by tests. For reporting quality and security defects without changing the code, use loop-review. For choosing which framework or library to adopt in the first place, use loop-scout. For the complexity or correctness of an algorithm rather than the shape of the code around it, use loop-algo."
-argument-hint: <target> [--mode <optimize|full>]
+argument-hint: <target> [--mode <lite|balanced|all-out>]
 ---
 
 # Applying Patterns and Refactorings

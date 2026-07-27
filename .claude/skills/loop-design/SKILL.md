@@ -97,7 +97,7 @@ Jump straight to the slice the user asked for; each row lists the reference and 
 
 ## Execution flags
 
-`--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here**. This skill ships no workflow template — design work runs inline in this session — so there is no mode logic to carry. When the work hands off to a sibling that does run a workflow (`loop-ship` for the release, `loop-operate` for the live service, `loop-algo` for the mechanism inside a component), pass the raw argument string straight through unchanged so the flag reaches the one parser that honours it. See `../loop-engine/references/execution-modes.md`.
+`--mode <lite|balanced|all-out>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here**. This skill ships no workflow template — design work runs inline in this session — so there is no mode logic to carry. When the work hands off to a sibling that does run a workflow (`loop-ship` for the release, `loop-operate` for the live service, `loop-algo` for the mechanism inside a component), pass the raw argument string straight through unchanged so the flag reaches the one parser that honours it. See `../loop-engine/references/execution-modes.md`.
 
 ## Files in this skill
 

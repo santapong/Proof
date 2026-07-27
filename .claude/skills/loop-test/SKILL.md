@@ -1,7 +1,7 @@
 ---
 name: loop-test
 description: "Write and repair automated correctness tests: design cases, match the project's test framework and conventions, and verify each test runs and fails for the right reason before it passes. Use when the user asks to write, add, generate, or fix tests, improve coverage, add a regression test for a bug, or set up testing for a module. Covers happy-path, edge, error, and property-based cases. For performance benchmarks and complexity validation, use loop-algo. For contract tests against a third-party provider, use loop-integrate, which specifies the contract this skill then authors. For finding the bug a regression test should lock in, use loop-debug."
-argument-hint: <target> [--mode <optimize|full>]
+argument-hint: <target> [--mode <lite|balanced|all-out>]
 ---
 
 # Writing Tests
@@ -71,7 +71,7 @@ A handful of modules you can test inline in this session. For **a whole package 
 
 This is the **pipeline** pattern (design → write → run per module, no barrier between modules) from the **`loop-engine`** skill (see its `templates/pipeline.workflow.js` and harness policy H1 pipeline-default, H4 adversarial verify). Invoke the `loop-engine` skill to author and execute the run; the test-generation template pre-wires the case schema, the convention-matching step, and the run-and-report gate. For a module or two you can hold in context, skip the workflow and write the tests directly.
 
-**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
+**Execution flags.** `--mode <lite|balanced|all-out>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
 
 ## Reference files
 

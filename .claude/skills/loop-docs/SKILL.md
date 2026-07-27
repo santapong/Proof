@@ -1,7 +1,7 @@
 ---
 name: loop-docs
 description: "Write and maintain technical documentation: READMEs, API references, docstrings, guides, and ADR prose, verifying every claim against the source. Use when the user asks to write, generate, update, or improve documentation, a README, API docs, docstrings, or a how-to guide, or to keep docs in sync with code. Follows the Diataxis doc-type model and matches repo conventions. For deciding the architecture an ADR records, use loop-design. For writing a runbook an operator or automated loop executes, use loop-operate. For an incident postmortem or correction-of-error, use loop-incident."
-argument-hint: <target> [--mode <optimize|full>]
+argument-hint: <target> [--mode <lite|balanced|all-out>]
 ---
 
 # Writing Docs
@@ -56,7 +56,7 @@ A single doc you write inline in this session. For **documenting many modules, p
 
 This is the per-item **pipeline → adversarial-verify** pattern from the **`loop-engine`** skill (see its `templates/pipeline.workflow.js` and harness policy H1 pipeline-default, H4 adversarial-verify). Invoke the `loop-engine` skill to author and execute the run; the doc-generation template pre-wires the extract/draft/verify stages and the accuracy schema. For one or two modules you can hold in context, skip the workflow and write directly — don't spin up agents for a single README.
 
-**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
+**Execution flags.** `--mode <lite|balanced|all-out>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
 
 ## Reference files
 

@@ -8,9 +8,9 @@
 //
 // Model/effort and verifier width come from the canonical ROUTES block — source of truth:
 // ../../loop-engine/references/execution-modes.md §M8. Never inline a bare model:/effort: literal.
-// The Draft stage is tagged `doc`, so in optimize mode it routes to claude-haiku-4-5 with effort
+// The Draft stage is tagged `doc`, so in balanced mode it routes to claude-haiku-4-5 with effort
 // OMITTED — Haiku 4.5 has no effort dial, and writing effort:'low' on it is a no-op at best.
-// Under full mode every node moves to claude-opus-5 (§M3) and the accuracy check widens from one
+// Under all-out mode every node moves to claude-opus-5 (§M3) and the accuracy check widens from one
 // checker to three diverse lenses (§M5), reduced by majority refute.
 //
 // Invoke with: Workflow({ script, args: { areas: [...], docType: "reference", mode: "optimize" } })
@@ -36,11 +36,25 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
-const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const RAW_MODE = (input && input.mode) || 'balanced'
+const MODE_ALIAS = { optimize: 'balanced', full: 'all-out' }          // v1.1 names — still accepted (§M9.6)
+const MODE = MODE_ALIAS[RAW_MODE] || (['lite', 'balanced', 'all-out'].indexOf(RAW_MODE) >= 0 ? RAW_MODE : 'balanced')
 const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
-  optimize: {
+  lite: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: null },
+    analyze:    { model: 'claude-sonnet-5',  effort: 'medium' },
+    synthesize: { model: 'claude-sonnet-5',  effort: 'medium' },
+    verify:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    judge:      { model: 'claude-sonnet-5',  effort: 'medium' },
+    critic:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    gating:     { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — error cost
+    planner:    { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — gates the run
+  },
+  balanced: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },
     doc:        { model: 'claude-haiku-4-5', effort: null },
     implement:  { model: 'claude-sonnet-5',  effort: 'high' },
     analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
@@ -48,13 +62,13 @@ const ROUTES = {
     verify:     { model: null,               effort: 'high' },
     judge:      { model: null,               effort: 'high' },
     critic:     { model: null,               effort: 'high' },
-    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
-    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+    gating:     { model: 'claude-opus-5',    effort: 'max' },
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },
   },
-  full: {
-    scout:      { model: 'claude-opus-5', effort: 'high' },
-    doc:        { model: 'claude-opus-5', effort: 'high' },
-    implement:  { model: 'claude-opus-5', effort: 'high' },
+  'all-out': {
+    scout:      { model: 'claude-opus-5', effort: 'xhigh' },
+    doc:        { model: 'claude-opus-5', effort: 'xhigh' },
+    implement:  { model: 'claude-opus-5', effort: 'xhigh' },
     analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
     synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
     verify:     { model: 'claude-opus-5', effort: 'xhigh' },
@@ -65,7 +79,7 @@ const ROUTES = {
   },
 }
 const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
-const WIDTH = (kind) => (MODE === 'full' ? (kind === 'gating' ? 5 : 3) : (kind === 'gating' ? 3 : 1))
+const WIDTH = (kind) => (MODE === 'all-out' ? (kind === 'gating' ? 5 : 3) : MODE === 'lite' ? 1 : (kind === 'gating' ? 3 : 1))
 function optsFor(node, label) {
   const r = routeFor(node.taskType)
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
@@ -76,7 +90,7 @@ function optsFor(node, label) {
 }
 // No DRY_LIMIT: this template has no loop stage (§M8 — omit what you do not use). WIDTH is kept:
 // the Verify stage is a genuine adversarial accuracy check ("try to REFUTE this doc"), and §M5
-// forbids full mode ever running a single skeptic on one. The lens set is declared below, so the
+// forbids all-out mode ever running a single skeptic on one. The lens set is declared below, so the
 // §M5 rule that mode picks HOW MANY declared lenses run — never which exist — actually applies.
 // No plannerAgent: no node in this template carries taskType 'planner', so §M8's third
 // optional member is dropped too. `PLANNER` and its `optsFor()` line stay — they are invariant
@@ -87,7 +101,7 @@ const DOC_TYPE = (input && input.docType) || 'reference'
 
 // EDIT ME: the Verify node's DECLARED accuracy lenses. Each re-checks the drafted doc against the
 // source a DIFFERENT way (H4: diversity beats redundancy). Mode picks how MANY run (§M5); it never
-// invents new ones. ORDER MATTERS — in optimize mode only lens[0] runs, so lens[0] must be the
+// invents new ones. ORDER MATTERS — in balanced mode only lens[0] runs, so lens[0] must be the
 // broadest check. Five are declared so a gating doc review can reach width 5 without inventing one.
 const ACCURACY_LENSES = [
   { key: 'signatures', prompt: 'Check every stated signature, parameter name, default, return type, and error condition against the actual definition in the source. A name or comment is a hint to verify, never a fact to copy.' },
@@ -97,7 +111,7 @@ const ACCURACY_LENSES = [
   { key: 'scope', prompt: 'Check the doc is about THIS area: no claims borrowed from a sibling module, no behavior attributed here that lives elsewhere, and no path, flag, or config key that belongs to another component.' },
 ]
 
-// Verifier width is mode-resolved (§M5): 1 in optimize, 3 in full, 5 on a gating node. Capped by
+// Verifier width is mode-resolved (§M5): 1 in balanced, 3 in full, 5 on a gating node. Capped by
 // the declared lens set, and any cap is logged — no silent narrowing (H6).
 const VERIFY_WIDTH = Math.min(WIDTH('verify'), ACCURACY_LENSES.length)
 if (VERIFY_WIDTH < WIDTH('verify')) {
@@ -188,7 +202,7 @@ const results = await pipeline(
   // Stage 3 — Verify: adversarial accuracy check (harness policy H4). This stage IS the
   // SKILL.md §5 accuracy rule — the checkers re-read the SOURCE and the drafted doc and
   // default to accurate=false on any claim they cannot confirm against the code.
-  // Width is mode-resolved (§M5): one checker per area in optimize, ACTIVE_LENSES.length
+  // Width is mode-resolved (§M5): one checker per area in balanced, ACTIVE_LENSES.length
   // diverse checkers in full. The inner parallel() is a WITHIN-AREA lens vote, not a barrier —
   // no area waits on another area's drafts, so H2's earned-barrier test is not engaged.
   (prev) =>

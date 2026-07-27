@@ -37,11 +37,25 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
-const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const RAW_MODE = (input && input.mode) || 'balanced'
+const MODE_ALIAS = { optimize: 'balanced', full: 'all-out' }          // v1.1 names — still accepted (§M9.6)
+const MODE = MODE_ALIAS[RAW_MODE] || (['lite', 'balanced', 'all-out'].indexOf(RAW_MODE) >= 0 ? RAW_MODE : 'balanced')
 const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
-  optimize: {
+  lite: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: null },
+    analyze:    { model: 'claude-sonnet-5',  effort: 'medium' },
+    synthesize: { model: 'claude-sonnet-5',  effort: 'medium' },
+    verify:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    judge:      { model: 'claude-sonnet-5',  effort: 'medium' },
+    critic:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    gating:     { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — error cost
+    planner:    { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — gates the run
+  },
+  balanced: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },
     doc:        { model: 'claude-haiku-4-5', effort: null },
     implement:  { model: 'claude-sonnet-5',  effort: 'high' },
     analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
@@ -49,13 +63,13 @@ const ROUTES = {
     verify:     { model: null,               effort: 'high' },
     judge:      { model: null,               effort: 'high' },
     critic:     { model: null,               effort: 'high' },
-    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
-    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+    gating:     { model: 'claude-opus-5',    effort: 'max' },
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },
   },
-  full: {
-    scout:      { model: 'claude-opus-5', effort: 'high' },
-    doc:        { model: 'claude-opus-5', effort: 'high' },
-    implement:  { model: 'claude-opus-5', effort: 'high' },
+  'all-out': {
+    scout:      { model: 'claude-opus-5', effort: 'xhigh' },
+    doc:        { model: 'claude-opus-5', effort: 'xhigh' },
+    implement:  { model: 'claude-opus-5', effort: 'xhigh' },
     analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
     synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
     verify:     { model: 'claude-opus-5', effort: 'xhigh' },
@@ -66,6 +80,7 @@ const ROUTES = {
   },
 }
 const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
+const WIDTH = (kind) => (MODE === 'all-out' ? (kind === 'gating' ? 5 : 3) : MODE === 'lite' ? 1 : (kind === 'gating' ? 3 : 1))
 function optsFor(node, label) {
   const r = routeFor(node.taskType)
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }

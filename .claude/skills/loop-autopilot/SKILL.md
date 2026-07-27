@@ -1,7 +1,7 @@
 ---
 name: loop-autopilot
 description: "Run an autonomous engineering loop over this repository: read feedback (GitHub issues, PR comments, CI failures), act on it as draft pull requests with tests, and when there is no feedback, research improvements and propose them. Use when the user wants to automate repository maintenance, set up a self-improving engineering loop, continuously triage issues and PRs, or have Claude propose code improvements on a schedule. The subject is the codebase and the output is a draft PR; it composes the plugin's other skills, proposes only, and never merges. For running and self-healing a live production service rather than improving a repo, use loop-operate. For a single one-off orchestrated job rather than a standing loop, use loop-orchestrate."
-argument-hint: <repo> [--mode <optimize|full>]
+argument-hint: <repo> [--mode <lite|balanced|all-out>]
 ---
 
 # Automating Improvements
@@ -10,7 +10,7 @@ You are about to run a project's **autonomous engineering loop**: read what need
 
 This is a **composition layer over the `loop-engine` skill, not a new engine** (same pattern as `loop-orchestrate`). Every stage below is an existing skill invoked inside a budget-guarded loop.
 
-**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through when you invoke it for `templates/improvement-loop.workflow.js` (or any companion template) and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
+**Execution flags.** `--mode <lite|balanced|all-out>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through when you invoke it for `templates/improvement-loop.workflow.js` (or any companion template) and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
 
 **Because an unattended runner (a Cloud Routine) has no per-run approval prompt, the guardrails are structural, not interactive: draft-PR-on-a-`claude/`-branch, an explicit never-merge rule, budget/round caps, and dedup against what already exists.** Those are non-negotiable — see §6.
 

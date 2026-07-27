@@ -9,7 +9,7 @@
 // Invoke with: Workflow({ script, args: { question: "...", angles: [...], mode: "optimize" } })
 // input.question — the research question (scope it BEFORE authoring; see the skill, step 1)
 // input.angles   — optional array of distinct search angles; falls back to a default set
-// input.mode     — 'optimize' (default) or 'full' (execution-modes.md §M2). Full mode fact-checks
+// input.mode     — 'optimize' (default) or 'full' (execution-modes.md §M2). All-out mode fact-checks
 //                  every claim through WIDTH('verify') diverse lenses instead of one.
 
 export const meta = {
@@ -29,11 +29,25 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
-const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const RAW_MODE = (input && input.mode) || 'balanced'
+const MODE_ALIAS = { optimize: 'balanced', full: 'all-out' }          // v1.1 names — still accepted (§M9.6)
+const MODE = MODE_ALIAS[RAW_MODE] || (['lite', 'balanced', 'all-out'].indexOf(RAW_MODE) >= 0 ? RAW_MODE : 'balanced')
 const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
-  optimize: {
+  lite: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: null },
+    analyze:    { model: 'claude-sonnet-5',  effort: 'medium' },
+    synthesize: { model: 'claude-sonnet-5',  effort: 'medium' },
+    verify:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    judge:      { model: 'claude-sonnet-5',  effort: 'medium' },
+    critic:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    gating:     { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — error cost
+    planner:    { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — gates the run
+  },
+  balanced: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },
     doc:        { model: 'claude-haiku-4-5', effort: null },
     implement:  { model: 'claude-sonnet-5',  effort: 'high' },
     analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
@@ -41,13 +55,13 @@ const ROUTES = {
     verify:     { model: null,               effort: 'high' },
     judge:      { model: null,               effort: 'high' },
     critic:     { model: null,               effort: 'high' },
-    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
-    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+    gating:     { model: 'claude-opus-5',    effort: 'max' },
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },
   },
-  full: {
-    scout:      { model: 'claude-opus-5', effort: 'high' },
-    doc:        { model: 'claude-opus-5', effort: 'high' },
-    implement:  { model: 'claude-opus-5', effort: 'high' },
+  'all-out': {
+    scout:      { model: 'claude-opus-5', effort: 'xhigh' },
+    doc:        { model: 'claude-opus-5', effort: 'xhigh' },
+    implement:  { model: 'claude-opus-5', effort: 'xhigh' },
     analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
     synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
     verify:     { model: 'claude-opus-5', effort: 'xhigh' },
@@ -58,7 +72,7 @@ const ROUTES = {
   },
 }
 const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
-const WIDTH = (kind) => (MODE === 'full' ? (kind === 'gating' ? 5 : 3) : (kind === 'gating' ? 3 : 1))
+const WIDTH = (kind) => (MODE === 'all-out' ? (kind === 'gating' ? 5 : 3) : MODE === 'lite' ? 1 : (kind === 'gating' ? 3 : 1))
 function optsFor(node, label) {
   const r = routeFor(node.taskType)
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
@@ -81,7 +95,7 @@ const ANGLES = (input && input.angles) || [
 ]
 
 // EDIT ME: the declared fact-check lenses. Each attacks a claim a DIFFERENT way (H4). Mode picks
-// how MANY run (WIDTH('verify') — 1 in optimize, 3 in full); it never invents new ones, so a node
+// how MANY run (WIDTH('verify') — 1 in balanced, 3 in full); it never invents new ones, so a node
 // that needs width 5 needs two more lenses declared here, deliberately (§M5).
 const FACT_CHECK_LENSES = [
   { key: 'contradiction', prompt: 'Hunt for a source that CONTRADICTS the claim outright, or that states a materially different number, scope, or condition. One credible contradiction is enough to set supported=false.' },
@@ -179,7 +193,7 @@ const perSource = await pipeline(
   (read) =>
     parallel(
       read.claims.map((c) => async () => {
-        // Width is mode-resolved (§M5): one skeptic per claim in optimize, three diverse lenses
+        // Width is mode-resolved (§M5): one skeptic per claim in balanced, three diverse lenses
         // in full. Sequential INSIDE the thunk: claims already run in parallel, so this bounds
         // concurrency (H6) without adding a barrier — no cross-claim dependency exists, so H2
         // is not engaged.

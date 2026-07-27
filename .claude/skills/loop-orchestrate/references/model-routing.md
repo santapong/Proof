@@ -11,7 +11,7 @@ Every agent you spawn runs on *some* model at *some* effort. Picking well is the
 
 That is a rule shaped like a check, so it cannot rot the way a rule shaped like a fact does. Everything else in this file is an elaboration of it.
 
-**Mode selects the column.** `--mode optimize` (the default) routes each node to the cheapest tier that can do its job; `--mode full` pins every node to the top of the fleet. The full contract — flag parsing, verifier width, the loop-until-dry threshold, the pre-flight, and the canonical `ROUTES` block that templates copy — is `../../loop-engine/references/execution-modes.md`. **That file is the source of truth for the routing table and both modifiers; this file is the rationale and the worked example. If the two disagree, this file is the defect.**
+**Mode selects the column.** `--mode balanced` (the default) routes each node to the cheapest tier that can do its job; `--mode all-out` pins every node to the top of the fleet. The full contract — flag parsing, verifier width, the loop-until-dry threshold, the pre-flight, and the canonical `ROUTES` block that templates copy — is `../../loop-engine/references/execution-modes.md`. **That file is the source of truth for the routing table and both modifiers; this file is the rationale and the worked example. If the two disagree, this file is the defect.**
 
 ## The fleet
 
@@ -32,29 +32,29 @@ Effort is a separate dial, ordered `low < medium < high < xhigh < max`. Model se
 
 Match the task to the most demanding row it fits, then apply the modifiers below. This table reproduces `../../loop-engine/references/execution-modes.md` §M3 — `inherit` in the optimize column means *omit `opts.model`*; a spelled-out ID means *pin it*.
 
-| Node kind | optimize model | optimize effort | full model | full effort | Rationale |
+| Node kind | balanced model | optimize effort | all-out model | full effort | Rationale |
 |---|---|---|---|---|---|
-| scout / doc / mechanical (enumeration, extraction, formatting, renames) | `claude-haiku-4-5` | omit | `claude-opus-5` | `high` | Optimize: per-item judgment is small and multiplied wide, so budget governs (modifier A, H6) and Haiku is the floor. Full: modifier A is disabled, so the same node runs at ceiling — the row where the two modes diverge most, and where full mode's cost is actually incurred. |
+| scout / doc / mechanical (enumeration, extraction, formatting, renames) | `claude-haiku-4-5` | omit | `claude-opus-5` | `high` | Optimize: per-item judgment is small and multiplied wide, so budget governs (modifier A, H6) and Haiku is the floor. Full: modifier A is disabled, so the same node runs at ceiling — the row where the two modes diverge most, and where all-out mode's cost is actually incurred. |
 | implement (production edit, drafting, most coding) | `claude-sonnet-5` | `high` | `claude-opus-5` | `high` | Optimize pins Sonnet 5 rather than inheriting, because the session runs Opus 5 and inheriting would route real production volume a tier above what the work needs. Full lifts it: implementation is where a cheapened node ships a defect. |
 | analyze / synthesize (judgment over gathered facts, merged artifacts) | inherit | `high` | `claude-opus-5` | `xhigh` | Optimize omits `model` — the node's target tier equals the session model today, which is exactly the case H8's omit-by-default rule is for. Full pins the same model *and* lifts effort, because at the ceiling the only remaining headroom is effort and width. |
-| verify / judge / critic (adversarial refute, diverse-lens vote, completeness pass) | inherit | `high` | `claude-opus-5` | `xhigh` | Verification is asymmetric — accepting a wrong result costs far more than the check (modifier B). Optimize inherits and scales effort with the ask; full pins, sets `xhigh`, and widens to 3 diverse lenses (§M5), which is where most of full mode's extra agents come from. |
-| correctness-critical / gating (a false "all clear" ships the defect or corrupts every downstream node) | `claude-opus-5` | `max` | `claude-opus-5` | `max` | Identical in both modes — this row is already at the ceiling, which is the concrete meaning of "modifier B has no travel left". Pinned even in optimize so the check does not silently degrade when a session runs below Opus 5. Full mode widens it to 5 lenses; model and effort do not move. |
-| planner — the single decompose/planning node | `claude-opus-5` | `xhigh` | `claude-opus-5` | `max` | Pinned in both modes. Every later node inherits this node's output, so a silent inherit-downgrade corrupts the whole DAG rather than one result — the highest-error-cost node in any run (modifier B, H4). |
+| verify / judge / critic (adversarial refute, diverse-lens vote, completeness pass) | inherit | `high` | `claude-opus-5` | `xhigh` | Verification is asymmetric — accepting a wrong result costs far more than the check (modifier B). Optimize inherits and scales effort with the ask; full pins, sets `xhigh`, and widens to 3 diverse lenses (§M5), which is where most of all-out mode's extra agents come from. |
+| correctness-critical / gating (a false "all clear" ships the defect or corrupts every downstream node) | `claude-opus-5` | `max` | `claude-opus-5` | `max` | Identical in all three modes — this row is already at the ceiling, which is the concrete meaning of "modifier B has no travel left". Pinned even in balanced so the check does not silently degrade when a session runs below Opus 5. All-out mode widens it to 5 lenses; model and effort do not move. |
+| planner — the single decompose/planning node | `claude-opus-5` | `xhigh` | `claude-opus-5` | `max` | Pinned in all three modes. Every later node inherits this node's output, so a silent inherit-downgrade corrupts the whole DAG rather than one result — the highest-error-cost node in any run (modifier B, H4). |
 | planner — with the opt-in `--planner fable` override | `claude-fable-5` | `xhigh` | `claude-fable-5` | `max` | Reachable only by explicit flag, never by the table. Overrides the never-on-a-gate-blocking-step rule knowingly, under the §M7 preconditions, with the caveats printed at the point of use and an automatic fallback to `claude-opus-5` at `max`. |
 
 Read the rows top-down and stop at the first that genuinely describes the task. "Rewrite this call site to the new API" is implement, not scout, even though it touches one line. "Does this auth change leak a session across tenants?" is a verify whose *wrong answer ships a breach* — so it is really the correctness-critical row.
 
-Within a band, pick the higher effort when the input is ambiguous, the output is long-horizon, or a mistake is expensive to catch later; pick the lower effort when the task is well-specified and self-checking. In `full` mode there is no "within a band" to exercise — the column is the floor and the ceiling at once.
+Within a band, pick the higher effort when the input is ambiguous, the output is long-horizon, or a mistake is expensive to catch later; pick the lower effort when the task is well-specified and self-checking. In `all-out` mode there is no "within a band" to exercise — the column is the floor and the ceiling at once.
 
-**Two node kinds pin even in optimize** — gating and planner — because a silent downgrade there is inherited by everything downstream. Everywhere else in optimize, omit and inherit. In `full`, pin everything: the mode is a *guarantee*, not a default, and an inherited model silently voids the guarantee the moment a session runs below Opus 5.
+**Two node kinds pin even in balanced** — gating and planner — because a silent downgrade there is inherited by everything downstream. Everywhere else in balanced, omit and inherit. In `all-out`, pin everything: the mode is a *guarantee*, not a default, and an inherited model silently voids the guarantee the moment a session runs below Opus 5.
 
 ## Override modifier A — wide fan-out pushes a tier DOWN (optimize only)
 
-**Modifier A — wide fan-out pushes a tier DOWN.** Active in `optimize`. **Disabled in `full`.**
+**Modifier A — wide fan-out pushes a tier DOWN.** Active in `balanced`. **Disabled in `all-out`.**
 
-The honest justification: modifier A exists to protect an **un-negotiated** budget ceiling (H6). In full mode the human has already been shown the bill and said yes at the §M6 pre-flight, so silently cheapening the run behind them is a worse failure than the spend they approved. That is the whole argument — A is not "less useful" in full mode, it is *against the contract*.
+The honest justification: modifier A exists to protect an **un-negotiated** budget ceiling (H6). In all-out mode the human has already been shown the bill and said yes at the §M6 pre-flight, so silently cheapening the run behind them is a worse failure than the spend they approved. That is the whole argument — A is not "less useful" in all-out mode, it is *against the contract*.
 
-In `optimize`, when a stage fans out across many items the governing constraint is no longer "which model reasons best" but **budget** — the token target is a hard ceiling, and once it is spent further `agent()` calls throw (H6). Protect that ceiling by **dropping to the cheapest tier that can still do the per-item work**:
+In `balanced`, when a stage fans out across many items the governing constraint is no longer "which model reasons best" but **budget** — the token target is a hard ceiling, and once it is spent further `agent()` calls throw (H6). Protect that ceiling by **dropping to the cheapest tier that can still do the per-item work**:
 
 - A 300-endpoint inventory that "should" be Sonnet becomes Haiku — the per-item judgment is small and multiplied 300×, the aggregate bill is not. **From an Opus 5 session that drop is two steps, not one**, which is why the rule is phrased as "the cheapest tier that can do the work" rather than "one tier down": one step would leave a mechanical fan-out on Sonnet and pay a Sonnet bill for Haiku work.
 - If per-item work is genuinely mechanical, this bottoms out at **Haiku with `effort` omitted**; Haiku is the floor, not a starting point you drop below, and it has no effort dial to turn down further.
@@ -62,7 +62,7 @@ In `optimize`, when a stage fans out across many items the governing constraint 
 
 Whatever you cap, `log()` it — a silently narrowed fan-out reads as full coverage when it was not (H6, no silent caps).
 
-Full mode must still `log()` the suppression:
+All-out mode must still `log()` the suppression:
 
 ```js
 log(`modifier-A: suppressed (mode=full) — ${items.length}-item fan-out running at ceiling by design`)
@@ -70,14 +70,14 @@ log(`modifier-A: suppressed (mode=full) — ${items.length}-item fan-out running
 
 so a reader of the transcript can tell a wide fan-out ran at full tier **by design** and not by oversight. A full-mode ledger row that is silent about modifier A is indistinguishable from an optimize run that forgot to apply it.
 
-## Override modifier B — high downstream error-cost pushes a tier UP (both modes)
+## Override modifier B — high downstream error-cost pushes a tier UP (all three modes)
 
 Verification is asymmetric: the cost of *accepting a wrong result* dwarfs the cost of the check. When an agent's output gates everything after it — a verify that decides "ship it", a decomposition every later task inherits, a judge that picks the winner — push **up**, even if the task looks cheap:
 
 - "Confirm the migration dropped no log lines" is nominally a search (Haiku), but a false "all clear" corrupts 40 services silently → the correctness-critical row.
 - A one-line release-notes edit is formatting (Haiku), but if downstream auditors treat it as the compliance record, lift it to a real implement-and-review pass.
 
-**Modifier B — high downstream error-cost pushes a tier UP.** Active in both modes, restated as a **three-rung ladder** now that Opus 5 is the ceiling of the default path:
+**Modifier B — high downstream error-cost pushes a tier UP.** Active in all three modes, restated as a **three-rung ladder** now that Opus 5 is the ceiling of the default path:
 
 1. **Model** — push the tier up first.
 2. **Effort** — then `high` → `xhigh` → `max`.
@@ -87,7 +87,7 @@ At the ceiling only rungs 2 and 3 have travel. That is exactly what "already at 
 
 **Collision rule.** Both modifiers can apply at once — a wide verify fan-out over correctness-critical items. In **optimize**, keep the *model* high (error cost wins on the tier) and control spend with **fewer, sharper verifiers** at higher effort rather than many cheap ones (H4: diversity beats redundancy). In **full**, both stay at the ceiling and spend is controlled **at the pre-flight, not by the router** — the router has no discretion left to exercise.
 
-The old framing of this paragraph — "the two modifiers pull opposite ways, resolve the tension" — is only half true now, and only in one mode. In `full` there is no tension to resolve, because **modifier A does not exist**: every node is already pinned at the ceiling, so B's first rung has no travel and A has nothing to pull against. The collision is an `optimize`-mode problem with an `optimize`-mode answer.
+The old framing of this paragraph — "the two modifiers pull opposite ways, resolve the tension" — is only half true now, and only in one mode. In `all-out` there is no tension to resolve, because **modifier A does not exist**: every node is already pinned at the ceiling, so B's first rung has no travel and A has nothing to pull against. The collision is an `balanced`-mode problem with an `balanced`-mode answer.
 
 ## Mapping to `agent()` opts
 
@@ -100,13 +100,13 @@ agent(prompt, { label: 'verify:concurrency', phase: 'Verify',
 
 **In a real template you do not write those literals by hand.** Every `*.workflow.js` that sets `model` or `effort` carries the canonical `ROUTES` block verbatim from `../../loop-engine/references/execution-modes.md` §M8 and resolves each node through `optsFor(node, label)`, which reads `input.mode`, looks up the node's `taskType`, and **omits `model`/`effort` when the route says `null`**. Scripts have no filesystem and no module access (H10), so the block is duplicated by design — and drift between copies is a defect, caught by the `ROUTES` grep in `CONTRIBUTING.md`'s validation block. The literal above is what `optsFor()` produces for a gating node; it is not something a template should hand-write.
 
-**Omit `model` when the route says `inherit`.** In `optimize`, a judgment or verify stage whose target tier equals the session model needs *no* `model` override at all — you just set `effort`. Set `opts.model` only when the router has a clear reason to leave the session tier: routing **down** to Haiku/Sonnet for a cheap or wide stage (modifier A), or pinning the top tier on a node whose wrong answer is inherited by everything after it (a gating verify, the decomposition). In `full`, every consumed `agent()` call is pinned — that is the mode's enforcement mechanism, not the noise H8 normally warns about.
+**Omit `model` when the route says `inherit`.** In `balanced`, a judgment or verify stage whose target tier equals the session model needs *no* `model` override at all — you just set `effort`. Set `opts.model` only when the router has a clear reason to leave the session tier: routing **down** to Haiku/Sonnet for a cheap or wide stage (modifier A), or pinning the top tier on a node whose wrong answer is inherited by everything after it (a gating verify, the decomposition). In `all-out`, every consumed `agent()` call is pinned — that is the mode's enforcement mechanism, not the noise H8 normally warns about.
 
-## Worked example — routing a 5-task project, both modes
+## Worked example — routing a 5-task project, all three modes
 
-Project: *migrate 40 services off a deprecated logging library.* **Session model is Opus 5, mode is the default `optimize`** — the `full` column prices the same DAG under `--mode full`.
+Project: *migrate 40 services off a deprecated logging library.* **Session model is Opus 5, mode is the default `balanced`** — the `all-out` column prices the same DAG under `--mode all-out`.
 
-| # | Task | Base node kind | `--mode optimize` (default) | `--mode full` |
+| # | Task | Base node kind | `--mode balanced` (default) | `--mode all-out` |
 |---|---|---|---|---|
 | 1 | Scan each repo, list every call site of the old lib | scout | modifier A: wide fan-out (40 repos), already at the floor → `model:'claude-haiku-4-5'`, `effort` omitted | modifier A suppressed → `model:'claude-opus-5'`, `effort:'high'` |
 | 2 | Rewrite each call site to the new API | implement | modifier A: wide fan-out (≈2k sites) → **split bimodally**; trivial sites `model:'claude-haiku-4-5'` (no effort), ambiguous sites `model:'claude-sonnet-5'`, `effort:'high'` | modifier A suppressed, **no split** → `model:'claude-opus-5'`, `effort:'high'` for every site |
@@ -116,12 +116,12 @@ Project: *migrate 40 services off a deprecated logging library.* **Session model
 
 Notes on the routing:
 
-- **Task 3's conclusion changed, not just its model string.** The previous edition let the decompose *inherit* the session model on the grounds that the session was already at the fleet cap. That reasoning is retired: the planner is now **pinned in both modes**, because every later node inherits its output, so a silent inherit-downgrade corrupts the whole DAG rather than one result. If you are migrating an old plan, this is the row where the *decision* moved — do not just swap the ID.
-- **Task 4 is the concrete illustration of "already at ceiling".** It is pinned at `claude-opus-5`, `max` in *both* columns. Modifier B still applies to it — B just has no travel left on rungs 1 and 2, so the only thing full mode can add is rung 3, and it does: width goes 3 → 5. That is what a maxed-out node looks like.
-- **Tasks 1, 2 and 5 carry an explicit `model` in optimize because they route *down*** from the session tier to protect budget, which is exactly when `opts.model` earns its place. In `full` they carry an explicit `model` for the opposite reason — the mode pins everything so the ledger can prove what ran.
-- **Task 2's bimodal split exists only in optimize.** It is a modifier-A artifact: the mechanical majority drops to Haiku, the ambiguous minority stays on Sonnet. With modifier A disabled, the split has no reason to exist and disappears — every site runs at ceiling. A full-mode script that still splits its fan-out has copied the wrong column.
+- **Task 3's conclusion changed, not just its model string.** The previous edition let the decompose *inherit* the session model on the grounds that the session was already at the fleet cap. That reasoning is retired: the planner is now **pinned in all three modes**, because every later node inherits its output, so a silent inherit-downgrade corrupts the whole DAG rather than one result. If you are migrating an old plan, this is the row where the *decision* moved — do not just swap the ID.
+- **Task 4 is the concrete illustration of "already at ceiling".** It is pinned at `claude-opus-5`, `max` in *both* columns. Modifier B still applies to it — B just has no travel left on rungs 1 and 2, so the only thing all-out mode can add is rung 3, and it does: width goes 3 → 5. That is what a maxed-out node looks like.
+- **Tasks 1, 2 and 5 carry an explicit `model` in balanced because they route *down*** from the session tier to protect budget, which is exactly when `opts.model` earns its place. In `all-out` they carry an explicit `model` for the opposite reason — the mode pins everything so the ledger can prove what ran.
+- **Task 2's bimodal split exists only in balanced.** It is a modifier-A artifact: the mechanical majority drops to Haiku, the ambiguous minority stays on Sonnet. With modifier A disabled, the split has no reason to exist and disappears — every site runs at ceiling. A full-mode script that still splits its fan-out has copied the wrong column.
 - **Nothing here reaches Fable 5**, and the table cannot route to it. Fable is reachable only by an explicit `--planner fable`, and only for task 3.
-- **Pricing the full column.** Across the five tasks, full mode replaces two Haiku fan-outs and one bimodal Sonnet fan-out with Opus 5, lifts the planner from `xhigh` to `max`, and widens task 4 from 3 lenses to 5 — typically **2.5×–4×** the optimize spend on a DAG shaped like this one, with the multiple driven almost entirely by rows 1, 2 and 5 rather than by the two nodes that were already pinned. That is not a number to guess at: under `--mode full` the pre-flight in `../../loop-engine/references/execution-modes.md` §M6 computes it deterministically from the authored DAG, prints it beside the optimize price, and asks one question **before any agent spawns**.
+- **Pricing the full column.** Across the five tasks, all-out mode replaces two Haiku fan-outs and one bimodal Sonnet fan-out with Opus 5, lifts the planner from `xhigh` to `max`, and widens task 4 from 3 lenses to 5 — typically **2.5×–4×** the optimize spend on a DAG shaped like this one, with the multiple driven almost entirely by rows 1, 2 and 5 rather than by the two nodes that were already pinned. That is not a number to guess at: under `--mode all-out` the pre-flight in `../../loop-engine/references/execution-modes.md` §M6 computes it deterministically from the authored DAG, prints it beside the optimize price, and asks one question **before any agent spawns**.
 
 ## Fable 5 — opt-in only, via `--planner fable`
 

@@ -28,7 +28,7 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // (../references/execution-modes.md §M6). The orchestrating session computes them at
 // authoring time and stamps them here as a PURE LITERAL, because a script may not read a
 // clock, roll dice, or prompt a human (harness policy H10).
-// Leave the zeros under --mode optimize: no pre-flight fires and nothing was approved.
+// Leave the zeros under --mode balanced: no pre-flight fires and nothing was approved.
 // They are echoed into the return value so the gate can diff approved-vs-actual against
 // <transcriptDir>/journal.jsonl instead of taking the estimate on faith — loop-engine/SKILL.md
 // step 7 and loop-orchestrate/SKILL.md both require that diff, and this literal is its left side.
@@ -38,11 +38,25 @@ const ESTIMATE = { agents: 0, tokensLow: 0, tokensHigh: 0, mode: 'optimize' }
 // Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
-const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const RAW_MODE = (input && input.mode) || 'balanced'
+const MODE_ALIAS = { optimize: 'balanced', full: 'all-out' }          // v1.1 names — still accepted (§M9.6)
+const MODE = MODE_ALIAS[RAW_MODE] || (['lite', 'balanced', 'all-out'].indexOf(RAW_MODE) >= 0 ? RAW_MODE : 'balanced')
 const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
-  optimize: {
+  lite: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: null },
+    analyze:    { model: 'claude-sonnet-5',  effort: 'medium' },
+    synthesize: { model: 'claude-sonnet-5',  effort: 'medium' },
+    verify:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    judge:      { model: 'claude-sonnet-5',  effort: 'medium' },
+    critic:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    gating:     { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — error cost
+    planner:    { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — gates the run
+  },
+  balanced: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },
     doc:        { model: 'claude-haiku-4-5', effort: null },
     implement:  { model: 'claude-sonnet-5',  effort: 'high' },
     analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
@@ -50,13 +64,13 @@ const ROUTES = {
     verify:     { model: null,               effort: 'high' },
     judge:      { model: null,               effort: 'high' },
     critic:     { model: null,               effort: 'high' },
-    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
-    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+    gating:     { model: 'claude-opus-5',    effort: 'max' },
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },
   },
-  full: {
-    scout:      { model: 'claude-opus-5', effort: 'high' },
-    doc:        { model: 'claude-opus-5', effort: 'high' },
-    implement:  { model: 'claude-opus-5', effort: 'high' },
+  'all-out': {
+    scout:      { model: 'claude-opus-5', effort: 'xhigh' },
+    doc:        { model: 'claude-opus-5', effort: 'xhigh' },
+    implement:  { model: 'claude-opus-5', effort: 'xhigh' },
     analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
     synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
     verify:     { model: 'claude-opus-5', effort: 'xhigh' },
@@ -67,7 +81,7 @@ const ROUTES = {
   },
 }
 const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
-const WIDTH = (kind) => (MODE === 'full' ? (kind === 'gating' ? 5 : 3) : (kind === 'gating' ? 3 : 1))
+const WIDTH = (kind) => (MODE === 'all-out' ? (kind === 'gating' ? 5 : 3) : MODE === 'lite' ? 1 : (kind === 'gating' ? 3 : 1))
 function optsFor(node, label) {
   const r = routeFor(node.taskType)
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
@@ -77,7 +91,7 @@ function optsFor(node, label) {
   return opts
 }
 // No DRY_LIMIT: this template has no loop stage (§M8 — omit what you do not use). WIDTH is kept:
-// stage 2 IS an adversarial verify, and §M5 forbids full mode ever running a single skeptic.
+// stage 2 IS an adversarial verify, and §M5 forbids all-out mode ever running a single skeptic.
 // No plannerAgent: no node in this template carries taskType 'planner', so §M8's third
 // optional member is dropped too. `PLANNER` and its `optsFor()` line stay — they are invariant
 // core, and the flag is simply inert here.
@@ -133,7 +147,7 @@ const VERIFY_LENSES = [
   'impact: if it is real, does it change any outcome that matters here?',
 ]
 
-// Verifier width is mode-resolved (§M5): 1 in optimize, 3 in full, 5 on a gating node. Capped by
+// Verifier width is mode-resolved (§M5): 1 in balanced, 3 in full, 5 on a gating node. Capped by
 // the declared lens set, and any cap is logged — no silent narrowing (H6).
 const width = Math.min(WIDTH(VERIFY_NODE.taskType), VERIFY_LENSES.length)
 if (width < WIDTH(VERIFY_NODE.taskType)) {

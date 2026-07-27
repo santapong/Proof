@@ -43,11 +43,25 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
-const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const RAW_MODE = (input && input.mode) || 'balanced'
+const MODE_ALIAS = { optimize: 'balanced', full: 'all-out' }          // v1.1 names — still accepted (§M9.6)
+const MODE = MODE_ALIAS[RAW_MODE] || (['lite', 'balanced', 'all-out'].indexOf(RAW_MODE) >= 0 ? RAW_MODE : 'balanced')
 const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
-  optimize: {
+  lite: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: null },
+    analyze:    { model: 'claude-sonnet-5',  effort: 'medium' },
+    synthesize: { model: 'claude-sonnet-5',  effort: 'medium' },
+    verify:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    judge:      { model: 'claude-sonnet-5',  effort: 'medium' },
+    critic:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    gating:     { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — error cost
+    planner:    { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — gates the run
+  },
+  balanced: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },
     doc:        { model: 'claude-haiku-4-5', effort: null },
     implement:  { model: 'claude-sonnet-5',  effort: 'high' },
     analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
@@ -55,13 +69,13 @@ const ROUTES = {
     verify:     { model: null,               effort: 'high' },
     judge:      { model: null,               effort: 'high' },
     critic:     { model: null,               effort: 'high' },
-    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
-    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+    gating:     { model: 'claude-opus-5',    effort: 'max' },
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },
   },
-  full: {
-    scout:      { model: 'claude-opus-5', effort: 'high' },
-    doc:        { model: 'claude-opus-5', effort: 'high' },
-    implement:  { model: 'claude-opus-5', effort: 'high' },
+  'all-out': {
+    scout:      { model: 'claude-opus-5', effort: 'xhigh' },
+    doc:        { model: 'claude-opus-5', effort: 'xhigh' },
+    implement:  { model: 'claude-opus-5', effort: 'xhigh' },
     analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
     synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
     verify:     { model: 'claude-opus-5', effort: 'xhigh' },
@@ -72,8 +86,7 @@ const ROUTES = {
   },
 }
 const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
-const WIDTH = (kind) => (MODE === 'full' ? (kind === 'gating' ? 5 : 3) : (kind === 'gating' ? 3 : 1))
-const DRY_LIMIT = MODE === 'full' ? 3 : 2
+const WIDTH = (kind) => (MODE === 'all-out' ? (kind === 'gating' ? 5 : 3) : MODE === 'lite' ? 1 : (kind === 'gating' ? 3 : 1))
 function optsFor(node, label) {
   const r = routeFor(node.taskType)
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
@@ -82,9 +95,12 @@ function optsFor(node, label) {
   if (PLANNER && node.taskType === 'planner') opts.model = PLANNER // §M7 override — planner nodes only
   return opts
 }
-// DRY_LIMIT above IS loop policy L1's K — 2 in optimize, 3 in full (§M5). WIDTH is kept: the
+const DRY_LIMIT = MODE === 'all-out' ? 3 : MODE === 'lite' ? 1 : 2
+// §M8 omission note: DRY_LIMIT is declared here rather than inside the canonical block so the
+// block stays byte-identical across all 25 templates; loop policy L1's K is mode-conditional (§M5).
+// DRY_LIMIT above IS loop policy L1's K — 1 in lite, 2 in balanced, 3 in all-out (§M5). WIDTH is kept: the
 // Verify stage is a genuine adversarial review ("adversarially review this change"), and §M5
-// forbids full mode ever running a single skeptic on one. This loop runs UNATTENDED and its
+// forbids all-out mode ever running a single skeptic on one. This loop runs UNATTENDED and its
 // output is a PR proposal, so a full-mode run gated by one reviewer while billing at the
 // Opus-5/xhigh ceiling was the worst possible combination. The lens set is declared below.
 // No plannerAgent: no node in this template carries taskType 'planner', so §M8's third
@@ -112,7 +128,7 @@ const MAX_ROUNDS = (input && input.maxRounds) || 6 // hard backstop (L4)
 
 // EDIT ME: the Verify node's DECLARED review lenses. Each attacks a proposed change a DIFFERENT
 // way (H4: diversity beats redundancy). Mode picks how MANY run (§M5); it never invents new ones.
-// ORDER MATTERS — in optimize mode only lens[0] runs, so lens[0] carries the broadest mandate.
+// ORDER MATTERS — in balanced mode only lens[0] runs, so lens[0] carries the broadest mandate.
 // Five are declared so a gating review can reach width 5 without inventing a lens at run time.
 const REVIEW_LENSES = [
   { key: 'correctness', prompt: 'Attack the change itself: does it do what the item asked, exactly, and does it hold on the empty, null, boundary, and error paths as well as the happy one?' },
@@ -122,7 +138,7 @@ const REVIEW_LENSES = [
   { key: 'reversibility', prompt: 'Attack the exit: if this lands and is wrong, can it be reverted cleanly? A migration, a data backfill, or a released artifact makes safeToPropose a much higher bar.' },
 ]
 
-// Verifier width is mode-resolved (§M5): 1 in optimize, 3 in full, 5 on a gating node. Capped by
+// Verifier width is mode-resolved (§M5): 1 in balanced, 3 in full, 5 on a gating node. Capped by
 // the declared lens set, and any cap is logged — no silent narrowing (H6).
 const VERIFY_WIDTH = Math.min(WIDTH('verify'), REVIEW_LENSES.length)
 if (VERIFY_WIDTH < WIDTH('verify')) {
@@ -244,7 +260,7 @@ do {
         actOpts,
       ).then((a) => ({ ...prev, act: a }))
     },
-    // Width is mode-resolved (§M5): one adversarial reviewer per item in optimize, three diverse
+    // Width is mode-resolved (§M5): one adversarial reviewer per item in balanced, three diverse
     // lenses in full. The inner parallel() is a WITHIN-ITEM lens vote, not a cross-item barrier,
     // so H2's earned-barrier test is not engaged and no item waits on another item's change.
     (prev) => {

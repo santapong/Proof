@@ -1,7 +1,7 @@
 ---
 name: loop-scout
 description: "Find existing frameworks, libraries, tools, services, or standards that already solve a problem before building it from scratch, a prior-art and build-vs-buy check that prevents reinventing the wheel. Use when the user is about to build a component or feature, asks whether to build or adopt an existing solution, asks whether a library exists for a need, or is choosing between candidate dependencies. Ends at a decision: reuse, adapt, or build, naming the candidate and the runner-up. For using a framework already in the project idiomatically, use loop-pattern. For wiring up a chosen third-party platform or API, use loop-integrate. For a question that needs cited evidence rather than a build-vs-buy decision, use loop-research."
-argument-hint: <capability> [--mode <optimize|full>]
+argument-hint: <capability> [--mode <lite|balanced|all-out>]
 ---
 
 # Finding Frameworks
@@ -52,7 +52,7 @@ Even when building is justified, keep it small. From **`references/build-vs-buy.
 
 Deliver a short, decisive recommendation, not a survey: the pick (reuse X / adapt X / build), the rationale against the must-haves, the **strongest counter-argument named**, and the runner-up so the decision is auditable. When the choice is architecturally significant, record it as an ADR using the **`loop-design`** skill's `templates/adr-template.md`. For a wide search across many candidates, run **`templates/prior-art-search.workflow.js`** to fan out discovery and evaluation in parallel, then synthesize the decision.
 
-**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — invoke the `loop-engine` skill to author and execute `templates/prior-art-search.workflow.js`, passing the raw argument string straight through and carrying no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
+**Execution flags.** `--mode <lite|balanced|all-out>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — invoke the `loop-engine` skill to author and execute `templates/prior-art-search.workflow.js`, passing the raw argument string straight through and carrying no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
 
 ## Reference files
 

@@ -25,7 +25,7 @@ Reach for these to justify a convention, to settle a house-style dispute, or to 
 
 ## Diátaxis — the doc-type model
 
-**Diátaxis** (Daniele Procida) is the core taxonomy this skill classifies by: four modes on the study/work × practical/theoretical axes — tutorial, how-to, reference, explanation. It is a **living framework** with no version number; it is revised in place, so cite it as "the Diátaxis framework" and re-read the source periodically rather than pinning an edition. In this skill it drives **SKILL §1 (pick the type first)**; the full mode definitions, skeletons, and the single-mode rule live in **`doc-types.md`** — apply it there, this entry only names the source.
+**Diátaxis** (Daniele Procida) is the core taxonomy this skill classifies by: four modes on the study/work × practical/theoretical axes — tutorial, how-to, reference, explanation. It is a **living framework** with no version number; it is revised in place, so cite it as "the Diátaxis framework" and re-read the source periodically rather than pinning an edition. In this skill it drives **SKILL §1 (pick the type first)**; the all-out mode definitions, skeletons, and the single-mode rule live in **`doc-types.md`** — apply it there, this entry only names the source.
 
 ## Prose style: Google and Microsoft
 

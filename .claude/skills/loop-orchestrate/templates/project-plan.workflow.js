@@ -42,7 +42,7 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // (../../loop-engine/references/execution-modes.md §M6). The orchestrating session
 // computes them at authoring time and stamps them here as a PURE LITERAL, because a
 // script may not read a clock, roll dice, or prompt a human (harness policy H10).
-// Leave the zeros under --mode optimize: no pre-flight fires and nothing was approved.
+// Leave the zeros under --mode balanced: no pre-flight fires and nothing was approved.
 // They are echoed into the return value so the gate can diff approved-vs-actual against
 // <transcriptDir>/journal.jsonl instead of taking the estimate on faith.
 // ---------------------------------------------------------------------------
@@ -52,11 +52,25 @@ const ESTIMATE = { agents: 0, tokensLow: 0, tokensHigh: 0, mode: 'optimize' }
 // Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
-const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const RAW_MODE = (input && input.mode) || 'balanced'
+const MODE_ALIAS = { optimize: 'balanced', full: 'all-out' }          // v1.1 names — still accepted (§M9.6)
+const MODE = MODE_ALIAS[RAW_MODE] || (['lite', 'balanced', 'all-out'].indexOf(RAW_MODE) >= 0 ? RAW_MODE : 'balanced')
 const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
-  optimize: {
+  lite: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: null },
+    analyze:    { model: 'claude-sonnet-5',  effort: 'medium' },
+    synthesize: { model: 'claude-sonnet-5',  effort: 'medium' },
+    verify:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    judge:      { model: 'claude-sonnet-5',  effort: 'medium' },
+    critic:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    gating:     { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — error cost
+    planner:    { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — gates the run
+  },
+  balanced: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },
     doc:        { model: 'claude-haiku-4-5', effort: null },
     implement:  { model: 'claude-sonnet-5',  effort: 'high' },
     analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
@@ -64,13 +78,13 @@ const ROUTES = {
     verify:     { model: null,               effort: 'high' },
     judge:      { model: null,               effort: 'high' },
     critic:     { model: null,               effort: 'high' },
-    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
-    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+    gating:     { model: 'claude-opus-5',    effort: 'max' },
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },
   },
-  full: {
-    scout:      { model: 'claude-opus-5', effort: 'high' },
-    doc:        { model: 'claude-opus-5', effort: 'high' },
-    implement:  { model: 'claude-opus-5', effort: 'high' },
+  'all-out': {
+    scout:      { model: 'claude-opus-5', effort: 'xhigh' },
+    doc:        { model: 'claude-opus-5', effort: 'xhigh' },
+    implement:  { model: 'claude-opus-5', effort: 'xhigh' },
     analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
     synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
     verify:     { model: 'claude-opus-5', effort: 'xhigh' },
@@ -81,7 +95,7 @@ const ROUTES = {
   },
 }
 const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
-const WIDTH = (kind) => (MODE === 'full' ? (kind === 'gating' ? 5 : 3) : (kind === 'gating' ? 3 : 1))
+const WIDTH = (kind) => (MODE === 'all-out' ? (kind === 'gating' ? 5 : 3) : MODE === 'lite' ? 1 : (kind === 'gating' ? 3 : 1))
 function optsFor(node, label) {
   const r = routeFor(node.taskType)
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
@@ -179,7 +193,7 @@ const TASKS = [
     // EDIT ME: mechanical enumeration multiplied across the codebase. taskType 'scout' routes
     // it DOWN to Haiku with effort omitted under 'optimize' (modifier A / H6), and UP to the
     // ceiling under 'full', where modifier A is disabled by contract.
-    rationale: 'mechanical inventory, budget-bound fan-out → scout route (Haiku, effort omitted) in optimize; ceiling in full (modifier A / H6)',
+    rationale: 'mechanical inventory, budget-bound fan-out → scout route (Haiku, effort omitted) in balanced; ceiling in full (modifier A / H6)',
     prompt: 'Enumerate every call site / config touchpoint relevant to the task. Return raw data only.',
     schema: INVENTORY_SCHEMA,
   },
@@ -188,9 +202,9 @@ const TASKS = [
     label: 'analyze:risk',
     taskType: 'analyze',
     phase: 'Scout',
-    // EDIT ME: real judgment → the 'analyze' route omits model in optimize so the agent
+    // EDIT ME: real judgment → the 'analyze' route omits model in balanced so the agent
     // inherits the session tier (H8), and pins + lifts effort in full.
-    rationale: 'risk analysis is judgment work → analyze route: inherit session model at high in optimize, pinned xhigh in full (H8)',
+    rationale: 'risk analysis is judgment work → analyze route: inherit session model at high in balanced, pinned xhigh in full (H8)',
     prompt: 'Identify the highest-risk areas the change will touch and why. Return raw data only.',
     schema: INVENTORY_SCHEMA,
   },
@@ -199,7 +213,7 @@ const TASKS = [
     label: 'analyze:arch',
     taskType: 'analyze',
     phase: 'Scout',
-    rationale: 'architecture read is judgment work → analyze route: inherit in optimize, pinned xhigh in full (H8)',
+    rationale: 'architecture read is judgment work → analyze route: inherit in balanced, pinned xhigh in full (H8)',
     prompt: 'Map the structural constraints (boundaries, invariants) the change must respect. Return raw data only.',
     schema: INVENTORY_SCHEMA,
   },
@@ -208,7 +222,7 @@ const TASKS = [
   // earns the barrier below (harness policy H2).
   // NOTE ON taskType: this is the phase's SINGLE decompose/planning node — the one node whose
   // output every later node is authored against — so it takes the 'planner' kind, which §M3
-  // PINS in both modes (claude-opus-5 at xhigh in optimize, max in full). It is also the one
+  // PINS in all three modes (claude-opus-5 at xhigh in balanced, max in full). It is also the one
   // place `--planner fable` may land (§M7): a single node, never a fan-out, never inside a
   // loop, so preconditions 1 and 2 hold structurally. It dispatches through plannerAgent()
   // below, which prints the §M7 disclosure and falls back to claude-opus-5 at max on a refusal
@@ -219,7 +233,7 @@ const TASKS = [
     label: 'plan:batches',
     taskType: 'planner',
     phase: 'Plan',
-    rationale: 'single decompose over the full scout set; every Build node is authored against it → planner route: pinned claude-opus-5 at xhigh in optimize, max in full, and the only node --planner fable may override (§M3/§M7)',
+    rationale: 'single decompose over the full scout set; every Build node is authored against it → planner route: pinned claude-opus-5 at xhigh in balanced, max in full, and the only node --planner fable may override (§M3/§M7)',
     prompt: 'Group the inventory into dependency-safe batches for the Build phase. Return raw data only.',
     schema: PLAN_SCHEMA,
   },
@@ -230,10 +244,10 @@ const TASKS = [
     label: 'draft', // per-item label is set at dispatch (draft:<item>)
     taskType: 'implement',
     phase: 'Build',
-    // EDIT ME: production edit. The 'implement' route pins claude-sonnet-5 in optimize —
+    // EDIT ME: production edit. The 'implement' route pins claude-sonnet-5 in balanced —
     // deliberately, not by inheritance: the session runs a tier above what this work needs,
     // so inheriting would pay the top tier for production volume. In full it runs at ceiling.
-    rationale: 'production implementation → implement route: Sonnet 5 at high in optimize, pinned Opus 5 at high in full (H8)',
+    rationale: 'production implementation → implement route: Sonnet 5 at high in balanced, pinned Opus 5 at high in full (H8)',
     prompt: 'Implement the change for this item. Return the diff and a one-line summary as raw data.',
     schema: DRAFT_SCHEMA,
   },
@@ -244,10 +258,10 @@ const TASKS = [
     phase: 'Build',
     // EDIT ME: a false "all clear" here ships a broken change to every downstream item, so
     // this is correctness-critical → the 'gating' route, PINNED at claude-opus-5 / 'max' in
-    // BOTH modes. It is pinned even in optimize so the check does not silently degrade when a
+    // BOTH modes. It is pinned even in balanced so the check does not silently degrade when a
     // session runs below the top tier — modifier B has no travel left on model or effort here,
-    // which is exactly why full mode answers it with WIDTH instead (§M4 rung 3, §M5, H4).
-    rationale: 'false "all clear" ships the bug → gating route: pinned claude-opus-5 at max in both modes, widened to 5 lenses in full (modifier B / H4)',
+    // which is exactly why all-out mode answers it with WIDTH instead (§M4 rung 3, §M5, H4).
+    rationale: 'false "all clear" ships the bug → gating route: pinned claude-opus-5 at max in all three modes, widened to 5 lenses in full (modifier B / H4)',
     prompt: 'Try to REFUTE that the draft is correct and complete. Default to ok=false if uncertain. Return raw data only.',
     schema: VERDICT_SCHEMA,
     // Declared lens set. Mode picks HOW MANY of these run — it never invents new ones (§M5).
@@ -286,7 +300,7 @@ if (MODE === 'full') {
 // ---------------------------------------------------------------------------
 const scoutNodes = TASKS.filter((t) => t.phase === 'Scout')
 if (MODE === 'full') {
-  // Modifier A (wide fan-out pushes a tier DOWN) is DISABLED in full mode: the human already
+  // Modifier A (wide fan-out pushes a tier DOWN) is DISABLED in all-out mode: the human already
   // approved the bill at the pre-flight, so cheapening behind them is worse than the spend
   // (§M4). Log the suppression so a wide fan-out at ceiling reads as design, not oversight.
   log(`modifier-A: suppressed (mode=full) — ${scoutNodes.length}-item fan-out running at ceiling by design`)

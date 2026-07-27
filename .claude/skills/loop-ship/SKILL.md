@@ -1,7 +1,7 @@
 ---
 name: loop-ship
 description: "Plan and execute getting a change safely to production: rollout strategy (rolling, blue-green, canary), feature-flag plan, expand-contract migrations, the release checklist and go/no-go, a tested rollback path, and DORA measurement. Use when the user asks how to ship, release, roll out, or deploy a change, whether to canary or blue-green it, how to run a zero-downtime schema migration, how to roll back, or how to build a release checklist. For choosing a delivery architecture for a system still being designed, use loop-design and record it as an ADR. For watching SLOs and auto-remediating after the rollout has baked, use loop-operate. For assessing what is in the release and how risky it is, use loop-audit."
-argument-hint: <change> [--mode <optimize|full>]
+argument-hint: <change> [--mode <lite|balanced|all-out>]
 ---
 
 # Shipping a change

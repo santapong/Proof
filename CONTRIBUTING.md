@@ -24,7 +24,7 @@ A skill's `references/` file may cross-reference a **sibling skill's** `referenc
 - **Frontmatter is required**: a YAML block with `name`, `description` and `argument-hint`.
   - `name` — lowercase letters, numbers, hyphens; gerund style **matching the directory exactly** (`loop-review`, `loop-test`). A mismatch does not error, it just fails to resolve.
   - `description` — third person, **≤1024 characters**, stating *what it does* AND *when to use it* (the trigger phrases Claude matches on). No first/second person.
-  - `argument-hint` — the invocation shape, including every flag the skill accepts (`<target> [--mode <optimize|full>]`).
+  - `argument-hint` — the invocation shape, including every flag the skill accepts (`<target> [--mode <lite|balanced|all-out>]`).
   - **Quote any value containing a colon.** `description: Integrate a platform: OAuth 2.0 flows…` is not valid YAML — a colon followed by whitespace opens a nested mapping, and the parser reports `mapping values are not allowed here`. Two skills shipped this way in 1.0.0. Wrap the whole value in double quotes and it is safe by construction; `node scripts/validate.mjs` rejects the unquoted form.
 - **Keep the body a thin router** (aim under ~400 lines). Push depth into `references/` files and load them on demand — this keeps token cost low, since only `SKILL.md` stays in context.
 - **Be prescriptive**: sane defaults with named escape hatches, not a neutral glossary. No leftover TODO/placeholder text.
@@ -121,7 +121,7 @@ Workflow templates read their arguments off one normalized `input` object, and a
 
 | Reserved | Flag | Values | Read by |
 |---|---|---|---|
-| `input.mode` | `--mode` | `optimize` (default) \| `full` | `const MODE` in the canonical `ROUTES` block (§M8) |
+| `input.mode` | `--mode` | `balanced` (default) \| `all-out` | `const MODE` in the canonical `ROUTES` block (§M8) |
 | `input.planner` | `--planner` | `opus` (default) \| `fable` | `const PLANNER` in the canonical `ROUTES` block (§M7, §M8) |
 
 **Never take `mode` for anything else.** `improvement-loop.workflow.js` had a dry/live safety switch on `input.mode` in v0.4.0 and had to rename it to `input.runMode` for this release — a breaking change to a shipped argument, carrying a back-compat branch that logs a warning when it sees a legacy value. After 1.0.0, renaming an argument is a breaking change; the cheap fix is to not collide in the first place.

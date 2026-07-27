@@ -88,28 +88,47 @@ const failures = []
 for (const f of files) {
   const rel = relative(ROOT, f)
   try {
-    const opt = await run(f, { mode: 'optimize' })
-    const full = await run(f, { mode: 'full' })
+    const lite = await run(f, { mode: 'lite' })
+    const opt = await run(f, { mode: 'balanced' })
+    const full = await run(f, { mode: 'all-out' })
+    const legacy = await run(f, { mode: 'optimize' })   // deprecated alias must still route
 
     const errs = []
 
     // 1. It ran and asked for at least one agent.
-    if (!opt.calls.length) errs.push('made no agent() calls in optimize mode')
+    if (!opt.calls.length) errs.push('made no agent() calls in balanced mode')
 
     // 2. Every consumed call carries a schema (H3).
     const noSchema = opt.calls.filter((c) => !c.schema)
     if (noSchema.length) errs.push(`${noSchema.length} agent() call(s) with no schema`)
 
-    // 3. Full mode pins claude-opus-5 on every call; optimize must NOT pin it everywhere.
+    // 3. all-out pins claude-opus-5 on every call.
     const fullUnpinned = full.calls.filter((c) => c.model !== 'claude-opus-5')
     if (fullUnpinned.length) {
-      errs.push(`full mode left ${fullUnpinned.length} call(s) unpinned: ${[...new Set(fullUnpinned.map((c) => c.model ?? 'inherit'))].join(', ')}`)
+      errs.push(`all-out left ${fullUnpinned.length} call(s) unpinned: ${[...new Set(fullUnpinned.map((c) => c.model ?? 'inherit'))].join(', ')}`)
     }
 
-    // 4. Optimize must route SOMETHING below the ceiling, or the mode dial is inert here.
+    // 4. balanced must route SOMETHING below the ceiling, or the mode dial is inert here.
     const optTiers = new Set(opt.calls.map((c) => c.model ?? 'inherit'))
     if (optTiers.size === 1 && optTiers.has('claude-opus-5')) {
-      errs.push('optimize mode pinned opus-5 on every call — mode dial is inert')
+      errs.push('balanced pinned opus-5 on every call — mode dial is inert')
+    }
+
+    // 4b. lite must never leave a node inheriting the session model, and must be no more
+    // expensive than balanced on any node — that is the whole point of the tier.
+    const liteInherit = lite.calls.filter((c) => !c.model)
+    if (liteInherit.length) errs.push(`lite left ${liteInherit.length} call(s) inheriting the session model — lite must pin down`)
+    const rankM = { 'claude-haiku-4-5': 1, 'claude-sonnet-5': 2, 'claude-opus-5': 3 }
+    for (let i = 0; i < Math.min(lite.calls.length, opt.calls.length); i++) {
+      const l = rankM[lite.calls[i].model] ?? 3
+      const b = rankM[opt.calls[i].model] ?? 3
+      if (l > b) { errs.push(`lite routed call ${i} HIGHER than balanced (${lite.calls[i].model} > ${opt.calls[i].model ?? 'inherit'})`); break }
+    }
+
+    // 4c. The deprecated `optimize` alias must resolve to balanced, not fall through to a default.
+    if (legacy.calls.length !== opt.calls.length ||
+        legacy.calls.some((c, i) => c.model !== opt.calls[i].model || c.effort !== opt.calls[i].effort)) {
+      errs.push('deprecated alias --mode optimize did not resolve identically to --mode balanced')
     }
 
     // 5. Effort must lift in full mode wherever optimize used a non-max effort.
@@ -125,7 +144,7 @@ for (const f of files) {
     // 6. --planner fable must reach a planner node if the template declares one.
     const declaresPlanner = readFileSync(f, 'utf8').includes("taskType: 'planner'")
     if (declaresPlanner) {
-      const fable = await run(f, { mode: 'optimize', planner: 'fable' })
+      const fable = await run(f, { mode: 'balanced', planner: 'fable' })
       if (!fable.calls.some((c) => c.model === 'claude-fable-5')) {
         errs.push('declares a planner node but --planner fable never routed to claude-fable-5')
       }
@@ -134,7 +153,7 @@ for (const f of files) {
     if (errs.length) failures.push({ rel, errs })
     else {
       pass++
-      if (VERBOSE) console.log(`  ok   ${rel}  (${opt.calls.length} calls; optimize tiers: ${[...optTiers].join('/')})`)
+      if (VERBOSE) console.log(`  ok   ${rel}  (${opt.calls.length} calls; balanced tiers: ${[...optTiers].join('/')})`)
     }
   } catch (e) {
     failures.push({ rel, errs: [`threw at runtime: ${e.message}`] })

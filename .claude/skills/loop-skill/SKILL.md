@@ -1,7 +1,7 @@
 ---
 name: loop-skill
 description: "Author a new skill for this plugin, or bring an existing one up to contract: draft the discriminating description and register the boundary, research and grade the standards shelf, write the thin router, the on-demand references and the ROUTES-carrying workflow template, then prove it conforms with the validation gate. Use when the user asks to create, scaffold, add, or fix a skill, or asks how to extend the plugin. The deliverable is a skill directory that passes scripts/validate.mjs. For configuring what Claude is permitted to do — permissions, hooks, MCP servers, scheduled automation — use loop-harness, whose subject is the environment rather than a capability. For prose written for a human reader, use loop-docs. For designing the software a skill talks about, use loop-design."
-argument-hint: <skill-purpose> [--mode <optimize|full>]
+argument-hint: <skill-purpose> [--mode <lite|balanced|all-out>]
 ---
 
 # loop-skill
@@ -17,7 +17,7 @@ Read `../../../docs/c4/skill-anatomy.md` before your first skill — it explains
 ### 1. Parse arguments
 
 - **skill-purpose** — everything that is not a flag. If empty, ask what the skill should do.
-- **`--mode <optimize|full>`** — parsed by `loop-engine`; pass the raw argument string through. See `../loop-engine/references/execution-modes.md`.
+- **`--mode <lite|balanced|all-out>`** — parsed by `loop-engine`; pass the raw argument string through. See `../loop-engine/references/execution-modes.md`.
 
 Establish which job this is:
 

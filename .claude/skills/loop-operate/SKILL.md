@@ -1,7 +1,7 @@
 ---
 name: loop-operate
 description: "Operate a running service in steady state: define SLIs, SLOs, and error budgets, design burn-rate alerts, write self-healing runbooks, watch health, gate auto-rollback on SLO signals, and set the autonomy dial for unattended operation. Use when the user asks to monitor or operate a live service, set up SLOs or error budgets, design alerting or on-call triage, write a runbook, add self-healing or automated remediation, or decide how much a service may fix itself. For a declared outage affecting users right now, use loop-incident. For choosing SLO targets for a system not yet built, use loop-design. For a rollout that is still in flight and has not finished baking, use loop-ship, which authors the rollback mechanism this skill triggers. For automating improvements to a repository rather than a running service, use loop-autopilot."
-argument-hint: <service> [--mode <optimize|full>]
+argument-hint: <service> [--mode <lite|balanced|all-out>]
 ---
 
 # Operating a Service

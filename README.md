@@ -9,7 +9,7 @@
 
 TheLoopSkill turns a task into a **multi-agent Workflow** — pipeline by default, parallel fan-out where it's earned, loops for unknown-size discovery — governed by explicit engineering policies and a pluggable lifecycle framework. Eighteen domain skills build on that engine to cover the lifecycle end to end — design, mechanism, build, review, integrate, ship, operate, respond — and one autonomous skill ties them into a self-improving loop.
 
-Every node of every workflow is routed to a model tier that matches the job, on one dial: `--mode optimize` spends carefully, `--mode full` spends everything.
+Every node of every workflow is routed to a model tier that matches the job, on one dial with three rungs: **`lite`** for small tasks, **`balanced`** (the default) for real work, **`all-out`** when the answer matters more than the bill.
 
 ## Contents
 
@@ -37,7 +37,7 @@ It's for developers who want Claude Code to do *engineering*, not just answer qu
 
 ## What's in the box
 
-Twenty skills, grouped by the engineering role they play. Every skill takes `[--mode <optimize|full>]` unless noted.
+Twenty skills, grouped by the engineering role they play. Every skill takes `[--mode <lite|balanced|all-out>]` unless noted.
 
 **Engine & planning**
 
@@ -280,21 +280,29 @@ Confirmed findings come back as structured data, with everything the verifiers r
 Every workflow node carries a `taskType`. A shared routing block maps that type, plus the mode, to a model and an effort level — so a mechanical enumeration and an adversarial security verdict never cost the same.
 
 ```
-/loop-review the auth changes on this branch              # optimize (default)
-/loop-review the auth changes on this branch --mode full  # all-out
+/loop-review the auth changes on this branch                 # balanced (default)
+/loop-review the auth changes on this branch --mode lite     # small task, minimal spend
+/loop-review the auth changes on this branch --mode all-out  # spare nothing
 ```
 
-| | `--mode optimize` (default) | `--mode full` |
-|---|---|---|
-| Mechanical / scout / doc | Haiku 4.5 | Opus 5, `high` |
-| Implementation | Sonnet 5, `high` | Opus 5, `high` |
-| Judgment / verify / critic | inherit session model, `high` | Opus 5, `xhigh` |
-| Wide fan-out pushes a tier **down** | active | **disabled** |
-| Verifier width | 1, or 3 when the ask is thorough | always 3 (5 on a gating verify) |
-| Loop-until-dry threshold | 2 | 3 |
-| Pre-flight | none | deterministic estimate + **one confirmation before anything spawns** |
+| | `--mode lite` | `--mode balanced` (default) | `--mode all-out` |
+|---|---|---|---|
+| Reach for it when | Small, well-specified task | Real production work | The answer matters more than the bill |
+| Mechanical / scout / doc | Haiku 4.5 | Haiku 4.5 | Opus 5, `xhigh` |
+| Implementation | Sonnet 5 | Sonnet 5, `high` | Opus 5, `xhigh` |
+| Judgment / verify / critic | Sonnet 5, `medium` | inherit, `high` | Opus 5, `xhigh` |
+| Gating & planner | **Opus 5** — pinned in every mode | **Opus 5** | **Opus 5**, `max` |
+| Wide fan-out pushes a tier **down** | active | active | **disabled** |
+| Verifier width | 1 | 1, or 3 when thorough | 3 (5 on a gating verify) |
+| Loop-until-dry threshold | 1 | 2 | 3 |
+| Pre-flight | none | none | estimate + **one confirmation before anything spawns** |
+| Typical spend vs balanced | ≈0.2–0.4× | 1× | ≈3–5× |
 
-The load-bearing difference is not the effort floor — it is that full mode **disables the tier-down modifier**, so a 300-item sweep that optimize would route to Haiku runs entirely on Opus 5. That is where the cost goes, so full mode prices the DAG and asks once before spending it.
+Two things are deliberate. **Gating and planner nodes stay on Opus 5 even in `lite`** — they are single nodes whose wrong answer is inherited by everything downstream, so cheapening them buys a worse version of every task that follows. And **`lite` never inherits the session model**: it pins downward, because inheriting an Opus 5 session would make the cheapest-named mode the most expensive one on half the DAG.
+
+The load-bearing difference at the top of the ladder is not the effort floor — it is that `all-out` **disables the tier-down modifier**, so a 300-item sweep `balanced` would route to Haiku runs entirely on Opus 5. That is where the cost goes, which is why `all-out` prices the DAG and asks once before spending it.
+
+The v1.1 names `optimize` and `full` still work as deprecated aliases, so nothing that already runs breaks.
 
 `--planner fable` is an orthogonal opt-in that routes the single planning node to Fable 5 for a deeper decomposition, and states its own tradeoffs at the point of use. Full contract: [`execution-modes.md`](.claude/skills/loop-engine/references/execution-modes.md).
 

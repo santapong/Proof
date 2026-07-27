@@ -10,10 +10,10 @@
 // Invoke with: Workflow({ script, args: { target: "...", scope: "...", mode: "optimize", gating: false } })
 // input.target — what to review (a diff, a PR, a path, a repo). Used in every finder prompt.
 // input.scope  — one-line scope note (e.g. "only changed lines in git diff main...HEAD").
-// input.mode   — 'optimize' (default) or 'full' (execution-modes.md §M2). Full mode runs the
+// input.mode   — 'optimize' (default) or 'full' (execution-modes.md §M2). All-out mode runs the
 //                adversarial verify at WIDTH('verify') diverse lenses instead of one skeptic.
 // input.gating — true when this review blocks a release. Widens the verify fan-out to 5 lenses
-//                under full mode (§M5). It widens only — the skeptics stay on the `verify` route.
+//                under all-out mode (§M5). It widens only — the skeptics stay on the `verify` route.
 
 export const meta = {
   name: 'security-review', // EDIT ME
@@ -30,11 +30,25 @@ const input = typeof args === 'string' ? JSON.parse(args) : args
 // Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
 // Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
 // access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
-const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const RAW_MODE = (input && input.mode) || 'balanced'
+const MODE_ALIAS = { optimize: 'balanced', full: 'all-out' }          // v1.1 names — still accepted (§M9.6)
+const MODE = MODE_ALIAS[RAW_MODE] || (['lite', 'balanced', 'all-out'].indexOf(RAW_MODE) >= 0 ? RAW_MODE : 'balanced')
 const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
 const ROUTES = {
-  optimize: {
+  lite: {
     scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: null },
+    analyze:    { model: 'claude-sonnet-5',  effort: 'medium' },
+    synthesize: { model: 'claude-sonnet-5',  effort: 'medium' },
+    verify:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    judge:      { model: 'claude-sonnet-5',  effort: 'medium' },
+    critic:     { model: 'claude-sonnet-5',  effort: 'medium' },
+    gating:     { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — error cost
+    planner:    { model: 'claude-opus-5',    effort: 'high' }, // pinned in EVERY mode — gates the run
+  },
+  balanced: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },
     doc:        { model: 'claude-haiku-4-5', effort: null },
     implement:  { model: 'claude-sonnet-5',  effort: 'high' },
     analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
@@ -42,13 +56,13 @@ const ROUTES = {
     verify:     { model: null,               effort: 'high' },
     judge:      { model: null,               effort: 'high' },
     critic:     { model: null,               effort: 'high' },
-    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
-    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+    gating:     { model: 'claude-opus-5',    effort: 'max' },
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },
   },
-  full: {
-    scout:      { model: 'claude-opus-5', effort: 'high' },
-    doc:        { model: 'claude-opus-5', effort: 'high' },
-    implement:  { model: 'claude-opus-5', effort: 'high' },
+  'all-out': {
+    scout:      { model: 'claude-opus-5', effort: 'xhigh' },
+    doc:        { model: 'claude-opus-5', effort: 'xhigh' },
+    implement:  { model: 'claude-opus-5', effort: 'xhigh' },
     analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
     synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
     verify:     { model: 'claude-opus-5', effort: 'xhigh' },
@@ -59,7 +73,7 @@ const ROUTES = {
   },
 }
 const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
-const WIDTH = (kind) => (MODE === 'full' ? (kind === 'gating' ? 5 : 3) : (kind === 'gating' ? 3 : 1))
+const WIDTH = (kind) => (MODE === 'all-out' ? (kind === 'gating' ? 5 : 3) : MODE === 'lite' ? 1 : (kind === 'gating' ? 3 : 1))
 function optsFor(node, label) {
   const r = routeFor(node.taskType)
   const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
@@ -142,7 +156,7 @@ const VERIFY_LENSES = [
   { key: 'classification', prompt: 'Attack the classification: does the reported CWE and severity match what the code actually permits, and is this the same weakness another candidate already reports at the same location? A misclassified or duplicate finding is not a finding at this bar.' },
 ]
 
-// Gating reviews block a release, so their verify fan-out widens to 5 under full mode (§M5).
+// Gating reviews block a release, so their verify fan-out widens to 5 under all-out mode (§M5).
 // This changes WIDTH only — the skeptics stay on the `verify` route, per §M3.
 const VERIFY_WIDTH = WIDTH(input && input.gating ? 'gating' : 'verify')
 
@@ -177,7 +191,7 @@ if (deduped.length === 0) {
 
 // Adversarial verify (harness policy H4): independent skeptics per candidate, prompted to
 // REFUTE it and default to isReal=false when the exploit path is unproven. Width is mode-resolved
-// (§M5): one skeptic in optimize, three diverse lenses in full, five when the review is gating —
+// (§M5): one skeptic in balanced, three diverse lenses in full, five when the review is gating —
 // and a candidate now dies on a MAJORITY refute at ⌈N/2⌉ rather than on a single verdict.
 const lenses = VERIFY_LENSES.slice(0, VERIFY_WIDTH)
 log(`verify: ${deduped.length} candidates × ${lenses.length} lens(es) = ${deduped.length * lenses.length} skeptic(s)`)
