@@ -16,10 +16,10 @@ Every node of every workflow is routed to a model tier that matches the job, on 
 - [Why](#why)
 - [What's in the box](#whats-in-the-box)
 - [Quickstart](#quickstart)
-- [How the skills compose](#how-the-skills-compose)
+- [Architecture at a glance](#architecture-at-a-glance)
 - [The `loop-engine`](#the-loop-engine)
 - [Execution modes](#execution-modes--one-dial-for-the-whole-fleet)
-- [Architecture & philosophy](#architecture--philosophy)
+- [Engineering policies & discipline](#engineering-policies--discipline)
 - [Installation](#installation)
 - [Repository layout](#repository-layout)
 - [Contributing](#contributing)
@@ -106,42 +106,93 @@ Eighteen skills, grouped by the engineering role they play. Every skill takes `[
 
 No install needed to try it inside this repo — the skills live in `.claude/skills/` and are auto-discovered by any Claude Code session opened here. See [Installation](#installation) for local, web, and plugin paths.
 
-## How the skills compose
+## Architecture at a glance
 
-The skills aren't a flat list — they build on `loop-engine` and delegate to each other rather than duplicating logic:
+The system is documented with the **[C4 model](https://c4model.com)** — a hierarchy of diagrams at decreasing altitude, where each level answers one question and refuses to answer the next level's. Level 1 is below; the rest live in **[`docs/c4/`](docs/c4/README.md)**.
+
+### Level 1 — System Context
+
+**What is this, who uses it, what does it depend on?** Note where the boundary sits: Claude Code is *outside* it. The plugin has no process, port, or lifecycle of its own — everything it "does" is done by the host on its instruction.
+
+```mermaid
+graph TB
+    dev["Developer<br/><i>[Person]</i><br/>Invokes a skill; answers gate questions"]
+
+    system["<b>TheLoopSkill</b><br/><i>[Software System]</i><br/>Turns an engineering task into a governed multi-agent workflow, with the model matched to each job and a human at every phase gate"]
+
+    cc["Claude Code<br/><i>[External System]</i><br/>Host runtime: loads skills, runs the Workflow tool"]
+    fleet["Claude Model Fleet<br/><i>[External System]</i><br/>Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5"]
+    repo["Target Repository<br/><i>[External System]</i><br/>The developer's codebase"]
+    forge["GitHub<br/><i>[External System]</i><br/>Issues, PRs, CI signals"]
+
+    dev -->|"Invokes a skill, answers gates"| system
+    cc -->|"Spawns agents on its behalf"| system
+    system -->|"Routes each node to a tier"| fleet
+    system -->|"Reads code; implement nodes write"| repo
+    system -->|"Reads feedback; opens draft PRs, never merges"| forge
+
+    classDef person   fill:#08427b,stroke:#052e56,color:#ffffff
+    classDef focus    fill:#1168bd,stroke:#0b4884,color:#ffffff
+    classDef external fill:#999999,stroke:#6b6b6b,color:#ffffff
+
+    class dev person
+    class system focus
+    class cc,fleet,repo,forge external
+```
+
+### Level 2 — Containers
+
+Eight separately-loadable units, split by **loading regime**, which is the meaningful boundary for a plugin with no server: a `SKILL.md` enters agent context on invocation, a `references/*.md` loads only if the router asks for it, and a `*.workflow.js` is never read into context at all — it is *executed* in a sandbox with no filesystem, clock, or module system. That sandbox is what forces the routing block to be duplicated rather than imported. → **[Container diagram](docs/c4/container.md)**
+
+### Level 3 — How the skills compose
+
+The skills aren't a flat list — they build on `loop-engine` and **delegate rather than duplicate**. Every edge below is a boundary that would otherwise be an overlap:
 
 ```mermaid
 flowchart TD
-    subgraph gov["Governance (loop-engine skill)"]
-        HP[harness-policy] --- LP[loop-policy] --- AIDLC[AIDLC framework]
+    subgraph gov["Governance — read-only law"]
+        HP[harness-policy<br/>H1–H12] --- LP[loop-policy<br/>L1–L8] --- EM[execution-modes<br/>M1–M9] --- AIDLC[AIDLC<br/>phases + gates]
     end
-    WF[[loop-engine<br/>pipeline / parallel / loop]]
+    WF[[loop-engine<br/>pipeline · parallel · loop]]
     gov --> WF
-
-    OP[loop-orchestrate] -->|plans + routes models| WF
+    OP[loop-orchestrate] -->|plans the DAG, routes models| WF
     AI[loop-autopilot] -->|runs the loop on| WF
 
-    subgraph domain["Domain skills"]
-        RC[loop-review]
-        DS[loop-design]
-        WT[loop-test]
-        DB[loop-debug]
-        WD[loop-docs]
-        RT[loop-research]
-        FF[loop-scout]
-        AC[loop-audit]
-        EH[loop-harness]
+    subgraph build["Design · build · verify"]
+        DS[loop-design] & ALG[loop-algo] & PAT[loop-pattern]
+        RC[loop-review] & WT[loop-test] & AC[loop-audit] & DB[loop-debug]
     end
-    WF --> domain
+    subgraph run["Integrate · ship · run"]
+        INT[loop-integrate] & SHIP[loop-ship]
+        OPS[loop-operate] & INC[loop-incident]
+    end
+    subgraph know["Knowledge"]
+        RT[loop-research] & FF[loop-scout] & WD[loop-docs] & EH[loop-harness]
+    end
+    WF --> build & run & know
 
+    RC -->|remediation| PAT
     AC -->|security dimension| RC
+    AC -->|risk memo as go/no-go| SHIP
     WD -->|consumes ADR / C4| DS
     FF -->|delegates search| RT
-    AI -->|composes| RC & WT & DB & WD & FF & DS & AC
+    FF -->|hands over a named provider| INT
+    INT -->|specifies contract tests| WT
+    DS -->|mechanism inside a component| ALG
     EH -.->|unattended substrate| AI
+
+    OPS ==>|no runbook, or beyond its scope| INC
+    INC ==>|service restored, now find the defect| DB
+    DB ==>|regression test| WT
+    WT ==>|ready to release| SHIP
+    SHIP ==>|bake complete, service is yours| OPS
 ```
 
-At the base is `loop-engine` and the two policies that govern it. `loop-orchestrate` and `loop-autopilot` sit on top as planning/automation layers. Domain skills delegate where it's natural — `loop-audit` calls `loop-review` for security, `loop-docs` consumes the ADR/C4 that `loop-design` emits, `loop-scout` hands its search to `loop-research`.
+The **bold cycle** is the operational chain, and it is the reason those five skills are separate rather than one: `loop-operate` detects and auto-mitigates *known* conditions → `loop-incident` takes *novel* ones, mitigating before diagnosing → `loop-debug` finds the defect once the service is back → `loop-test` locks it with a regression → `loop-ship` redeploys → `loop-operate` owns it again once the rollout bakes.
+
+Each handoff is a **checkable question**, not a judgment call: *does a runbook exist and does running it restore the SLI?* · *is the service currently down, or is the defect merely reproducible?* · *is the rollout in flight, or baked?* The full 18-way matrix is in **[`docs/design/boundary-audit.json`](docs/design/boundary-audit.json)**, which is normative — it outranks any plan that disagrees with it.
+
+→ **[Component diagram](docs/c4/component.md)** opens `loop-engine` itself, and **[the architecture notes](docs/c4/README.md)** trace one invocation end to end and give the prior art behind each design idea.
 
 ## The autonomy ladder
 
@@ -220,11 +271,9 @@ The load-bearing difference is not the effort floor — it is that full mode **d
 
 `--planner fable` is an orthogonal opt-in that routes the single planning node to Fable 5 for a deeper decomposition, and states its own tradeoffs at the point of use. Full contract: [`execution-modes.md`](.claude/skills/loop-engine/references/execution-modes.md).
 
-## Architecture & philosophy
+## Engineering policies & discipline
 
-**[📐 Architecture docs](docs/c4/README.md)** — the system documented with the **C4 model** at three levels ([Context](docs/c4/context.md) · [Container](docs/c4/container.md) · [Component](docs/c4/component.md)), plus the technical mechanism traced end to end and the seven ideas the design rests on, each with its prior art.
-
-Every authored workflow obeys two policy documents:
+Every authored workflow obeys three policy documents:
 
 - **[Harness Engineering Policy](.claude/skills/loop-engine/references/harness-policy.md)** — orchestration design: pipeline vs. earned parallel barriers, adversarial/diverse-lens verification, budget & concurrency, isolation, phase discipline.
 - **[Loop Engineering Policy](.claude/skills/loop-engine/references/loop-policy.md)** — iteration: loop-until-dry, budget-guarded loops, seen-set convergence, runaway prevention.
