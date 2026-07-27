@@ -2,6 +2,32 @@
 
 How to run the improvement loop unattended, and the safety scopes that keep "autonomous" from becoming "unsupervised writes to main." This builds on the mechanisms catalogued in the `loop-harness` skill's `references/automation-loops.md` — read that for the full menu; this file is the recommended setup for *this* loop.
 
+It is also the **single definitional home of the autonomy ladder** — the four rungs below are defined here and nowhere else under `.claude/skills/`. `loop-operate` wires a live service to the same ladder and cites this section rather than restating it, so that the two skills cannot drift apart after 1.0.0. The repository `README.md` carries a reader-facing summary of the same ladder; where the two differ, **this section is the source of truth** and the README is the thing to correct.
+
+## The autonomy ladder
+
+Four rungs, in order. Each is a statement of **what the loop does and what the human does** — not a maturity score, and not something you set once. A deployment sits at exactly one rung per change kind, climbs only by earning the next rung's preconditions, and can be dropped back automatically.
+
+| Rung | The loop does | The human does | Implemented by | Status |
+|---|---|---|---|---|
+| **OBSERVE** | Reports findings; takes no action on the repository | Reads the report and decides what to act on | `loop-audit`, `loop-review` | shipped |
+| **VERIFY** | Acts on a `claude/` branch, verifies its own work adversarially, opens a **draft PR** | Approves and merges | `loop-autopilot` in its default mode | shipped |
+| **SUSTAIN** | Detects when its own verifier is being gamed or the loop is meta-overfitting | Reads the alarms and freezes config on a trip | `verifier-integrity.md` + `held-out-eval.md` | shipped |
+| **SCALE** | Merges behind a canary and rolls **itself** back on a bad signal | Handles the exceptions a rollback raises | §Advanced below + `../templates/canary-merge.workflow.js` | off by default |
+
+**OBSERVE — report only.** The loop reads and reports; it writes nothing to the repository. The output is a findings list a human acts on. This is the correct rung for a loop whose verifier has never been measured, and it is where every deployment starts.
+
+**VERIFY — propose, a human merges.** The loop does the work on a `claude/`-prefixed branch, subjects the result to adversarial verification, and opens a draft PR. It never merges. This is the default rung for `loop-autopilot` and the rung nearly every deployment should stay at indefinitely; the value is real work done autonomously with the merge decision still human.
+
+**SUSTAIN — keep the loop honest.** SUSTAIN adds no new authority. It adds *self-measurement*: held-out evaluation of the loop's own false-accept rate, structural guards against verifier gaming, and drift detection on both. A rung that notices the machinery has gone quietly wrong is a precondition for granting any authority above VERIFY, because every rung above it rests on the verifier being trustworthy.
+
+**SCALE — autonomous delivery, off by default.** The loop merges eligible changes without a human, behind a canary, and reverts autonomously on a bad signal. It is granted **per change kind and per blast radius**, never blanket, and only while every SUSTAIN signal is green. §Advanced below is its full specification.
+
+**The degradation guarantee — the property that makes the ladder safe to climb.** *Any alarm drops the loop one rung, automatically and logged; re-enabling requires a human.* A SUSTAIN alarm freezes config; a SCALE trip drops to VERIFY; and VERIFY's floor — propose-only, a human merges — is always there to catch it. The worst case is therefore never a runaway loop, it is a loop that quietly goes back to asking permission. Two consequences follow, and both are load-bearing:
+
+- **The floor is safe by construction.** Degradation terminates at a rung that opens draft PRs and nothing more, so the failure mode of the whole design is *less* autonomy, never uncontrolled autonomy.
+- **Trips are recorded where a human reads them**, not merely counted. An automatic drop that nobody notices is how a loop sits at a degraded rung for a month while everyone assumes it is working.
+
 ## Primary: a Cloud Routine
 
 Cloud Routines run on Anthropic infrastructure with **your machine off** and **no per-run approval prompt** — the strongest autonomy, so the guardrails below are load-bearing.
@@ -56,7 +82,7 @@ Random-samples merged PRs and opens a `comprehension-check` issue so a human act
 - [ ] "Unrestricted branch pushes" is **off**; pushes go to `claude/*`.
 - [ ] Network is **Trusted**; only GitHub (+ optional alphaXiv) connectors are enabled.
 - [ ] Routine prompt is `routine-prompt.md`, with the never-merge rule intact.
-- [ ] You've run `templates/improvement-loop.workflow.js` in `mode:"dry"` once and reviewed the proposals it would make.
+- [ ] You've run `templates/improvement-loop.workflow.js` in `runMode:"dry"` once and reviewed the proposals it would make.
 - [ ] An opt-in label convention limits which issues the loop will act on.
 - [ ] (If using the credit ledger) the pinned `🤖 Credit Ledger` issue exists and its number is wired into the reconcile Routine's `args`.
 - [ ] You ran `references/anti-patterns.md` against the current design (AP5 in particular) before raising concurrency.
@@ -108,7 +134,7 @@ Autonomy is a privilege the loop loses without asking:
 - **Rollback rate** over a window exceeds threshold → drop back to propose-only.
 - **Cross-judge disagreement** trend rising → drop back.
 
-Dropping back is automatic and logged; **re-enabling requires a human** to review the trip and flip it on. This is the safety net's safety net: SCALE degrades to VERIFY, which is already safe. The worst case is not "runaway loop" — it is "loop quietly returns to opening draft PRs."
+These are the SCALE-specific triggers of the degradation guarantee defined in § "The autonomy ladder" above — the same rule, with this rung's alarms named. Dropping back is automatic and logged; **re-enabling requires a human** to review the trip and flip it on. This is the safety net's safety net: SCALE degrades to VERIFY, which is already safe. The worst case is not "runaway loop" — it is "loop quietly returns to opening draft PRs."
 
 ### Autonomy state + audit
 

@@ -1,6 +1,7 @@
 ---
 name: loop-review
-description: Review code for security vulnerabilities and quality issues using OWASP Top 10, CWE Top 25, and ASVS standards. Use when the user asks to review code, run a security scan or audit, check for vulnerabilities, do a code-quality or best-practices review, or assess a diff, PR, or repo for injection, auth, crypto, secrets, SSRF, or dependency risks.
+description: "Review code for security vulnerabilities and quality defects using OWASP Top 10, CWE Top 25, and ASVS, and report them without changing the code. Use when the user asks to review code, scan for vulnerabilities, do a security or code-quality review, or assess a diff, PR, or repo for injection, auth, crypto, secrets, SSRF, or dependency risk. Reports HIGH and MEDIUM findings at confidence at or above 0.8; it judges, it does not refactor. For applying the refactoring that fixes a reported smell, use loop-pattern. For a change-impact and release-risk report rather than a defect hunt, use loop-audit. For diagnosing a failure that was actually observed at runtime, use loop-debug."
+argument-hint: <target> [--mode <optimize|full>]
 ---
 
 # Reviewing Code
@@ -67,6 +68,8 @@ Map each reported finding to its standard identifiers — OWASP Top 10 category,
 
 When the user asks for a quality, best-practices, or general review (not strictly security), also apply **`references/quality-checks.md`**: correctness traps, error handling, resource leaks, concurrency, dead/duplicated code, and maintainability. Keep security and quality findings in separate report sections so severity is not conflated.
 
+**Detection lives here; remediation is `loop-pattern`.** This skill names the smell and cites the standard, then stops — when the user wants the refactoring applied, hand the named smell to **`loop-pattern`**, which produces the behavior-preserving diff. The two compose in that order rather than competing for "clean up this code".
+
 ## 8. Orchestration: scale past a small diff
 
 A small diff you can review inline in this session. For **anything larger — a big PR, multiple files, or a full-repo audit — run it as a multi-agent workflow** using the template at **`templates/security-review.workflow.js`**:
@@ -76,6 +79,8 @@ A small diff you can review inline in this session. For **anything larger — a 
 3. **Adversarial verify** — one skeptic per deduped candidate, prompted to *refute* it and default to not-a-finding if the source→sink path is unproven. Only survivors that clear the §5 bar get reported.
 
 This is the parallel finder → dedup → adversarial-verify pattern from the **`loop-engine`** skill (see its `templates/parallel.workflow.js` and harness policy H2/H4). Invoke the `loop-engine` skill to author and execute the run; the security template is a specialization of that pattern with the categories, severity model, and false-positive suppression pre-wired. For a diff small enough to hold in context, skip the workflow and review directly — do not spin up agents for a two-file change.
+
+**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. Under `--mode full` step 3's adversarial verify widens from one skeptic per candidate to **three perspective-diverse lenses** (five when the review is gating), and a candidate dies on a majority refute at ⌈N/2⌉. See `../loop-engine/references/execution-modes.md` §M5.
 
 ## Reference files
 

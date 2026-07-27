@@ -1,6 +1,7 @@
 ---
 name: loop-design
-description: "Design software systems and architecture: architecture-style selection, API design, backend and data modeling, frontend performance, deployment strategy, and non-functional requirements. Use when the user asks to design a system or architecture, choose an architecture pattern, design an API, plan a deployment or rollout strategy, optimize frontend performance, model backend data, or record architecture decisions (ADRs) and C4 diagrams."
+description: "Design software systems and architecture: architecture-style selection, API design, backend and data modeling, frontend performance, and turning non-functional requirements into numbers and SLO targets. Use when the user asks to design a system or architecture, choose an architecture pattern, design an API this system exposes, model backend data, pick a consistency policy, optimize frontend performance, set NFR or capacity targets, or record architecture decisions as ADRs and C4 diagrams. Works at component granularity on a system not yet built. For executing a release or choosing a rollout strategy for a system already running, use loop-ship. For measuring and alerting on the SLOs of a live service, use loop-operate. For the algorithm inside one component, use loop-algo."
+argument-hint: <system>
 ---
 
 # Designing Systems
@@ -8,6 +9,8 @@ description: "Design software systems and architecture: architecture-style selec
 You are about to design a system, or one slice of one. The engine is you reasoning from requirements to a defensible architecture — not a template you fill in. Your job is to make the fewest, most reversible decisions that satisfy the requirements, justify each against a named alternative, and record what you chose and why so the next person can undo it.
 
 **The failure mode this skill exists to prevent is premature complexity**: microservices for a three-person team, Kafka for 100 events a day, eventual consistency for a bank balance. Default to the simplest thing that meets the stated non-functional requirements, and make the requirements state themselves before you draw a box.
+
+**Granularity boundary against `loop-algo`.** This skill's deliverable is a box-and-arrow diagram, a contract, or a deployable topology; `loop-algo`'s is a Big-O, a stated invariant, a memory-ordering argument, or a benchmark table. The worked case both skills carry, because it is the one that splits every time: **"shard the queue across N nodes" is `loop-design` — that is topology. "Which lock-free queue structure, and what are its progress guarantees" is `loop-algo` — that is mechanism.** The same feature request produces both, in that order: this skill decides that a queue exists and what crosses its boundary, `loop-algo` decides what runs inside it and proves what it costs.
 
 ## Stance on tech stack: principles, not mandates
 
@@ -56,19 +59,17 @@ REST is the default; reach for GraphQL when clients need to shape wildly varying
 
 If the system has a UI, decide the rendering strategy against the content, not the trend. Default to server-rendering for content and first-paint-critical pages (Next.js or equivalent), client-side for app-shell interactivity; measure against Core Web Vitals (LCP, INP, CLS), not vibes. Cover: rendering strategy (SSR/SSG/ISR/CSR), the caching hierarchy, bundle budgets, and the data-fetching contract with the API from step 4. Rendering-strategy decision table and performance budgets: **`references/frontend.md`**.
 
-### 6. Deployment & delivery
+### 6. Delivery shape (a design-time decision, recorded as an ADR)
 
-Design how changes reach production safely. Defaults:
+Decide exactly one thing here: the **coarse delivery shape the architecture must support** — one deployable or many, whether releasing dark has to be possible at all, and the environment topology that implies. That is an architectural constraint on a system not yet built, so **record it as an ADR** (step 8) and stop.
 
-- **Canary + feature flags** — ship code dark, release with a flag, ramp traffic on a canary, auto-roll-back on SLO regression. This decouples deploy from release, which is the single biggest de-risking move available.
-- **Infrastructure as code** — everything reproducible (Terraform or equivalent); no console-clicked prod.
-- **CI/CD as the only path to prod** (GitHub Actions or equivalent), with the rollback path tested, not assumed.
+**Every execution question belongs to `loop-ship`** — which rollout strategy to run (rolling, blue-green, canary), the feature-flag plan, expand-contract migration steps, the release checklist and go/no-go, and the tested rollback path. Do not choose a rollout strategy here for a system that already runs; that is `loop-ship`'s call on `loop-ship`'s evidence.
 
-Escape hatch: for a low-traffic internal tool, blue-green or even rolling deploys are fine — canary earns its complexity at scale. Rollout strategies, migration/expand-contract patterns, and environment topology: **`references/deployment.md`**.
+Design-time delivery-shape stub: **`references/deployment.md`**. The mechanics of getting a change to production: **`../loop-ship/`**.
 
 ### 7. NFR validation & SLOs
 
-Close the loop: walk back through the design and check it against the numbers from step 1. For each NFR — latency, availability, durability, security, cost — state how the design meets it and where it breaks first (the next bottleneck). Turn the targets into **SLOs with error budgets**, name the caching strategy (default **cache-aside**; escape to write-through/read-through only when the access pattern demands it), and identify the failure modes and their mitigations. A design that can't be validated against its NFRs isn't done. Validation checklist, SLO/error-budget mechanics, caching and resilience patterns: **`references/nfr.md`**.
+Close the loop: walk back through the design and check it against the numbers from step 1. For each NFR — latency, availability, durability, security, cost — state how the design meets it and where it breaks first (the next bottleneck). Turn the targets into **SLOs with error budgets** and hand measurement, burn-rate alerting and remediation to **`loop-operate`**, name the caching strategy (default **cache-aside**; escape to write-through/read-through only when the access pattern demands it), and identify the failure modes and their mitigations. A design that can't be validated against its NFRs isn't done. Validation checklist, SLO and error-budget **targets**, capacity and cost: **`references/nfr.md`** (caching and resilience patterns live in **`references/backend.md`**, which `nfr.md` delegates to). The measurement, burn-rate alerting and remediation **mechanics**: **`../loop-operate/`**.
 
 ### 8. Record the decisions (ADRs + C4)
 
@@ -90,9 +91,13 @@ Jump straight to the slice the user asked for; each row lists the reference and 
 | Design or version an API | 4 | `references/api-design.md` | ADR (if versioning/contract is load-bearing) |
 | Model backend data / pick consistency | 3 | `references/backend.md` | ADR |
 | Optimize frontend performance | 5 | `references/frontend.md` | — |
-| Plan a deployment / rollout strategy | 6 | `references/deployment.md` | ADR (if strategy is load-bearing) |
-| Define NFRs / SLOs / capacity | 1 then 7 | `references/nfr.md` | — |
+| Fix the delivery shape a design must support | 6 | `references/deployment.md`; for executing the release or picking a rollout strategy, `loop-ship` | ADR (design-time shape only) |
+| Define NFRs / SLOs / capacity | 1 then 7 | `references/nfr.md`; for measuring and alerting on them, `loop-operate` | — |
 | Record a decision or draw C4 | 8 | — | ADR + C4 context/container |
+
+## Execution flags
+
+`--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here**. This skill ships no workflow template — design work runs inline in this session — so there is no mode logic to carry. When the work hands off to a sibling that does run a workflow (`loop-ship` for the release, `loop-operate` for the live service, `loop-algo` for the mechanism inside a component), pass the raw argument string straight through unchanged so the flag reaches the one parser that honours it. See `../loop-engine/references/execution-modes.md`.
 
 ## Files in this skill
 
@@ -102,8 +107,8 @@ Jump straight to the slice the user asked for; each row lists the reference and 
 - `references/api-design.md` — contract-first, versioning, pagination, idempotency, error envelopes, REST/GraphQL/gRPC.
 - `references/backend.md` — data modeling, transaction boundaries, per-domain consistency, sharding, outbox.
 - `references/frontend.md` — rendering strategies, Core Web Vitals budgets, caching hierarchy, data-fetching contract.
-- `references/deployment.md` — canary/feature flags, IaC, CI/CD, migrations, environment topology.
-- `references/nfr.md` — requirements intake, SLOs/error budgets, caching, capacity, resilience, cost.
+- `references/deployment.md` — design-time delivery-shape stub; mechanics live in `loop-ship`.
+- `references/nfr.md` — requirements intake, NFR targets, caching, capacity, resilience, cost.
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow
 
 **Templates** (produce concrete artifacts, don't paraphrase them):

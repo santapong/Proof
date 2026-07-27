@@ -1,0 +1,25 @@
+name: validate
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # The real gate. `claude plugin validate` only reads the marketplace
+      # manifest — it never opens a SKILL.md, which is how two skills once
+      # shipped with frontmatter that no YAML parser would load. This script
+      # checks the surface that actually matters: frontmatter, ROUTES drift,
+      # H10 determinism, and cross-reference paths.
+      - name: Validate plugin
+        run: node scripts/validate.mjs

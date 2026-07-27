@@ -8,24 +8,37 @@ The tagging taxonomy for the review. Every finding that clears the reporting bar
 
 Tag from this file, not from memory. The categories drift year to year and a wrong id makes findings look sloppy and breaks cross-review consistency. `vulnerability-playbooks.md` tells you how to *find* each weakness; this file tells you how to *name* it.
 
-## OWASP Top 10 (2021) — the category axis
+## OWASP Top 10:2025 — the category axis
 
-Reproduce these ids and names verbatim. This is the stable mapping baseline for every review.
+**Edition.** **OWASP Top 10:2025**, announced November 2025 at Global AppSec Washington DC and published as **final in January 2026**. Confirmed against `owasp.org/Top10/2025/` on **2026-07-26**. It supersedes the 2021 edition, which this file previously carried as its baseline. Reproduce these ids and names verbatim.
 
 | ID | Category |
 |---|---|
-| **A01:2021** | Broken Access Control |
-| **A02:2021** | Cryptographic Failures |
-| **A03:2021** | Injection |
-| **A04:2021** | Insecure Design |
-| **A05:2021** | Security Misconfiguration |
-| **A06:2021** | Vulnerable and Outdated Components |
-| **A07:2021** | Identification and Authentication Failures |
-| **A08:2021** | Software and Data Integrity Failures |
-| **A09:2021** | Security Logging and Monitoring Failures |
-| **A10:2021** | Server-Side Request Forgery (SSRF) |
+| **A01:2025** | Broken Access Control |
+| **A02:2025** | Security Misconfiguration |
+| **A03:2025** | Software Supply Chain Failures |
+| **A04:2025** | Cryptographic Failures |
+| **A05:2025** | Injection |
+| **A06:2025** | Insecure Design |
+| **A07:2025** | Authentication Failures |
+| **A08:2025** | Software or Data Integrity Failures |
+| **A09:2025** | Security Logging and Alerting Failures |
+| **A10:2025** | Mishandling of Exceptional Conditions |
 
-**On the 2025 refresh.** OWASP is refreshing the Top 10 (a 2025 edition is in progress, with category names and rankings expected to shift). Until it is finalized and widely adopted, **tag against 2021** — it is the version tools, auditors, and compliance mappings still key on. When the 2025 list lands, update this table and re-map the cross-reference below; do not mix editions inside one report. Note for later: 2017's dedicated *A4 XML External Entities (XXE)* was folded into **A05 Security Misconfiguration** in 2021, and *A7 XSS* was folded into **A03 Injection** — reviewers who learned the old list should map accordingly.
+**Tag against 2025, and never mix editions inside one report.** If a client's tooling, auditor, or compliance mapping still keys on 2021 — many do, and that is a legitimate reason to dual-tag — write both explicitly (`A05:2025 Injection / A03:2021 Injection`) rather than an unsuffixed `A03`, which is ambiguous across editions and is exactly how a cross-review trend line silently corrupts.
+
+**What moved from 2021 → 2025**, because the renumbering catches out reviewers who learned the old list:
+
+| Change | Detail |
+|---|---|
+| **Two new categories** | **A03:2025 Software Supply Chain Failures** (broader than 2021's *Vulnerable and Outdated Components*, which it absorbs) and **A10:2025 Mishandling of Exceptional Conditions** |
+| **SSRF absorbed** | 2021's dedicated *A10 SSRF* folded into **A01:2025 Broken Access Control** |
+| **Injection renumbered** | **A03:2021 → A05:2025.** The single most common mis-tag; XSS and SQLi move with it |
+| **Misconfiguration promoted** | *A05:2021 → **A02:2025*** |
+| **Renames** | *Identification and Authentication Failures* → **Authentication Failures**; *Software and Data Integrity Failures* → **Software or Data Integrity Failures**; *Security Logging and Monitoring Failures* → **Security Logging and Alerting Failures** |
+| **Unchanged at #1** | **A01 Broken Access Control**, in both editions |
+
+Older still: 2017's *A4 XML External Entities (XXE)* folded into Security Misconfiguration in 2021, and 2017's *A7 XSS* folded into Injection — so an XSS finding tags **A05:2025**, not a category of its own.
 
 ## OWASP ASVS 5.0 — the positive-control checklist
 
@@ -33,45 +46,52 @@ The Top 10 is a list of what goes wrong; the **Application Security Verification
 
 ASVS 5.0 renumbered its chapters. Map each OWASP category to the ASVS chapter(s) that supply its positive control:
 
-| OWASP category | ASVS 5.0 chapter(s) — the control to verify present |
+| OWASP category (2025) | ASVS 5.0 chapter(s) — the control to verify present |
 |---|---|
-| A01 Broken Access Control | V8 Authorization (deny-by-default, enforce at the trust boundary), V7 Session Management |
-| A02 Cryptographic Failures | V11 Cryptography (approved algorithms, key management, secure random), V12 Secure Communication (TLS), V14 Data Protection |
-| A03 Injection | V1 Encoding and Sanitization (context-correct output encoding), V2 Validation and Business Logic (parameterized queries, allow-list input) |
-| A04 Insecure Design | V15 Secure Coding and Architecture (threat modeling, secure-by-default, defense in depth), V2 business-logic limits |
-| A05 Security Misconfiguration | V13 Configuration (hardening, headers, no debug/defaults in prod), V5 File Handling |
-| A06 Vulnerable and Outdated Components | V13 Configuration / V15 Architecture (dependency inventory, patch process, no unmaintained components) |
-| A07 Identification and Authentication Failures | V6 Authentication, V7 Session Management, V9 Self-contained Tokens, V10 OAuth and OIDC |
-| A08 Software and Data Integrity Failures | V1/V2 (safe deserialization), V15 Architecture (verify integrity of updates, CI/CD, and untrusted data) |
-| A09 Security Logging and Monitoring Failures | V16 Security Logging and Error Handling (log security events, no sensitive data in logs, fail closed) |
-| A10 Server-Side Request Forgery | V2 Validation (allow-list outbound destinations), V4 API and Web Service, V12 Secure Communication |
+| A01:2025 Broken Access Control | V8 Authorization (deny-by-default, enforce at the trust boundary), V7 Session Management. **Also SSRF** since 2025 absorbed it: V2 Validation (allow-list outbound destinations), V4 API and Web Service |
+| A02:2025 Security Misconfiguration | V13 Configuration (hardening, headers, no debug/defaults in prod), V5 File Handling |
+| A03:2025 Software Supply Chain Failures | V15 Architecture (dependency inventory, provenance, patch process, no unmaintained components), V13 Configuration. Pairs with the SLSA/SBOM pins in `standards.md` |
+| A04:2025 Cryptographic Failures | V11 Cryptography (approved algorithms, key management, secure random), V12 Secure Communication (TLS), V14 Data Protection |
+| A05:2025 Injection | V1 Encoding and Sanitization (context-correct output encoding), V2 Validation and Business Logic (parameterized queries, allow-list input) |
+| A06:2025 Insecure Design | V15 Secure Coding and Architecture (threat modeling, secure-by-default, defense in depth), V2 business-logic limits |
+| A07:2025 Authentication Failures | V6 Authentication, V7 Session Management, V9 Self-contained Tokens, V10 OAuth and OIDC |
+| A08:2025 Software or Data Integrity Failures | V1/V2 (safe deserialization), V15 Architecture (verify integrity of updates, CI/CD, and untrusted data) |
+| A09:2025 Security Logging and Alerting Failures | V16 Security Logging and Error Handling (log security events, no sensitive data in logs, fail closed) |
+| A10:2025 Mishandling of Exceptional Conditions | V16 Error Handling (fail closed, no sensitive detail in error responses), V2 Business Logic (handle the error path, not only the happy path) |
 
 You do not need to cite an exact ASVS requirement number in every finding; naming the chapter and the control ("ASVS V8 — enforce authorization server-side, deny by default") is enough to point the reader at the fix.
 
-## CWE Top 25 (2024) — the weakness taxonomy
+## CWE Top 25 (2025) — the weakness taxonomy
 
-The **CWE Top 25 Most Dangerous Software Weaknesses** is the precise-id axis. Tag the CWE that names the *specific* weakness, then roll it up to its OWASP category. Below is the 2024 edition (the most recent finalized list; the 2025 edition follows the same data-driven methodology and re-ranks the same weakness pool — swap the ids in when it publishes, the taxonomy is continuous). These are the ~15 you will reach for most often:
+**Edition.** The **2025 CWE Top 25 Most Dangerous Software Weaknesses**, published **11 December 2025** by CISA with MITRE/HSSEDI, drawn from roughly 39,000 CVEs disclosed between June 2024 and June 2025. Confirmed against `cwe.mitre.org/top25/archive/2025/2025_cwe_top25.html` on **2026-07-26**.
+
+The list is the precise-id axis. Tag the CWE that names the *specific* weakness, then roll it up to its OWASP category. **The roll-up column below is 2025 ids** — note that Injection is **A05:2025**, not the A03 it was in 2021. These are the ~15 you will reach for most often:
 
 | CWE | Name | Rolls up to |
 |---|---|---|
-| **CWE-79** | Improper Neutralization of Input During Web Page Generation (XSS) | A03 |
-| **CWE-89** | SQL Injection | A03 |
-| **CWE-78** | OS Command Injection | A03 |
-| **CWE-77** | Command Injection | A03 |
-| **CWE-20** | Improper Input Validation | A03 (cross-cuts) |
-| **CWE-22** | Improper Limitation of a Pathname to a Restricted Directory (Path Traversal) | A01 |
-| **CWE-352** | Cross-Site Request Forgery (CSRF) | A01 |
-| **CWE-862** | Missing Authorization | A01 |
-| **CWE-863** | Incorrect Authorization | A01 |
-| **CWE-434** | Unrestricted Upload of File with Dangerous Type | A04 / A05 |
-| **CWE-287** | Improper Authentication | A07 |
-| **CWE-306** | Missing Authentication for Critical Function | A07 |
-| **CWE-798** | Use of Hard-coded Credentials | A07 / A02 |
-| **CWE-502** | Deserialization of Untrusted Data | A08 |
-| **CWE-918** | Server-Side Request Forgery (SSRF) | A10 |
+| **CWE-79** | Improper Neutralization of Input During Web Page Generation (XSS) — **#1 in 2025** | A05:2025 |
+| **CWE-89** | SQL Injection — **#2** | A05:2025 |
+| **CWE-352** | Cross-Site Request Forgery (CSRF) — **#3** | A01:2025 |
+| **CWE-862** | Missing Authorization — **#4** | A01:2025 |
+| **CWE-787** | Out-of-bounds Write — **#5** | (memory-safety; no direct OWASP web category) |
+| **CWE-78** | OS Command Injection | A05:2025 |
+| **CWE-77** | Command Injection | A05:2025 |
+| **CWE-94** | Code Injection | A05:2025 |
+| **CWE-20** | Improper Input Validation | A05:2025 (cross-cuts) |
+| **CWE-22** | Improper Limitation of a Pathname to a Restricted Directory (Path Traversal) | A01:2025 |
+| **CWE-863** | Incorrect Authorization | A01:2025 |
+| **CWE-284** | Improper Access Control — **new in 2025** | A01:2025 |
+| **CWE-639** | Authorization Bypass Through User-Controlled Key — **new in 2025** | A01:2025 |
+| **CWE-434** | Unrestricted Upload of File with Dangerous Type | A06:2025 / A02:2025 |
+| **CWE-287** | Improper Authentication | A07:2025 |
+| **CWE-306** | Missing Authentication for Critical Function | A07:2025 |
+| **CWE-798** | Use of Hard-coded Credentials | A07:2025 / A04:2025 |
+| **CWE-502** | Deserialization of Untrusted Data | A08:2025 |
+| **CWE-918** | Server-Side Request Forgery (SSRF) | A01:2025 — SSRF lost its dedicated category in 2025 |
+| **CWE-770** | Allocation of Resources Without Limits or Throttling — **new in 2025** | A10:2025 |
 | **CWE-125** | Out-of-bounds Read | (memory-safety; no direct OWASP web category) |
-| **CWE-787** | Out-of-bounds Write | (memory-safety; no direct OWASP web category) |
 | **CWE-416** | Use After Free | (memory-safety) |
+| **CWE-120 / -121 / -122** | Classic / stack-based / heap-based buffer overflow — **new in 2025** | (memory-safety) |
 
 The memory-safety entries (CWE-125, -787, -416, plus CWE-119/-476/-190) dominate the CWE Top 25 because it spans all software, not just web apps — they have no clean OWASP Top 10 home. Tag them with the CWE id alone and note "memory safety (C/C++/unsafe)" in the finding; do not force an OWASP category that does not fit.
 

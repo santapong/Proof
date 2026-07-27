@@ -1,6 +1,7 @@
 ---
 name: loop-audit
-description: Audit a set of code changes and produce an impact and risk report. Use when the user asks to audit a diff, PR, release, or commit range, summarize what changed, assess the impact, blast radius, or risk of a change, check whether changes are covered by tests, or produce a change report or release risk memo. For finding security or quality defects to fix, use loop-review instead.
+description: "Audit a set of code changes and produce an impact and risk report: classify each change, trace blast radius, rate risk, and check test coverage. Use when the user asks to audit a diff, PR, release, or commit range, summarize what changed, assess impact or blast radius, check whether changes are covered by tests, or produce a change report or release risk memo. Reports on a change set that already exists; it neither hunts defects nor plans the rollout. For finding security or quality defects to fix, use loop-review instead. For planning how the release reaches production and how it rolls back, use loop-ship."
+argument-hint: <diff|PR|range> [--mode <optimize|full>]
 ---
 
 # Auditing Changes
@@ -75,6 +76,8 @@ Assemble the report from **`references/report-template.md`**: summary and overal
 3. **Synthesize report** — one agent assembles the §7 report from the merged entries and the folded-in `loop-review` findings.
 
 This is the parallel-analyze → barrier → synthesis pattern from the **`loop-engine`** skill (see its `templates/parallel.workflow.js` and harness policy H2's earned barrier and H4 adversarial verify). Invoke the `loop-engine` skill to author and execute the run; the change-audit template pre-wires the classification, blast-radius, and risk schema. For a small diff, skip the workflow and audit directly — do not spin up agents for a two-file change.
+
+**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
 
 ## Reference files
 

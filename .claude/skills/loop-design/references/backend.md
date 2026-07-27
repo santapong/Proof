@@ -4,6 +4,8 @@ Data modeling, consistency, and the machinery that makes writes reliable. The en
 
 Read this when you are on step 3 of the workflow (data & consistency), or when the user asks "how should I model this?", "SQL or NoSQL?", "do I need a queue?", "how do I cache this?", or "how do I make this reliable?". The persistent thread: **decide consistency per domain, not for the whole system.** One system can hold a strongly-consistent ledger in Postgres and an eventually-consistent activity feed at the same time — and should.
 
+**Granularity check before you start.** Everything here is *topology*: which store, which partition key, which broker, which box on the diagram. If the deliverable is instead a Big-O, an invariant, a memory-ordering argument, or a benchmark table, it belongs to `../../loop-algo`. The worked boundary case: *"shard the queue across N nodes"* is this file — a topology decision; *"which lock-free queue structure, and what are its progress guarantees"* is `../../loop-algo/references/concurrency.md`. Same word, different deliverable.
+
 ## Data modeling: normalize first, denormalize for a proven read
 
 **Default to a normalized schema (roughly 3NF): one fact, one place.** Normalization is the safe default because it makes writes correct by construction — there is a single row to update, so no copy can drift out of sync, and referential integrity is the database's job, not yours. Model the entities and their relationships as the domain actually has them; let foreign keys and joins do the assembly at read time.

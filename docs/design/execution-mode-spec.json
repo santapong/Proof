@@ -1,0 +1,281 @@
+{
+  "fileOutline": [
+    {
+      "section": "Title + framing (no heading — the file's opening two paragraphs)",
+      "content": "`# Execution modes — one dial for the whole fleet`. Opens the way `standards.md` and `loop-policy.md` open: state what this file governs and what it does NOT. Mode is a **run-level routing dial**, not a new orchestration primitive — it changes *which model and how much effort each node gets*, never *what shape the DAG takes*. Shape stays governed by `harness-policy.md` (H1–H12) and `loop-policy.md` (L1–L8), both consumed read-only. Name the two modes (`optimize`, the default; `full`) and the one orthogonal override (`--planner fable`), and state the single invariant the rest of the file elaborates: **one parser, eighteen skills, zero per-skill branching.** Close the framing with the pointer pair: routing *rationale* lives in `../../loop-orchestrate/references/model-routing.md`; the `agent()` expression rule is `harness-policy.md` H8."
+    },
+    {
+      "section": "The two modes at a glance",
+      "content": "A single table with one row per behavior the mode dial moves — the plan's table, tightened and with the ambiguities resolved: node routing (six kinds, pointer to §M3), override modifier A (active / **disabled**), override modifier B (active / active-at-ceiling), verifier width (1, or 3 for \"thorough\" / 3 for standard nodes and 5 for gating nodes, always), loop-until-dry threshold K (2 / 3), model pinning discipline (omit-and-inherit / pin `claude-opus-5` explicitly), pre-flight (none / estimate + one confirmation), typical spend vs the optimize baseline (1× / 2.5×–4×). One sentence under the table: a mode is chosen once per invocation and is frozen for that run — see §M9 on resume."
+    },
+    {
+      "section": "M1. What mode does NOT change",
+      "content": "Placed early and deliberately, mirroring `loop-orchestrate/SKILL.md`'s \"What this layer does NOT change\". An explicit non-negotiable list so no implementer treats `--mode full` as a licence to relax the engineering rules: H1 pipeline-by-default and H2 earned barriers are unchanged (full mode does not buy you a barrier); H3 schema-on-every-consumed-`agent()` is unchanged; H5 `.filter(Boolean)` is unchanged; H7 isolation stays `'none'` unless agents mutate concurrently — a richer model does not make worktrees cheaper; H9 phase discipline unchanged; H11 one workflow per human gate unchanged, and the full-mode pre-flight is an **additional** gate, never a substitute for a framework gate; L2/L3/L4/L6/L7/L8 unchanged. Only L1's dry threshold moves, and only by the value stated in §M5. Closing line: if a mode change would fix your workflow's shape, the shape was wrong."
+    },
+    {
+      "section": "M2. Flag parsing — one parser, eighteen skills",
+      "content": "The grammar (`--mode <optimize|full>`, `--planner <opus|fable>`), the defaults, and the parse location. States that **only two files parse flags**: `loop-engine/SKILL.md` step 1 and `loop-orchestrate/SKILL.md` step 1. The other sixteen skills advertise the flags in their `argument-hint` frontmatter and pass their raw argument string through when they invoke `loop-engine` — that pass-through *is* the inheritance mechanism, and it is why no skill needs mode logic. Rules: an absent `--mode` resolves to `optimize` silently (never prompt); an **unrecognized** value is never guessed — list the two valid values and ask, exactly as step 2 already does for an unknown `--framework`; `--planner` is orthogonal to `--mode` and legal in both; flags are case-insensitive and `=`-form (`--mode=full`) is accepted. Ends with the script-side plumbing contract: the resolved values travel to the Workflow tool as real JSON values on `args` (`{ mode: 'full', planner: 'opus', … }`), never a JSON-encoded string, and every template still normalizes defensively with `const input = typeof args === 'string' ? JSON.parse(args) : args`."
+    },
+    {
+      "section": "M3. The per-node-kind routing table",
+      "content": "The contract's core: one row per node kind, columns `optimize model` / `optimize effort` / `full model` / `full effort` / rationale, with exact model IDs (`claude-haiku-4-5`, `claude-sonnet-5`, `claude-opus-5`, `claude-fable-5` — bare aliases, **never** date-suffixed). `inherit` in the optimize column means \"omit `opts.model`\"; a spelled-out ID means \"pin it\". Two rules stated under the table. (1) **Optimize omits, full pins.** Full mode writes `model: 'claude-opus-5'` on every consumed `agent()` call even though that is usually the session model, because the mode is a *guarantee*, not a default — an inherited model silently voids the guarantee the moment a session runs below Opus 5, and the ledger must be able to prove what ran. (2) **Two nodes pin even in optimize**: the correctness-critical/gating node and the planner, because a silent downgrade there is inherited by everything downstream. Cross-references H8 and the `model-routing.md` modifiers."
+    },
+    {
+      "section": "M4. The override modifiers under each mode",
+      "content": "Restates both modifiers as the mode contract sees them, and is the section `model-routing.md`'s rewrite must agree with word-for-word. **Modifier A (wide fan-out pushes a tier DOWN)** — active in optimize, **disabled in full**, with the honest justification: A exists to protect an un-negotiated budget ceiling (H6); in full mode the human has already been shown the bill and said yes (§M6), so silently cheapening the run behind them is a worse failure than the spend. In full mode the script must still `log()` that A was suppressed, so a reader can tell a wide fan-out ran at full tier by design and not by oversight. **Modifier B (error cost pushes a tier UP)** — active in both, but restated as a three-rung ladder now that Opus 5 is the ceiling of the default path: push **model** up first, then **effort** (`high`→`xhigh`→`max`), then **verifier width and lens diversity**. At the ceiling only the last two rungs have travel, which is precisely what \"already at ceiling\" means in the plan's table. B is also the only modifier that may reach for `--planner fable`, and only under §M7's preconditions. Closes with the collision rule: in optimize, keep the model high and control spend with fewer, sharper verifiers (H4); in full, both stay at the ceiling and spend is controlled at the pre-flight, not by the router."
+    },
+    {
+      "section": "M5. Verification width and the dry threshold",
+      "content": "The two loop/verify dials the mode moves, with exact numbers so a template can be written from this section alone. **Width.** Optimize: 1 verifier for \"find any bugs\", 3 perspective-diverse verifiers when the ask is thorough/audit/comprehensive (unchanged H4 scaling). Full: **always** diverse-lens, never a single skeptic — 3 lenses for a standard node, 5 for a correctness-critical/gating node. That is how the plan's \"3–5\" band is resolved into a rule rather than a range. Majority-refute kills the finding at ⌈N/2⌉ refutes (2 of 3, 3 of 5). Lens sets are a decomposition decision, not a mode dial — the mode picks *how many* of the node's declared lenses run, never invents new ones. **Dry threshold.** L1's K goes 2 → 3 in full mode, expressed as `const DRY_LIMIT = input.mode === 'full' ? 3 : 2`; `MAX_ROUNDS` stays at its authored backstop (L4) and finder `ANGLES` stay as authored — widening angles is a decomposition change, not a mode change. Every round still `log()`s its dry counter (L5), and the log line must include the mode so a transcript is self-describing."
+    },
+    {
+      "section": "M6. The full-mode pre-flight",
+      "content": "Specifies the gate in full: it runs **in the orchestrating session, before the Workflow tool is called** — not inside the script. That placement is not incidental, it is the H10 answer: a script may not read a clock, may not roll dice, and may not prompt a human, so anything interactive and anything estimated must happen at authoring time and enter the script as pure literals. Covers (a) when it fires, (b) the exact estimate table it prints, (c) the deterministic formula and its calibration constants, (d) the one question it asks and what each answer does, (e) when it must re-fire. Also specifies what the script carries afterwards: a pure-literal `const ESTIMATE = { agents: N, tokensLow: X, tokensHigh: Y, mode: 'full' }` block echoed into the ledger, so the approved number and the actual spend can be diffed at the gate against `<transcriptDir>/journal.jsonl`. Ends with the hard rule: **no agent spawns before the answer.** Never spawn first and ask later, and never treat silence as consent."
+    },
+    {
+      "section": "M7. `--planner fable` — the opt-in that states its own price",
+      "content": "The honest section. Opens by naming the conflict rather than burying it: `model-routing.md` says never place Fable 5 on a gate-blocking interactive step, and **planning is gate-blocking** — the decompose node is the barrier every later node waits on, and in AIDLC it sits directly in front of a human gate. The flag does not repeal that rule; it makes overriding it explicit, bounded, and disclosed. Bounding argument, stated plainly: the failure modes that make Fable dangerous in a fan-out are *silent* (a refused security-audit item reads as a clean bill of health), whereas a refused or stalled **planner** fails *loudly* — one node, no DAG, nothing downstream runs, and a human is already standing at the gate. That asymmetry is the whole reason planner is the one place the override is sanctioned, and the section says so instead of implying the caveats stopped applying. Then: the four preconditions (single node only, never a fan-out; never inside a loop; the caller has accepted the ~minutes-long turn; the org meets the 30-day data-retention requirement — under zero data retention every Fable request returns 400, so the flag is unavailable, not merely inadvisable). Then the **mandatory disclosure line** the skill must print at the point of use, verbatim, before the planner spawns: latency, refusal risk, retention. Then the automatic fallback: if the planner refuses or exceeds the declared latency budget, fall back to `claude-opus-5` at `max`, `log()` the fallback, and carry it into the ledger and the gate report. Then the ledger requirement: a run whose planner was Fable must say so in its cast row and its gate deliverable — a reader must never have to guess which model produced the DAG they are approving."
+    },
+    {
+      "section": "M8. Mapping mode to `agent()` opts — the canonical ROUTES block",
+      "content": "The copy-paste artifact. A ~20-line pure-literal `ROUTES` object keyed `optimize`/`full`, each holding one entry per node kind with `{ model, effort }` (`model: null` meaning omit), plus a `routeFor(kind)` / `optsFor(node, label)` pair that resolves the node against `input.mode` and omits `model`/`effort` when null. States the H10-derived constraint explicitly and turns it into a rule rather than an apology: **scripts have no filesystem and no module access, so this block cannot be factored into a shared import — it is duplicated verbatim into every `*.workflow.js` that sets `model` or `effort`, and this file is its single source of truth.** Duplication is therefore correct here, and drift is a defect: a verify lens must diff the blocks, and CONTRIBUTING's validation block gains a `grep` that flags any template still carrying a bare `model:`/`effort:` literal outside `ROUTES`. Ends with the ledger line format, which now carries `mode`, the resolved model (`inherit` vs a pinned ID), effort, and — in full mode — the `modifier-A: suppressed` marker."
+    },
+    {
+      "section": "M9. Back-compat, inheritance, and resume",
+      "content": "Four sub-rules. (1) **No flag behaves exactly like v0.4.0 did, minus the rebaseline** — an invocation with no `--mode` is `optimize`, and the only behavioral delta is that judgment nodes now inherit Opus 5 instead of Opus 4.8 and pinned nodes now name `claude-opus-5`. (2) **v0.4.0 scripts still run.** A persisted script literally containing `model: 'claude-opus-4-8'` keeps working — that ID is still an active model — it simply runs a generation behind and carries no mode plumbing; migration is a one-line substitution plus pasting the `ROUTES` block, and the CHANGELOG says so rather than implying a silent upgrade. (3) **Eighteen skills, no per-skill logic.** Domain skills advertise the flags in `argument-hint`, pass their argument string through to `loop-engine`, and author through the same templates; a skill that grows its own mode branch is a defect, not a feature. (4) **Mode is frozen at first author.** A resumed run (`{scriptPath, resumeFromRunId}`) reuses the persisted script and its original `args.mode`; changing mode mid-run would desynchronize the script from the args it was authored against, so a mode change requires a fresh run and (in full) a fresh pre-flight."
+    },
+    {
+      "section": "Fleet discipline — the calibration and edition note",
+      "content": "The closing section, in the shape of the `standards.md` \"edition discipline\" notes the repo already uses, and the direct antidote to the v0.4.0 failure this release is fixing. Three rules. (1) **Never hardcode a fleet ceiling.** v0.4.0 asserted \"the default fleet caps at Opus 4.8\" and made real advice depend on it; the claim expired and took the advice with it. The replacement is a *check*, not a constant: read the session model, compare it to the node's target tier, omit when they match, pin when a silent mismatch would be costly. (2) **Model IDs are pinned here as of 2026-07 and are bare aliases** — `claude-haiku-4-5`, `claude-sonnet-5`, `claude-opus-5`, `claude-fable-5` — never date-suffixed, and updated in lockstep across this file, `model-routing.md`, and every `ROUTES` block. (3) **The estimator constants in §M6 are calibration, not physics.** Re-baseline them from `<transcriptDir>/journal.jsonl` at every gate; when a node's actual spend lands outside its band, update the constant and the revision note together. Re-check the whole file roughly twice a year or on any fleet change."
+    }
+  ],
+  "routingTable": [
+    {
+      "nodeKind": "scout / doc / mechanical (enumeration, extraction, formatting, renames)",
+      "optimizeModel": "claude-haiku-4-5",
+      "optimizeEffort": "omit (null) — Haiku 4.5 carries no effort dial; the plan's `low` is a no-op at best and an error at worst",
+      "fullModel": "claude-opus-5",
+      "fullEffort": "high",
+      "rationale": "Optimize: per-item judgment is small and multiplied wide, so budget is the governing constraint (modifier A, H6) and Haiku is the floor. Full: modifier A is disabled, so the same node runs at session tier — this is the row where the two modes diverge most and where full mode's cost is actually incurred."
+    },
+    {
+      "nodeKind": "implement (production edit, drafting, most coding)",
+      "optimizeModel": "claude-sonnet-5",
+      "optimizeEffort": "medium–high (`high` unless the change is well-specified and self-checking)",
+      "fullModel": "claude-opus-5",
+      "fullEffort": "high",
+      "rationale": "Optimize pins Sonnet 5 explicitly rather than inheriting, because the session runs Opus 5 and inheriting would route real production volume one tier above what the work needs. Full lifts it to the ceiling: the mode's promise is that no node is cheapened, and implementation is where a cheapened node ships a defect."
+    },
+    {
+      "nodeKind": "analyze / synthesize (judgment over gathered facts, merged artifacts)",
+      "optimizeModel": "inherit",
+      "optimizeEffort": "high",
+      "fullModel": "claude-opus-5",
+      "fullEffort": "xhigh",
+      "rationale": "Optimize omits `model` — the node's target tier equals the session model today, which is exactly the case H8's omit-by-default rule is for. Full pins the same model *and* lifts effort, because at the ceiling the only remaining headroom is effort and width (modifier B's second rung)."
+    },
+    {
+      "nodeKind": "verify / judge / critic (adversarial refute, diverse-lens vote, completeness pass)",
+      "optimizeModel": "inherit",
+      "optimizeEffort": "high–xhigh (`xhigh` once the ask is thorough or the finding gates a report)",
+      "fullModel": "claude-opus-5",
+      "fullEffort": "xhigh",
+      "rationale": "Verification is asymmetric — accepting a wrong result costs far more than the check (modifier B). Optimize inherits and scales effort with the ask; full pins, sets `xhigh`, and additionally widens to 3 diverse lenses (§M5), which is where most of full mode's extra agents come from."
+    },
+    {
+      "nodeKind": "correctness-critical / gating (a false \"all clear\" ships the defect or corrupts every downstream node)",
+      "optimizeModel": "claude-opus-5",
+      "optimizeEffort": "max",
+      "fullModel": "claude-opus-5",
+      "fullEffort": "max",
+      "rationale": "Identical in both modes — this row is already at the ceiling, which is the concrete meaning of the plan's \"modifier B: already at ceiling\". Pinned even in optimize (the one place v0.4.0 already endorsed spelling Opus out) so the check does not silently degrade when a session runs below Opus 5. Full mode widens it to 5 lenses; the model and effort do not move."
+    },
+    {
+      "nodeKind": "planner — the single decompose/planning node (default)",
+      "optimizeModel": "claude-opus-5",
+      "optimizeEffort": "xhigh",
+      "fullModel": "claude-opus-5",
+      "fullEffort": "max",
+      "rationale": "Pinned in both modes, unlike v0.4.0's worked example which let the decompose inherit. Every later node inherits this node's output, so a silent inherit-downgrade corrupts the whole DAG rather than one result — the highest-error-cost node in any run (modifier B, H4)."
+    },
+    {
+      "nodeKind": "planner — with the opt-in `--planner fable` override (orthogonal to `--mode`)",
+      "optimizeModel": "claude-fable-5",
+      "optimizeEffort": "xhigh",
+      "fullModel": "claude-fable-5",
+      "fullEffort": "max",
+      "rationale": "Reachable only by explicit flag, never by the table. Overrides the never-on-a-gate-blocking-step rule knowingly and under the §M7 preconditions; the caveats are printed at the point of use, and a refusal or latency-budget overrun falls back to `claude-opus-5` at `max` with the fallback logged and carried into the ledger and the gate report."
+    }
+  ],
+  "flagParsing": [
+    {
+      "flag": "--mode <name>",
+      "values": "`optimize` | `full` (case-insensitive; `--mode=full` also accepted)",
+      "default": "`optimize` when the flag is absent — resolved silently, never prompted for",
+      "parsedBy": "`loop-engine/SKILL.md` step 1 and `loop-orchestrate/SKILL.md` step 1 — the only two parsers in the plugin. The other 16 skills advertise the flag in `argument-hint` and pass their raw argument string through when they invoke `loop-engine`.",
+      "behavior": "Sets the routing column for every node (§M3), toggles override modifier A (§M4), sets verifier width and the loop-until-dry threshold (§M5), and decides whether the pre-flight fires (§M6). An unrecognized value is never guessed: name the two valid values and ask, mirroring the existing unknown-`--framework` handling in step 2. The resolved value is passed to the Workflow tool as `args.mode` and is frozen for the run."
+    },
+    {
+      "flag": "--planner <name>",
+      "values": "`opus` | `fable`",
+      "default": "`opus` — i.e. the planner cell of the active mode's routing row",
+      "parsedBy": "Same two parsers as `--mode`; orthogonal to it and legal in both modes",
+      "behavior": "Routes only the single decompose/planning node to `claude-fable-5`. Never applies to any other node, never to a fan-out, never inside a loop. Before spawning, the skill prints the §M7 disclosure verbatim (latency, refusal risk, 30-day retention) and records the choice in the cast ledger and the gate deliverable. Under an org with zero data retention the flag is refused with a named remedy rather than attempted — every Fable request would return 400. On refusal or latency-budget overrun, fall back to `claude-opus-5` at `max` and `log()` the fallback."
+    },
+    {
+      "flag": "--dry-run (existing flag, new interaction)",
+      "values": "present | absent",
+      "default": "absent",
+      "parsedBy": "`loop-engine/SKILL.md` step 1 / `loop-orchestrate/SKILL.md` step 1 (unchanged)",
+      "behavior": "Suppresses the full-mode confirmation prompt, because nothing spawns — but does **not** suppress the estimate. Under `--mode full --dry-run` the printed script plus the §M6 estimate table together are the deliverable, which makes dry-run the sanctioned way to price a full-mode run before committing to it."
+    },
+    {
+      "flag": "--budget <tokens> (existing flag, new interaction)",
+      "values": "integer token ceiling",
+      "default": "unset (no ceiling; `budget.total` is falsy and budget-scaled loops must stay guarded per L2)",
+      "parsedBy": "`loop-orchestrate/SKILL.md` step 1 (unchanged)",
+      "behavior": "When both `--budget` and `--mode full` are set and the §M6 estimate's **high** end exceeds the ceiling, the pre-flight refuses to spawn and offers exactly three exits: re-run at `--mode optimize`, raise the budget to a stated figure, or narrow the phase's scope. This is deliberately stricter than H6's runtime behavior (which throws mid-run once `budget.spent()` reaches `budget.total`) — burning 80% of a ceiling before dying is the failure the pre-flight exists to prevent."
+    },
+    {
+      "flag": "args.mode / args.planner (script-side plumbing, not a CLI flag)",
+      "values": "the resolved string values, passed as real JSON on the Workflow `args` object — never a JSON-encoded string",
+      "default": "`'optimize'` / `'opus'`, applied by the parser before the call so the script never has to default them",
+      "parsedBy": "The template's own normalization line: `const input = typeof args === 'string' ? JSON.parse(args) : args`, then the canonical `ROUTES` block (§M8) resolves `input.mode`",
+      "behavior": "The single point where mode reaches executing code. `ROUTES[input.mode][kind]` yields `{model, effort}`; `optsFor()` omits either when null. `DRY_LIMIT` and verifier width derive from `input.mode` the same way. All of it is pure-literal arithmetic over `args` — no clock, no RNG, resume-safe (H10)."
+    }
+  ],
+  "preflight": {
+    "whenItFires": "Once per invocation, only under `--mode full`, in the orchestrating session **after** the phase's script is authored and **before** the Workflow tool is called — so no agent has spawned when the human answers. It does not fire in optimize mode at all. It is an additional gate, never a replacement for a framework gate (H11): AIDLC's own Inception/Construction/Operation gates still stand, and the pre-flight sits in front of the first of them. It re-fires only when a post-gate re-plan raises the approved agent count or token high-end by more than 25%, or when a phase's agent count would exceed the repo's ≤15-per-workflow guideline. Under `--dry-run` the estimate still prints; the question does not.",
+    "whatItShows": "A four-part block. (1) **DAG size** — agents per node and the phase total, with fan-outs and verifier widths shown as their multiplicands (e.g. `verify-sweep: 5 items × 3 lenses = 15`), so the number is auditable rather than asserted. (2) **Token range** — a low–high band per node kind and a phase total, alongside the same DAG priced at `--mode optimize`, so the human sees the delta (typically 2.5×–4×) and not just an absolute. (3) **What full mode changed** — modifier A suppressed, effort floors lifted per node, verifier width 1→3 (5 on gating nodes), loop-until-dry K 2→3, and every node pinned to `claude-opus-5`. (4) **Risks worth naming before spending** — the run concentrates every node on the Opus 5 rate-limit bucket, and concurrency is capped at min(16, cores−2) per workflow (H6), so a wide full-mode phase queues rather than parallelizes.",
+    "estimationMethod": "Pure deterministic arithmetic over the DAG the planner already produced — no `Date.now()`, no `Math.random()`, no argless `new Date()`, and nothing sampled. Two reasons it satisfies H10 rather than merely dodging it: the computation happens at **authoring time in the session**, not inside the script (a script can neither prompt a human nor read a clock), and every input is a literal already present in the authored script.\n\n**Node count.** `agents = Σ over nodes of items(n) × width(n)` where `items(n) = n.fanOut` for a known work-list, and `MAX_ROUNDS × ANGLES.length` for a `fanOut: \"unknown\"` discovery loop — both of which are declared `const`s in the script, so the loop's *upper bound* is known even though its actual length is not. `width(n)` is 1 for non-verify nodes, and in full mode 3 for a standard verify/judge/critic node and 5 for a correctness-critical/gating one (§M5). The result is a strict upper bound, stated as such; a loop that goes dry early comes in under it, and the pre-flight says so.\n\n**Token range.** `tokens(n) = agents(n) × BAND[kind][mode] × SIZE[n.size]`, summed componentwise over the low and high ends. `BAND` is a fixed per-node-kind table of per-agent output tokens in optimize mode — scout/doc 2k–6k · implement 10k–25k · analyze/synthesize 12k–30k · verify/judge/critic 6k–18k · gating 20k–45k · planner 18k–45k · planner-on-Fable 30k–80k — and `SIZE` is a declared per-node multiplier (`compact` ×0.4, `standard` ×1, `long-form` ×3) that the planner sets on nodes producing large artifacts, which is what makes a six-way authoring fan-out price honestly instead of looking like six scouts. Full mode uses the same table with the full-mode row's model/effort and the widened verifier counts.\n\n**Honesty about the constants.** `BAND` and `SIZE` are calibration, not physics. They are the only tunable numbers in the file, they are re-baselined from `<transcriptDir>/journal.jsonl` at every gate, and the closing calibration note records the revision. Because nothing is sampled, the same DAG under the same mode yields byte-identical numbers on every run — which is what makes the approved estimate diffable against actual spend at the gate.",
+    "confirmationContract": "One question, one answer, before anything spawns: **\"Full mode: N agents across P phases, est. X–Y output tokens (optimize would be A–B). Modifier A disabled · verifier width 3 (5 on gating nodes) · loop-until-dry K=3 · every node pinned to claude-opus-5. Proceed?\"** — with three accepted answers. **yes** → author and call the Workflow tool unchanged, and stamp the approved figures into the script's pure-literal `ESTIMATE` block so the gate report can diff approved-vs-actual. **no** → nothing spawns, nothing is written, and the session reports what would have run; never a partial start. **optimize** → re-author the same DAG at `--mode optimize`, print the cheaper estimate, and proceed without a second confirmation (the cheaper run needs no pre-approval). Silence is not consent and a timeout is not a yes — if no answer arrives, the run does not start. The approval covers the whole invocation, not each phase; it is re-asked only on the two re-fire conditions above, and each re-ask shows the delta against what was previously approved rather than restating the total cold."
+  },
+  "harnessAmendment": "## H8. Model and effort selection is mode-governed\n\nThe run's `--mode` decides the route; this rule decides how a script expresses it.\n\n- **`--mode optimize` (the default)** — omit `model` and inherit the session model for judgment work. Set `opts.model` only when the router has a reason to leave the session tier: routing *down* to Haiku/Sonnet for a cheap or wide stage, or pinning the top tier on a node whose wrong answer is inherited by everything after it (a gating verify, the decomposition). Set `effort` per node: `low` or omitted for mechanical stages, the higher tiers for the hardest verify/judge stages.\n- **`--mode full`** — pin `model: 'claude-opus-5'` on **every** consumed `agent()` call and lift each node to its full-mode effort floor. Pinning here is not the noise H8 usually warns about; it is the mode's enforcement mechanism. An inherited model silently voids the guarantee the moment a session runs below Opus 5, and the cast ledger must be able to prove what actually ran.\n\nNever hardcode a fleet ceiling into a script, a policy, or a piece of advice — the session model is a fact to read, not a constant to assert. A claim like \"the fleet caps at model X\" expires, and any rule resting on it expires with it; compare the node's target tier against the session model instead, and pin whenever a silent mismatch would be expensive.\n\nThe per-node-kind routing table, both override modifiers, verifier width, the loop-until-dry threshold, the `--planner fable` opt-in, and the full-mode pre-flight are specified in `execution-modes.md`. The routing rationale and the worked example live in `../../loop-orchestrate/references/model-routing.md`.",
+  "backCompat": [
+    "**No `--mode` resolves to `optimize`, silently.** No prompt, no warning, no behavior change in shape — an unflagged v1.0.0 invocation runs the same DAG, the same barriers, the same loops, and the same verifier widths a v0.4.0 invocation would have. The only delta is the fleet rebaseline described below.",
+    "**The rebaseline is the whole delta.** Under no flag, nodes that used to inherit Opus 4.8 now inherit Opus 5; nodes that used to pin `claude-opus-4-8` (the correctness-critical verify in `project-plan.workflow.js`) now pin `claude-opus-5`; the Haiku ID loses its date suffix (`claude-haiku-4-5-20251001` → `claude-haiku-4-5`, matching what the template already used). Sonnet 5 is unchanged. This is a documentation-and-default change, not a semantic one — no caller has to pass a flag to keep working.",
+    "**Existing v0.4.0 scripts keep running.** A persisted `*.workflow.js` containing a literal `model: 'claude-opus-4-8'` still executes — that model ID is still active — it simply runs a generation behind and has no mode plumbing, so `--mode full` will not reach it. Migration is a one-line ID substitution plus pasting the canonical `ROUTES` block; the CHANGELOG states this explicitly rather than implying a silent upgrade.",
+    "**All 18 skills inherit the flags with zero per-skill logic.** Sixteen domain skills gain nothing but an `argument-hint` mention and pass their raw argument string through when they invoke `loop-engine`; `loop-engine` and `loop-orchestrate` own the only two parsers. A domain skill that grows its own mode branch is a defect. The one shared edit domain skills do take is pasting the identical `ROUTES` block into any template that sets `model` or `effort` — boilerplate from a single source of truth, not per-skill behavior.",
+    "**The v0.4.0 assertion \"the default fleet caps at Opus 4.8\" is retired, not edited.** Substituting \"Opus 5\" would preserve the defect: the sentence is a fact with an expiry date that was made load-bearing for real advice (omit `model` on judgment nodes), so when it expired the advice silently lost its warrant. The replacement is a *rule* — read the session model, compare it to the node's target tier, omit on a match, pin when a silent mismatch would be costly — which cannot rot the same way. That retirement is a breaking documentation change and is a large part of what makes this release 1.0.0 rather than 0.5.0.",
+    "**Mode is frozen at first author.** A resumed run (`{scriptPath, resumeFromRunId}`) reuses the persisted script and the `args.mode` it was authored against; passing a different `--mode` on resume would desynchronize the script from its arguments. A mode change requires a fresh run, and in full mode a fresh pre-flight."
+  ],
+  "filesToTouch": [
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-engine/references/execution-modes.md",
+      "action": "create",
+      "change": "The mode contract, in the twelve sections outlined above. Carries the per-node-kind routing table, both modifiers restated per mode, verifier width and the dry threshold, the `--planner fable` opt-in with its disclosure text, the pre-flight spec (formula + constants + confirmation contract), the canonical `ROUTES` block, back-compat, and the closing fleet-discipline/calibration note. Must be listed in `loop-engine/SKILL.md` step 2 and in the README's file map so it is not a dangling reference (CONTRIBUTING requires every referenced file to exist and be named)."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-engine/references/harness-policy.md",
+      "action": "amend",
+      "change": "Replace the whole of H8 with the prose in `harnessAmendment`. Heading changes from \"Model and effort selection\" to \"Model and effort selection is mode-governed\" — check for and update any cross-reference that quotes the old title. No other H-rule changes; H6's no-silent-caps rule gains a mention only inside `execution-modes.md` §M4 (the modifier-A suppression log), not in the policy file itself."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-engine/SKILL.md",
+      "action": "amend",
+      "change": "Four edits. (1) `argument-hint` → `<task> [--mode <optimize|full>] [--planner <opus|fable>] [--framework <name>] [--dry-run]`. (2) Step 1 gains the two flags with their defaults and the never-guess-an-unknown-value rule, mirroring the existing unknown-`--framework` handling. (3) Step 2 adds `references/execution-modes.md` to the load list (as item 4, before the framework file). (4) Step 5's requirements list gains the `ROUTES` block and the `args.mode`/`args.planner` pass-through; step 6 gains the full-mode pre-flight gate — estimate, one confirmation, no spawn before the answer — and step 7's report gains the approved-vs-actual diff against `journal.jsonl`."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-orchestrate/SKILL.md",
+      "action": "amend",
+      "change": "Five edits. (1) `argument-hint` gains `[--mode <optimize|full>] [--planner <opus|fable>]`. (2) Step 1 parses both, plus the documented `--budget` × full-mode interaction. (3) Step 2's read-only law list adds `../loop-engine/references/execution-modes.md`. (4) Step 5 (\"Assign a model + effort tier per node\") becomes mode-aware: the routing table is now two columns and the rationale line must name the mode. (5) Step 8 gains the pre-flight before the Workflow call; step 9's ledger row gains `mode` and, in full mode, the `modifier-A: suppressed` marker."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-orchestrate/references/model-routing.md",
+      "action": "rewrite",
+      "change": "Full rewrite onto the Opus 5 fleet with a per-mode column. (a) The load-bearing sentence \"The default fleet caps at Opus 4.8\" is deleted and replaced by a session-model *check*, not a new constant. (b) Fleet table becomes Haiku 4.5 / Sonnet 5 / Opus 5 / Fable 5 with bare aliases; Opus 4.8 leaves the default path (retained only as the documented refusal-fallback target). (c) Routing table gains `--mode optimize` / `--mode full` columns matching `execution-modes.md` §M3 exactly. (d) **Modifier A** becomes mode-conditional (disabled in full, with the pre-flight named as the reason) and its 'drop one tier' wording is restated as 'drop to the cheapest tier that can still do the per-item work' — from an Opus 5 session the drop is now two steps, not one — keeping the bimodal-split rule and adding the suppression-log requirement. (e) **Modifier B** is restated as a three-rung ladder (model → effort → width) because at the Opus 5 ceiling only the last two rungs have travel; the 'both modifiers pull opposite ways' paragraph is rewritten, since in full mode A does not exist. (f) The 5-task worked example becomes a **two-column** table (optimize | full) on the same project: the premise line changes to 'session model is Opus 5, mode is the default optimize'; task 3 (decompose) flips from *omit* to *pin* `claude-opus-5` — a changed conclusion, not a changed string; task 4 stays pinned at `max` and is the concrete illustration of 'already at ceiling'; tasks 1/2/5 flip to Opus 5 `high` in the full column and task 2's bimodal split disappears with modifier A. All four 'Notes on the routing' bullets are rewritten (bullet 1 is now false as written), and a fifth note prices the full column and points at the pre-flight. (g) The Fable 5 section keeps all three caveats, names `--planner fable` as the only sanctioned entry point, and states the gate-blocking conflict and its bounded resolution at the point of use rather than quietly dropping the rule."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-orchestrate/references/task-decomposition.md",
+      "action": "amend",
+      "change": "Not in the plan's file list — a gap this spec closes. Three edits for internal consistency: §5's verification-width guidance gains the full-mode rule (3 lenses standard, 5 gating, always); §7's default-cast table's 'Default tier' column becomes per-mode (or is replaced by a pointer to `execution-modes.md` §M3, which is the better fix — the tier belongs in one place); §8's ledger `log()` payload gains `mode`. Leaving this file naming Haiku/Sonnet/Opus tiers on its own would give the plugin two disagreeing routing tables."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-orchestrate/templates/project-plan.workflow.js",
+      "action": "amend",
+      "change": "The reference implementation of the contract. Replace the per-node `model`/`effort` literals with the canonical `ROUTES` block keyed on `input.mode`; `optsFor()` resolves via `routeFor(node.taskType)` and still omits null fields. Line 168's `model: 'claude-opus-4-8'` → the gating route (pinned `claude-opus-5`, `max`); line 99's `claude-haiku-4-5` stays but is sourced from `ROUTES`. Add the pure-literal `ESTIMATE` block, add `mode` to the ledger `log()` and to the returned `ledger` rows, and add the `modifier-A: suppressed` log line under full mode. `meta` stays a pure literal; nothing new reads a clock or rolls dice (H10)."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-engine/templates/loop-until-dry.workflow.js",
+      "action": "amend",
+      "change": "`const DRY_LIMIT = 2` → `input.mode === 'full' ? 3 : 2` (L1, §M5), with the comment naming both the policy rule and the mode file. The hardcoded three-lens judge array becomes width-resolved from mode (3 standard / 5 gating), and the majority test becomes `⌈N/2⌉` instead of the literal `>= 2` so it stays correct at width 5. `MAX_ROUNDS` and `ANGLES` are untouched by design. Add the `ROUTES` block and route the finder and judge `agent()` calls through it. Every round's `log()` line gains the mode."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-engine/templates/pipeline.workflow.js",
+      "action": "amend",
+      "change": "Add the canonical `ROUTES` block and the `input.mode` normalization, and route each stage's `agent()` opts through `optsFor()` rather than leaving stages unrouted. This is the template most skills copy first (SKILL.md step 5 calls it the default choice), so a mode-blind pipeline template would be the single largest hole in the contract."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-engine/templates/parallel.workflow.js",
+      "action": "amend",
+      "change": "Same `ROUTES` + `optsFor()` treatment; additionally, the finder-per-lens fan-out and the downstream verify stage must resolve verifier width from mode (§M5) rather than assuming one skeptic per survivor."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-engine/templates/loop-until-budget.workflow.js",
+      "action": "amend",
+      "change": "Same `ROUTES` + `optsFor()` treatment, plus the documented `--budget` × `--mode full` interaction: the L2 `budget.total &&` guard is unchanged, but the header comment must point at §M6, since under full mode the ceiling is pre-approved at the pre-flight rather than discovered mid-run."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-review/templates/security-review.workflow.js",
+      "action": "amend",
+      "change": "Its adversarial verify is one skeptic per candidate; under full mode that must become 3 diverse lenses with a majority-refute kill (5 for a gating review). Add the `ROUTES` block and mode-resolved width. Named explicitly because this is the plugin's exemplar template — whatever it does, contributors will copy."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-audit/templates/change-audit.workflow.js",
+      "action": "amend",
+      "change": "Carries a bare `effort: 'high'` on its synthesize node (line 134). Replace with the mode-resolved route so full mode actually reaches it. Same one-line class of edit as the three files below — identical boilerplate, no per-skill logic."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-debug/templates/bug-diagnosis.workflow.js",
+      "action": "amend",
+      "change": "Bare `effort: 'high'` on the synthesize node (line 123) → mode-resolved route via the `ROUTES` block."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-research/templates/research.workflow.js",
+      "action": "amend",
+      "change": "Bare `effort: 'high'` on the synthesize node (line 145) → mode-resolved route via the `ROUTES` block."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-scout/templates/prior-art-search.workflow.js",
+      "action": "amend",
+      "change": "Bare `effort: 'high'` on the decide node (line 125) → mode-resolved route via the `ROUTES` block."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-autopilot/templates/improvement-loop.workflow.js",
+      "action": "amend",
+      "change": "Second home of `const DRY_LIMIT = 2` (line 31) — apply the same mode-conditional threshold as `loop-until-dry.workflow.js`, or the autonomy loop silently keeps K=2 under full mode. Also add the `ROUTES` block; this template runs unattended, so its ledger line must record the mode."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/.claude/skills/loop-audit/SKILL.md",
+      "action": "amend",
+      "change": "Representative of the ten skills that currently have **no** `argument-hint` at all (`loop-audit`, `loop-autopilot`, `loop-debug`, `loop-design`, `loop-docs`, `loop-harness`, `loop-research`, `loop-review`, `loop-scout`, `loop-test`). The plan's `mode-propagate` node says '`--mode` added to the 12 existing argument-hints', but only `loop-engine` and `loop-orchestrate` have one — so this is an *add-the-line* job, not an edit-the-line job. Each gains `argument-hint: <target> [--mode <optimize|full>]` plus a one-line note that flag parsing is delegated to `loop-engine`. The six new v1.0.0 skills ship with the hint already in place."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/CONTRIBUTING.md",
+      "action": "amend",
+      "change": "Two additions to the workflow-template rules: (1) every template that sets `model` or `effort` carries the canonical `ROUTES` block verbatim from `execution-modes.md` §M8, and duplication is intentional because scripts have no module access under H10; (2) the validation block gains a `grep` that flags any `*.workflow.js` carrying a bare `model:`/`effort:` literal outside `ROUTES`, alongside the existing `Date.now|Math.random` grep."
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/README.md",
+      "action": "amend",
+      "change": "The usage block (lines ~132–144) documents `--framework` and `--dry-run`; add `--mode` and `--planner` with one line each and a pointer to `execution-modes.md`. The skill table's `loop-engine` and `loop-orchestrate` invocation cells gain the flags. A short 'Execution modes' section carries the at-a-glance table. (Phase 3 `docs-refresh` also rewrites this file for 18 skills and the handoff chain — these edits fold into that.)"
+    },
+    {
+      "path": "/mnt/data/company/TheLoopSkill/CHANGELOG.md",
+      "action": "amend",
+      "change": "The 1.0.0 entry must call the Opus 5 rebaseline a **breaking documentation change** under a Changed/Breaking heading: the retired 'fleet caps at Opus 4.8' claim, the `claude-opus-4-8` → `claude-opus-5` pins, the `claude-haiku-4-5-20251001` → `claude-haiku-4-5` de-suffixing, and the one-line migration for persisted v0.4.0 scripts. Plus the added `--mode` / `--planner` flags and the full-mode pre-flight under Added."
+    }
+  ],
+  "openIssues": [
+    "**Haiku 4.5 has no `effort` dial.** The plan's optimize row says 'Haiku 4.5, `low`', but v0.4.0's own routing table says 'omit (or `low`)' and `project-plan.workflow.js` sets `effort: null` — and at the API level Haiku 4.5 rejects an effort parameter outright. This spec makes **omit** canonical and treats `low` as a no-op at best. Needs a one-line sign-off, and `verify-sweep` needs a lens that catches any template setting effort on a Haiku node.",
+    "**Model-ID inconsistency already in v0.4.0.** `model-routing.md` writes `claude-haiku-4-5-20251001` (fleet table and worked example) while `project-plan.workflow.js` writes `claude-haiku-4-5`. This spec standardizes on the bare alias with no date suffix, everywhere. Worth an explicit CHANGELOG line so nobody 'fixes' it back.",
+    "**The plan's `mode-propagate` node is under-scoped in two ways.** It is described as adding `--mode` to '12 existing argument-hints' at Haiku `low`, but (a) only 2 of the 12 skills have an `argument-hint` at all — the other 10 need the line *added*, and (b) it does not cover the six existing templates that hardcode `effort`/`DRY_LIMIT` (`change-audit`, `bug-diagnosis`, `research`, `prior-art-search`, `improvement-loop`, `security-review`). Either widen the node — and it cannot stay Haiku `low` if it is editing JavaScript — or accept that full mode does not reach those templates in 1.0.0 and say so in the release notes. Recommend widening; a mode that silently skips six templates is worse than no mode.",
+    "**`--planner fable` under zero data retention.** Fable 5 requires 30-day retention; a ZDR org gets a 400 on *every* request, not a degraded result. The spec therefore makes the flag *unavailable* rather than merely inadvisable under ZDR, with a named remedy. Needs confirmation of how the harness surfaces the org's retention posture — if it cannot be checked ahead of time, the fallback to `claude-opus-5` `max` has to absorb the 400 as well as a refusal.",
+    "**Opus 5 draws a separate rate-limit bucket** from the combined Opus 4.x pool. Full mode concentrates every node on that one bucket, so a wide full-mode phase can 429 where the same DAG in optimize (spread across Haiku/Sonnet/Opus) would not. The pre-flight names this as a risk; open question is whether it should do more — e.g. cap full-mode fan-out width below H6's min(16, cores−2) concurrency ceiling.",
+    "**Full mode versus the ≤15-agents-per-workflow guideline.** A single verify node at width 5 over 5 items is 25 agents on its own. Precedence must be stated: this spec says the guideline wins — split the phase into two gated workflows rather than exceed it, and have the pre-flight surface the split. Needs sign-off, because the alternative (mode wins) is also defensible and changes the pre-flight's output.",
+    "**`--mode full` + `--budget` semantics.** H6 currently treats the budget as a hard ceiling that throws mid-run once spent. This spec makes the pre-flight *refuse to start* when the estimate's high end exceeds the ceiling, which is stricter than H6 and is a genuine behavior change to `--budget`. It is the right call — burning 80% of a ceiling before dying is exactly what the pre-flight exists to prevent — but it should be an explicit decision, not an implementation detail.",
+    "**Mode on resume.** This spec freezes mode at first author: a `{scriptPath, resumeFromRunId}` resume reuses the persisted script and its original `args.mode`, and a mode change requires a fresh run plus a fresh pre-flight. That matches how the Workflow tool re-invokes a persisted script, but it should be verified against the tool's actual resume semantics before it is written as law.",
+    "**Should `--planner fable` be legal in `--mode optimize`?** This spec treats the two flags as orthogonal, which is the simpler contract. The counter-argument is that a Fable planner inside a cost-optimizing run is incoherent — the most expensive, slowest node in the cheapest mode. Flagging for a decision; if the answer is 'full mode only', §M2 and the flag table both change.",
+    "**ROUTES-block drift across ~11 templates.** H10 gives scripts no filesystem and no module access, so the routing block genuinely cannot be imported — it must be duplicated, and duplication drifts. Mitigations proposed here: a dedicated `verify-sweep` lens that diffs the blocks, and a CONTRIBUTING `grep` alongside the existing `Date.now|Math.random` check. Open question is whether that is enough for a 1.0.0 that promises API stability, or whether the block should be reduced to something smaller and harder to get wrong (e.g. a two-line `ROUTES` literal plus a shared naming convention)."
+  ]
+}

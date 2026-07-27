@@ -1,0 +1,705 @@
+{
+  "matrix": [
+    {
+      "skill": "loop-engine",
+      "scope": "Authors and executes ONE multi-agent Workflow script for a task already scoped; subject is the orchestration script itself, deliverable is an executed run.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-orchestrate",
+          "condition": "The unit of work is a whole project needing phase decomposition, a task DAG, and per-node model/effort routing before any script is written."
+        },
+        {
+          "otherSkill": "loop-autopilot",
+          "condition": "The run must recur unattended over a repository on a schedule rather than execute once now."
+        }
+      ]
+    },
+    {
+      "skill": "loop-orchestrate",
+      "scope": "Plans multi-agent project work; subject is a project, deliverable is a typed task DAG + model/effort routing + cost ledger \u2014 a plan, never an execution.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-engine",
+          "condition": "The task is single-phase and the user wants it run now, not planned."
+        },
+        {
+          "otherSkill": "loop-autopilot",
+          "condition": "The user wants a standing loop that re-plans itself each round rather than one plan for one project."
+        },
+        {
+          "otherSkill": "loop-design",
+          "condition": "The decomposition wanted is of a software system into components, not of work into agent tasks."
+        }
+      ]
+    },
+    {
+      "skill": "loop-autopilot",
+      "scope": "Runs a standing, budget-guarded loop whose subject is the REPOSITORY and whose only output is a draft PR; propose-only, never merges, never touches a running service.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-operate",
+          "condition": "The subject is a deployed service in production \u2014 health, SLOs, alerts, self-healing \u2014 rather than source code in a repo."
+        },
+        {
+          "otherSkill": "loop-orchestrate",
+          "condition": "The user wants one planned multi-phase job, not an unattended recurring loop."
+        },
+        {
+          "otherSkill": "loop-harness",
+          "condition": "The ask is how to schedule/configure the runner (Routine, hook, permissions) rather than what the loop should do."
+        }
+      ]
+    },
+    {
+      "skill": "loop-harness",
+      "scope": "Configures CLAUDE's own execution environment for a repo \u2014 permissions, hooks, MCP servers, scheduling mechanisms; subject is .claude/settings.json and .mcp.json, never the product's runtime.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-operate",
+          "condition": "The automation being configured watches or remediates the deployed product rather than gating Claude's own tool use."
+        },
+        {
+          "otherSkill": "loop-autopilot",
+          "condition": "The ask is the content and safety rules of the autonomous loop, not the mechanism that fires it."
+        }
+      ]
+    },
+    {
+      "skill": "loop-research",
+      "scope": "Answers an open question from multiple external sources with adversarial fact-checking; deliverable is a cited report, and it recommends nothing about this codebase.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-scout",
+          "condition": "The question exists only because the user is about to build something and needs a reuse/adapt/build verdict."
+        },
+        {
+          "otherSkill": "loop-algo",
+          "condition": "The answer is a complexity bound or correctness argument derivable by analysis rather than by citing sources."
+        }
+      ]
+    },
+    {
+      "skill": "loop-scout",
+      "scope": "Decides whether a capability the user has NOT yet built should be reused, adapted, or built; deliverable is a named candidate + runner-up + rationale. Ends at the decision.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-pattern",
+          "condition": "The framework or library is already a dependency of this project and the question is how to use it idiomatically."
+        },
+        {
+          "otherSkill": "loop-integrate",
+          "condition": "The provider is already chosen and the work is wiring it up \u2014 auth, webhooks, retries, secrets."
+        },
+        {
+          "otherSkill": "loop-research",
+          "condition": "The user wants a cited survey of a topic with no build-vs-buy decision attached."
+        }
+      ]
+    },
+    {
+      "skill": "loop-design",
+      "scope": "Decides the macro structure of a system not yet built: component boundaries, architecture style, the API this system exposes, data model, consistency policy, and NFR targets as numbers; deliverable is ADRs + C4.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-ship",
+          "condition": "The system already exists and the question is how a specific change reaches production and backs out."
+        },
+        {
+          "otherSkill": "loop-operate",
+          "condition": "The SLO already exists and the question is how to measure, alert on, or auto-remediate against it on a live service."
+        },
+        {
+          "otherSkill": "loop-algo",
+          "condition": "The decision is inside a single component \u2014 which data structure, what complexity, which concurrency primitive."
+        },
+        {
+          "otherSkill": "loop-integrate",
+          "condition": "The API being designed against is someone else's, consumed rather than exposed."
+        }
+      ]
+    },
+    {
+      "skill": "loop-algo",
+      "scope": "Designs and validates the MECHANISM inside one component: algorithm/data-structure choice, complexity analysis, invariants and correctness arguments, concurrency primitives, benchmark validation.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-design",
+          "condition": "The answer is a diagram of components and contracts rather than a Big-O, an invariant, or a benchmark."
+        },
+        {
+          "otherSkill": "loop-debug",
+          "condition": "The code used to be fast or correct and now is not \u2014 an unexplained regression is a defect, not a mechanism choice."
+        },
+        {
+          "otherSkill": "loop-pattern",
+          "condition": "The change reshapes code structure while leaving the underlying mechanism identical."
+        },
+        {
+          "otherSkill": "loop-test",
+          "condition": "The artifact wanted is a correctness test rather than a performance benchmark."
+        }
+      ]
+    },
+    {
+      "skill": "loop-pattern",
+      "scope": "Changes the SHAPE of existing code to be idiomatic and maintainable \u2014 GoF patterns, Fowler refactorings, SOLID, framework idioms; deliverable is a behavior-preserving diff backed by tests.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-review",
+          "condition": "The user wants the smells and defects named in a report, with the code left untouched."
+        },
+        {
+          "otherSkill": "loop-scout",
+          "condition": "The framework is not yet adopted and the question is which one to pick."
+        },
+        {
+          "otherSkill": "loop-algo",
+          "condition": "The change alters the algorithm's complexity or concurrency semantics rather than preserving behavior."
+        },
+        {
+          "otherSkill": "loop-design",
+          "condition": "The restructuring crosses component or deployable boundaries rather than staying inside existing modules."
+        }
+      ]
+    },
+    {
+      "skill": "loop-integrate",
+      "scope": "Builds and hardens the boundary to a third-party/cloud/SaaS system: OAuth2/OIDC, webhooks, idempotency keys, rate limits, retry/backoff, contract tests, secrets, sandbox\u2192prod promotion.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-scout",
+          "condition": "No provider has been chosen yet."
+        },
+        {
+          "otherSkill": "loop-design",
+          "condition": "The contract being designed is the one this system publishes to its own callers."
+        },
+        {
+          "otherSkill": "loop-review",
+          "condition": "The integration is already written and the ask is a security verdict on it."
+        },
+        {
+          "otherSkill": "loop-debug",
+          "condition": "The integration is failing at runtime and the ask is why."
+        }
+      ]
+    },
+    {
+      "skill": "loop-test",
+      "scope": "Authors and repairs automated CORRECTNESS tests that fail for the right reason before they pass; matches the repo's existing stack and conventions.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-algo",
+          "condition": "The artifact is a performance benchmark or a complexity/invariant validation rather than a pass/fail correctness assertion."
+        },
+        {
+          "otherSkill": "loop-integrate",
+          "condition": "The test is a provider contract test \u2014 loop-integrate specifies the contract, this skill authors the file."
+        },
+        {
+          "otherSkill": "loop-debug",
+          "condition": "The bug the regression test should lock in has not been root-caused yet."
+        },
+        {
+          "otherSkill": "loop-incident",
+          "condition": "What is needed is a reproduction harness for a live outage, not a suite entry."
+        }
+      ]
+    },
+    {
+      "skill": "loop-review",
+      "scope": "JUDGES source code for security and quality defects against OWASP/CWE/ASVS and reports HIGH/MEDIUM findings at confidence \u22650.8; it never edits the code it reviews.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-pattern",
+          "condition": "The user wants the reported smell actually fixed rather than reported."
+        },
+        {
+          "otherSkill": "loop-audit",
+          "condition": "The deliverable is a change/impact/risk report over a diff rather than a defect list."
+        },
+        {
+          "otherSkill": "loop-debug",
+          "condition": "The defect was observed failing at runtime rather than found by reading code."
+        }
+      ]
+    },
+    {
+      "skill": "loop-audit",
+      "scope": "Reports on a CHANGE SET that already exists: classification, blast radius, risk rating, coverage; backward-looking over a diff, PR, range, or release.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-review",
+          "condition": "The goal is to find exploitable or quality defects to fix, not to characterize the change."
+        },
+        {
+          "otherSkill": "loop-ship",
+          "condition": "The question is forward-looking \u2014 how this release reaches production and how it rolls back."
+        },
+        {
+          "otherSkill": "loop-incident",
+          "condition": "The retrospective is of an outage rather than of a diff."
+        }
+      ]
+    },
+    {
+      "skill": "loop-docs",
+      "scope": "Writes and maintains PROSE that describes code for a reader \u2014 README, API reference, docstrings, guides, ADR write-up \u2014 verified against source, per Diataxis.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-design",
+          "condition": "The architectural decision the ADR would record has not been made yet."
+        },
+        {
+          "otherSkill": "loop-operate",
+          "condition": "The document is a runbook whose steps an operator or automated loop executes against a live service."
+        },
+        {
+          "otherSkill": "loop-incident",
+          "condition": "The document is an incident timeline, postmortem, or correction-of-error."
+        }
+      ]
+    },
+    {
+      "skill": "loop-debug",
+      "scope": "Finds the ROOT CAUSE of one specific reproducible defect and applies the minimal fix plus a regression test; no service-impact obligation, no comms, no rollout.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-incident",
+          "condition": "A production service is degraded or down right now with users affected \u2014 mitigate there first, then hand root cause back here."
+        },
+        {
+          "otherSkill": "loop-algo",
+          "condition": "The code is behaving as designed but is too slow or too memory-hungry."
+        },
+        {
+          "otherSkill": "loop-review",
+          "condition": "No failure has been observed and the user wants code read for latent defects."
+        },
+        {
+          "otherSkill": "loop-operate",
+          "condition": "The symptom is an alert that a known runbook already resolves."
+        }
+      ]
+    },
+    {
+      "skill": "loop-ship",
+      "scope": "Gets a specific change from merged to fully released and back out again: rollout strategy, flag plan, expand-contract migration, release checklist and go/no-go, tested rollback, DORA measurement. Owns the window from deploy start to bake complete.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-design",
+          "condition": "The system is still being designed and the delivery architecture is a design-time ADR, not a release being executed."
+        },
+        {
+          "otherSkill": "loop-operate",
+          "condition": "The rollout has baked and ownership has passed to steady-state SLO watching and auto-remediation."
+        },
+        {
+          "otherSkill": "loop-audit",
+          "condition": "The ask is what is in the release and how risky it is, not how it reaches production."
+        },
+        {
+          "otherSkill": "loop-incident",
+          "condition": "The deploy already failed and users are affected \u2014 declare and mitigate first."
+        }
+      ]
+    },
+    {
+      "skill": "loop-incident",
+      "scope": "Responds to a DECLARED, live, user-impacting failure: severity triage, roles and comms, mitigate before diagnosing, reproduction harness, timeline, blameless postmortem/CoE. Episodic and novel by definition.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-operate",
+          "condition": "A known runbook exists and resolves the condition without declaring an incident."
+        },
+        {
+          "otherSkill": "loop-debug",
+          "condition": "Service is already restored and the remaining work is finding the root cause."
+        },
+        {
+          "otherSkill": "loop-ship",
+          "condition": "The mitigation is a redeploy or rollback and the question is how to execute it safely."
+        },
+        {
+          "otherSkill": "loop-audit",
+          "condition": "The retrospective is over a diff rather than over an outage."
+        }
+      ]
+    },
+    {
+      "skill": "loop-operate",
+      "scope": "Runs a service in STEADY STATE: defines SLIs/SLOs/error budgets, designs burn-rate alerts, authors self-healing runbooks, gates auto-rollback on SLO signals, and sets the autonomy dial. Standing configuration, not episodic response.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-incident",
+          "condition": "An incident is declared, or the condition exceeds what any existing runbook covers."
+        },
+        {
+          "otherSkill": "loop-design",
+          "condition": "The service is not yet built and the SLO targets are being chosen for the first time."
+        },
+        {
+          "otherSkill": "loop-ship",
+          "condition": "A rollout is actively in flight and has not finished baking."
+        },
+        {
+          "otherSkill": "loop-autopilot",
+          "condition": "The autonomous loop's subject is the repository and its output is a pull request."
+        }
+      ]
+    },
+    {
+      "skill": "loop-skill",
+      "scope": "Authors a skill directory for this plugin \u2014 router, references, standards shelf and workflow template \u2014 that passes scripts/validate.mjs.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-harness",
+          "condition": "the change is to what Claude is PERMITTED to do \u2014 permissions, hooks, MCP servers, scheduled automation \u2014 rather than to a capability it gains"
+        },
+        {
+          "otherSkill": "loop-docs",
+          "condition": "the deliverable is prose for a human reader rather than a skill directory under .claude/skills/"
+        },
+        {
+          "otherSkill": "loop-design",
+          "condition": "you are designing the software a skill talks about, not the skill itself"
+        },
+        {
+          "otherSkill": "loop-pattern",
+          "condition": "you are refactoring existing code rather than authoring a plugin artifact"
+        }
+      ]
+    },
+    {
+      "skill": "loop-frontend",
+      "scope": "Crafts how an interface feels frame by frame \u2014 motion choreography, easing and duration budgets, type scale, perceived performance \u2014 in a UI that already renders.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-design",
+          "condition": "the deliverable changes a number the PAGE is measured by \u2014 rendering strategy, first-load JS budget, Core Web Vitals target, caching tier \u2014 rather than a number the EYE is measured by"
+        },
+        {
+          "otherSkill": "loop-pattern",
+          "condition": "the diff is behaviour-preserving structure (extract a component, apply a pattern, make it idiomatic) rather than behaviour-changing presentation"
+        },
+        {
+          "otherSkill": "loop-scout",
+          "condition": "the question is which animation library this project should adopt, as a build-vs-buy with a named winner, rather than which rung of the escalation ladder one specific motion sits on"
+        },
+        {
+          "otherSkill": "loop-algo",
+          "condition": "the answer is a Big-O or a benchmark table \u2014 loop-algo's milliseconds are measured and provable, loop-frontend's are perceptual and chosen"
+        }
+      ]
+    }
+  ],
+  "overlaps": [
+    {
+      "skillA": "loop-design",
+      "skillB": "loop-ship",
+      "risk": "loop-design/references/deployment.md (149 lines) already IS loop-ship's entire declared scope: rolling/blue-green/canary with mechanics and failure modes, the risk\u2192strategy table, the four feature-flag kinds and hygiene, expand-contract migrations, IaC, CI/CD gates, tested rollback, and the full DORA section. loop-design's current description explicitly advertises 'deployment strategy' and 'plan a deployment or rollout strategy' as trigger phrases. Shipping loop-ship without moving that content creates two skills with identical knowledge and colliding triggers, and whichever wins the match is arbitrary.",
+      "severity": "high",
+      "resolution": "This is a content migration, not a wording fix, and it is the single highest-value action in Phase 2. Move deployment.md out of loop-design into loop-ship (split as references/rollout-strategies.md + references/migrations.md + references/dora.md), leaving behind a ~15-line design-time stub in loop-design that states only 'pick the coarse delivery shape and record it as an ADR; the execution machinery lives in loop-ship' plus the pointer. Remove 'deployment strategy'/'plan a deployment or rollout strategy' from loop-design's description (done in the rewrite). loop-design step 6 shrinks to an ADR-emitting decision; loop-ship owns everything from deploy start to bake complete. If Construction declines this migration, loop-ship must NOT ship as a separate skill \u2014 it would be a duplicate of loop-design/references/deployment.md."
+    },
+    {
+      "skillA": "loop-design",
+      "skillB": "loop-operate",
+      "risk": "loop-design/references/nfr.md already owns SLIs, SLOs, error budgets, burn-rate alerting ('multi-window, multi-burn-rate', 'alert on SLO burn, not causes'), the three observability pillars, RED/USE/golden signals, and OpenTelemetry \u2014 which the plan assigns to loop-operate as 'SLI/SLO/error budgets, alert design'. Both would answer 'what should my SLOs be?' and 'how do I make this observable?'.",
+      "severity": "high",
+      "resolution": "Split nfr.md on the design-time/run-time seam. loop-design keeps target SETTING: the intake table, availability math, RTO/RPO, scalability axis, cost, build-vs-buy, and the pre-sign-off checklist \u2014 everything answered before launch with no telemetry in hand. Move the SLI/SLO/error-budget MEASUREMENT half plus the entire observability section into loop-operate/references/slo-and-alerting.md and observability.md, and have loop-design's nfr.md cross-reference it the same way it already cross-references loop-review for threat modeling. Test of the seam: if the answer requires reading a live metric, it belongs to loop-operate."
+    },
+    {
+      "skillA": "loop-incident",
+      "skillB": "loop-operate",
+      "risk": "Both are triggered by 'production is unhealthy'. An alert firing is genuinely ambiguous between them, and both plausibly claim auto-rollback (loop-operate has 'SLO-gated auto-rollback', loop-incident has 'mitigate-before-diagnose'). This is the thinnest boundary in the 18 and the most likely mis-selection at runtime.",
+      "severity": "high",
+      "resolution": "Separate on a checkable predicate, not a vibe, and state it as the first sentence of BOTH SKILL.md bodies: 'Does a runbook exist for this condition AND does executing it restore the SLI?' Yes \u2192 loop-operate (steady state, no declaration). No, or impact exceeds the runbook's scope, or a human must be paged/coordinated \u2192 loop-incident. Corollary: loop-operate owns AUTOMATED mitigation of KNOWN conditions; loop-incident owns HUMAN-COORDINATED mitigation of NOVEL ones, and only loop-incident writes postmortems. Merge tripwire for the verify-sweep in Phase 2: if either SKILL.md ends up spending more than ~30% of its body restating the other's phase, they are not separable and should be merged into loop-operate with an explicit 'incident mode' section \u2014 better one honest skill than two that fight for the same trigger."
+    },
+    {
+      "skillA": "loop-ship",
+      "skillB": "loop-operate",
+      "risk": "'Rollback plan' (loop-ship) and 'SLO-gated auto-rollback' (loop-operate) name the same action, and both claim canary. A user asking 'roll this back' matches both.",
+      "severity": "high",
+      "resolution": "Split on mechanism vs trigger, and on rollout lifecycle. loop-ship AUTHORS the rollback mechanism and proves it works (the button); loop-operate OWNS THE SIGNAL that presses it unattended (the wire from burn rate to the button) and the autonomy level at which it may fire. Temporal rule: from deploy start until bake completes, the rollout belongs to loop-ship; after bake, the service belongs to loop-operate. Canary appears in both but at different granularity \u2014 loop-ship defines the ramp schedule and abort criteria, loop-operate supplies the SLI those criteria are evaluated against."
+    },
+    {
+      "skillA": "loop-debug",
+      "skillB": "loop-incident",
+      "risk": "loop-debug's current description claims 'a crash', 'unexpected behavior', and 'asks why something is broken' \u2014 which is exactly what a user says during an outage. loop-debug will hijack incident triggers and start bisecting while the service is down, which is precisely the failure mode loop-incident exists to prevent (mitigate before diagnose).",
+      "severity": "high",
+      "resolution": "Split on service impact, not on symptom vocabulary. loop-incident requires a LIVE, USER-IMPACTING failure; loop-debug requires a REPRODUCIBLE DEFECT with no restoration obligation. Both descriptions must carry the pointer explicitly (done in the rewrites) and loop-debug's SKILL.md \u00a71 must open with the interrupt: 'if a production service is currently degraded with users affected, stop and use loop-incident first.' The plan's handoff chain already encodes the correct order \u2014 the descriptions must encode it too, because selection happens before either body is read."
+    },
+    {
+      "skillA": "loop-review",
+      "skillB": "loop-pattern",
+      "risk": "loop-review/references/quality-checks.md already covers dead/duplicated code and maintainability, and loop-review's current description advertises 'code-quality or best-practices review'. loop-pattern's declared scope (SOLID, Fowler smells, idioms) is the remediation of exactly those findings. 'Clean up this code' and 'is this idiomatic?' match both.",
+      "severity": "high",
+      "resolution": "Split on the artifact produced, which is unambiguous at request time: loop-review emits a FINDINGS LIST and touches no code; loop-pattern emits a DIFF. Keep quality-checks.md in loop-review (detection is a review job) but add a 'remediation' column pointing each smell class at loop-pattern's catalog entry, so the two compose instead of competing. loop-review's description must gain the explicit clause 'it judges, it does not refactor' (done in the rewrite) \u2014 that single clause is what keeps 'clean up this code' out of it."
+    },
+    {
+      "skillA": "loop-autopilot",
+      "skillB": "loop-operate",
+      "risk": "Both are autonomous loops with an autonomy ladder, and the plan says loop-operate 'carries the autonomy dial wired to loop-autopilot's ladder'. If both define the ladder, the two definitions drift and 'how much should this fix itself?' matches both. Separately, loop-autopilot's SCALE rung (canary-merge.workflow.js) already specifies merge-behind-canary + agent-driven rollback \u2014 loop-ship + loop-operate content living inside loop-autopilot.",
+      "severity": "high",
+      "resolution": "Separable on subject and are worth keeping apart \u2014 autopilot's subject is the repository and its output is a draft PR; operate's subject is a running service and its output is a mitigated SLI \u2014 but the SHARED ladder needs exactly one home. Recommend promoting the OBSERVE\u2192VERIFY\u2192\u2026\u2192SCALE ladder to loop-engine/references/autonomy-ladder.md and having BOTH loop-autopilot and loop-operate cite it; neither redefines it. Additionally, canary-merge.workflow.js should cite loop-ship for the rollout mechanism and loop-operate for the SLO gate rather than restating them."
+    },
+    {
+      "skillA": "loop-scout",
+      "skillB": "loop-pattern",
+      "risk": "'What's the best way to do X in React?' is genuinely ambiguous \u2014 it could mean 'which library' (scout) or 'which idiom' (pattern).",
+      "severity": "medium",
+      "resolution": "Disambiguate on the dependency manifest, a fact both skills can check in one command: if answering the question adds a line to package.json/requirements.txt/go.mod, it is loop-scout; if the dependency is already there, it is loop-pattern. State this test in both descriptions ('already in the project' vs 'not yet adopted') and in loop-pattern's SKILL.md \u00a71."
+    },
+    {
+      "skillA": "loop-design",
+      "skillB": "loop-algo",
+      "risk": "'Should this be sharded?', 'is this fast enough?', and 'how should this queue work?' plausibly match both; loop-design/references/backend.md already discusses sharding and access patterns.",
+      "severity": "medium",
+      "resolution": "Split on granularity with a concrete test: if the deliverable is a box-and-arrow diagram, a contract, or a deployable topology \u2192 loop-design. If the deliverable is a Big-O, an invariant, a memory-ordering argument, or a benchmark table \u2192 loop-algo. Worked boundary case to put in both bodies: 'shard the queue across N nodes' is loop-design (topology); 'which lock-free queue structure and what are its progress guarantees' is loop-algo."
+    },
+    {
+      "skillA": "loop-algo",
+      "skillB": "loop-debug",
+      "risk": "'It's slow' matches both \u2014 a performance regression is a defect, a slow-by-design hot path is a mechanism problem, and users describe them identically.",
+      "severity": "medium",
+      "resolution": "Split on whether the behavior CHANGED. A regression (it was fast, now it is not; a deploy or commit correlates) is loop-debug \u2014 bisect it. Known-correct code that has never been fast enough is loop-algo. Both descriptions carry the pointer; loop-algo's SKILL.md should open by asking 'did this get slower, or was it never fast enough?' and hand off on the first answer."
+    },
+    {
+      "skillA": "loop-audit",
+      "skillB": "loop-ship",
+      "risk": "'Release risk memo' (loop-audit's current description) and 'release checklist / go-no-go' (loop-ship) both fire on 'is this release safe?'.",
+      "severity": "medium",
+      "resolution": "Split on direction in time. loop-audit is backward-looking over a diff \u2014 what is in it, what it touches, how risky, is it covered. loop-ship is forward-looking over a rollout \u2014 how it reaches prod, at what ramp, behind what flag, backing out how. loop-ship CONSUMES loop-audit's memo as its go/no-go input, which makes the dependency explicit rather than competitive. Both descriptions gain the pointer (done)."
+    },
+    {
+      "skillA": "loop-scout",
+      "skillB": "loop-integrate",
+      "risk": "'Add Stripe' spans both: choosing Stripe is scout, wiring Stripe is integrate.",
+      "severity": "medium",
+      "resolution": "Sequential handoff on a hard boundary: loop-scout terminates at a named recommendation and writes no integration code; loop-integrate begins with the provider already named and never re-litigates the choice. When the user names a specific provider in the request, that is the signal the scout phase is already done \u2014 state this in loop-integrate's SKILL.md \u00a71."
+    },
+    {
+      "skillA": "loop-integrate",
+      "skillB": "loop-design",
+      "risk": "loop-design/references/api-design.md owns idempotency keys, versioning, error envelopes, and retries \u2014 the same vocabulary as loop-integrate's declared scope.",
+      "severity": "medium",
+      "resolution": "Split on direction of the contract: loop-design owns the API this system PUBLISHES (it writes the spec); loop-integrate owns the API this system CONSUMES (it obeys someone else's spec and defends against it). Idempotency appears in both legitimately but as different obligations \u2014 design requires callers to send a key, integrate requires this system to send one. Add a one-line note to api-design.md pointing consumer-side concerns at loop-integrate."
+    },
+    {
+      "skillA": "loop-integrate",
+      "skillB": "loop-test",
+      "risk": "'Contract tests' is named in loop-integrate's scope but authoring tests is loop-test's job.",
+      "severity": "medium",
+      "resolution": "loop-integrate SPECIFIES the contract (which interactions, which provider states, which pact) and loop-test AUTHORS the files in the repo's stack \u2014 the same delegation loop-debug already uses for regression tests. loop-integrate must not hand-roll test files in a framework the repo does not use."
+    },
+    {
+      "skillA": "loop-algo",
+      "skillB": "loop-test",
+      "risk": "Benchmark-driven validation (loop-algo) vs verifying tests run correctly (loop-test) \u2014 both are 'write something that runs the code and reports'.",
+      "severity": "medium",
+      "resolution": "Split on the assertion type: pass/fail correctness assertion \u2192 loop-test; a measured distribution compared against a baseline \u2192 loop-algo. loop-algo owns benchmark methodology (warmup, variance, statistical significance, what a 5% delta means); loop-test owns everything with an expected value."
+    },
+    {
+      "skillA": "loop-review",
+      "skillB": "loop-audit",
+      "risk": "Pre-existing and already mitigated by loop-audit's pointer, but loop-review's current description contains the bare word 'audit' ('run a security scan or audit'), which fires on 'audit this PR'.",
+      "severity": "medium",
+      "resolution": "Make the pointer bidirectional. loop-audit already says 'for defects, use loop-review'; loop-review must gain 'for a change-impact and release-risk report rather than a defect hunt, use loop-audit'. Narrow the bare 'audit' to 'security review' in loop-review's trigger list (done in the rewrite)."
+    },
+    {
+      "skillA": "loop-debug",
+      "skillB": "loop-review",
+      "risk": "'Why is this broken?' vs 'find what's wrong with this code' \u2014 both are defect-finding.",
+      "severity": "medium",
+      "resolution": "Split on evidence source: loop-debug requires an OBSERVED failure (a trace, a red test, a reproduction); loop-review works from reading source with no failure in hand. If the user can paste a stack trace, it is loop-debug. Pre-existing and mild, but with 18 skills the pointer should be explicit in both."
+    },
+    {
+      "skillA": "loop-orchestrate",
+      "skillB": "loop-engine",
+      "risk": "Pre-existing. 'Orchestrate' appears verbatim in both current descriptions; loop-engine's opens with 'Orchestrate a task\u2026' and loop-orchestrate's with 'Plan and orchestrate\u2026'.",
+      "severity": "medium",
+      "resolution": "Remove 'orchestrate' as loop-engine's leading verb \u2014 it authors and EXECUTES a script (done in the rewrite). loop-orchestrate PLANS and produces a DAG it never runs. Rule of thumb for the descriptions: one project with phases \u2192 orchestrate; one task now \u2192 engine."
+    },
+    {
+      "skillA": "loop-docs",
+      "skillB": "loop-operate",
+      "risk": "A runbook is a document, so loop-docs' 'how-to guide' trigger will catch 'write a runbook for the disk-full alert'.",
+      "severity": "medium",
+      "resolution": "Split on executor: loop-docs writes for a HUMAN READER seeking understanding (Diataxis); loop-operate writes runbooks whose steps are EXECUTED, possibly unattended, and which must be deterministic, idempotent, and testable. A runbook is an operational artifact that happens to be markdown, not documentation. loop-docs' description gains the pointer (done)."
+    },
+    {
+      "skillA": "loop-docs",
+      "skillB": "loop-incident",
+      "risk": "'Write the postmortem' matches loop-docs' documentation triggers.",
+      "severity": "low",
+      "resolution": "Postmortems and correction-of-error documents belong to loop-incident, which owns the timeline data and the blameless-analysis method; loop-docs may be delegated the final prose pass but is not the entry point. Pointer added to loop-docs' description."
+    },
+    {
+      "skillA": "loop-research",
+      "skillB": "loop-scout",
+      "risk": "Pre-existing. loop-research's 'compare options with citations' overlaps loop-scout's candidate evaluation.",
+      "severity": "low",
+      "resolution": "Already correctly composed \u2014 loop-scout \u00a72 delegates its searching to loop-research. Make it explicit in loop-research's description ('for a build-vs-buy decision about something the user is about to build, use loop-scout, which delegates its searching here') so the composition direction is visible at selection time."
+    },
+    {
+      "skillA": "loop-pattern",
+      "skillB": "loop-algo",
+      "risk": "Both change code inside a component; 'make this cleaner and faster' matches both.",
+      "severity": "low",
+      "resolution": "Split on behavior preservation. loop-pattern's diffs are behavior-preserving by definition (a refactoring that changes behavior is a bug). loop-algo deliberately changes the performance profile and sometimes the semantics (ordering, fairness, memory visibility). If the test suite should pass unchanged before and after, it is loop-pattern."
+    },
+    {
+      "skillA": "loop-harness",
+      "skillB": "loop-operate",
+      "risk": "Both configure automated recurring behavior; loop-harness/references/automation-loops.md covers Routines and scheduled tasks, and loop-operate covers self-healing runbooks on a schedule.",
+      "severity": "low",
+      "resolution": "Split on subject: loop-harness configures what CLAUDE may do (permissions, hooks, MCP, schedulers); loop-operate configures what the SERVICE does when unhealthy. A self-healing runbook may be deployed via a mechanism loop-harness set up \u2014 that is composition, and the pointer in loop-harness' description ('the subject is Claude's own configuration, not the product's runtime') keeps it one-directional."
+    },
+    {
+      "skillA": "loop-skill",
+      "skillB": "loop-harness",
+      "risk": "Both configure Claude Code itself, so 'set up Claude for this project' plausibly matches either.",
+      "severity": "medium",
+      "resolution": "Split on what changes: loop-harness changes what Claude is PERMITTED to do (permissions, hooks, MCP, schedules); loop-skill changes what Claude KNOWS HOW to do (a capability). A skill may be deployed via a harness loop-harness set up \u2014 that is composition, and the pointer is one-directional."
+    },
+    {
+      "skillA": "loop-skill",
+      "skillB": "loop-docs",
+      "risk": "A SKILL.md is markdown, so 'write the docs for this skill' will catch loop-docs' how-to trigger.",
+      "severity": "medium",
+      "resolution": "Split on the artifact and its contract: loop-docs writes for a HUMAN READER seeking understanding (Diataxis); loop-skill emits a directory that must pass scripts/validate.mjs and whose description field is machine-consumed at selection time. A SKILL.md is an executable contract that happens to be markdown."
+    },
+    {
+      "skillA": "loop-frontend",
+      "skillB": "loop-design",
+      "risk": "loop-design/references/frontend.md already owns frontend performance, so 'make the UI faster/smoother' plausibly matches both.",
+      "severity": "high",
+      "resolution": "Split PAGE-LOADING performance (loop-design: rendering strategy, bundle budget, LCP/INP/CLS targets, caching) from PER-ANIMATION FRAME COST (loop-frontend: compositor-only properties, FLIP, will-change hygiene). Field test: 'the page takes 4s to appear' is loop-design; 'the drawer stutters when it opens' is loop-frontend. This is the weakest of the four boundaries and both files must say so plainly rather than pretend it is crisp."
+    },
+    {
+      "skillA": "loop-frontend",
+      "skillB": "loop-scout",
+      "risk": "'Should I use anime.js?' reads as a library-selection question, which is loop-scout's territory.",
+      "severity": "medium",
+      "resolution": "loop-frontend walks its own escalation ladder (CSS transition -> keyframes -> View Transitions -> scroll-driven -> WAAPI -> library) and answers 'does THIS motion need a library, and which rung is it?' \u2014 most often 'no library'. A project-wide adoption evaluation with criteria, a winner and a runner-up is loop-scout, which loop-frontend hands off to."
+    },
+    {
+      "skillA": "loop-frontend",
+      "skillB": "loop-pattern",
+      "risk": "Both edit component files in a frontend codebase.",
+      "severity": "medium",
+      "resolution": "Split on what a screenshot can see: loop-pattern's output is a behaviour-preserving refactor backed by tests that a screenshot cannot distinguish; loop-frontend's output is visible by definition and no unit test catches its regression. If both touch one file, loop-pattern decides where the component boundary goes and loop-frontend decides what crosses it in 240ms."
+    }
+  ],
+  "descriptionRewrites": [
+    {
+      "skill": "loop-debug",
+      "currentDescription": "Diagnose and fix bugs with a reproduce to localize to root-cause to fix method. Use when the user reports a bug, a failing test, an exception or stack trace, unexpected behavior, a crash, or asks why something is broken or how to fix it. Drives hypothesis-driven debugging and adds a regression test once fixed.",
+      "newDescription": "Find the root cause of a specific defective behavior and fix it, using reproduce, localize, hypothesize, eliminate, minimal fix, regression test. Use when the user reports a bug, a failing test, an exception or stack trace, a crash, or unexpected behavior in code they can run, and asks why it happens or how to fix it. Drives hypothesis-driven elimination and delegates the regression test to loop-test. For a production service that is currently degraded or down with users affected, use loop-incident first, which mitigates and hands the root cause back here. For code that is correct but too slow or memory-hungry by design, use loop-algo. For a defect found by reading code rather than by observing a failure, use loop-review.",
+      "why": "The current wording ('a crash', 'unexpected behavior', 'why something is broken') is exactly what a user types during an outage, so it will out-compete loop-incident on the trigger that matters most and start bisecting while the service is down. Adds the three highest-risk pointers (incident, algo, review) and constrains the subject to code the user can run."
+    },
+    {
+      "skill": "loop-design",
+      "currentDescription": "Design software systems and architecture: architecture-style selection, API design, backend and data modeling, frontend performance, deployment strategy, and non-functional requirements. Use when the user asks to design a system or architecture, choose an architecture pattern, design an API, plan a deployment or rollout strategy, optimize frontend performance, model backend data, or record architecture decisions (ADRs) and C4 diagrams.",
+      "newDescription": "Design software systems and architecture: architecture-style selection, API design, backend and data modeling, frontend performance, and turning non-functional requirements into numbers and SLO targets. Use when the user asks to design a system or architecture, choose an architecture pattern, design an API this system exposes, model backend data, pick a consistency policy, optimize frontend performance, set NFR or capacity targets, or record architecture decisions as ADRs and C4 diagrams. Works at component granularity on a system not yet built. For executing a release or choosing a rollout strategy for a system already running, use loop-ship. For measuring and alerting on the SLOs of a live service, use loop-operate. For the algorithm inside one component, use loop-algo.",
+      "why": "'Deployment strategy' and 'plan a deployment or rollout strategy' are loop-ship's core triggers and must leave loop-design's description entirely, or the two skills compete for every release question. Also disambiguates API direction (exposed vs consumed) against loop-integrate, marks the design-time/run-time seam against loop-operate, and marks granularity against loop-algo."
+    },
+    {
+      "skill": "loop-review",
+      "currentDescription": "Review code for security vulnerabilities and quality issues using OWASP Top 10, CWE Top 25, and ASVS standards. Use when the user asks to review code, run a security scan or audit, check for vulnerabilities, do a code-quality or best-practices review, or assess a diff, PR, or repo for injection, auth, crypto, secrets, SSRF, or dependency risks.",
+      "newDescription": "Review code for security vulnerabilities and quality defects using OWASP Top 10, CWE Top 25, and ASVS, and report them without changing the code. Use when the user asks to review code, scan for vulnerabilities, do a security or code-quality review, or assess a diff, PR, or repo for injection, auth, crypto, secrets, SSRF, or dependency risk. Reports HIGH and MEDIUM findings at confidence at or above 0.8; it judges, it does not refactor. For applying the refactoring that fixes a reported smell, use loop-pattern. For a change-impact and release-risk report rather than a defect hunt, use loop-audit. For diagnosing a failure that was actually observed at runtime, use loop-debug.",
+      "why": "'It judges, it does not refactor' is the single clause that keeps 'clean up this code' out of loop-review and in loop-pattern. Drops the bare word 'audit' that collides with loop-audit, and makes loop-audit's existing one-way pointer bidirectional as required at 18 skills."
+    },
+    {
+      "skill": "loop-scout",
+      "currentDescription": "Find existing frameworks, libraries, tools, or standards that already solve a problem before building it from scratch \u2014 a prior-art and build-vs-buy check that prevents reinventing the wheel and over-engineering. Use when the user is about to build a component, feature, or system, asks whether to build or adopt an existing solution, wants to avoid reinventing something, asks whether a library or framework exists for a need, or is scoping work that likely has established solutions.",
+      "newDescription": "Find existing frameworks, libraries, tools, services, or standards that already solve a problem before building it from scratch, a prior-art and build-vs-buy check that prevents reinventing the wheel. Use when the user is about to build a component or feature, asks whether to build or adopt an existing solution, asks whether a library exists for a need, or is choosing between candidate dependencies. Ends at a decision: reuse, adapt, or build, naming the candidate and the runner-up. For using a framework already in the project idiomatically, use loop-pattern. For wiring up a chosen third-party platform or API, use loop-integrate. For a question that needs cited evidence rather than a build-vs-buy decision, use loop-research.",
+      "why": "'Ends at a decision' plus the loop-pattern and loop-integrate pointers install the not-yet-adopted / already-a-dependency / already-chosen boundary that separates scout from the two new skills that flank it on either side of the adoption timeline."
+    },
+    {
+      "skill": "loop-autopilot",
+      "currentDescription": "Run an autonomous engineering loop that improves this project \u2014 read feedback (GitHub issues, PR comments, CI failures), act on it as draft pull requests with tests, and when there is no feedback, research improvements (market trends, papers, tech-debt scan) and propose them. Use when the user wants to automate project maintenance, set up a self-improving or autonomous engineering loop, continuously triage and act on issues/PRs, or have Claude propose improvements on a schedule. Composes the plugin's other skills; proposes via draft PR + comment and never merges.",
+      "newDescription": "Run an autonomous engineering loop over this repository: read feedback (GitHub issues, PR comments, CI failures), act on it as draft pull requests with tests, and when there is no feedback, research improvements and propose them. Use when the user wants to automate repository maintenance, set up a self-improving engineering loop, continuously triage issues and PRs, or have Claude propose code improvements on a schedule. The subject is the codebase and the output is a draft PR; it composes the plugin's other skills, proposes only, and never merges. For running and self-healing a live production service rather than improving a repo, use loop-operate. For a single one-off orchestrated job rather than a standing loop, use loop-orchestrate.",
+      "why": "'This project' is ambiguous once loop-operate exists \u2014 a running service is also 'this project'. Pinning the subject to the repository and the output to a draft PR is the one statement that separates two skills which are otherwise both 'an autonomous loop with an autonomy dial'."
+    },
+    {
+      "skill": "loop-audit",
+      "currentDescription": "Audit a set of code changes and produce an impact and risk report. Use when the user asks to audit a diff, PR, release, or commit range, summarize what changed, assess the impact, blast radius, or risk of a change, check whether changes are covered by tests, or produce a change report or release risk memo. For finding security or quality defects to fix, use loop-review instead.",
+      "newDescription": "Audit a set of code changes and produce an impact and risk report: classify each change, trace blast radius, rate risk, and check test coverage. Use when the user asks to audit a diff, PR, release, or commit range, summarize what changed, assess impact or blast radius, check whether changes are covered by tests, or produce a change report or release risk memo. Reports on a change set that already exists; it neither hunts defects nor plans the rollout. For finding security or quality defects to fix, use loop-review instead. For planning how the release reaches production and how it rolls back, use loop-ship.",
+      "why": "'Release risk memo' now collides head-on with loop-ship's go/no-go. Adds the backward-looking framing and the loop-ship pointer while keeping the existing loop-review pointer, which is the house-style exemplar for this pattern."
+    },
+    {
+      "skill": "loop-test",
+      "currentDescription": "Write and repair automated tests: design cases, match the project test framework, and verify tests run and fail for the right reason. Use when the user asks to write, add, generate, or fix tests, improve coverage, add a regression test for a bug, or set up testing for a module. Matches the repo existing test stack and conventions.",
+      "newDescription": "Write and repair automated correctness tests: design cases, match the project's test framework and conventions, and verify each test runs and fails for the right reason before it passes. Use when the user asks to write, add, generate, or fix tests, improve coverage, add a regression test for a bug, or set up testing for a module. Covers happy-path, edge, error, and property-based cases. For performance benchmarks and complexity validation, use loop-algo. For contract tests against a third-party provider, use loop-integrate, which specifies the contract this skill then authors. For finding the bug a regression test should lock in, use loop-debug.",
+      "why": "Three new skills now name test-shaped artifacts (loop-algo benchmarks, loop-integrate contract tests, loop-incident repro harnesses). Narrowing to 'correctness tests' and naming the two delegations keeps loop-test the authoring service for all of them instead of a competitor."
+    },
+    {
+      "skill": "loop-docs",
+      "currentDescription": "Write and maintain technical documentation: READMEs, API references, docstrings, guides, and ADRs. Use when the user asks to write, generate, update, or improve documentation, a README, API docs, docstrings, a how-to guide, or to keep docs in sync with code. Follows the Diataxis doc-type model and matches repo conventions.",
+      "newDescription": "Write and maintain technical documentation: READMEs, API references, docstrings, guides, and ADR prose, verifying every claim against the source. Use when the user asks to write, generate, update, or improve documentation, a README, API docs, docstrings, or a how-to guide, or to keep docs in sync with code. Follows the Diataxis doc-type model and matches repo conventions. For deciding the architecture an ADR records, use loop-design. For writing a runbook an operator or automated loop executes, use loop-operate. For an incident postmortem or correction-of-error, use loop-incident.",
+      "why": "Runbooks and postmortems are markdown, so loop-docs' 'how-to guide' trigger would capture both of loop-operate's and loop-incident's signature deliverables. The pointers encode the human-reader vs executed-artifact split."
+    },
+    {
+      "skill": "loop-research",
+      "currentDescription": "Research a topic across multiple sources with adversarial fact-checking and a cited synthesis. Use when the user asks to research a topic, do a literature or market review, gather and verify evidence, answer a question that needs multiple sources, compare options with citations, or produce a fact-checked report \u2014 anything where breadth of sources and verified claims matter more than a single-shot answer.",
+      "newDescription": "Research a question across multiple sources with adversarial fact-checking and a cited synthesis. Use when the user asks to research a topic, do a literature or market review, gather and verify evidence, answer a question that needs multiple sources, compare options with citations, or produce a fact-checked report, anything where breadth of sources and verified claims matter more than a single-shot answer. Every claim carries a source. For a build-vs-buy or prior-art decision about something the user is about to build, use loop-scout, which delegates its searching here.",
+      "why": "'Compare options with citations' is indistinguishable from loop-scout's candidate evaluation at selection time. Naming the composition direction ('which delegates its searching here') resolves it without narrowing loop-research's legitimate scope."
+    },
+    {
+      "skill": "loop-orchestrate",
+      "currentDescription": "Plan and orchestrate multi-agent project work: decompose a project into a task DAG, choose pipeline or parallel workflow shapes, and assign the right Claude model and effort tier to each task (right model for the right job). Use when the user asks to manage or orchestrate a project, break a large task into subtasks across agents, decide which model to use for which job, or drive a multi-phase build, audit, or migration at scale.",
+      "newDescription": "Plan multi-agent project work: decompose a project into a typed task DAG, choose pipeline or parallel shapes per phase, route the right Claude model and effort tier to each task, and produce a cost ledger. Use when the user asks to plan or orchestrate a project, break a large job into subtasks across agents, decide which model to use for which task, or drive a multi-phase build, audit, or migration at scale. Produces the plan; loop-engine executes it. For a single task that needs one workflow script rather than a multi-phase plan, use loop-engine directly. For a standing scheduled loop over a repository, use loop-autopilot.",
+      "why": "Pre-existing collision with loop-engine, worsened by 18 skills: both descriptions currently lead with a form of 'orchestrate'. Making loop-orchestrate plan-only and pointing at loop-engine for execution and loop-autopilot for standing loops draws the three-way line explicitly."
+    },
+    {
+      "skill": "loop-engine",
+      "currentDescription": "Orchestrate a task with multi-agent Workflow scripts (pipeline/parallel/loop) governed by the harness & loop engineering policies and a pluggable lifecycle framework (default AIDLC). Use when the user asks to run a task as a workflow, orchestrate with subagents, fan out agents, or execute a phase-structured job (audit, migration, review sweep, feature build) at multi-agent scale.",
+      "newDescription": "Author and execute a multi-agent Workflow script (pipeline, parallel with an earned barrier, or a guarded loop) governed by the harness and loop engineering policies and a pluggable lifecycle framework (default AIDLC). Use when the user asks to run a task as a workflow, orchestrate with subagents, fan out agents, or execute a phase-structured job (audit, migration, review sweep, feature build) at multi-agent scale. This is the execution engine every other skill's templates target. For decomposing a whole project into a phased DAG with model routing before execution, use loop-orchestrate.",
+      "why": "Drops 'orchestrate' as the leading verb so it stops competing with loop-orchestrate on that exact word, and states its role as the shared execution substrate that all 18 skills' workflow templates run on."
+    },
+    {
+      "skill": "loop-harness",
+      "currentDescription": "Engineer a project's Claude Code harness \u2014 permissions, hooks, MCP servers, and automation loops \u2014 from reusable scaffolds. Use when the user wants to set up or harden a project's .claude/settings.json, add or design hooks, configure permissions (allow/deny/ask), wire up MCP servers via .mcp.json, or automate recurring work (SessionStart setup, /loop, scheduled tasks, PR-watch, headless runs). Ships copy-paste settings.json, .mcp.json, hook scripts, and a loop scaffold.",
+      "newDescription": "Engineer a project's Claude Code harness: permissions, hooks, MCP servers, and in-repo automation, from reusable scaffolds. Use when the user wants to set up or harden .claude/settings.json, add or design hooks, configure permissions (allow/deny/ask), wire up MCP servers via .mcp.json, or schedule recurring Claude work (SessionStart setup, /loop, scheduled tasks, PR-watch, headless runs, Cloud Routines). The subject is Claude's own configuration, not the product's runtime. For operating the deployed service the repo produces, use loop-operate. For the content of the autonomous loop the harness schedules, use loop-autopilot.",
+      "why": "'Automate recurring work' is now claimed by loop-operate (self-healing runbooks on a schedule) too. Pinning the subject to Claude's own configuration is the one sentence that keeps 'automate this check every 5 minutes' routed correctly depending on whether the check runs against the repo or against production."
+    },
+    {
+      "skill": "loop-pattern",
+      "currentDescription": "(new in v1.0.0 \u2014 no SKILL.md exists yet; plan scope line: 'Applies patterns/idioms/refactorings. GoF, Fowler Refactoring 2e, SOLID, language style guides, idiomatic framework use. Distinct from loop-review, which only judges.')",
+      "newDescription": "Apply design patterns, refactorings, and language or framework idioms to existing code, and remove the smells that motivate them: GoF patterns, Fowler's Refactoring catalog, SOLID, and the framework's own idiomatic usage. Use when the user asks to refactor, restructure, or clean up code, apply or choose a design pattern, fix a code smell, make code idiomatic or conventional for its language or framework, or improve maintainability by changing the code. Produces a behavior-preserving diff backed by tests. For reporting quality and security defects without changing the code, use loop-review. For choosing which framework or library to adopt in the first place, use loop-scout. For the complexity or correctness of an algorithm rather than the shape of the code around it, use loop-algo.",
+      "why": "Must state 'produces a behavior-preserving diff' up front \u2014 that is the discriminator against loop-review (which produces a report) and against loop-algo (which deliberately changes the performance profile). Carries all three cluster pointers the plan flagged as risky."
+    },
+    {
+      "skill": "loop-integrate",
+      "currentDescription": "(new in v1.0.0 \u2014 no SKILL.md exists yet; plan scope line: 'Third-party/cloud/SaaS integration: OAuth2/OIDC (RFC 6749/9700), webhooks, idempotency keys, rate limits, retry/backoff, contract tests, sandbox\u2192prod promotion, secret handling.')",
+      "newDescription": "Integrate a third-party, cloud, or SaaS platform: OAuth 2.0 and OIDC flows, token and secret handling, webhook receipt and verification, idempotency keys, rate limits, retry and backoff, contract tests against the provider, and sandbox-to-production promotion. Use when the user asks to integrate, connect, or wire up an external API, provider, or SaaS, implement OAuth or SSO, receive or send webhooks, handle a provider's rate limits or retries, or move an integration from sandbox to live credentials. For choosing which provider or library to adopt, use loop-scout. For designing an API this system exposes to others, use loop-design. For auditing the security of an integration already written, use loop-review.",
+      "why": "Its vocabulary (idempotency, retries, versioning, auth) is shared verbatim with loop-design/references/api-design.md and loop-review's auth/crypto categories. The 'consumed vs exposed' pointer to loop-design and the 'already written' pointer to loop-review are what keep the three apart."
+    },
+    {
+      "skill": "loop-algo",
+      "currentDescription": "(new in v1.0.0 \u2014 no SKILL.md exists yet; plan scope line: 'Complexity analysis, data-structure selection, invariants and correctness arguments, concurrency mechanisms, benchmark-driven validation.')",
+      "newDescription": "Design and validate the mechanism inside a component: algorithm and data-structure selection, time and space complexity analysis, correctness arguments and invariants, concurrency mechanisms and memory-model reasoning, and benchmark-driven validation of the choice. Use when the user asks which algorithm or data structure to use, for a Big-O or complexity analysis, to make correct code faster or less memory-hungry, to prove an invariant or reason about a race, lock, or lock-free structure, or to benchmark two implementations against each other. For component boundaries, contracts, and topology, use loop-design. For code that is wrong rather than slow, use loop-debug. For restructuring code shape without changing its mechanism, use loop-pattern.",
+      "why": "'Inside a component' plus 'correct but slow' are the two phrases that separate it from loop-design (macro) and loop-debug (regression). Without the loop-debug pointer, every 'this is slow' request is a coin flip between the two."
+    },
+    {
+      "skill": "loop-ship",
+      "currentDescription": "(new in v1.0.0 \u2014 no SKILL.md exists yet; plan scope line: 'Pre-/at-deploy: blue-green, canary, rolling, feature flags, expand-contract migrations, rollback plans, DORA metrics, release checklist.')",
+      "newDescription": "Plan and execute getting a change safely to production: rollout strategy (rolling, blue-green, canary), feature-flag plan, expand-contract migrations, the release checklist and go/no-go, a tested rollback path, and DORA measurement. Use when the user asks how to ship, release, roll out, or deploy a change, whether to canary or blue-green it, how to run a zero-downtime schema migration, how to roll back, or how to build a release checklist. For choosing a delivery architecture for a system still being designed, use loop-design and record it as an ADR. For watching SLOs and auto-remediating after the rollout has baked, use loop-operate. For assessing what is in the release and how risky it is, use loop-audit.",
+      "why": "Collides with loop-design (which today owns this exact content in references/deployment.md), loop-operate (rollback), and loop-audit (release risk). All three pointers are mandatory, and the loop-design pointer is only honest if deployment.md actually migrates here in Phase 2."
+    },
+    {
+      "skill": "loop-incident",
+      "currentDescription": "(new in v1.0.0 \u2014 no SKILL.md exists yet; plan scope line: 'Exception state: severity triage, comms, mitigate-before-diagnose, reproduction harness, timeline, blameless postmortem / correction-of-error. Delegates root cause to loop-debug.')",
+      "newDescription": "Run the response to a live, user-impacting production failure: severity triage, comms and roles, mitigate before diagnosing, build a reproduction harness, keep the timeline, and write the blameless postmortem or correction-of-error. Use when the user says production is down or degraded, an outage or sev is declared, customers are affected, an alert has escalated past its runbook, or asks for a postmortem, incident timeline, or CoE. Restores service first and hands root-cause analysis to loop-debug. For steady-state SLOs, alert design, and runbooks that resolve a condition without declaring an incident, use loop-operate. For redeploying or rolling back the fix once it exists, use loop-ship.",
+      "why": "Sits in the middle of the detect/mitigate/root-cause/redeploy chain and needs a pointer in every direction. 'An alert has escalated past its runbook' is the load-bearing phrase against loop-operate; 'restores service first' is the load-bearing phrase against loop-debug."
+    },
+    {
+      "skill": "loop-operate",
+      "currentDescription": "(new in v1.0.0 \u2014 no SKILL.md exists yet; plan scope line: 'Steady state: SLI/SLO/error budgets, health watching, self-healing runbooks, SLO-gated auto-rollback, alert design, on-call triage. Carries the autonomy dial wired to loop-autopilot's ladder.')",
+      "newDescription": "Operate a running service in steady state: define SLIs, SLOs, and error budgets, design burn-rate alerts, write self-healing runbooks, watch health, gate auto-rollback on SLO signals, and set the autonomy dial for unattended operation. Use when the user asks to monitor or operate a live service, set up SLOs or error budgets, design alerting or on-call triage, write a runbook, add self-healing or automated remediation, or decide how much a service may fix itself. For a declared outage affecting users right now, use loop-incident. For choosing SLO targets for a system not yet built, use loop-design. For automating improvements to a repository rather than a running service, use loop-autopilot.",
+      "why": "The most contested description in the set \u2014 it must fend off loop-incident (episodic vs steady state), loop-design (which owns SLO target-setting today in nfr.md), and loop-autopilot (the other autonomous loop). 'In steady state' and 'running/live service' are the two phrases doing that work."
+    }
+  ],
+  "verdict": "All 18 boundaries hold, but two of them hold only conditionally, and shipping v1.0.0 without meeting those conditions would produce exactly the failure the plan's Open Risk #1 predicts.\n\nCONDITION 1 (blocking, loop-ship and loop-operate). loop-design does not merely overlap the two new operational skills \u2014 it already CONTAINS them. `loop-design/references/deployment.md` is 149 lines covering rolling/blue-green/canary mechanics and failure modes, the risk-to-strategy table, the four feature-flag kinds, expand-contract migrations, IaC, CI/CD gating, tested rollback, and the complete DORA scorecard: that is 100% of loop-ship's declared scope, already written, already shipped in v0.4.0. `loop-design/references/nfr.md` likewise already owns SLIs, SLOs, error budgets, multi-window multi-burn-rate alerting, RED/USE/golden signals, and OpenTelemetry \u2014 the core of loop-operate. Description surgery alone cannot fix this; two skills cannot share one body of knowledge and be selected reliably. Phase 2 must MOVE the content: deployment.md out of loop-design into loop-ship (split into rollout-strategies.md / migrations.md / dora.md, leaving a ~15-line design-time ADR stub plus pointer), and nfr.md's SLO-measurement and observability sections into loop-operate (leaving the target-setting half, availability math, RTO/RPO, scalability, and cost behind). The seam is checkable: if answering the question requires reading a live metric or executing a deploy, it is not loop-design. If Construction declines the migration, do NOT ship loop-ship as a separate skill \u2014 fold it back into loop-design step 6, because it would otherwise be a verbatim duplicate.\n\nCONDITION 2 (non-blocking, loop-autopilot and loop-operate). Both carry an autonomy ladder. Two definitions will drift within one release. Promote the OBSERVE-to-SCALE ladder to a single home (recommend `loop-engine/references/autonomy-ladder.md`) and have both skills cite it; neither redefines it. Relatedly, loop-autopilot's `canary-merge.workflow.js` should cite loop-ship for the rollout mechanism and loop-operate for the SLO gate rather than restating either.\n\nNO MERGE IS RECOMMENDED \u2014 but one pair is on probation. loop-incident vs loop-operate is the thinnest boundary in the 18. It is separable today only because of a single checkable predicate: does a runbook exist for this condition AND does executing it restore the SLI? Yes means loop-operate (steady state, automated, known); no or beyond-scope means loop-incident (declared, coordinated, novel). That predicate must be the FIRST sentence of both SKILL.md bodies, not buried in a reference. Give the Phase 2 verify-sweep an explicit merge tripwire: if either skill's body ends up spending more than roughly 30% of its length restating the other's phase, they are not genuinely separable and should be merged into loop-operate with an 'incident mode' section. One honest skill beats two that fight for the same trigger.\n\nThe five clusters named in the brief resolve as follows. (a) The detect/mitigate/root-cause/redeploy chain holds on four distinct predicates \u2014 runbook-covered vs not (operate/incident), service restored vs not (incident/debug), defect vs release (debug/ship), rollout in flight vs baked (ship/operate) \u2014 provided loop-debug's description surrenders its outage-shaped trigger phrases, which the rewrite does. (b) loop-review vs loop-pattern holds cleanly on the artifact produced: findings list vs diff. (c) loop-scout vs loop-pattern holds on a fact both can check in one command \u2014 does answering this add a line to the dependency manifest. (d) loop-design vs loop-algo vs loop-ship holds on granularity and phase (boxes vs Big-O vs rollout), once Condition 1 is met. (e) loop-autopilot vs loop-operate holds on subject (repository vs running service) and output (draft PR vs mitigated SLI), once Condition 2 is met.\n\nTwo cross-cutting notes for Construction. First, every description in the matrix now carries at least one 'use X instead when Y' pointer and several carry three; that redundancy is deliberate, because selection happens on the description alone, before any body is read. Second, only loop-engine and loop-orchestrate currently declare `argument-hint` in frontmatter \u2014 the `mode-propagate` task should add it to the other ten alongside `--mode`, since a skill with no argument-hint gives the model no shape cue at invocation time."
+}

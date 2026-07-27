@@ -1,6 +1,7 @@
 ---
 name: loop-research
-description: Research a topic across multiple sources with adversarial fact-checking and a cited synthesis. Use when the user asks to research a topic, do a literature or market review, gather and verify evidence, answer a question that needs multiple sources, compare options with citations, or produce a fact-checked report — anything where breadth of sources and verified claims matter more than a single-shot answer.
+description: "Research a question across multiple sources with adversarial fact-checking and a cited synthesis. Use when the user asks to research a topic, do a literature or market review, gather and verify evidence, answer a question that needs multiple sources, compare options with citations, or produce a fact-checked report, anything where breadth of sources and verified claims matter more than a single-shot answer. Every claim carries a source. For a build-vs-buy or prior-art decision about something the user is about to build, use loop-scout, which delegates its searching here."
+argument-hint: <question> [--mode <optimize|full>]
 ---
 
 # Researching Topics
@@ -43,6 +44,8 @@ A narrow fact-check you can do inline in this session. For **a broad or multi-so
 4. **Synthesis** — one agent writes the cited report from the verified claims.
 
 This is the parallel-sweep → pipeline → synthesis pattern from the **`loop-engine`** skill (see its `templates/parallel.workflow.js`, `templates/pipeline.workflow.js`, and harness policy H2/H4). Invoke the `loop-engine` skill to author and execute the run; the research template pre-wires the search angles, claim schema, and adversarial verification. For a question small enough to answer from two or three sources, skip the workflow and research directly.
+
+**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
 
 ## 6. Output: a cited report
 

@@ -4,6 +4,8 @@ The contract is the most expensive thing to change, because every consumer is co
 
 Defaults below are prescriptive; each has an escape hatch that names the requirement that justifies leaving the default. When a protocol choice, versioning scheme, or auth model is load-bearing, record it as an ADR (`../templates/adr-template.md`) — name the alternative you rejected.
 
+**Direction of the contract — this file owns the API this system *publishes*.** Consumer-side concerns — obeying somebody else's spec and defending against it: retries, backoff and circuit breakers, webhook receipt and replay, sandbox-to-production promotion, third-party auth and secret handling — belong to `../../loop-integrate`. The vocabulary overlaps (idempotency, versioning, error shapes, rate limits) but the obligation inverts: here you *require* callers to behave; there this system *is* the caller.
+
 ## 1. Protocol: REST vs GraphQL vs gRPC
 
 **Default: REST over HTTP/JSON.** It is resource-oriented, cacheable through standard HTTP semantics, debuggable with `curl`, and understood by every client and proxy. Reach past it only when a named consumer need forces it.
@@ -91,6 +93,8 @@ Content-Type: application/json
 ```
 
 A retry with the same key returns the identical `201` and payment object — the charge happens once. See `backend.md` for the outbox pattern that makes the write-plus-side-effect atomic.
+
+This section states the *publisher's* obligation: store the key and replay the response. The mirrored *consumer's* obligation — generating a stable key, reusing it across retries, and tolerating a provider that honours the header imperfectly — is `../../loop-integrate/references/webhooks-and-idempotency.md`.
 
 ## 7. Error envelope & status codes
 

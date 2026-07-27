@@ -9,6 +9,80 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [1.1.0] — 2026-07-27
+
+Two new skills and the architecture documentation for authoring more of them. Additive only — **no breaking changes**, and every 1.0.0 skill name, flag and reserved argument is unchanged.
+
+### Added
+
+- **`loop-frontend`** — luxury UI craft: motion choreography, easing and duration budgets, stagger, shared-element continuity, type scale and optical sizing, restraint, and perceived-performance patterns. Enforces `prefers-reduced-motion` and the WCAG 2.2 flash limits as **gates rather than advice** — SC 2.3.1 is Level A seizure risk, so a flashing effect is a refusal, not a warning.
+
+  **It deliberately does not pin an animation library.** Research confirmed anime.js **v4.5.0, MIT, 2026-06-22** live from the npm registry, and it is the default *at the rung where a library is earned* — but the skill's body carries an **escalation ladder** (CSS transition → keyframes → View Transitions → scroll-driven → WAAPI → library) and climbs to the top rung only for one of five named reasons: orchestrated timelines with seeking, genuine interruptible springs, SVG morphing, scroll-scrubbed pinning, or gesture-driven motion. The full default import is 40.3 KB gzipped against a critical-path budget `loop-design` sets at ~130–170 KB, and most luxury motion needs no library at all.
+
+  Also records a licence correction worth having: **GSAP became free for commercial use in April 2025** after Webflow's acquisition of GreenSock — but it is **proprietary, not OSI-approved**, and bars use in competing no-code animation tools. Both "GSAP costs money" and "GSAP is open source" are now wrong.
+
+- **`loop-skill`** — the skill that authors skills. Drafts the discriminating description and registers the boundary, researches and grades the standards shelf, writes the thin router / on-demand references / ROUTES-carrying template, and proves conformance with the validation gate. Its scaffold template handles three-or-more skills at once, with the boundary check as an earned barrier because descriptions must be read side by side. Adding a skill is a **minor** bump; renaming one is major, because skill names are API from 1.0.0.
+- **`docs/c4/skill-anatomy.md`** — why a skill has the shape it has: the three loading regimes, the `description` field as API, the standards-shelf honesty convention, the sandbox contract, and the lifecycle of adding a skill. `CONTRIBUTING.md` covers the mechanics; this covers the reasoning.
+- **`docs/c4/skills.md`** — the C4 view of the fleet: one *skill container view* (what is inside any single skill, and why the three parts are separate — they load differently), plus six component diagrams, one per role group, each closing with the checkable question that separates its members. Deliberately not twenty near-identical per-skill diagrams; what differs between skills is their relationships, not their internals.
+- **Boundary-audit rows and overlap resolutions** for both new skills: `loop-skill` against `loop-harness` (what Claude is *permitted* to do vs what it *knows how* to do) and `loop-docs` (prose for a reader vs a directory that must pass the gate); `loop-frontend` against `loop-design`, `loop-pattern`, `loop-scout` and `loop-algo`. The matrix is now 20 rows and 28 rated overlaps.
+
+### Changed
+
+- **Every architecture diagram is now native C4 notation.** The README System Context and composition diagram, `docs/c4/context.md`, and both the blank template and worked example in `loop-design/templates/c4-context.md` moved from generic `graph`/`flowchart` with hand-written `classDef`s to `C4Context` / `C4Component`. The `loop-design` template's rationale is inverted accordingly: native C4 is now the default and generic `graph` the last resort, because a generic graph will let you draw two systems in focus or an actor with no role, and the native form makes those mistakes hard to express. 15 of the repo's 16 diagrams are C4; the autonomy ladder stays a flowchart because a rung is not a component and "degrades one rung down" is a state transition, not a dependency.
+- **README restructured around the C4 model** — Level 1 Context inline, Level 2 summarised, Level 3 redrawn with all twenty skills and the operational cycle (`operate → incident → debug → test → ship → operate`) that justifies those five being separate skills.
+- Skill count updated fleet-wide: **18 → 20**.
+
+### Known gaps
+
+- No skill owns **"audit this existing app for WCAG conformance."** `loop-frontend` enforces the motion criteria at *authoring* time on code it is writing and stops there. Recorded rather than quietly annexed.
+- The `loop-frontend` ↔ `loop-design` boundary is rated **HIGH** and is the weakest of the four: page-loading performance is `loop-design`'s, per-animation frame cost is `loop-frontend`'s. Both files say so plainly rather than pretending it is crisp.
+- The **autonomy ladder** remains defined in one skill and cited from another, deferred from 1.0.0. Still no shared home.
+
+## [1.0.0] — 2026-07-27
+
+The plugin grows from twelve skills to **eighteen**, gains a fleet-wide **execution-mode dial**, and rebaselines onto Opus 5. This is the API-stability release: skill names, the `argument-hint` flag surface, and reserved template argument names are now covered by SemVer.
+
+### Added
+
+- **Six skills**, closing the lifecycle gaps the previous twelve left open:
+  - **`loop-algo`** — the mechanism inside a component: algorithm and data-structure choice, complexity analysis, invariants and correctness arguments, concurrency, benchmark-driven validation.
+  - **`loop-pattern`** — applies GoF patterns, Fowler refactorings, SOLID and language/framework idioms, and removes the smells that motivate them. Emits a **diff**, where `loop-review` emits findings.
+  - **`loop-integrate`** — third-party / cloud / SaaS integration: OAuth 2.0 and OIDC, token and secret handling, webhook verification, idempotency keys, rate limits, retry and backoff, contract tests.
+  - **`loop-ship`** — getting a change safely to production: rollout strategy, feature flags, expand-contract migrations, release gates, tested rollback, DORA.
+  - **`loop-operate`** — steady-state operation: SLIs/SLOs/error budgets, burn-rate alerting, self-healing runbooks, SLO-gated auto-rollback. Ships as honest **gated scaffolding**: without a live service its templates are not proven recipes, and the SKILL.md says so.
+  - **`loop-incident`** — a live, user-impacting failure: severity triage, comms and roles, mitigate before diagnosing, reproduction harness, timeline, blameless postmortem.
+- **Execution modes** — `loop-engine/references/execution-modes.md` defines `--mode optimize|full` and the orthogonal `--planner opus|fable`, a canonical `ROUTES` block reproduced byte-identically in every routed template, and a **deterministic full-mode pre-flight** that prices the DAG and asks for one confirmation before any agent spawns.
+- **`scripts/validate.mjs` + `.github/workflows/validate.yml`** — a validation gate that can actually fail. It rejects unparseable frontmatter, `name`/directory mismatch, `node --check` failures, H10 clock/random violations, `ROUTES` drift, and dangling reference paths. `claude plugin validate --strict` reads only the marketplace manifest and never opens a `SKILL.md`, which is how two unparseable skills passed every previous gate.
+- **`docs/c4/`** — architecture documented with the C4 model (context, container, component), the technical mechanism traced end to end, and the ideas with their prior art.
+- **`docs/design/`** — the 18-skill boundary audit and the execution-mode spec, committed as **normative** records. The audit outranks any build plan that disagrees with it.
+- **Reserved argument names** — `input.mode` and `input.planner` are reserved fleet-wide, documented in both `CONTRIBUTING.md` and `execution-modes.md` §M9.
+- **`argument-hint`** on the ten skills that lacked one entirely.
+
+### Changed
+
+- **Opus 5 rebaseline.** `model-routing.md` no longer asserts "the default fleet caps at Opus 4.8" — that claim expired and took its dependent advice with it. Routing now reasons from a **session-model check** rather than a hardcoded ceiling, so the rule cannot rot the same way at the next model launch. The worked example, both override modifiers, and every model ID were rewritten.
+- **Model IDs standardized on bare aliases** (`claude-haiku-4-5`, not `claude-haiku-4-5-20251001`), which two files previously disagreed about.
+- **Harness policy H8** replaced: model and effort selection is now mode-governed.
+- **Verifier width for a correctness-critical/gating verify in optimize mode is 3**, not 1. The policy table always said 3; the shared `WIDTH` function returned 1. The function was wrong.
+- **`loop-review` retagged to OWASP Top 10:2025 and the 2025 CWE Top 25.** Injection moved **A03:2021 → A05:2025** and SSRF lost its dedicated category into A01, so all eleven playbook entries and the ASVS control map are remaps, not renumbers. Dual-tag explicitly (`A05:2025 / A03:2021`) where a client's tooling still keys on 2021.
+
+### Breaking
+
+- **Content moved out of `loop-design`.** `references/deployment.md` collapses from 148 lines to a design-time stub, with its mechanics split into `loop-ship`; the SLO-measurement and observability halves of `references/nfr.md` move to `loop-operate`. `loop-design` keeps target-*setting*. Two skills cannot share one body of knowledge and be selected reliably.
+- **`improvement-loop.workflow.js` renamed its dry/live switch** from `input.mode` to `input.runMode`, because `mode` is now reserved fleet-wide. A caller still passing `mode: "live"` gets the safe `dry` default and a logged warning — it will not run live. Update any Routine wired against the old key.
+- **`loop-design` and `loop-harness` no longer advertise `--mode`.** Neither ships a workflow template nor invokes `loop-engine`, so neither can honour it. A skill that cannot honour a flag must not advertise it.
+- **`--mode full` with `--budget` now refuses to start** when the estimate's high end exceeds the ceiling, rather than throwing mid-run. This is deliberately stricter than harness policy H6.
+
+### Fixed
+
+- **Two `SKILL.md` frontmatter blocks did not parse as YAML** (`loop-integrate`, `loop-orchestrate`) — an unquoted `description:` containing `": "` opens a nested mapping. All eighteen descriptions are now quoted by construction and the gate rejects the unquoted form.
+- **Citation currency**, each verified against a primary source: PCI-DSS future-dated requirements became mandatory **31 March 2025** (recorded as 2026); OpenTelemetry Semantic Conventions **v1.43.0** (`observability.md` still instructed readers to emit under v1.42.0); the 2025 CWE Top 25 published 11 December 2025; CycloneDX/ECMA-424 2nd-edition dating; ITIL, OpenAPI and SAFe edition claims; SLSA reconciled across four files.
+- **A fabricated non-confirmation** of *Site Reliability Engineering, 2nd Edition*, propped up by an invented ISBN-prefix heuristic, was published on two shelves and elevated to a standing rule. The book is real and announced; the heuristic is deleted.
+- **`loop-ship` graded Sigstore "Yes"** on a rubric whose "No" grade explicitly covers an OSS project's own spec — while the row's own text called it "an implementation rather than a specification."
+- **Cross-file agreement claims removed.** Three shelves asserted what the *other* shelves currently recorded ("all three now agree"). Such a claim is false the moment any sibling is edited, and is how a 1.42/1.43 version gap opened. The propagation obligation is kept; the assertion about sibling contents is not.
+- **The `ROUTES`-drift grep** documented in `CONTRIBUTING.md` was inert — it printed 304 lines on a conformant tree, and its filter would have suppressed a real violation carrying a trailing comment. Replaced by the validation gate.
+- **`--planner fable` was advertised in two `argument-hint`s and implemented nowhere.** It is now wired. §M7's promised fallback on "exceeding the declared latency budget" was **removed as unimplementable** — H10 bans clock reads, so no script can enforce a timeout; the refusal and HTTP-400 fallbacks remain, since both surface as `agent()` returning `null`.
+
 ## [0.4.0] — 2026-07-04
 
 Renamed every skill into a collision-free **`loop-*`** namespace. The previous names were identical to Claude Code's built-in skills (`reviewing-code`, `diagnosing-bugs`, …), and the orchestration skill (`workflow`) additionally shadowed the built-in `/workflows` command. This is a **breaking change**: skill invocations change (e.g. `/workflow` → `/loop-engine`, `/reviewing-code` → `/loop-review`).
@@ -70,6 +144,10 @@ Initial release: the 12-skill TheLoopSkill plugin, built and merged across PRs #
 - **`automating-improvements`** — a propose-only autonomous engineering loop that composes the other skills, plus the **credit-horizon** self-learning extension (per-kind trust ledger), an anti-patterns checklist, and a comprehension-rot digest.
 - **Plugin packaging** — `.claude-plugin/plugin.json` + `marketplace.json`, web enablement via `.claude/settings.json`, the MIT `LICENSE`, and `INSTALL.md` covering local, web, and marketplace install paths.
 
-[Unreleased]: https://github.com/santapong/TheLoopSkill/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/santapong/TheLoopSkill/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/santapong/TheLoopSkill/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/santapong/TheLoopSkill/compare/v0.4.0...v1.0.0
+[0.4.0]: https://github.com/santapong/TheLoopSkill/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/santapong/TheLoopSkill/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/santapong/TheLoopSkill/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/santapong/TheLoopSkill/releases/tag/v0.1.0

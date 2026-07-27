@@ -1,6 +1,7 @@
 ---
 name: loop-test
-description: "Write and repair automated tests: design cases, match the project test framework, and verify tests run and fail for the right reason. Use when the user asks to write, add, generate, or fix tests, improve coverage, add a regression test for a bug, or set up testing for a module. Matches the repo existing test stack and conventions."
+description: "Write and repair automated correctness tests: design cases, match the project's test framework and conventions, and verify each test runs and fails for the right reason before it passes. Use when the user asks to write, add, generate, or fix tests, improve coverage, add a regression test for a bug, or set up testing for a module. Covers happy-path, edge, error, and property-based cases. For performance benchmarks and complexity validation, use loop-algo. For contract tests against a third-party provider, use loop-integrate, which specifies the contract this skill then authors. For finding the bug a regression test should lock in, use loop-debug."
+argument-hint: <target> [--mode <optimize|full>]
 ---
 
 # Writing Tests
@@ -54,6 +55,8 @@ Case-design heuristics, the boundary checklist, and when property-based earns it
 
 Pair this with the Claude Code built-in **verify** skill to exercise the change end-to-end, not just at the unit boundary.
 
+**A reproduction harness for a live outage is `loop-incident`'s artifact, not a suite entry** — it exists to pin down a failure while service is being restored, and it is committed as a regression test here only once the incident is closed and the root cause is known.
+
 ## 6. Coverage: target behaviors, not a percentage
 
 **Chase uncovered behaviors and risk, not a coverage number.** A coverage report is a map of *untested behavior* — read it to find branches, error paths, and edge cases nobody exercises, and write cases for the ones that carry real risk. Do not add tests solely to move a percentage, and do not assert on a coverage threshold as if it were a behavior. 100% line coverage with no boundary or error cases is a weaker suite than 70% that pins the contract.
@@ -67,6 +70,8 @@ A handful of modules you can test inline in this session. For **a whole package 
 3. **Run (optional)** — per module, execute the new tests and report pass/fail, so a broken or vacuous file surfaces instead of shipping green-by-accident.
 
 This is the **pipeline** pattern (design → write → run per module, no barrier between modules) from the **`loop-engine`** skill (see its `templates/pipeline.workflow.js` and harness policy H1 pipeline-default, H4 adversarial verify). Invoke the `loop-engine` skill to author and execute the run; the test-generation template pre-wires the case schema, the convention-matching step, and the run-and-report gate. For a module or two you can hold in context, skip the workflow and write the tests directly.
+
+**Execution flags.** `--mode <optimize|full>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
 
 ## Reference files
 

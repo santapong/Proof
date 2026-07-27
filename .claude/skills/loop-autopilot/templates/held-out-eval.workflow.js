@@ -107,6 +107,12 @@ const measured = await pipeline(
       `Held-out task ${t.id} (${t.kind || 'task'}). On a NEW claude/heldout-${t.id} branch, attempt this task exactly as the improvement loop's Act stage would (design -> implement -> add a test -> update docs). Do NOT read or modify any held-out manifest, oracle, or test-runner config. Do NOT push or merge.\nTask: ${t.prompt}`,
       { label: `act:${t.id}`, phase: 'Act', schema: ACT_SCHEMA, isolation: 'worktree' },
     ).then((a) => ({ t, act: a })),
+  // This Verify stage is a MEASUREMENT of the live verifier, not an adversarial check of the
+  // candidate, so it stays at width 1 under §M5's deterministic-measurement carve-out — and here
+  // that is load-bearing rather than merely permitted: widening it would change the very thing
+  // being measured, and the held-out score would no longer describe the loop that actually runs.
+  // It also carries no ROUTES routing on purpose: the judge must run exactly as the live loop's
+  // judge runs, so it inherits the session configuration rather than being pinned by mode.
   (prev) => {
     if (!prev || !prev.act) return prev
     return agent(

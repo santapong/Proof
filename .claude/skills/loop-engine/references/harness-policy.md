@@ -48,7 +48,8 @@ Scale verification to the ask: "find any bugs" → few finders, single-vote veri
 
 ## H6. Budget and concurrency
 
-- The token target from a user's "+500k"-style directive is a **hard ceiling** exposed as `budget`: once `budget.spent()` reaches `budget.total`, further `agent()` calls throw. Guard budget-scaled loops with `budget.total &&` (see loop policy L2).
+- The token target from a user's "+500k"-style directive is a **hard ceiling** exposed as `budget`: once `budget.spent()` reaches `budget.total`, further `agent()` calls throw. Guard budget-scaled loops with `budget.total &&` (see loop policy L2). That is the *runtime* ceiling, and in `--mode optimize` it is the whole rule.
+- **`--mode full` makes `--budget` stricter than the bullet above, and this is the exception the mode contract names by name — do not read H6's runtime ceiling as the whole story.** When both flags are present, the full-mode pre-flight (`execution-modes.md` §M6) compares the estimate's **high** end against the ceiling **before the first agent spawns** and **refuses to start** if it exceeds it, offering exactly three exits: re-run at `--mode optimize`, raise the budget to a stated figure, or narrow the phase's scope. Nothing partially starts. This is a deliberate behaviour change to `--budget` in full mode — burning 80% of a ceiling and then throwing mid-run is precisely the failure a pre-flight exists to prevent — so a full-mode run never reaches the mid-run throw described above by way of an estimate it could have refused.
 - Concurrency is capped (min(16, cores − 2) per workflow); excess calls queue. Total lifetime agents are capped at 1000. Design fan-outs assuming queuing, not unlimited parallelism.
 - **No silent caps**: if the script bounds coverage (top-N, sampling, no-retry), `log()` what was dropped. Silent truncation reads as "covered everything" when it didn't.
 
@@ -56,9 +57,16 @@ Scale verification to the ask: "find any bugs" → few finders, single-vote veri
 
 `isolation: 'worktree'` costs ~200–500ms setup plus disk per agent. Use it **only** when agents mutate files concurrently and would otherwise conflict. Read-only agents never need it.
 
-## H8. Model and effort selection
+## H8. Model and effort selection is mode-governed
 
-Omit `model` by default — agents inherit the session model, which is almost always correct. Use `effort: 'low'` for cheap mechanical stages; reserve higher effort tiers for the hardest verify/judge stages.
+The run's `--mode` decides the route; this rule decides how a script expresses it.
+
+- **`--mode optimize` (the default)** — omit `model` and inherit the session model for judgment work. Set `opts.model` only when the router has a reason to leave the session tier: routing *down* to Haiku/Sonnet for a cheap or wide stage, or pinning the top tier on a node whose wrong answer is inherited by everything after it (a gating verify, the decomposition). Set `effort` per node: `low` or omitted for mechanical stages, the higher tiers for the hardest verify/judge stages.
+- **`--mode full`** — pin `model: 'claude-opus-5'` on **every** consumed `agent()` call and lift each node to its full-mode effort floor. Pinning here is not the noise H8 usually warns about; it is the mode's enforcement mechanism. An inherited model silently voids the guarantee the moment a session runs below Opus 5, and the cast ledger must be able to prove what actually ran.
+
+Never hardcode a fleet ceiling into a script, a policy, or a piece of advice — the session model is a fact to read, not a constant to assert. A claim like "the fleet caps at model X" expires, and any rule resting on it expires with it; compare the node's target tier against the session model instead, and pin whenever a silent mismatch would be expensive.
+
+The per-node-kind routing table, both override modifiers, verifier width, the loop-until-dry threshold, the `--planner fable` opt-in, and the full-mode pre-flight are specified in `execution-modes.md`. The routing rationale and the worked example live in `../../loop-orchestrate/references/model-routing.md`.
 
 ## H9. Phase discipline
 

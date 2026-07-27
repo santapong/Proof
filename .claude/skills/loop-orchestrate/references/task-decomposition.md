@@ -61,7 +61,7 @@ The canonical enum — the same one the node-schema comment in `../SKILL.md` use
 
 - **research** = `scout` (gather) + `analyze` (reason over what was gathered) — two nodes, one edge, never one.
 - **decompose** = `synthesize` **run in Inception**: the node that merges the readers' maps and emits the unit-of-work sub-DAG. `AIDLC.md` states outright that the Inception synthesis step *is* the decomposition — so it is a `synthesize` node, and it earns the top tier (§6).
-- **mechanical** = `doc`: deterministic transforms with no real reasoning, run cheap at `effort: 'low'`.
+- **mechanical** = `doc`: deterministic transforms with no real reasoning, run cheap on the cheapest capable model with `effort` **omitted** — the optimize route for `doc`/`scout` is Haiku 4.5, which has no effort dial at all (`../../loop-engine/references/execution-modes.md` §M3).
 
 A node whose `taskType` is `scout`/`analyze`/`verify`/`judge`/`critic`/`doc` is **read-only** — it never needs `isolation` (§4). Only `implement` (and a `doc` node that writes files) mutates.
 
@@ -104,7 +104,7 @@ The transform belongs inside a pipeline stage. "I need to flatten/map first" is 
 
 Sizing guidance:
 
-- **Verification width scales to the ask** (H4): one skeptic for "any bugs left?"; 3–5 perspective-diverse verifiers for "thorough audit"; a judge panel for wide solution spaces.
+- **Verification width scales to the ask** (H4) **and to the mode**. Under `--mode optimize` (the default): one skeptic for "any bugs left?"; 3 perspective-diverse verifiers when the ask is thorough/audit/comprehensive; a judge panel for wide solution spaces. Under **`--mode full` the width is a rule, not a range** — always diverse-lens, never a single skeptic: **3** verifiers on a standard `verify`/`judge`/`critic` node and **5** on a correctness-critical/gating one. Majority-refute kills a finding at ⌈N/2⌉ refutes (1 of 1, 2 of 3, 3 of 5), which in code is `Math.ceil(N / 2)` and never a literal `2`. Mode picks *how many* of a node's declared lenses run; it never invents new ones — a node that needs a fifth lens needs a decomposition change here, not a mode change. See `../../loop-engine/references/execution-modes.md` §M5.
 - **Cap wide fan-outs and `log()` the drops** (H6). Concurrency is capped at `min(16, cores−2)` per workflow and lifetime agents at 1000 — design for queuing, not unlimited parallelism. Silent truncation reads as "covered everything" when it didn't.
 - **Don't fan out work you can't reconverge.** A 50-way `scout` with no `synthesize` node downstream is 50 reports nobody reads. Every wide fan-out needs a merge or verify node consuming it.
 
@@ -131,13 +131,15 @@ When in doubt, default `'none'` and let a downstream merge/verify catch conflict
 
 Every node carries a `phase`; the phase set becomes `meta.phases`. Group the DAG by `phase` and check each phase against its **default cast** — the `taskType`s that phase expects (per `../../loop-engine/frameworks/AIDLC.md`). A node whose `taskType` isn't in its phase's cast is a decomposition smell — revisit §1.
 
-| Phase | Default cast (`taskType`) | Default tier | Shape (hint) | Human gate |
-|---|---|---|---|---|
-| **Inception** | `scout` readers → `synthesize` (the decompose) | readers = **Haiku**; decompose = **Opus** | `parallel()` readers + barrier synth | unit-of-work plan |
-| **Construction** | `implement` → `verify` chain; adversarial review sweep (`verify`, diverse-lens; `judge` for wide spaces) | implement = **Sonnet**; review = **mixed-tier** diverse `verify` | `pipeline(units, design, implement, test)` + `parallel()` review with dedup barrier | diff + tests + confirmed findings |
-| **Operation** | `verify`-loop finders; `synthesize`; `critic`; `doc` | verify-loop = **Sonnet**; synthesis/`critic` = **Opus**; `doc` = **Haiku** | loop-until-dry hunt + small `pipeline()` for docs | verification evidence + docs + known gaps |
+| Phase | Default cast (`taskType`) | Shape (hint) | Human gate |
+|---|---|---|---|
+| **Inception** | `scout` readers → `synthesize` (the decompose) | `parallel()` readers + barrier synth | unit-of-work plan |
+| **Construction** | `implement` → `verify` chain; adversarial review sweep (`verify`, diverse-lens; `judge` for wide spaces) | `pipeline(units, design, implement, test)` + `parallel()` review with dedup barrier | diff + tests + confirmed findings |
+| **Operation** | `verify`-loop finders; `synthesize`; `critic`; `doc` | loop-until-dry hunt + small `pipeline()` for docs | verification evidence + docs + known gaps |
 
-Tiers above are **defaults**, stated by family; `./model-routing.md` holds the exact model IDs, effort tiers, and escape hatches. `analyze` slots into Inception (reasoning over the maps before synthesis); `judge` appears wherever a wide solution space needs scoring.
+**This table deliberately carries no tier column.** The tier a `taskType` routes to lives in **exactly one place** — `../../loop-engine/references/execution-modes.md` §M3, the per-node-kind routing table, with its `--mode optimize` and `--mode full` columns and its exact model IDs. `./model-routing.md` holds the rationale, the two override modifiers, and the worked example. A second tier table here would be a second source of truth, and a routing table that drifts out of date while still reading as authoritative is precisely the failure this release exists to fix. Phase membership is a decomposition decision; tier is a routing decision; keep them in separate files.
+
+`analyze` slots into Inception (reasoning over the maps before synthesis); `judge` appears wherever a wide solution space needs scoring.
 
 **Gates are your phase boundaries** (H11). The DAG downstream of a gate is **provisional**: at each gate, stop, present the deliverable, and **re-plan and re-budget** the next phase against what actually happened. Author **one workflow per gated phase** — never a monolith spanning gates.
 
@@ -151,16 +153,27 @@ Every executed node emits one ledger row via `log()`:
 log({
   id,            // node id
   taskType,      // from §3
-  model,         // assigned tier/id, or null (inherited)
-  effort,        // low | medium | high | xhigh | max
+  mode,          // 'optimize' | 'full' — the run's --mode, from input.mode
+  model,         // assigned tier/id, or 'inherit' when opts.model was omitted
+  effort,        // low | medium | high | xhigh | max, or null (omitted)
   estTokens,     // pre-computed estimate for this node
-  rationale,     // one line: why this tier, not a cheaper one
+  rationale,     // one line: why this tier, not a cheaper one — and under which mode
   spentSoFar,    // running total across executed nodes
   budgetTotal,   // the --budget ceiling, or null
 })
 ```
 
-Constraints (H10): no `Date.now()` / `Math.random()` / argless `new Date()` inside the script — pass any timestamps via `args`, and derive actual token spend post-hoc from `<transcriptDir>/journal.jsonl`, which records each agent's real return value. `estTokens` is a pre-computed input; the journal is ground truth.
+**`mode` is not optional.** A ledger row that does not name the mode cannot be read after the fact: `model: 'claude-opus-5'` on a scout node is an expensive mistake under `optimize` and the contract under `full`, and the row is the only evidence of which one happened.
+
+**Under `--mode full`, every wide fan-out row additionally carries the `modifier-A: suppressed` marker**, emitted where the fan-out is dispatched:
+
+```js
+log(`modifier-A: suppressed (mode=full) — ${items.length}-item fan-out running at ceiling by design`)
+```
+
+Without it, a reader cannot distinguish a full-mode fan-out that ran at ceiling *by design* from an optimize-mode fan-out where someone forgot to route it down. Modifier A is disabled in full mode deliberately (`./model-routing.md`, `../../loop-engine/references/execution-modes.md` §M4), and the log line is what makes that decision auditable rather than invisible.
+
+Constraints (H10): no `Date.now()` / `Math.random()` / argless `new Date()` inside the script — pass any timestamps via `args`, and derive actual token spend post-hoc from `<transcriptDir>/journal.jsonl`, which records each agent's real return value. `estTokens` is a pre-computed input; the journal is ground truth. Under `--mode full` the approved figures also enter the script as a pure-literal `ESTIMATE` block stamped at the §M6 pre-flight, so the gate can diff approved-vs-actual instead of taking the estimate on faith.
 
 At each gate, present three things:
 

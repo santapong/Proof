@@ -6,10 +6,14 @@
 // delegated to the Claude Code built-in `verify` skill after the run (see the note at
 // the bottom and the skill, step 5). This keeps the workflow a pure generation pipeline.
 //
-// Invoke with: Workflow({ script, args: { modules: [...], framework: "..." } })
+// Model/effort come from the canonical ROUTES block — source of truth:
+// ../../loop-engine/references/execution-modes.md §M8. Never inline a bare model:/effort: literal.
+//
+// Invoke with: Workflow({ script, args: { modules: [...], framework: "...", mode: "optimize" } })
 // input.modules   — the modules/files/units to test (discover the work-list BEFORE authoring; loop policy L6)
 // input.framework — one-line hint about the repo's test stack (e.g. "vitest", "pytest", "go test");
 //                   agents still detect and MATCH the repo's real conventions (see references/framework-conventions.md)
+// input.mode      — 'optimize' (default) or 'full' (execution-modes.md §M2)
 
 export const meta = {
   name: 'test-generation-template', // EDIT ME: kebab-case name for this run
@@ -22,6 +26,52 @@ export const meta = {
 
 // Some harnesses deliver args as a JSON-encoded string — normalize before use.
 const input = typeof args === 'string' ? JSON.parse(args) : args
+
+// Canonical ROUTES block — single source of truth: loop-engine/references/execution-modes.md §M8.
+// Duplicated verbatim into every template that sets model or effort. H10 gives scripts no module
+// access, so duplication is intentional; drift is a defect (see scripts/validate.mjs).
+const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'
+const PLANNER = (input && input.planner) === 'fable' ? 'claude-fable-5' : null // --planner fable (§M7)
+const ROUTES = {
+  optimize: {
+    scout:      { model: 'claude-haiku-4-5', effort: null },   // Haiku has no effort dial — omit, never 'low'
+    doc:        { model: 'claude-haiku-4-5', effort: null },
+    implement:  { model: 'claude-sonnet-5',  effort: 'high' },
+    analyze:    { model: null,               effort: 'high' }, // null model = omit, inherit session (H8)
+    synthesize: { model: null,               effort: 'high' },
+    verify:     { model: null,               effort: 'high' },
+    judge:      { model: null,               effort: 'high' },
+    critic:     { model: null,               effort: 'high' },
+    gating:     { model: 'claude-opus-5',    effort: 'max' },  // pinned even in optimize
+    planner:    { model: 'claude-opus-5',    effort: 'xhigh' },// pinned even in optimize
+  },
+  full: {
+    scout:      { model: 'claude-opus-5', effort: 'high' },
+    doc:        { model: 'claude-opus-5', effort: 'high' },
+    implement:  { model: 'claude-opus-5', effort: 'high' },
+    analyze:    { model: 'claude-opus-5', effort: 'xhigh' },
+    synthesize: { model: 'claude-opus-5', effort: 'xhigh' },
+    verify:     { model: 'claude-opus-5', effort: 'xhigh' },
+    judge:      { model: 'claude-opus-5', effort: 'xhigh' },
+    critic:     { model: 'claude-opus-5', effort: 'xhigh' },
+    gating:     { model: 'claude-opus-5', effort: 'max' },
+    planner:    { model: 'claude-opus-5', effort: 'max' },
+  },
+}
+const routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze
+function optsFor(node, label) {
+  const r = routeFor(node.taskType)
+  const opts = { label: label || node.label, phase: node.phase, schema: node.schema }
+  if (r.model) opts.model = r.model     // omit → inherit session model (H8)
+  if (r.effort) opts.effort = r.effort  // omit → inherit session effort
+  if (PLANNER && node.taskType === 'planner') opts.model = PLANNER // §M7 override — planner nodes only
+  return opts
+}
+// No WIDTH / DRY_LIMIT: the fails-for-the-right-reason check is delegated OUT of this script to
+// the built-in `verify` skill (see the closing note), so there is no in-script verify stage to widen.
+// No plannerAgent: no node in this template carries taskType 'planner', so §M8's third
+// optional member is dropped too. `PLANNER` and its `optsFor()` line stay — they are invariant
+// core, and the flag is simply inert here.
 
 // EDIT ME: framework hint threaded into every agent prompt. Agents MUST still detect and match
 // the repo's real stack (framework, runner, file naming, fixtures, assertion style) — never
@@ -80,7 +130,7 @@ const results = await pipeline(
         `Module: ${JSON.stringify(mod)}\n` +
         `Cover happy path, edge/boundary, error/exception, and property-based cases where valuable. ` +
         `Test BEHAVIOR (observable outputs and side effects), not implementation. Return the case list as raw data.`,
-      { label: `design:${mod}`, phase: 'Design', schema: CASES_SCHEMA },
+      optsFor({ taskType: 'analyze', phase: 'Design', schema: CASES_SCHEMA }, `design:${mod}`),
     ).then((d) => ({ mod, design: d })),
   // Stage 2: write the test file as soon as ITS design completes (no barrier).
   // Stage callbacks receive (prevResult, originalItem, index) — use originalItem here, not threaded context.
@@ -96,14 +146,14 @@ const results = await pipeline(
         `Follow AAA (arrange-act-assert); keep tests deterministic, fast, isolated; mock ONLY at trust boundaries. ` +
         `Name each test after the behavior it checks, matching the repo's file naming and location conventions. ` +
         `Write the file, then return its path and the number of tests it contains as raw data.`,
-      { label: `write:${mod}`, phase: 'Write', schema: WRITE_SCHEMA },
+      optsFor({ taskType: 'implement', phase: 'Write', schema: WRITE_SCHEMA }, `write:${mod}`),
     ).then((w) => ({ mod, write: w }))
   },
 )
 
 // Dead agents / skipped modules resolve to null — harness policy H5. Always filter before consuming.
 const written = results.filter(Boolean).filter((r) => r.write && r.write.path)
-log(`write: ${written.length}/${input.modules.length} modules produced a test file`)
+log(`write [mode=${MODE}]: ${written.length}/${input.modules.length} modules produced a test file`)
 
 // NOTE: this workflow generates tests; it does NOT run or verify them. After it returns,
 // exercise the new files with the Claude Code built-in `verify` skill (skill, step 5):

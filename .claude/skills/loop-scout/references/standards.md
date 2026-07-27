@@ -4,13 +4,24 @@ The objective signals this skill leans on so a build-vs-buy call rests on publis
 
 `where-to-look.md` tells you *where* to discover candidates; this file tells you *how to score what you find* against recognized frameworks.
 
+**Read the authority grade before you cite.** Every standards shelf in this plugin uses the same three grades, with the same meanings — see `../../loop-integrate/references/standards.md` for the shelf where all three are in play:
+
+- **Authoritative — yes.** A recognized standards body, government agency, or licensed framework owner **ratified and published** it — or, as this plugin applies the grade consistently, a **published specification on a versioned track under formal governance**. On this shelf: **SLSA** and the **SPDX specification**, graded identically to `../../loop-ship/references/standards.md` and `../../loop-review/references/standards.md`, plus **ISO/IEC 5962:2021** itself, which ratified **SPDX 2.2.1** — see the row below for why that is not the same as saying "SPDX 3.x is an ISO standard."
+- **Authoritative — draft.** Real, citable working-group or committee output that **nothing has ratified**. On this shelf: **ISO/IEC DIS 5962**, the draft that would make SPDX 3.x ISO-adopted and **has not passed**.
+- **Authoritative — no.** A scoring tool's output, a community-stewarded convention, or a curated landscape. On this shelf: **SemVer** (community-stewarded, with no issuing body), **OpenSSF Scorecard** and **Criticality Score** (tools' opinion scores), and the **CNCF Landscape** and ecosystem registries (curated surfaces and metadata, not specifications).
+
+**The line the plugin draws:** a *versioned specification with a published governance and approval process* is **yes**; a *tool's score, a curated list, or a community awareness document* is **no**. Both can come from the same foundation — OpenSSF publishes SLSA (**yes**) and Scorecard (**no**) — so grade the artifact, not the logo.
+
+The grade matters most on the axis this skill exists to serve. A build-vs-buy verdict rests on **measured properties of the candidate** — its license id, its release history, its provenance attestation — not on the pedigree of the scheme you measured them with. Cite the scheme, and let the measurement carry the recommendation. A **No**-graded signal like a low Scorecard is **supporting** evidence, never the whole reason to reject a candidate.
+
 ## License identity — SPDX
 
 | Field | Value |
 |---|---|
 | **Standard** | SPDX License List + SPDX License Expression syntax |
-| **Issuing body** | The SPDX project, hosted by the **Linux Foundation** (SPDX is also ISO/IEC 5962:2021) |
-| **Edition (2026)** | SPDX Specification **3.0** (2024); the **License List** ships on its own rolling number and is updated roughly quarterly — always resolve against the current release |
+| **Issuing body** | The SPDX project, hosted by the **Linux Foundation** |
+| **Edition (2026)** | SPDX Specification **3.0.1** (Dec 2024; 3.0 was Apr 2024), with a **3.1 release candidate** that is not a pin. The **License List** ships on its own rolling number and is updated roughly quarterly — always resolve against the current release. **Same pin as `../../loop-ship/references/standards.md` and `../../loop-review/references/standards.md`; the three move together.** |
+| **ISO status — state it precisely** | **ISO/IEC 5962:2021 covers SPDX 2.2.1 only.** Confirmed 2026-07-26 against the ISO catalogue and `spdx.dev`. **ISO/IEC DIS 5962** for SPDX 3.x is at the enquiry stage and **has not passed**, so **do not describe SPDX 3.x as ISO-adopted** and do not write the bare phrase "SPDX is ISO/IEC 5962:2021" — that sentence silently upgrades the version you are actually citing. When a requirement names ISO/IEC 5962:2021, it is naming **2.2.1**. |
 
 **Maps to the license-compatibility axis.** When you score axis 3 in `evaluation-criteria.md`, do not eyeball "it's MIT-ish." Read the candidate's declared license as a canonical **SPDX identifier** (`MIT`, `Apache-2.0`, `BSD-3-Clause`, `GPL-3.0-only`, `AGPL-3.0-only`) and its `LICENSE`/`SPDX-License-Identifier` metadata. Compound cases use SPDX expression operators — `Apache-2.0 OR MIT` (dual-licensed, pick one), `GPL-2.0-or-later WITH Classpath-exception-2.0` (a carve-out that changes the obligation). A deprecated id (`GPL-3.0` without `-only`/`-or-later`) is a signal the metadata is stale. Reducing every candidate to an SPDX id is what makes the AGPL-network-service trap and copyleft obligations comparable across a shortlist.
 
@@ -20,9 +31,9 @@ The objective signals this skill leans on so a build-vs-buy call rests on publis
 |---|---|
 | **Standard** | SLSA — Supply-chain Levels for Software Artifacts |
 | **Issuing body** | **OpenSSF** (Open Source Security Foundation), Linux Foundation |
-| **Edition (2026)** | SLSA **v1.0** (2023), the current stable track; later drafts extend it but v1.0 is what to map to |
+| **Edition (2026)** | SLSA **v1.2** (approved **24 Nov 2025**, backwards-compatible with v1.1); the Build track's L0–L3 ladder is unchanged from v1.0, and the Source track is now approved. **Four shelves carry this pin — here, `../../loop-ship/`, `../../loop-review/`, `../../loop-harness/` — and a bump moves all four in one commit.** |
 
-**Maps to the security & supply-chain axis.** SLSA grades how trustworthy a build artifact's *origin* is, on **Build Levels L0–L3**: L1 = provenance exists; L2 = signed provenance from a hosted build service; L3 = hardened, non-falsifiable provenance. When a candidate is a shipped binary or package (not just source), check for a provenance attestation and treat its SLSA level as the supply-chain evidence for the "provenance and signing" sub-point in `evaluation-criteria.md`. Higher level = less "did this artifact really come from that repo?" risk.
+**Maps to the security & supply-chain axis.** SLSA grades how trustworthy a build artifact's *origin* is, on **Build Levels L0–L3**: L1 = provenance exists; L2 = signed provenance from a hosted build service; L3 = hardened, non-falsifiable provenance. When a candidate is a shipped binary or package (not just source), check for a provenance attestation and treat its SLSA level as the supply-chain evidence for the "provenance and signing" sub-point in `evaluation-criteria.md`. Higher level = less "did this artifact really come from that repo?" risk. This is the **adoption-time** provenance read — taken before the code is written, as one axis of a build-vs-buy score; for the **ship-time** gate on the single artifact about to be promoted, see `../../loop-ship/references/supply-chain-gate.md`.
 
 ## Objective maturity/health — OpenSSF Scorecard & Criticality Score
 
@@ -61,7 +72,9 @@ The objective signals this skill leans on so a build-vs-buy call rests on publis
 
 Standards get revised; a mapping is only as good as the edition it names.
 
-- **Pin the edition you map to** — SPDX Spec 3.0, SLSA v1.0, SemVer 2.0.0 — and don't silently mix editions across a shortlist.
-- **Rolling artifacts** (Scorecard, Criticality Score, the SPDX License List, the CNCF Landscape) have no fixed number; always read the **current release** at evaluation time rather than caching a value.
-- **Re-check on a cadence.** SLSA is on a v1.x track with further levels drafted; the SPDX License List changes quarterly. Re-verify roughly every two quarters, and when a new edition lands, update the pins here before relying on them.
-- **Verify, don't assert.** For any maturity, license, provenance, or version claim that decides a recommendation, confirm it against the primary source (repo, registry, attestation) via the `loop-research` skill — the same rule `evaluation-criteria.md` applies to the scoring axes.
+- **Pin the edition you map to** — SPDX Spec 3.0.1, SLSA v1.2, SemVer 2.0.0 — and don't silently mix editions across a shortlist.
+- **Carry the authority grade with the citation.** SLSA and SPDX are graded *yes*; Scorecard, Criticality Score, SemVer, and the landscapes are graded *no*. A candidate is rejected because of a measured property — an AGPL obligation, an unmaintained repo, an unsigned artifact — not because a scheme has a logo.
+- **Rolling artifacts** (Scorecard, Criticality Score, the SPDX License List, the CNCF Landscape) have no fixed number; always read the **current release** at evaluation time rather than caching a value. **Never invent a version for one of them.**
+- **Re-check on a cadence.** SLSA v1.2 (Nov 2025) is the current pin on a live v1.x track — the Source track was approved in that revision and further tracks are drafted; the SPDX License List changes quarterly, and **ISO/IEC DIS 5962 resolving** is the live watch item that would change the ISO row above. Re-verify roughly every two quarters, and when a new edition lands, update the pins here before relying on them.
+- **Verify, don't assert.** For any maturity, license, provenance, or version claim that decides a recommendation, confirm it against the primary source (repo, registry, attestation) via the `loop-research` skill — the same rule `evaluation-criteria.md` applies to the scoring axes. **If you cannot confirm it, write "unconfirmed as of \<date\>" in the verdict rather than asserting a number.** A build-vs-buy call that rests on a fabricated version is worse than one that rests on a stated unknown.
+- **Confirmation log — 2026-07-26.** Verified against the primary source: **SPDX 3.0.1 (Dec 2024)** as the current specification with a 3.1 release candidate outstanding, and **ISO/IEC 5962:2021 as covering SPDX 2.2.1 only** with **ISO/IEC DIS 5962** unresolved — this pass corrected a row that pinned "SPDX Specification 3.0" while calling SPDX flatly "also ISO/IEC 5962:2021", which is precisely the version-laundering the row now warns against, and which put this shelf at odds with `loop-ship`'s and `loop-review`'s. Also verified: **SLSA v1.2** (approved 24 Nov 2025, Source track approved) and **SemVer 2.0.0** as unchanged since 2013 with no successor pending. **Not independently re-confirmed and therefore deliberately left unpinned:** **OpenSSF Scorecard** and **Criticality Score** (continuously released tools — read the current check set, do not cache it), the **SPDX License List** release number, and the **CNCF Landscape** and the ecosystem registries, all of which are living surfaces to be read at evaluation time by design.
