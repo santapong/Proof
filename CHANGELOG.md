@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] — 2026-07-27
+
+### Added
+- **`loop-v1`** — the twenty-first skill: conduct a project brief to a shipped version one. Multi-planner coverage (three framings + reconcile + roster sweep), delegated-law build (every task authored under its owning skill's references), sequential gating with a bounded repair round, three-state verdicts (PASS / REFUTED / UNVERIFIED), release phase and a cumulative cast-and-cost ledger. Template: `v1-conductor.workflow.js`.
+- **`--fable-gate`** (§M7b) — second sanctioned Fable opt-in: routes exactly one lens of an all-out gating vote to `claude-fable-5` through `fableGateAgent()`, with a logged fallback to `claude-opus-5` on refusal or ZDR 400. The canonical §M8 block gains the optional `FABLE_GATE` + `fableGateAgent` segment; `validate.mjs` sanctions it as the fourth omissible member.
+
+### Changed
+- **§M6 `BAND` re-baselined ~2.5× upward** from the maison-aurel ladder run: the old figures assumed prompt-answer verifiers; tool-heavy verifiers measured 50–120k output each.
+- **§M5 gains the dispatch rule**: same-model verify fan-outs of width ≥ 3 dispatch staggered or sequentially — three parallel width-5 all-out bursts died whole to API 529 on 2026-07-27 while the same lenses dispatched sequentially completed 6/6.
+- `model-routing.md` Fable sections now name the two sanctioned entry points and the extended bounding argument.
+
+### Known-stale
+- The C4 composition diagram still says "twenty skills"; refresh deferred to the next docs pass.
+
 _Nothing yet._
 
 ## [1.3.0] — 2026-07-27

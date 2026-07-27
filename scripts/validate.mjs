@@ -469,7 +469,8 @@ function canonicalBlock() {
   return { ok: true, block, docLine: start + 1 }
 }
 
-// §M8 sanctions exactly three omissions: WIDTH, DRY_LIMIT and the plannerAgent helper. Everything
+// §M8 sanctions exactly four omissions: WIDTH, DRY_LIMIT, the plannerAgent helper, and the
+// FABLE_GATE + fableGateAgent pair (§M7b). Everything
 // else is the invariant core. Segment extents are derived from the canonical text, not listed here,
 // so this survives edits to the block.
 function optionalMask(block) {
@@ -479,6 +480,7 @@ function optionalMask(block) {
   }
   markLine((l) => /^const WIDTH\b/.test(l))
   markLine((l) => /^const DRY_LIMIT\b/.test(l))
+  markLine((l) => /^const FABLE_GATE\b/.test(l))
 
   const segments = []
   const fnStart = block.findIndex((l) => /^(?:async\s+)?function plannerAgent\b/.test(l))
@@ -490,6 +492,17 @@ function optionalMask(block) {
     for (let i = s; i <= e && i < block.length; i++) mask[i] = true
     segments.push({ name: 'plannerAgent', start: s, end: Math.min(e, block.length - 1), signature: /^(?:async\s+)?function plannerAgent\b/ })
   }
+  const fgStart = block.findIndex((l) => /^(?:async\s+)?function fableGateAgent\b/.test(l))
+  if (fgStart !== -1) {
+    let s = fgStart
+    while (s > 0 && /^\s*\/\//.test(block[s - 1])) s--
+    let e = fgStart
+    while (e < block.length && block[e] !== '}') e++
+    for (let i = s; i <= e && i < block.length; i++) mask[i] = true
+    segments.push({ name: 'fableGateAgent', start: s, end: Math.min(e, block.length - 1), signature: /^(?:async\s+)?function fableGateAgent\b/ })
+  }
+  const fgIdx = block.findIndex((l) => /^const FABLE_GATE\b/.test(l))
+  if (fgIdx !== -1) segments.push({ name: 'FABLE_GATE', start: fgIdx, end: fgIdx, signature: /^const FABLE_GATE\b/ })
   const widthIdx = block.findIndex((l) => /^const WIDTH\b/.test(l))
   if (widthIdx !== -1) segments.push({ name: 'WIDTH', start: widthIdx, end: widthIdx, signature: /^const WIDTH\b/ })
   const dryIdx = block.findIndex((l) => /^const DRY_LIMIT\b/.test(l))

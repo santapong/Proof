@@ -3,7 +3,7 @@
 > **Run real engineering work as governed, multi-agent workflows** — a Claude Code plugin of 20 composable skills covering the whole lifecycle, from design and review through shipping, operating, and autonomous self-improvement.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills: 20](https://img.shields.io/badge/skills-20-6f42c1.svg)](#whats-in-the-box)
+[![Skills: 21](https://img.shields.io/badge/skills-21-6f42c1.svg)](#whats-in-the-box)
 [![Plugin: marketplace](https://img.shields.io/badge/plugin-marketplace-2ea44f.svg)](#installation)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](CONTRIBUTING.md)
 
@@ -37,7 +37,7 @@ It's for developers who want Claude Code to do *engineering*, not just answer qu
 
 ## What's in the box
 
-Twenty skills, grouped by the engineering role they play. Every skill takes `[--mode <lite|balanced|all-out>]` unless noted.
+Twenty-one skills, grouped by the engineering role they play. Every skill takes `[--mode <lite|balanced|all-out>]` unless noted.
 
 **Engine & planning**
 
@@ -46,6 +46,7 @@ Twenty skills, grouped by the engineering role they play. Every skill takes `[--
 | **loop-engine** | `/loop-engine <task> [--planner <opus\|fable>] [--framework <name>] [--dry-run]` | Authors and executes a multi-agent Workflow script — pipeline by default, earned parallel barriers, loops for unknown-size discovery — governed by the harness & loop policies and a lifecycle framework (default AIDLC). |
 | **loop-orchestrate** | `/loop-orchestrate <project> [--planner <opus\|fable>] [--budget <tokens>]` | Planning layer on `loop-engine`: decomposes a project into a task DAG and routes the right Claude model + effort to each task ("right model for the right job"). |
 | **loop-skill** | `/loop-skill <skill-purpose>` | Authors a new skill for this plugin, or brings an existing one up to contract: discriminating description, graded standards shelf, thin router, references, ROUTES-carrying template — then proves it with the validation gate. |
+| **loop-v1** | `/loop-v1 <project-brief>` | Conducts a brief to a shipped version one: scopes the v1 contract, plans with three reconciled planners plus a roster sweep, drives every phase through the owning domain skills with sequential gates and repair rounds, releases, and ships the full cast-and-cost ledger. |
 
 **Design & mechanism**
 

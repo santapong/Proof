@@ -1,7 +1,7 @@
 ---
 name: loop-engine
 description: "Author and execute a multi-agent Workflow script (pipeline, parallel with an earned barrier, or a guarded loop) governed by the harness and loop engineering policies and a pluggable lifecycle framework (default AIDLC). Use when the user asks to run a task as a workflow, orchestrate with subagents, fan out agents, or execute a phase-structured job (audit, migration, review sweep, feature build) at multi-agent scale. This is the execution engine every other skill's templates target. For decomposing a whole project into a phased DAG with model routing before execution, use loop-orchestrate."
-argument-hint: <task> [--mode <lite|balanced|all-out>] [--planner <opus|fable>] [--framework <name>] [--dry-run]
+argument-hint: <task> [--mode <lite|balanced|all-out>] [--planner <opus|fable>] [--fable-gate] [--framework <name>] [--dry-run]
 ---
 
 # Workflow Skill
@@ -19,6 +19,7 @@ From the skill args, extract:
 - **task** — everything that is not a flag. This is the job to orchestrate. If empty, ask the user what task to run.
 - **`--mode <lite|balanced|all-out>`** — the run-level routing dial. Default: `balanced`, resolved **silently** when the flag is absent. `all-out` pins every node to `claude-opus-5`, disables the wide-fan-out modifier, widens verifiers, raises the loop-until-dry threshold, and fires the pre-flight in step 6. Full contract in `references/execution-modes.md`.
 - **`--planner <opus|fable>`** — routes only the single decompose/planning node. Default: `opus`. Orthogonal to `--mode` and legal in both. `fable` is an opt-in with a stated price — print the §M7 disclosure verbatim before the planner spawns.
+- **`--fable-gate`** — routes one lens of the all-out gating vote to `claude-fable-5`, with a logged fallback to `claude-opus-5` on a refusal or ZDR 400. Legal only under `--mode all-out`; accepted, ignored and logged as inert elsewhere. Full contract in `references/execution-modes.md` §M7b.
 - **`--framework <name>`** — which lifecycle framework governs the phases. Default: `AIDLC`.
 - **`--dry-run`** — if present, author the script and show it to the user, but do NOT execute it.
 
@@ -104,7 +105,7 @@ Frameworks are pluggable: drop a new `<Name>.md` into `frameworks/` following `f
 
 - `references/harness-policy.md` — the Harness Engineering Policy: H1–H12, the orchestration-shape and verification rules every script obeys
 - `references/loop-policy.md` — the Loop Engineering Policy: L1–L8, the iteration, budget-guard and convergence rules
-- `references/execution-modes.md` — the execution-mode contract: the routing table (§M3), both override modifiers (§M4), verifier width and the loop-until-dry threshold (§M5), the full-mode pre-flight (§M6), the `--planner fable` opt-in (§M7), and the canonical `ROUTES` block (§M8)
+- `references/execution-modes.md` — the execution-mode contract: the routing table (§M3), both override modifiers (§M4), verifier width and the loop-until-dry threshold (§M5), the full-mode pre-flight (§M6), the Fable opt-ins `--planner fable` / `--fable-gate` (§M7/§M7b), and the canonical `ROUTES` block (§M8)
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow
 - `templates/pipeline.workflow.js` — known items flowing through independent stages; the default shape
 - `templates/parallel.workflow.js` — fan-out finders whose results are merged and deduped at an earned barrier

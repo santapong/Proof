@@ -2,7 +2,7 @@
 
 This file governs **which model and how much effort each node gets**. It does not govern **what shape the DAG takes**. Mode is a run-level *routing* dial, not a new orchestration primitive: it moves tiers, effort, verifier width and one loop threshold, and it moves nothing else. Shape stays governed by `harness-policy.md` (H1–H12) and `loop-policy.md` (L1–L8), both of which this file consumes read-only and neither of which it may relax.
 
-There are three modes — **`lite`**, **`balanced`** (the default) and **`all-out`** — plus one orthogonal override, **`--planner opus|fable`**. The invariant the rest of this file elaborates is: **one parser, eighteen skills, zero per-skill branching.** Routing *rationale* — why a task type maps to a tier at all — lives in `../../loop-orchestrate/references/model-routing.md`; the rule for how a script *expresses* a routing decision on an `agent()` call is `harness-policy.md` **H8**.
+There are three modes — **`lite`**, **`balanced`** (the default) and **`all-out`** — plus one orthogonal override, **`--planner opus|fable`**. The invariant the rest of this file elaborates is: **one parser, twenty-one skills, zero per-skill branching.** Routing *rationale* — why a task type maps to a tier at all — lives in `../../loop-orchestrate/references/model-routing.md`; the rule for how a script *expresses* a routing decision on an `agent()` call is `harness-policy.md` **H8**.
 
 ## The three modes at a glance
 
@@ -46,20 +46,23 @@ The only policy value mode moves is **L1's dry-round threshold K**, and only by 
 
 If a mode change would fix your workflow's shape, the shape was wrong.
 
-## M2. Flag parsing — one parser, twenty skills
+## M2. Flag parsing — one parser, twenty-one skills
 
 **Grammar.**
 
 ```
 --mode <lite|balanced|all-out>   default: balanced
 --planner <opus|fable>           default: opus
+--fable-gate                     default: off — bare boolean; legal only under --mode all-out
 ```
 
 Both flags are case-insensitive and both accept the `=` form (`--mode=all-out`, `--planner=fable`). An **absent** `--mode` resolves to `balanced` **silently** — no prompt, no warning, no "did you mean". An **unrecognized** value is never guessed: name the three valid values and ask, exactly as `loop-engine/SKILL.md` already does for an unknown `--framework`. Guessing `--mode fast` means `balanced` is how a user discovers their run was cheapened after they paid for it.
 
+**`--fable-gate`** is a bare boolean (no value). It is legal only under `--mode all-out`: anywhere else it is accepted, ignored, and `log()`ged as inert, because the width-3-or-wider majority vote it depends on does not exist in the cheaper modes (§M7b). It travels to scripts as `input.fableGate: true`.
+
 **Only two files parse flags:** `loop-engine/SKILL.md` step 1 and `loop-orchestrate/SKILL.md` step 1. Those two are also the only two that advertise `--planner`, because they are the only two that route a planner node.
 
-**Sixteen domain skills advertise `--mode`** in their `argument-hint` frontmatter and pass their **raw argument string** through when they invoke `loop-engine` — that pass-through *is* the inheritance mechanism, and it is precisely why no domain skill needs mode logic of its own.
+**Seventeen domain skills advertise `--mode`** in their `argument-hint` frontmatter and pass their **raw argument string** through when they invoke `loop-engine` — that pass-through *is* the inheritance mechanism, and it is precisely why no domain skill needs mode logic of its own.
 
 **Two skills advertise neither, deliberately.** `loop-design` and `loop-harness` ship no workflow template and never invoke `loop-engine`, so they have nothing to route and no argument string to forward. **A skill that cannot honour a flag must not advertise it** — an `argument-hint` is API surface, and at 1.0.0 an accepted-but-ignored flag freezes as a promise the skill never keeps. If either grows a template later, it gains the flag in the same commit.
 
@@ -116,7 +119,7 @@ so a reader of the transcript can tell a wide fan-out ran at full tier **by desi
 2. **Effort** — then `high` → `xhigh` → `max`.
 3. **Verifier width and lens diversity** — then more, and more *different*, checks.
 
-At the ceiling only rungs 2 and 3 have travel. That is exactly what "already at ceiling" means on the gating row of §M3: the model cannot go higher, so error cost is answered with effort and width instead. B is also the only modifier that may reach for `--planner fable`, and only under §M7's preconditions.
+At the ceiling only rungs 2 and 3 have travel. That is exactly what "already at ceiling" means on the gating row of §M3: the model cannot go higher, so error cost is answered with effort and width instead. B is also the only modifier that may reach for the Fable opt-ins (`--planner fable`, `--fable-gate`), and only under §M7/§M7b's preconditions.
 
 **Collision rule.** Both modifiers can apply at once — a wide verify fan-out over correctness-critical items. In **optimize**, keep the *model* high (error cost wins on the tier) and control spend with **fewer, sharper verifiers** at higher effort rather than many cheap ones (H4: diversity beats redundancy). In **full**, both stay at the ceiling and spend is controlled **at the pre-flight, not by the router** — the router has no discretion left to exercise.
 
@@ -141,6 +144,8 @@ All-out mode never runs a single skeptic. That is how the plan's "3–5" band be
 2. **A single deterministic measurement** — a node that re-queries a metric, re-runs a check, or reads a system state rather than arguing about one. Three agents asking the same monitoring backend the same question is redundancy, which H4 explicitly ranks below diversity.
 
 Everything else that refutes, rebuts, fact-checks, or tries to break a result is an adversarial verify and takes the width in the table above. **All-out mode never runs a single skeptic** is not softened by these two carve-outs; neither of them is a skeptic.
+
+**Width is a count, not a dispatch shape.** A width-N fan-out on one pinned model concentrates N simultaneous heavy requests on a single rate-limit bucket; on 2026-07-27 three consecutive width-5 all-out verify bursts died whole to API 529 overload, while the same five lenses dispatched **sequentially** completed 6/6. Templates therefore dispatch same-model verify fan-outs of width ≥ 3 staggered or sequentially — the vote is over verdicts, not wall-clock, and H2 is untouched because no cross-item barrier is added. A dead lens still resolves to `null` and still counts toward no-verdict-is-never-a-pass.
 
 **Dry threshold.** L1's K goes 2 → 3 in all-out mode:
 
@@ -203,13 +208,15 @@ Both `width(n)` and `BAND` therefore depend on `input.planner` as well as on mod
 
 | Node kind | `balanced` | `all-out` |
 |---|---|---|
-| scout / doc | 2k–6k | 6k–15k |
-| implement | 10k–25k | 14k–32k |
-| analyze / synthesize | 12k–30k | 20k–48k |
-| verify / judge / critic | 6k–18k | 10k–28k |
-| gating | 20k–45k | 20k–45k |
-| planner | 18k–45k | 24k–56k |
-| planner on Fable | 30k–80k | 36k–92k |
+| scout / doc | 5k–15k | 15k–38k |
+| implement | 25k–62k | 35k–80k |
+| analyze / synthesize | 30k–75k | 50k–120k |
+| verify / judge / critic | 15k–45k | 25k–70k |
+| gating | 50k–110k | 50k–110k |
+| planner | 45k–110k | 60k–140k |
+| planner on Fable | 75k–200k | 90k–230k |
+
+**Revision 2026-07-27** — every row lifted ~2.5× from the maison-aurel ladder run: verifiers that read whole files and run tools measured 50–120k output each against the old 20–45k gating band (run journals are the source). The old figures assumed prompt-answer verifiers; these assume tool-heavy ones.
 
 Why the two columns differ at all, given that tokens are not billed per mode: all-out mode pins a richer model and lifts effort, and both produce **longer** output for the same prompt. The lift is per-kind, not a flat multiplier — a `scout` node moving Haiku 4.5 → Opus 5 at `high` roughly 2.5×s its output, while `gating` is **identical in both columns** because §M3's gating row already runs `claude-opus-5` at `max` in balanced; it has no travel left, so its band must not move either. Most of all-out mode's cost comes from *agent count* — modifier A suppressed and width 1→3 (5 on a gating verify) — not from the band, and a pre-flight that shows a 3× band lift with no width lift has priced something wrong.
 
@@ -248,7 +255,9 @@ The §M7 disclosure prints immediately before this question, so the human reads 
 
 **DECIDED — `--mode all-out` + `--budget`: the pre-flight refuses to start.** When `--budget` is set and the estimate's **high** end exceeds the ceiling, nothing spawns, and the pre-flight offers exactly three exits: re-run at `--mode balanced`, raise the budget to a stated figure, or narrow the phase's scope. State this plainly wherever it is documented: **this is stricter than H6.** H6 treats the budget as a runtime ceiling that throws mid-run once `budget.spent()` reaches `budget.total`; the pre-flight refuses before the first agent. It is a genuine behavior change to `--budget`, made deliberately, because burning 80% of a ceiling and then dying is exactly the failure a pre-flight exists to prevent.
 
-## M7. `--planner fable` — the opt-in that states its own price
+## M7. The Fable opt-ins — flags that state their own price
+
+### M7a. `--planner fable`
 
 Name the conflict first, because burying it is how a caveat gets lost: **`model-routing.md` says never place Fable 5 on a gate-blocking interactive step, and planning is gate-blocking.** The decompose node is the barrier every later node waits on, and in AIDLC it sits directly in front of a human gate. This flag does not repeal that rule. It makes overriding it **explicit, bounded, and disclosed.**
 
@@ -274,6 +283,22 @@ Name the conflict first, because burying it is how a caveat gets lost: **`model-
 **How a template implements it.** Not with a local branch: the override lives inside the canonical `ROUTES` block (§M8), so every copy stays byte-identical and the drift check keeps working. `PLANNER` resolves the flag once, `optsFor()` applies it to `taskType: 'planner'` nodes and to nothing else, and a template that declares a planner node dispatches it through `plannerAgent()` instead of `agent()`. A template with no planner node carries `PLANNER` and the `optsFor()` line anyway — they are part of the invariant block — and the flag is simply inert there.
 
 **DECIDED — `--planner fable` is orthogonal to `--mode` and legal in both.** The counter-argument (the most expensive, slowest node inside the cheapest mode is incoherent) is real but loses to the simpler contract: one flag, one meaning, no mode-dependent legality table.
+
+### M7b. `--fable-gate` — one lens of the all-out gating vote
+
+The planner is no longer the only sanctioned placement, and the bounding argument extends rather than repeals. What makes Fable dangerous in a fan-out is that a refusal is **silent**; a majority-voted gating verify changes that arithmetic twice over — the lens dispatches through `fableGateAgent()` (§M8), so a refusal or ZDR 400 falls back to `claude-opus-5` at `max` and is `log()`ged, and even a doubly-dead lens resolves to `null`, shrinking the live vote rather than faking a verdict. The gap is loud in the ledger, and what the flag buys is genuine **model diversity on the highest-error-cost node** — H4's diversity-beats-redundancy applied to the one place a shared blind spot ships a defect.
+
+Five preconditions, all required:
+
+1. **`--mode all-out` only.** The vote must be diverse-lens width ≥ 3; the cheaper modes run narrower and the arithmetic above does not hold. Elsewhere the flag is inert and logged.
+2. **Exactly one lens** of one gating VERIFY fan-out — never a majority, never a second node, never a decision or measurement node (§M5 carve-outs).
+3. **Dispatch through `fableGateAgent()`** — the logged fallback is the licence.
+4. The org meets the **30-day data-retention requirement**; under zero data retention the lens absorbs the HTTP 400 as a refusal, at the cost of one round-trip.
+5. The **disclosure prints before the fan-out spawns**, and the cast ledger row names which lens ran Fable — or that it fell back.
+
+Mandatory disclosure, printed verbatim at the point of use:
+
+> `--fable-gate` routes one lens of the gating verify to claude-fable-5. Tradeoffs: markedly higher latency for that lens, a broader class of refusals than the rest of the fleet, and a 30-day data-retention requirement — a zero-data-retention organization receives an HTTP 400 rather than a degraded result. On a refusal or a 400 the lens falls back to claude-opus-5 at max effort; the fallback is logged and the vote proceeds either way.
 
 ## M8. Mapping mode to `agent()` opts — the canonical `ROUTES` block
 
@@ -349,9 +374,25 @@ async function plannerAgent(prompt, node, label) {
   log('planner fallback: claude-fable-5 returned nothing (refusal, or HTTP 400 under zero data retention) → claude-opus-5 at max (§M7)')
   return agent(prompt, Object.assign({}, opts, { model: 'claude-opus-5', effort: 'max' }))
 }
+const FABLE_GATE = MODE === 'all-out' && (input && input.fableGate) === true // --fable-gate (§M7b)
+// §M7b opt-in. One lens of an all-out gating vote may run Fable; a refusal and the
+// ZDR HTTP 400 both surface as null, so the same ||-shaped fallback applies. Only a
+// gating verify fan-out dispatches through this, and only for lensIndex 0.
+async function fableGateAgent(prompt, node, lensIndex, label) {
+  const opts = optsFor(node, label)
+  if (!FABLE_GATE || lensIndex !== 0) return agent(prompt, opts)
+  log('--fable-gate routes one lens of the gating verify to claude-fable-5. Tradeoffs: markedly higher latency for that lens, a broader class of refusals than the rest of the fleet, and a 30-day data-retention requirement — a zero-data-retention organization receives an HTTP 400 rather than a degraded result. On a refusal or a 400 the lens falls back to claude-opus-5 at max effort; the fallback is logged and the vote proceeds either way.')
+  const out = await agent(prompt, Object.assign({}, opts, { model: 'claude-fable-5' }))
+  if (out) {
+    log(`cast · node=${label || node.label} kind=gating lens=${lensIndex} mode=${MODE} model=claude-fable-5 effort=${opts.effort} · --fable-gate`)
+    return out
+  }
+  log('fable-gate fallback: claude-fable-5 returned nothing (refusal, or HTTP 400 under zero data retention) → claude-opus-5 at max (§M7b)')
+  return agent(prompt, Object.assign({}, opts, { model: 'claude-opus-5', effort: 'max' }))
+}
 ```
 
-**Three members are omitted when unused, and nothing else varies.** A template that does not loop omits `DRY_LIMIT`; one with no adversarial verify stage omits `WIDTH` (see §M5 on which node shapes count); one with no `taskType: 'planner'` node omits `plannerAgent`. Say which you dropped, and why, in a comment right below the block — an omission with no note is indistinguishable from drift.
+**Four members are omitted when unused, and nothing else varies.** A template that does not loop omits `DRY_LIMIT`; one with no adversarial verify stage omits `WIDTH` (see §M5 on which node shapes count); one with no `taskType: 'planner'` node omits `plannerAgent`; one with no Fable-eligible gating fan-out omits `FABLE_GATE` + `fableGateAgent`. Say which you dropped, and why, in a comment right below the block — an omission with no note is indistinguishable from drift. (Templates authored before v1.4.0 predate the Fable-gate member; their omission notes need not name it until the block is next touched.)
 
 `MODE`, `PLANNER`, `ROUTES`, `routeFor` and `optsFor` — including the `PLANNER` line inside `optsFor` — are the **invariant core** and appear in every copy, whether or not the template declares a planner node. `optsFor` references `PLANNER`, so dropping the const breaks the block; and keeping the override central is precisely what stops eighteen skills from each inventing a local `--planner` branch. **No other local variation is permitted.**
 
@@ -377,7 +418,7 @@ cast · node=synthesize   kind=synthesize mode=balanced model=inherit effort=hig
 
 4. **Mode is frozen at first author.** A resumed run (`{scriptPath, resumeFromRunId}`) reuses the persisted script and the `args.mode` it was authored against; passing a different `--mode` on resume would desynchronize the script from its arguments. A mode change requires a fresh run and, in all-out mode, a fresh pre-flight. **Caveat:** this rule is written from how the Workflow tool re-invokes a persisted script, and it has not been verified against the tool's actual resume semantics. Re-verify it before treating a resume-with-different-mode failure as expected behavior rather than a bug.
 
-5. **`input.mode` and `input.planner` are reserved fleet-wide.** Every template that carries the `ROUTES` block reads `input.mode`, and a planner-routed template reads `input.planner`. **A template must never take either name for a local purpose** — a workflow that means something else by `mode` will silently mis-route every node in the run, because `ROUTES[MODE]` falls back to `balanced` for any unrecognized value rather than failing loudly.
+5. **`input.mode`, `input.planner` and `input.fableGate` are reserved fleet-wide.** Every template that carries the `ROUTES` block reads `input.mode`, and a planner-routed template reads `input.planner`. **A template must never take either name for a local purpose** — a workflow that means something else by `mode` will silently mis-route every node in the run, because `ROUTES[MODE]` falls back to `balanced` for any unrecognized value rather than failing loudly.
 
    This is not hypothetical: `loop-autopilot/templates/improvement-loop.workflow.js` already used `input.mode` for its own dry/live safety switch and had to rename it to `input.runMode` in this release — a breaking change to an unattended template, forced by a name collision. Pick a qualified name (`runMode`, `execution`, `reviewDepth`) and say so in a comment.
 

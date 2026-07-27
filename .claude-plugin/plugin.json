@@ -1,8 +1,8 @@
 {
   "name": "theloopskill",
   "displayName": "TheLoopSkill",
-  "description": "Twenty composable engineering skills for Claude Code on a governed multi-agent workflow engine: pipeline/parallel/loop orchestration under explicit harness and loop policies, per-node model routing with optimize and full execution modes, and lifecycle coverage from design, algorithms, patterns and UI craft through review, testing, integration, release, operations and incident response, to an autonomous propose-only improvement loop.",
-  "version": "1.3.0",
+  "description": "Twenty-one composable engineering skills for Claude Code on a governed multi-agent workflow engine: pipeline/parallel/loop orchestration under explicit harness and loop policies, per-node model routing with optimize and full execution modes, and lifecycle coverage from design, algorithms, patterns and UI craft through review, testing, integration, release, operations and incident response, to an autonomous propose-only improvement loop.",
+  "version": "1.4.0",
   "author": {
     "name": "santapong",
     "email": "santapongsondhi@gmail.com"
