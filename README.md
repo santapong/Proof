@@ -115,29 +115,25 @@ The system is documented with the **[C4 model](https://c4model.com)** — a hier
 **What is this, who uses it, what does it depend on?** Note where the boundary sits: Claude Code is *outside* it. The plugin has no process, port, or lifecycle of its own — everything it "does" is done by the host on its instruction.
 
 ```mermaid
-graph TB
-    dev["Developer<br/><i>[Person]</i><br/>Invokes a skill; answers gate questions"]
+C4Context
+    title System Context — TheLoopSkill
 
-    system["<b>TheLoopSkill</b><br/><i>[Software System]</i><br/>Turns an engineering task into a governed multi-agent workflow, with the model matched to each job and a human at every phase gate"]
+    Person(dev, "Developer", "Invokes a skill; answers the questions raised at each phase gate")
 
-    cc["Claude Code<br/><i>[External System]</i><br/>Host runtime: loads skills, runs the Workflow tool"]
-    fleet["Claude Model Fleet<br/><i>[External System]</i><br/>Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5"]
-    repo["Target Repository<br/><i>[External System]</i><br/>The developer's codebase"]
-    forge["GitHub<br/><i>[External System]</i><br/>Issues, PRs, CI signals"]
+    System(tls, "TheLoopSkill", "Turns an engineering task into a governed multi-agent workflow, with the model matched to each job and a human at every phase gate")
 
-    dev -->|"Invokes a skill, answers gates"| system
-    cc -->|"Spawns agents on its behalf"| system
-    system -->|"Routes each node to a tier"| fleet
-    system -->|"Reads code; implement nodes write"| repo
-    system -->|"Reads feedback; opens draft PRs, never merges"| forge
+    System_Ext(cc, "Claude Code", "Host runtime: discovers and loads skills, executes the Workflow tool, enforces permissions")
+    System_Ext(fleet, "Claude Model Fleet", "Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5 — the agents a workflow spawns")
+    System_Ext(repo, "Target Repository", "The developer's codebase and git history")
+    System_Ext(forge, "GitHub", "Issues, PRs and CI signals consumed by the autonomous loop")
 
-    classDef person   fill:#08427b,stroke:#052e56,color:#ffffff
-    classDef focus    fill:#1168bd,stroke:#0b4884,color:#ffffff
-    classDef external fill:#999999,stroke:#6b6b6b,color:#ffffff
+    Rel(dev, tls, "Invokes a skill, answers gates")
+    Rel(cc, tls, "Loads it and spawns agents on its behalf", "plugin API")
+    Rel(tls, fleet, "Routes each node to a model tier", "agent() opts")
+    Rel(tls, repo, "Reads code; implement nodes write patches", "tool calls")
+    Rel(tls, forge, "Reads feedback; opens draft PRs, never merges", "REST")
 
-    class dev person
-    class system focus
-    class cc,fleet,repo,forge external
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
 ### Level 2 — Containers
@@ -149,46 +145,67 @@ Eight separately-loadable units, split by **loading regime**, which is the meani
 The skills aren't a flat list — they build on `loop-engine` and **delegate rather than duplicate**. Every edge below is a boundary that would otherwise be an overlap:
 
 ```mermaid
-flowchart TD
-    subgraph gov["Governance — read-only law"]
-        HP[harness-policy<br/>H1–H12] --- LP[loop-policy<br/>L1–L8] --- EM[execution-modes<br/>M1–M9] --- AIDLC[AIDLC<br/>phases + gates]
-    end
-    WF[[loop-engine<br/>pipeline · parallel · loop]]
-    gov --> WF
-    OP[loop-orchestrate] -->|plans the DAG, routes models| WF
-    AI[loop-autopilot] -->|runs the loop on| WF
+C4Component
+    title Component diagram — how the eighteen skills compose
 
-    subgraph build["Design · build · verify"]
-        DS[loop-design] & ALG[loop-algo] & PAT[loop-pattern]
-        RC[loop-review] & WT[loop-test] & AC[loop-audit] & DB[loop-debug]
-    end
-    subgraph run["Integrate · ship · run"]
-        INT[loop-integrate] & SHIP[loop-ship]
-        OPS[loop-operate] & INC[loop-incident]
-    end
-    subgraph know["Knowledge"]
-        RT[loop-research] & FF[loop-scout] & WD[loop-docs] & EH[loop-harness]
-    end
-    WF --> build & run & know
+    Container_Boundary(gov, "Governance — read-only law") {
+        Component(pol, "Engineering policies", "harness H1–H12 · loop L1–L8 · modes M1–M9", "Orchestration shape, iteration, and per-node model routing")
+        Component(fw, "Lifecycle frameworks", "AIDLC", "Phases and the human gates between them")
+    }
 
-    RC -->|remediation| PAT
-    AC -->|security dimension| RC
-    AC -->|risk memo as go/no-go| SHIP
-    WD -->|consumes ADR / C4| DS
-    FF -->|delegates search| RT
-    FF -->|hands over a named provider| INT
-    INT -->|specifies contract tests| WT
-    DS -->|mechanism inside a component| ALG
-    EH -.->|unattended substrate| AI
+    Component(eng, "loop-engine", "Orchestration engine", "pipeline · parallel · loop — authors and runs the workflow script")
+    Component(orch, "loop-orchestrate", "Planning layer", "Decomposes a project into a task DAG and routes a model to each node")
+    Component(auto, "loop-autopilot", "Autonomous loop", "Reads feedback, acts as draft PRs, never merges")
 
-    OPS ==>|no runbook, or beyond its scope| INC
-    INC ==>|service restored, now find the defect| DB
-    DB ==>|regression test| WT
-    WT ==>|ready to release| SHIP
-    SHIP ==>|bake complete, service is yours| OPS
+    Container_Boundary(build, "Design · build · verify") {
+        Component(design, "loop-design", "Architecture", "Components, APIs, NFR and SLO targets")
+        Component(algo, "loop-algo", "Mechanism", "Algorithms, complexity, invariants, benchmarks")
+        Component(pat, "loop-pattern", "Refactoring", "Patterns and idioms — emits a diff")
+        Component(rev, "loop-review", "Security + quality", "OWASP / CWE / ASVS — emits findings")
+        Component(test, "loop-test", "Tests", "Designs and writes them; verifies each fails for the right reason")
+        Component(aud, "loop-audit", "Change impact", "Blast radius, risk rating, coverage")
+        Component(dbg, "loop-debug", "Root cause", "Reproducible defects only")
+    }
+
+    Container_Boundary(run, "Integrate · ship · run") {
+        Component(intg, "loop-integrate", "Platform integration", "OAuth/OIDC, webhooks, idempotency, resilience")
+        Component(ship, "loop-ship", "Release", "Rollout strategy, migrations, tested rollback")
+        Component(ops, "loop-operate", "Steady state", "SLOs, alerts, runbooks, auto-rollback")
+        Component(inc, "loop-incident", "Live failure", "Triage, mitigate, reproduce, postmortem")
+    }
+
+    Container_Boundary(know, "Knowledge") {
+        Component(res, "loop-research", "Cited research", "Search, deep-read, refute-first verify")
+        Component(scout, "loop-scout", "Prior art", "Build-vs-buy before building")
+        Component(docs, "loop-docs", "Documentation", "Diátaxis; verified against code")
+        Component(harn, "loop-harness", "Claude Code harness", "Permissions, hooks, MCP, automation")
+    }
+
+    Rel(pol, eng, "Governs")
+    Rel(fw, eng, "Supplies phases and gates")
+    Rel(orch, eng, "Plans the DAG, routes models")
+    Rel(auto, eng, "Runs the loop on")
+
+    Rel(rev, pat, "Remediation")
+    Rel(aud, rev, "Security dimension")
+    Rel(aud, ship, "Risk memo as go/no-go")
+    Rel(docs, design, "Consumes ADR / C4")
+    Rel(scout, res, "Delegates search")
+    Rel(scout, intg, "Hands over a named provider")
+    Rel(intg, test, "Specifies contract tests")
+    Rel(design, algo, "Mechanism inside a component")
+    Rel(harn, auto, "Unattended substrate")
+
+    Rel(ops, inc, "No runbook, or beyond its scope")
+    Rel(inc, dbg, "Service restored — now find the defect")
+    Rel(dbg, test, "Lock it with a regression")
+    Rel(test, ship, "Ready to release")
+    Rel(ship, ops, "Bake complete — the service is yours")
+
+    UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="2")
 ```
 
-The **bold cycle** is the operational chain, and it is the reason those five skills are separate rather than one: `loop-operate` detects and auto-mitigates *known* conditions → `loop-incident` takes *novel* ones, mitigating before diagnosing → `loop-debug` finds the defect once the service is back → `loop-test` locks it with a regression → `loop-ship` redeploys → `loop-operate` owns it again once the rollout bakes.
+The five relationships running `loop-operate → loop-incident → loop-debug → loop-test → loop-ship → loop-operate` form a **closed cycle**, and that cycle is the reason those five are separate skills rather than one: `loop-operate` detects and auto-mitigates *known* conditions → `loop-incident` takes *novel* ones, mitigating before diagnosing → `loop-debug` finds the defect once the service is back → `loop-test` locks it with a regression → `loop-ship` redeploys → `loop-operate` owns it again once the rollout bakes.
 
 Each handoff is a **checkable question**, not a judgment call: *does a runbook exist and does running it restore the SLI?* · *is the service currently down, or is the defect merely reproducible?* · *is the rollout in flight, or baked?* The full 18-way matrix is in **[`docs/design/boundary-audit.json`](docs/design/boundary-audit.json)**, which is normative — it outranks any plan that disagrees with it.
 
@@ -207,6 +224,8 @@ flowchart TB
     O --> V --> S --> C
     C -. "any alarm degrades autonomy one rung down — the floor is always safe" .-> V
 ```
+
+> **Why this one isn't a C4 diagram.** Every other diagram in this repo is C4 ([Context](#level-1--system-context) · [Container](docs/c4/container.md) · [Component](docs/c4/component.md)). This one isn't, deliberately: C4 models *structure* — systems, containers, components and the relationships between them — and a rung is not a component. "Degrades one rung down on an alarm" is a state transition, not a dependency. Drawing it in C4 notation would render, and would be semantically false. C4's own guidance is that it is a set of static structure diagrams, complemented by other notations where a different question is being asked; this is one of those.
 
 | Rung | The loop does | The human does | Implemented by | Status |
 |---|---|---|---|---|

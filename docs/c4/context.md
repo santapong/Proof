@@ -5,39 +5,30 @@
 TheLoopSkill is a **Claude Code plugin**: eighteen composable engineering skills built on a multi-agent workflow engine. It ships no server and no runtime of its own — it is Markdown and JavaScript that the Claude Code host loads, reads, and executes on the developer's behalf. That is the single most important thing this diagram communicates, and it is why Claude Code appears *outside* the box rather than inside it.
 
 ```mermaid
-graph TB
-    %% ---- People / actors ----
-    dev["Developer<br/><i>[Person]</i><br/>Invokes a skill to review, design, debug, ship, or operate software"]
-    maint["Plugin Maintainer<br/><i>[Person]</i><br/>Adds skills and standards; approves at the lifecycle gates"]
+C4Context
+    title System Context — TheLoopSkill
 
-    %% ---- The system in focus (exactly ONE) ----
-    system["<b>TheLoopSkill</b><br/><i>[Software System]</i><br/>Turns an engineering task into a governed multi-agent workflow, with the model matched to each job and a human at every phase gate"]
+    Person(dev, "Developer", "Invokes a skill to review, design, debug, ship, or operate software")
+    Person(maint, "Plugin Maintainer", "Adds skills and standards shelves; approves at the lifecycle gates")
 
-    %% ---- External systems ----
-    cc["Claude Code<br/><i>[External System]</i><br/>Host runtime: discovers skills, loads context, executes the Workflow tool, enforces permissions"]
-    fleet["Claude Model Fleet<br/><i>[External System]</i><br/>Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5 — the agents a workflow spawns"]
-    repo["Target Repository<br/><i>[External System]</i><br/>The developer's own codebase and git history — read, and mutated only by implement nodes"]
-    forge["GitHub<br/><i>[External System]</i><br/>Issues, PRs and CI signals consumed by the autonomous loop; draft PRs opened back"]
-    web["Web &amp; Standards Sources<br/><i>[External System]</i><br/>Specs, RFCs and publisher catalogues that version-pinned citations are confirmed against"]
+    System(tls, "TheLoopSkill", "Turns an engineering task into a governed multi-agent workflow, with the model matched to each job and a human at every phase gate")
 
-    %% ---- Relationships ----
-    dev -->|"Invokes a skill, answers gate questions"| system
-    maint -->|"Authors skills and standards shelves"| system
-    system -->|"Is discovered and loaded as a plugin"| cc
-    cc -->|"Spawns agents and runs workflow scripts on its behalf"| system
-    system -->|"Routes each node to a model tier via ROUTES"| fleet
-    system -->|"Reads code; implement nodes write patches"| repo
-    system -->|"Reads feedback; opens draft PRs, never merges"| forge
-    system -->|"Confirms every version pin before citing it"| web
+    System_Ext(cc, "Claude Code", "Host runtime: discovers skills, loads context, executes the Workflow tool, enforces permissions")
+    System_Ext(fleet, "Claude Model Fleet", "Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5 — the agents a workflow spawns")
+    System_Ext(repo, "Target Repository", "The developer's own codebase and git history — read, and mutated only by implement nodes")
+    System_Ext(forge, "GitHub", "Issues, PRs and CI signals consumed by the autonomous loop; draft PRs opened back")
+    System_Ext(web, "Web & Standards Sources", "Specs, RFCs and publisher catalogues that version-pinned citations are confirmed against")
 
-    %% ---- C4 colour convention ----
-    classDef person   fill:#08427b,stroke:#052e56,color:#ffffff
-    classDef focus    fill:#1168bd,stroke:#0b4884,color:#ffffff
-    classDef external fill:#999999,stroke:#6b6b6b,color:#ffffff
+    Rel(dev, tls, "Invokes a skill, answers gate questions")
+    Rel(maint, tls, "Authors skills and standards shelves")
+    Rel(tls, cc, "Is discovered and loaded as a plugin", "plugin.json")
+    Rel(cc, tls, "Spawns agents and runs workflow scripts on its behalf", "Workflow tool")
+    Rel(tls, fleet, "Routes each node to a model tier", "ROUTES → agent() opts")
+    Rel(tls, repo, "Reads code; implement nodes write patches", "tool calls")
+    Rel(tls, forge, "Reads feedback; opens draft PRs, never merges", "REST")
+    Rel(tls, web, "Confirms every version pin before citing it", "HTTPS")
 
-    class dev,maint person
-    class system focus
-    class cc,fleet,repo,forge,web external
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
 ## Reading it back, one sentence per arrow
