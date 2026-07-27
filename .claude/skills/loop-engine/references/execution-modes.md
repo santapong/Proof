@@ -153,7 +153,7 @@ Everything else that refutes, rebuts, fact-checks, or tries to break a result is
 const DRY_LIMIT = MODE === 'all-out' ? 3 : MODE === 'lite' ? 1 : 2
 ```
 
-`MODE` is defined by the canonical `ROUTES` block in §M8 (`const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'`), and this line is byte-identical to the one there — copy the whole block, never this snippet alone. Do **not** write `input.mode` here: templates normalize with `const input = typeof args === 'string' ? JSON.parse(args) : args`, which yields `undefined` when `args` is absent, and a bare `input.mode` then throws a `TypeError` before a single agent spawns.
+`MODE` is defined by the canonical `ROUTES` block in §M8 and is deliberately **not** restated here — read it there and copy the whole block, never a snippet of it. `DRY_LIMIT` is the one routed constant §M8 does *not* carry: **this fence is its single source of truth**, and a template that loops reproduces this line byte-identically from here. Do **not** write `input.mode` here: templates normalize with `const input = typeof args === 'string' ? JSON.parse(args) : args`, which yields `undefined` when `args` is absent, and a bare `input.mode` then throws a `TypeError` before a single agent spawns.
 
 `MAX_ROUNDS` stays at its authored backstop (L4) and finder `ANGLES` stay as authored — widening angles is a decomposition change, not a mode change. Every round still `log()`s its dry counter (L5), and **the log line must include the mode** so a transcript is self-describing:
 
@@ -185,22 +185,22 @@ items(n) = n.fanOut                        for a known work-list
 width(n) = 1                               for a non-verify node
          = 1                               for a gating DECISION or a deterministic
                                            measurement, in BOTH modes (§M5 carve-outs)
-         = 1                               optimize, standard verify/judge/critic on an
+         = 1                               balanced, standard verify/judge/critic on an
                                            ordinary ask ("find any bugs")
-         = 3                               optimize, standard verify/judge/critic when the
+         = 3                               balanced, standard verify/judge/critic when the
                                            ask is thorough / audit / comprehensive (H4)
-         = 3                               optimize, correctness-critical/gating VERIFY
+         = 3                               balanced, correctness-critical/gating VERIFY
          = 3                               all-out mode, standard verify/judge/critic
          = 5                               all-out mode, correctness-critical/gating VERIFY
 
 tokens(n) = agents(n) × BAND[kind][mode] × SIZE[n.size]   summed componentwise (low, high)
 ```
 
-`BAND` is indexed by both `kind` and `mode`; both columns are tabulated below, and the pre-flight evaluates the whole expression twice — once at `mode = 'full'` for the headline figure and once at `mode = 'optimize'` for the comparison the human is actually shown. Estimating a full-mode run against the optimize band understates it and is the single easiest way to under-price the bill the human is about to approve.
+`BAND` is indexed by both `kind` and `mode`; both columns are tabulated below, and the pre-flight evaluates the whole expression twice — once at `mode = 'all-out'` for the headline figure and once at `mode = 'balanced'` for the comparison the human is actually shown. Estimating a full-mode run against the `balanced` band understates it and is the single easiest way to under-price the bill the human is about to approve.
 
 **One `kind` is not a `taskType`.** `planner on Fable` is selected by the *flag*, not by the node: it applies when `n.taskType === 'planner'` **and** `input.planner === 'fable'`, and it replaces the plain `planner` row for that one node. Every other `kind` in the table below is the node's `taskType` verbatim. Without this rule the Fable row is unreachable and a `--planner fable` run is priced as though it were running Opus 5 — which is precisely the run where the human most needs an honest number, because it is the slowest and the least familiar.
 
-Both `width(n)` and `BAND` therefore depend on `input.planner` as well as on mode. A pre-flight that ignores the flag prices the wrong DAG.
+`BAND` therefore depends on `input.planner` as well as on mode, and a pre-flight that ignores the flag prices the wrong DAG. `width(n)` does **not**: §M7a's first precondition makes the planner a single node in every mode, so the flag moves the band and never the count. `--fable-gate` (§M7b) selects **no** row at all — there is no *gating on Fable* band — so a gating verify with one Fable lens prices its other lenses from the `gating` row while that one lens stays **unpriced**. Name it as unpriced and report the node as a lower bound; pricing it as Opus 5 understates the one lens the flag exists to add.
 
 `MAX_ROUNDS` and `ANGLES` are declared `const`s in the script, so a discovery loop's **upper bound** is known even though its actual length is not. **State the result explicitly as a strict upper bound**: a loop that goes dry early comes in under it, and the pre-flight says so.
 
@@ -221,6 +221,8 @@ Both `width(n)` and `BAND` therefore depend on `input.planner` as well as on mod
 Why the two columns differ at all, given that tokens are not billed per mode: all-out mode pins a richer model and lifts effort, and both produce **longer** output for the same prompt. The lift is per-kind, not a flat multiplier — a `scout` node moving Haiku 4.5 → Opus 5 at `high` roughly 2.5×s its output, while `gating` is **identical in both columns** because §M3's gating row already runs `claude-opus-5` at `max` in balanced; it has no travel left, so its band must not move either. Most of all-out mode's cost comes from *agent count* — modifier A suppressed and width 1→3 (5 on a gating verify) — not from the band, and a pre-flight that shows a 3× band lift with no width lift has priced something wrong.
 
 Same discipline as `SIZE` below: these are calibration, not physics (see the closing fleet-discipline note), and the `all-out` column is the thinner-evidence half because far fewer full-mode runs exist to re-baseline from. Re-baseline both columns at every gate.
+
+**There is no `lite` column, deliberately, and a `lite` phase is therefore unpriced.** The pre-flight fires only under `--mode all-out` and prices that DAG against `balanced`, so a third column has never been needed — and these rows are calibration lifted from run journals, of which `lite` has none. Inventing one by scaling `balanced` down would be a fabricated column wearing a measured column's clothes. Anything pricing a phase says plainly that `lite` has no band and refuses, rather than substituting the `balanced` figures: `balanced` is not even a sound upper bound for `lite`, because §M3's judgment rows *inherit* under `balanced` while `lite` pins Sonnet, so which of the two is dearer depends on the session model — §M3 records Opus 5 as the default, but nothing pins it, which makes the ordering an assumption rather than a located fact. `agents` is unaffected and stays exactly computable at `lite`, where §M5 puts every width at 1.
 
 `SIZE` — per-node multiplier the planner sets on nodes producing large artifacts: `compact` ×0.4, `standard` ×1, `long-form` ×3. This is what makes a six-way authoring fan-out price honestly instead of looking like six scouts.
 

@@ -1,0 +1,266 @@
+{
+  "$comment": "D4 — normative extraction contract for theloopskill-mcp. Machine-readable companion to docs/design/ADR-0004-extraction-strategy-and-failure-semantics.md, beside mcp/runtime-pin.json (D1) and mcp/tool-contracts.json (D3). Every value here was measured against the repo on 2026-07-27, not asserted. A later gate checks this file mechanically.",
+  "adr": "docs/design/ADR-0004-extraction-strategy-and-failure-semantics.md",
+  "decidedOn": "2026-07-27",
+  "appliesTo": "theloopskill-mcp extraction layer",
+
+  "D4_1_authority": {
+    "rule": "Authority is per SYMBOL, not per section. A tool answering about a symbol reads that symbol's authority and cites it. No symbol has two authorities.",
+    "symbols": {
+      "MODE":       { "authority": "execution-modes.md §M8 js fence", "method": "evaluate" },
+      "MODE_ALIAS": { "authority": "execution-modes.md §M8 js fence", "method": "evaluate" },
+      "PLANNER":    { "authority": "execution-modes.md §M8 js fence", "method": "evaluate" },
+      "ROUTES":     { "authority": "execution-modes.md §M8 js fence", "method": "evaluate" },
+      "routeFor":   { "authority": "execution-modes.md §M8 js fence", "method": "evaluate" },
+      "optsFor":    { "authority": "execution-modes.md §M8 js fence", "method": "evaluate" },
+      "WIDTH":      { "authority": "execution-modes.md §M8 js fence", "method": "evaluate" },
+      "DRY_LIMIT":  {
+        "authority": "execution-modes.md §M5 js fence, line 153",
+        "method": "evaluate",
+        "measured": "grep -c DRY_LIMIT over execution-modes.md:306-392 returns 0 — DRY_LIMIT is NOT a member of the §M8 block, despite §M8:395 listing it among the block's four sanctioned omissions and validate.mjs:508-509 registering it as an optional segment OF that block (dead code: never matches).",
+        "consequence": "No gate enforces that the three templates carrying `const DRY_LIMIT` (loop-until-dry.workflow.js:90, improvement-loop.workflow.js:98, project-coverage-plan.workflow.js:71) match execution-modes.md:153. All four are byte-identical today by hand, not by check."
+      },
+      "BAND":       { "authority": "execution-modes.md §M6 markdown table, lines 209-217", "method": "table-parse" },
+      "SIZE":       { "authority": "execution-modes.md §M6 prose, line 218",              "method": "table-parse" },
+      "agents/items/width/tokens formulae": {
+        "authority": "execution-modes.md §M6 UNTAGGED fence, lines 179-197",
+        "method": "not-parsed",
+        "rule": "Returned verbatim as a cited text range with parsed:false. The fence carries Σ and prose clauses ('for a non-verify node') — it is pseudo-code, not JavaScript, and must NEVER be fed to the evaluator. Follows ADR-0003's standards_shelf precedent: a parser limitation surfaced is honest; the same limitation hidden reads as an absence of rules."
+      },
+      "routing rationale / worked example": {
+        "authority": "loop-orchestrate/references/model-routing.md",
+        "method": "advisory-crosscheck-only",
+        "rule": "NEVER an answer source. §M4:102 and model-routing.md:14 both already rule execution-modes.md the source and this file the defect on disagreement."
+      }
+    }
+  },
+
+  "D4_2_locator": {
+    "rule": "A block is located by COORDINATE — (file, headingRegex, fenceLang, ordinal, firstLineRegex) — aborting at the next ^##\\s. A content search over the tree is FORBIDDEN.",
+    "measuredWhy": "A naive content search for a fence whose first line is '// Canonical ROUTES block' matches 29 sites in the tree: 27 *.workflow.js templates, execution-modes.md:306 (the one authority), and .claude/skills/loop-skill/references/template-contract.md:34 — which is STALE (its MODE line at :37 is the retired v1.1 two-mode definition, its WIDTH at :41 has no lite branch) and invisible to every gate, since validate.mjs:592 walks *.workflow.js only.",
+    "firstLineIsAnchorNotIdentifier": true,
+    "reuses": "scripts/validate.mjs:446 canonicalBlock() — same walk, so check 5 and the server cannot diverge on what 'the block' is",
+    "blocks": {
+      "M8_ROUTES": {
+        "file": ".claude/skills/loop-engine/references/execution-modes.md",
+        "headingRegex": "^##\\s+M8\\.",
+        "fenceLang": "js",
+        "ordinal": 1,
+        "firstLineRegex": "^// Canonical ROUTES block",
+        "measured": { "startLine": 306, "endLine": 392, "blockLines": 87, "sha256": "7b0c1b7634e0a16d2dc56b9caa81488668fb5fda653afcc603088cf4feead975" }
+      },
+      "M5_DRY_LIMIT": {
+        "file": ".claude/skills/loop-engine/references/execution-modes.md",
+        "headingRegex": "^##\\s+M5\\.",
+        "fenceLang": "js",
+        "ordinal": 1,
+        "firstLineRegex": "^const DRY_LIMIT\\b",
+        "measured": { "line": 153, "text": "const DRY_LIMIT = MODE === 'all-out' ? 3 : MODE === 'lite' ? 1 : 2", "sha256": "16be3392cc59a7d1c86ab85cc3fb18d559ee3deb624dae4ad51968c9ea4102d8" }
+      }
+    },
+    "sourceFile": { "bytes": 48550, "sha256": "6471e0bb9c8ba786c1bff8edd9761920829d6ac3a0dab9e4388073c51d917e9e", "asOf": "2026-07-27" }
+  },
+
+  "D4_3_evaluation": {
+    "rule": "EVALUATE the block; never reimplement it. Precedent: validate.mjs:373 evaluates template meta with vm.runInNewContext rather than parsing it.",
+    "context": {
+      "contextObject": "Object.create(null)",
+      "codeGeneration": { "strings": false, "wasm": false },
+      "timeout": 1000,
+      "displayErrors": true
+    },
+    "inputConstruction": {
+      "rule": "MANDATORY: `input` is constructed INSIDE the vm from a JSON literal the server serializes. No host-realm object may cross the boundary.",
+      "measured": "With a host-realm object passed in as `input`, `input.constructor.constructor(\"return typeof process\")()` returns \"object\" — the host realm is reachable — EVEN THOUGH the context sets codeGeneration.strings:false, because that binds the VM's Function, not the host's. Constructing input inside the vm, and passing a null-prototype object, both measured clean.",
+      "prelude": "const input = <JSON.stringify(args)>;"
+    },
+    "harvest": {
+      "expression": ";({MODE,PLANNER,ROUTES,routeFor,optsFor,WIDTH})",
+      "rule": "Exactly §M8:397's declared invariant core plus WIDTH (which §M8 always carries even though templates may omit it). plannerAgent, fableGateAgent and FABLE_GATE are NOT harvested — they call agent() and log(), which the server does not and must not provide.",
+      "measured": "async function bodies referencing unbound agent/log DEFINE cleanly; bodies are not evaluated at definition time."
+    },
+    "notASecurityBoundary": {
+      "statement": "The vm isolates the block from the server's own globals. It is NOT a security sandbox — Node's own documentation says so.",
+      "provenanceArgument": "§M8 is a law file in the repo the server ships from, held by validate.mjs check 5 and by review. If that ever stops being true, evaluation stops being safe and the decision must be revisited, not patched."
+    },
+    "measuredContextProperties": {
+      "node": "v24.18.0",
+      "process": "undefined", "require": "undefined", "globalThis.process": "undefined",
+      "vmRealmFunctionAndEval": "EvalError — Code generation from strings disallowed",
+      "syncInfiniteLoop": "ERR_SCRIPT_EXECUTION_TIMEOUT at the timeout",
+      "blockSyntaxError": "SyntaxError, catchable",
+      "unboundGlobal": "ReferenceError, catchable"
+    },
+    "reEvaluatePerInput": true,
+    "doNotMutateHarvested": true,
+    "cost": { "operation": "read 48550 bytes + locate + evaluate + sha256", "iterations": 50, "totalMs": 99.0, "perCallMs": 1.98, "ruling": "evaluate live on every call; ADR-0001's deferral of caching costs nothing on this path" }
+  },
+
+  "D4_4_crosscheck": {
+    "source": { "file": ".claude/skills/loop-engine/references/execution-modes.md", "headingRegex": "^##\\s+M3\\.", "kind": "first markdown table under the heading", "measured": { "startLine": 81, "endLine": 89, "bodyRows": 7 } },
+    "requiredColumns": ["lite", "balanced", "all-out"],
+    "columnNormalization": "strip **, strip backticks, strip '(default)', trim",
+    "labelNormalization": "take text before '<br/>', strip **, trim, split on '/'",
+    "aliasMap": {
+      "$comment": "DECLARED, never inferred. An unmapped token is an ERROR, not a skip — a silently-skipped token is how a renamed kind stops being cross-checked while the coverage count still reads 10.",
+      "scout": "scout", "doc": "doc", "implement": "implement", "analyze": "analyze",
+      "synthesize": "synthesize", "verify": "verify", "judge": "judge", "critic": "critic",
+      "gating": "gating", "planner": "planner",
+      "mechanical": null,
+      "correctness-critical": null
+    },
+    "dedupeRowKeysToSet": {
+      "required": true,
+      "why": "MEASURED CHECKER BUG, not a doc defect: the first draft mapped 'correctness-critical'->gating AND matched the literal 'gating' in the same row label, reporting gating claimed twice. Row labels must be deduped to a set BEFORE counting."
+    },
+    "variantRows": {
+      "planner@fable": {
+        "matchRegex": "--planner fable",
+        "rule": "Checked through optsFor({taskType:'planner'}) under {planner:'fable'}, NEVER against ROUTES, and EXCLUDED from the coverage count.",
+        "why": "execution-modes.md:201 — 'selected by the flag, not by the node'. PLANNER (:312) overrides only opts.model; effort still comes from routeFor('planner')."
+      }
+    },
+    "cellParse": { "form": "<model>, <effort>", "inherit": "model:null", "omit": "effort:null" },
+    "coverageAssertion": "every one of the ten ROUTES keys is claimed EXACTLY ONCE across the table",
+    "measuredResultToday": {
+      "columns": ["lite", "balanced", "all-out"],
+      "coverage": { "scout": 1, "doc": 1, "implement": 1, "analyze": 1, "synthesize": 1, "verify": 1, "judge": 1, "critic": 1, "gating": 1, "planner": 1 },
+      "unclaimed": [], "overclaimed": [],
+      "disagreements": 0,
+      "verdict": "GREEN — 10 keys x 3 modes agree"
+    }
+  },
+
+  "D4_5_failureSemantics": {
+    "rule": "A disagreement is a TOOL-LEVEL ERROR, never a silent winner. The D4.1 authority ladder settles which FILE to fix; it does not license answering from one reading while the other says otherwise.",
+    "envelope": "extends ADR-0003 §D3.5 — {code, message, fix, details[], fallback}; `fix` is MANDATORY and imperative, per ADR-0002 §D2.4's grammar",
+    "tiers": {
+      "structural": {
+        "behaviour": "ok:false / isError:true IN BAND. initialize and tools/list still succeed; the server never dies on a bad document (ADR-0002 degrade-not-die).",
+        "codes": ["source-missing", "source-heading-missing", "source-fence-missing", "source-fence-unclosed", "source-fence-empty", "source-anchor-moved", "source-block-uninterpretable", "source-shape-changed"]
+      },
+      "semantic": {
+        "behaviour": "ok:false, and error.details[] carries BOTH readings with BOTH citations. Never resolve by precedence at call time.",
+        "codes": ["crosscheck-disagreement", "crosscheck-coverage", "crosscheck-label-unmapped", "crosscheck-columns-changed", "mode-vocabulary-changed", "kind-vocabulary-changed"]
+      },
+      "advisory": {
+        "behaviour": "ok:true. The answer is §M8's. The drift rides in notes[] with both citations.",
+        "codes": ["advisory-copy-drift"]
+      }
+    },
+    "exampleFix": "crosscheck-disagreement -> 'edit execution-modes.md §M3 to match §M8 — §M4:102 makes §M8 the source', NEVER 'ignore §M3'",
+    "unknownModeInteraction": {
+      "measured": "The §M8 block itself resolves an UNRECOGNIZED mode SILENTLY to 'balanced' (measured: LITE->balanced, fast->balanced, absent->balanced), exactly as §M9.5:421 warns.",
+      "rule": "route_node MUST validate the mode against the advertised enum BEFORE evaluating, and return ADR-0003's unknown_mode error naming the three values. It must never inherit the block's silent fallback."
+    }
+  },
+
+  "D4_6_contradictionRuling": {
+    "authoritative": {
+      "MODE and the mode vocabulary": "execution-modes.md §M8:309-311 (RAW_MODE / MODE_ALIAS / MODE, three-mode form)",
+      "DRY_LIMIT": "execution-modes.md §M5:152-154 (its own fence)",
+      "mode vocabulary inside §M6": "execution-modes.md §M6:209 (the BAND table header: `balanced` | `all-out`)"
+    },
+    "theHalfThatMoved": "the prose — §M5:156's parenthetical quote and §M6's width(n) rows plus :199",
+    "repairsApplied": [
+      { "line": 156, "kind": "delete-a-copy", "note": "Deletes the second definition of MODE rather than refreshing it, and states the DRY_LIMIT authority split. Refreshing would have restored a copy that drifts again on the next §M8 edit with no gate on it." },
+      { "line": "188,190,192", "kind": "rename", "note": "optimize -> balanced in the width(n) rows, aligning them with the BAND table twelve lines below" },
+      { "line": 199, "kind": "rename", "note": "mode='full' -> mode='all-out'; mode='optimize' -> mode='balanced'; 'the optimize band' -> 'the `balanced` band'" }
+    ],
+    "deliberatelyNotTouched": {
+      "lines": [229, 244],
+      "why": "There `optimize` is the word a HUMAN TYPES as the third answer to the pre-flight question, not a mode value. Renaming it would change a consent contract D4 does not rule on."
+    },
+    "bothReadingsOfM5_156_wereFalse": "Read as a claim about the quoted MODE line, the quote is the retired v1.1 two-mode definition. Read as a claim about the DRY_LIMIT line in the fence above it, there is no DRY_LIMIT line in §M8 to be identical to.",
+    "gatesAfterRepair": {
+      "validate": "PASSED — 45252 assertions, 0 failures, 5 warnings",
+      "smoke": "26 of 27 — same pre-existing loop-v1/v1-conductor planner failure recorded in mcp/runtime-pin.json.gateBaseline",
+      "identicalToBaselineIn": ["ADR-0001", "ADR-0002", "ADR-0003"],
+      "whyTheRepairIsSafe": "smoke.mjs never opens execution-modes.md; validate.mjs reads only §M8 via MODES_DOC (:25). Neither gate reads §M5 or §M6 prose — which is exactly why the drift survived."
+    }
+  },
+
+  "D4_7_probes": {
+    "E1": { "name": "locate", "asserts": "heading, fence open, fence close, non-empty, first-line anchor — in that order", "errorCodes": ["source-heading-missing", "source-fence-missing", "source-fence-unclosed", "source-fence-empty", "source-anchor-moved"] },
+    "E2": { "name": "evaluate", "asserts": "the block evaluates in the locked context and yields ROUTES", "errorCodes": ["source-block-uninterpretable"] },
+    "E3": { "name": "invariant core", "asserts": "MODE, PLANNER, ROUTES, routeFor, optsFor, WIDTH all present; routeFor/optsFor/WIDTH are functions", "errorCodes": ["source-shape-changed"] },
+    "E4": { "name": "mode vocabulary", "asserts": "Object.keys(ROUTES) === ['lite','balanced','all-out'] in order; each canonical mode resolves to itself; optimize->balanced and full->all-out", "errorCodes": ["mode-vocabulary-changed"] },
+    "E5": { "name": "kind coverage", "asserts": "Object.keys(ROUTES[m]) identical for all three modes and equal to the ten canonical keys in order", "errorCodes": ["kind-vocabulary-changed"] },
+    "E6": { "name": "§M3 cross-check", "asserts": "columns, alias mapping, coverage-exactly-once, cell-by-cell agreement", "errorCodes": ["crosscheck-columns-changed", "crosscheck-label-unmapped", "crosscheck-coverage", "crosscheck-disagreement"] },
+    "E7": {
+      "name": "retired vocabulary",
+      "mechanism": "sha256 CONTENT allowlist, NOT a line-number allowlist",
+      "measuredWhy": "The first design pinned sanctioned lines by NUMBER; deleting one §M3 row shifted every later line and produced two spurious failures. Hashing the line text is shift-proof.",
+      "shrinkOnly": "A sanctioned line that DISAPPEARS is not an error — the compat shim shrinking is the intended direction (§M9.6:429). Any NEW or EDITED occurrence of a retired mode VALUE fails.",
+      "detectRegex": "`(optimize|full)`|'(optimize|full)'|\"(optimize|full)\"",
+      "allowlist": [
+        { "line": 30,  "sha256": "f311d8f68649c2e5a88d085becf44164c6bc83fb71ac02e397e6c13024d5052b", "excerpt": "A mode is chosen **once per invocation and frozen for that run**" },
+        { "line": 427, "sha256": "542643aab33573897f95c792ac5d363e6685346734e5ee5723959e4be21dacb7", "excerpt": "6. **`optimize` and `full` are deprecated aliases, still accepted.**" }
+      ],
+      "errorCodes": ["retired-vocabulary"]
+    },
+    "E8": { "name": "advisory third-copy", "asserts": "model-routing.md's routing table vs §M8", "severity": "advisory — ok:true, notes[] only", "errorCodes": ["advisory-copy-drift"] },
+    "mutationMatrix": {
+      "$comment": "Every row planted against the real tree and observed firing. The unmutated tree passes E1-E7 (E8 is red by pin, see D4_8).",
+      "rows": [
+        { "mutation": "§M8 heading renamed M8. -> M8bis.",              "caughtBy": ["E1"],             "reportedAs": "source-heading-missing" },
+        { "mutation": "anchor comment reworded",                        "caughtBy": ["E1"],             "reportedAs": "source-anchor-moved" },
+        { "mutation": "§M8 fence retagged ```js -> ```javascript",       "caughtBy": ["E1"],             "reportedAs": "source-fence-missing" },
+        { "mutation": "file truncated mid-block",                       "caughtBy": ["E1"],             "reportedAs": "source-fence-unclosed" },
+        { "mutation": "§M8 fence emptied",                              "caughtBy": ["E1"],             "reportedAs": "source-anchor-moved" },
+        { "mutation": "§M8 syntax broken (const ROUTES = {{)",          "caughtBy": ["E2"],             "reportedAs": "source-block-uninterpretable" },
+        { "mutation": "§M8 REVERTED to the two-mode MODE",              "caughtBy": ["E4", "E6", "E7"], "reportedAs": "mode-vocabulary-changed: alias optimize resolves to optimize, pinned balanced" },
+        { "mutation": "§M8 all-out.scout effort xhigh -> high",         "caughtBy": ["E6"],             "reportedAs": "crosscheck-disagreement naming both readings" },
+        { "mutation": "§M3 balanced.implement -> claude-opus-5",        "caughtBy": ["E6"],             "reportedAs": "crosscheck-disagreement naming both readings" },
+        { "mutation": "§M3 loses the gating row",                       "caughtBy": ["E6"],             "reportedAs": "crosscheck-coverage: [[\"gating\",0]]" },
+        { "mutation": "§M3 gains an unmapped kind (triage)",            "caughtBy": ["E6"],             "reportedAs": "crosscheck-label-unmapped" },
+        { "mutation": "MODE_ALIAS remapped optimize:'lite'",            "caughtBy": ["E4"],             "reportedAs": "mode-vocabulary-changed" },
+        { "mutation": "MODE_ALIAS line deleted",                        "caughtBy": ["E2"],             "reportedAs": "source-block-uninterpretable (ReferenceError)" },
+        { "mutation": "the stale optimize prose reinstated at :156",    "caughtBy": ["E7"],             "reportedAs": "retired-vocabulary naming the line" }
+      ],
+      "theTwoRowsTheTaskAskedFor": "If §M8 is the half that moves back to the retired vocabulary, E4 fails. If the prose is the half that moves, E7 fails."
+    }
+  },
+
+  "D4_8_advisoryThirdCopy": {
+    "file": ".claude/skills/loop-orchestrate/references/model-routing.md",
+    "table": { "headingRegex": "^##\\s+Routing table", "measuredHeader": ["Node kind", "balanced model", "optimize effort", "all-out model", "full effort", "Rationale"], "liteColumnPresent": false },
+    "headerIsHalfRenamed": "'optimize effort' means BALANCED effort; 'full effort' means ALL-OUT effort",
+    "severity": "advisory — never ok:false",
+    "why": [
+      "The tie-break is already law twice over: execution-modes.md §M4:102 and model-routing.md:14 both say execution-modes.md is the source and this file is the defect on disagreement.",
+      "The fix is an edit to a file D4 does not rule on.",
+      "Blocking every route_node call on a pre-existing red would ship a server that never answers — the mistake ADR-0002 §D2.4 already ruled against."
+    ],
+    "pinnedDisagreements": [
+      { "key": "scout",     "mode": "all-out", "statedEffort": "high", "canonicalEffort": "xhigh", "statedModel": "claude-opus-5", "canonicalModel": "claude-opus-5" },
+      { "key": "doc",       "mode": "all-out", "statedEffort": "high", "canonicalEffort": "xhigh", "statedModel": "claude-opus-5", "canonicalModel": "claude-opus-5" },
+      { "key": "implement", "mode": "all-out", "statedEffort": "high", "canonicalEffort": "xhigh", "statedModel": "claude-opus-5", "canonicalModel": "claude-opus-5" }
+    ],
+    "shrinkOnly": "A FOURTH disagreement fails the gate. Repairing any of these three ALSO fails the gate, forcing the pin to shrink rather than rot. Same property as E7's allowlist.",
+    "relatedUnfixed": { "file": ".claude/skills/loop-engine/references/execution-modes.md", "line": 221, "text": "a `scout` node moving Haiku 4.5 -> Opus 5 at `high`", "canonical": "§M8 all-out.scout effort is xhigh", "note": "same class of error, in §M6 prose; NOT repaired because D4 rules only on the optimize/balanced contradiction" }
+  },
+
+  "D4_9_gateAssertions": {
+    "$comment": "What D4 adds to the golden-query gate, on top of ADR-0003 §D3.9's fifteen.",
+    "assertions": [
+      "No model ID string ('claude-haiku-4-5','claude-sonnet-5','claude-opus-5','claude-fable-5') and no effort literal ('medium','high','xhigh','max') appears anywhere in mcp/server.mjs — every one must be a property of an object the evaluator returned.",
+      "The extraction resolves the §M8 block to the byte range pinned in D4_2, and its sha256 matches the pin or the gate reports the drift with both hashes.",
+      "E1-E7 pass against the unmutated tree.",
+      "Each of the fourteen mutations in D4_7.mutationMatrix, planted in a scratch copy of the tree, produces the stated error code — the gate MUST NOT mutate the repo.",
+      "route_node rejects mode:'fast' with unknown_mode BEFORE evaluating, and never returns 'balanced' for it (the block's own silent fallback must not leak).",
+      "estimate_phase returns §M6's untagged fence with parsed:false and a citation covering lines 179-197.",
+      "A tool asked for the dry threshold cites execution-modes.md:153, NOT §M8.",
+      "E8's disagreement set equals D4_8.pinnedDisagreements exactly — more OR fewer fails.",
+      "The evaluator's context object has a null prototype and `input` is built inside the vm: assert that a block containing `input.constructor` sees undefined."
+    ]
+  },
+
+  "D4_10_notRuledHere": [
+    "Whether model-routing.md:35-43 is repaired, and by whom (D4 rules only that it is advisory and pins its current drift).",
+    "execution-modes.md:221's 'at `high`' scout claim, and :229/:244's human-facing `optimize` answer word.",
+    "template-contract.md:37,41's stale illustrative block.",
+    "Whether validate.mjs gains a check 9 diffing §M5:153 against the three templates that carry DRY_LIMIT (see D4_1.symbols.DRY_LIMIT.consequence).",
+    "Caching, HTTP transport, packaging — deferred by the approved v1 line."
+  ]
+}

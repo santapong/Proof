@@ -1,0 +1,105 @@
+{
+  "$comment": "Machine-readable pins for ADR-0001. Normative: an implementation or gate that disagrees with this file is wrong. See mcp/ADR-0001-runtime-and-dependency.md.",
+  "adr": "ADR-0001-runtime-and-dependency.md",
+  "decidedOn": "2026-07-27",
+  "verifiedOn": "2026-07-27",
+  "repoState": { "branch": "develop", "head": "4dd461a" },
+
+  "runtime": {
+    "decision": "zero-dependency",
+    "transport": "stdio",
+    "framing": "newline-delimited JSON, trailing \\r tolerated, no Content-Length",
+    "jsonrpc": "2.0",
+    "language": "JavaScript (ESM, .mjs)",
+    "nodeApisOnly": true,
+    "packageManifest": null,
+    "lockfile": null,
+    "dependencies": {},
+    "stdoutIsProtocolOnly": true,
+    "diagnosticsStream": "stderr"
+  },
+
+  "protocol": {
+    "advertise": "2025-06-18",
+    "negotiation": "echo the client's requested protocolVersion verbatim when it is in supportedVersions; otherwise reply with advertise",
+    "supportedVersions": [
+      "2025-11-25",
+      "2025-06-18",
+      "2025-03-26",
+      "2024-11-05",
+      "2024-10-07"
+    ],
+    "supportedVersionsSource": "@modelcontextprotocol/sdk@1.29.0 dist/esm/types.js:4 SUPPORTED_PROTOCOL_VERSIONS",
+    "clientRequestsObserved": "2025-11-25",
+    "methods": [
+      "initialize",
+      "notifications/initialized",
+      "ping",
+      "tools/list",
+      "tools/call",
+      "resources/list",
+      "resources/read"
+    ],
+    "unknownMethod": -32601,
+    "errorCodes": { "parse": -32700, "methodNotFound": -32601, "invalidParams": -32602, "internal": -32603 },
+    "domainFailureShape": "successful tools/call result with isError: true, never a JSON-RPC error"
+  },
+
+  "serverInfo": { "name": "theloopskill-mcp", "version": "0.1.0" },
+
+  "goldenQueryGate": {
+    "requirement": "MUST drive the server through the real SDK client (Client + StdioClientTransport) — this is what makes the zero-dependency choice safe",
+    "sdkUsage": "test-time only, via npx or a scratch tree; never a shipped dependency, never committed to the repo"
+  },
+
+  "runnerUp": {
+    "condition": "only if HTTP/streamable transport is un-deferred, or a required capability lands that must be hand-implemented (sampling, elicitation, progress, tasks)",
+    "shape": "scoped mcp/package.json; repo root stays manifest-free",
+    "requiresLawAmendment": "scoped carve-out to CONTRIBUTING.md:69 and scripts/validate.mjs:12-14",
+    "package": "@modelcontextprotocol/sdk",
+    "version": "1.29.0",
+    "versionRange": "1.29.0",
+    "caretForbidden": true,
+    "resolved": "https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.29.0.tgz",
+    "integrity": "sha512-zo37mZA9hJWpULgkRpowewez1y6ML5GsXJPY8FI0tBBCd77HEvza4jDqRKOXgHNn867PVGCyTdzqpz0izu5ZjQ==",
+    "publishedOn": "2026-03-30",
+    "enginesNode": ">=18",
+    "transitivePackages": 93,
+    "contentBytes": 15384678,
+    "api": {
+      "use": [
+        "@modelcontextprotocol/sdk/server/index.js#Server",
+        "@modelcontextprotocol/sdk/server/stdio.js#StdioServerTransport",
+        "setRequestHandler with SDK-exported request schemas from @modelcontextprotocol/sdk/types.js"
+      ],
+      "forbid": [
+        "@modelcontextprotocol/sdk/server/mcp.js#McpServer",
+        "registerTool",
+        "registerResource",
+        "registerPrompt",
+        "any direct import of zod"
+      ],
+      "reason": "registerTool inputSchema is ZodRawShapeCompat | AnySchema, and AnySchema = z3.ZodTypeAny | z4.$ZodType (dist/esm/server/zod-compat.d.ts:3) — both Zod. The high-level API makes 'one runtime dep' false. The low-level Server takes SDK-exported schemas, so your source never imports zod and hand-written JSON Schema passes through unmodified.",
+      "inputSchemaStyle": "hand-written JSON Schema literals"
+    },
+    "doNotUse": {
+      "path": "/home/santapong/node_modules/@modelcontextprotocol/sdk",
+      "version": "1.12.0",
+      "reason": "17 minors stale; lacks registerResource entirely, and its four resource() overloads are @deprecated on 1.29.0. Pin against what ships, not what is installed."
+    }
+  },
+
+  "gateBaseline": {
+    "measuredOn": "2026-07-27",
+    "validate": { "command": "node scripts/validate.mjs", "exit": 0, "assertions": 45252, "failures": 0, "warnings": 5 },
+    "smoke": {
+      "command": "node scripts/smoke.mjs",
+      "exit": 1,
+      "executed": 27,
+      "passed": 26,
+      "preExistingFailure": ".claude/skills/loop-v1/templates/v1-conductor.workflow.js — declares a planner node but --planner fable never routed to claude-fable-5",
+      "note": "pre-existing on develop before any mcp/ work; not caused by and not in scope for D1"
+    },
+    "mcpDirIsGateNeutral": "validate.mjs scopes its walk to .claude/skills (line 24) and node --checks in os.tmpdir() (line 287); smoke.mjs walks ROOT but skips node_modules by name (line 25) and collects only *.workflow.js"
+  }
+}

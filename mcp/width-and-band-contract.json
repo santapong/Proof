@@ -1,0 +1,260 @@
+{
+  "$comment": "D6 — normative machine-readable resolution of the three semantic gaps where D3's approved route_node and estimate_phase signatures cannot answer correctly from the source. Beside mcp/runtime-pin.json (D1), mcp/tool-contracts.json (D3), mcp/extraction-contract.json (D4) and mcp/correctness-invariant.json (D5). Every number here was measured against the tree on the date below; every rule cites file:line.",
+  "adr": "docs/design/ADR-0006-width-shape-band-coverage-and-flag-selected-rows.md",
+  "decidedOn": "2026-07-27",
+  "ownerSkill": "loop-engine",
+  "constrains": {
+    "file": "mcp/tool-contracts.json",
+    "paths": [
+      "D3.6_tools[name=route_node].inputSchema.properties.nodeShape",
+      "D3.6_tools[name=route_node].inputSchema.required",
+      "D3.6_tools[name=route_node].resultSchema.properties.width",
+      "D3.6_tools[name=route_node].resultSchema.required",
+      "D3.6_tools[name=estimate_phase].inputSchema.properties.nodes.items.properties.nodeShape",
+      "D3.6_tools[name=estimate_phase].inputSchema.properties.nodes.items.properties.declaredLenses",
+      "D3.5_errorEnvelope.schema.properties.code.enum"
+    ]
+  },
+
+  "sourcePins": {
+    "file": ".claude/skills/loop-engine/references/execution-modes.md",
+    "bytesAfterD6Edits": 49983,
+    "sha256AfterD6Edits": "44f38c6a940821da47549a5588f8ac5dee1ed387ac3ac845d545c06ec291ab27",
+    "bandTable": {
+      "headerLine": 209,
+      "rowLines": [211, 212, 213, 214, 215, 216, 217],
+      "sha256OfLines209to217": "4ca533b17b0e55574e9a568e67047e966669b1cd00b6487aa7f15090f4d61a67",
+      "dataColumns": ["balanced", "all-out"],
+      "measuredColumnCount": 2,
+      "liteColumnPresent": false
+    },
+    "m5WidthTable": { "headerLine": 130, "measuredColumnCount": 2, "liteColumnPresent": false },
+    "m5CarveOutClause": { "atLine": 141, "through": 148 },
+    "m6WidthRules": { "atLine": 185, "through": 194 },
+    "m6FlagSelectedRowRule": { "atLine": 201 },
+    "m6WidthDoesNotDependOnPlanner": { "atLine": 203, "editedBy": "D6" },
+    "m6NoLiteColumn": { "atLine": 225, "addedBy": "D6" },
+    "m8WidthDefinition": { "atLine": 352 },
+    "m8DomainDeclaredInProse": { "atLine": 397, "quote": "one with no adversarial verify stage omits `WIDTH` (see §M5 on which node shapes count)" }
+  },
+
+  "D6_1_width": {
+    "finding": "§M8's WIDTH is not wrong, it is PARTIAL. execution-modes.md:397 declares its domain in prose — adversarial verify nodes — and delegates the shape question to §M5 rather than encoding it. WIDTH('scout') is a DOMAIN error, not a value error. The block is correct for its intended caller and unusable as a general answer.",
+    "widthIsAFunctionOf": ["nodeShape", "mode", "askIsThorough", "declaredLenses", "taskType(only for the gating VERIFY distinction)"],
+    "m8WidthIsAFunctionOf": ["kind", "mode"],
+
+    "measuredM8Width": {
+      "$comment": "MEASURED — real §M8 block located by D4's coordinate walk (lines 306-392, 6278 bytes), evaluated in a null-prototype vm with codeGeneration disabled.",
+      "lite":     { "scout": 1, "doc": 1, "implement": 1, "analyze": 1, "synthesize": 1, "verify": 1, "judge": 1, "critic": 1, "gating": 1, "planner": 1 },
+      "balanced": { "scout": 1, "doc": 1, "implement": 1, "analyze": 1, "synthesize": 1, "verify": 1, "judge": 1, "critic": 1, "gating": 3, "planner": 1 },
+      "all-out":  { "scout": 3, "doc": 3, "implement": 3, "analyze": 3, "synthesize": 3, "verify": 3, "judge": 3, "critic": 3, "gating": 5, "planner": 3 }
+    },
+
+    "disagreementTable": [
+      { "case": "any non-verify node, all-out", "m6Says": 1, "m6At": 185, "m8Says": 3, "verdict": "WRONG on 7 of 10 kinds" },
+      { "case": "gating DECISION, all modes", "m6Says": 1, "m6At": 186, "m5At": 141, "m8Says": "3 balanced / 5 all-out", "verdict": "WRONG" },
+      { "case": "deterministic measurement, all modes", "m6Says": 1, "m6At": 186, "m8Says": "3 balanced / 5 all-out", "verdict": "WRONG" },
+      { "case": "standard verify, balanced, ordinary ask", "m6Says": 1, "m6At": 188, "m8Says": 1, "verdict": "agrees" },
+      { "case": "standard verify, balanced, thorough ask", "m6Says": 3, "m6At": 190, "m8Says": 1, "verdict": "WRONG" },
+      { "case": "gating VERIFY, balanced", "m6Says": 3, "m6At": 192, "m8Says": 3, "verdict": "agrees" },
+      { "case": "standard verify, all-out", "m6Says": 3, "m6At": 193, "m8Says": 3, "verdict": "agrees" },
+      { "case": "gating VERIFY, all-out", "m5Says": 5, "m5At": 133, "m8Says": 5, "verdict": "agrees" }
+    ],
+
+    "liteWidthAuthority": {
+      "$comment": "MEASURED — §M5's width table (:130) and §M6's width(n) rules both cover balanced and all-out only; §M6:187 says the carve-outs hold 'in BOTH modes'. §M8's WIDTH is the SOLE source for lite width, and it says 1 for every kind. Not a conflict, but a single point of authority worth recording.",
+      "soleSource": "execution-modes.md:352",
+      "value": 1,
+      "appliesTo": "every kind"
+    },
+
+    "D6_1_1_nodeShape": {
+      "rule": "REQUIRED on route_node and on every estimate_phase node item. Four-member TOTAL enum. Never defaulted from taskType, never defaulted at all.",
+      "enum": ["adversarial-verify", "gating-decision", "deterministic-measurement", "non-verify"],
+      "d3HadEnum": ["adversarial-verify", "gating-decision", "deterministic-measurement"],
+      "d3HadItOptional": true,
+      "changes": ["add the fourth member 'non-verify'", "move into inputSchema.required", "same on estimate_phase node items"],
+      "whyRequiredNotDefaulted": "taskType -> nodeShape is not a function in either direction. §M5:146 splits taskType:'gating' into a VERIFY (3 balanced / 5 all-out) and a DECISION (1 in all modes) in one sentence, and §M5's carve-out 2 ('re-queries a metric, re-runs a check, or reads a system state') can wear a 'verify' taskType. Any default is a guess, and the guess is wrong on the gating node — the worst possible error distribution. ADR-0005 I1 forbids a field the server chose because a lookup failed.",
+      "absenceIs": "JSON-RPC -32602 (structural, per ADR-0003's protocolSeam: missing required property)",
+      "teachabilityRule": "Because absence is -32602 and a -32602 is repaired by a model reading the schema, the nodeShape description MUST carry the §M5 carve-out text and cite §M5:141-148. The description is the error message here."
+    },
+
+    "D6_1_2_askIsThorough": {
+      "rule": "Load-bearing in exactly one cell; required there, inert and echoed as 'inert' everywhere else.",
+      "decidingCell": "mode === 'balanced' && nodeShape === 'adversarial-verify' && taskType !== 'gating'",
+      "derivation": "§M6:188-189 gives 1 on an ordinary ask and §M6:190-191 gives 3 on thorough/audit/comprehensive. §M5:132 makes all-out always 3, and §M6:192 makes balanced gating VERIFY always 3, so the ask cannot move either.",
+      "absenceInDecidingCell": { "shape": "in-band", "code": "width_undetermined", "mustName": ["the field", "the §M5/§M6 clause that needs it"] },
+      "whyInBandNotMinus32602": "The field is schema-optional and its necessity depends on the values of other fields, so absence is shape-valid but unanswerable — ADR-0003's isErrorEnvelope side of the seam."
+    },
+
+    "D6_1_3_widthStructure": {
+      "rule": "route_node returns width as a structure, never a bare integer. resultSchema.properties.width changes from {type:integer, enum:[1,3,5]} to the object below. D3's optional free-string `widthReason` is subsumed by governingClause and REMOVED.",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["value", "effective", "shape", "governingClause", "cappedBy", "m8WidthWouldSay", "agreesWithM8"],
+        "properties": {
+          "value": { "type": "integer", "enum": [1, 3, 5], "description": "The §M5/§M6 width for (shape, mode, ask). Never §M8 WIDTH's output." },
+          "effective": { "type": "integer", "minimum": 1, "description": "min(value, declaredLenses) when declaredLenses was supplied, else equal to value. This is what will actually dispatch — 11 templates cap with Math.min(WIDTH(...), LENSES.length) or slice(0, WIDTH(...))." },
+          "shape": { "type": "string", "enum": ["adversarial-verify", "gating-decision", "deterministic-measurement", "non-verify"] },
+          "governingClause": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["text", "citation"],
+            "properties": {
+              "text": { "type": "string", "description": "The §M5/§M6 clause that produced `value`, verbatim." },
+              "citation": { "$ref": "tool-contracts.json#/D3.2_citation/schema" }
+            },
+            "description": "REQUIRED. A width scalar with no governing clause is exactly the thing that is confidently wrong."
+          },
+          "cappedBy": { "type": ["string", "null"], "enum": ["declared-lenses", null], "description": "§M5:137-139 — a node declaring no lenses is pinned at width 1 forever; mode never invents lenses." },
+          "dispatch": { "type": "string", "description": "§M5:150 — a same-model verify fan-out of width >= 3 dispatches staggered or sequentially; three consecutive width-5 all-out bursts died whole to API 529 on 2026-07-27." },
+          "m8WidthWouldSay": { "type": "integer", "description": "What §M8's WIDTH(kind) returns for this kind and mode, evaluated live from the block." },
+          "agreesWithM8": { "type": "boolean", "description": "REQUIRED. false is an expected, disclosed state on 7 of 10 kinds under all-out." }
+        }
+      },
+      "whyCarryM8Disagreement": "D3's own route_node description says the tool explains what the canonical ROUTES block will compute at run time. Returning only the §M5-correct value would make the server right and the running template wrong with no artifact connecting them. The pair is also the mechanism by which the four live ledger call sites below get discovered."
+    },
+
+    "D6_1_4_declaredLenses": {
+      "rule": "ADD to estimate_phase's node items with route_node's semantics. D3 has it on route_node only, so one server answers the same question two ways.",
+      "schema": { "type": "integer", "minimum": 0 },
+      "absentMeans": "The node has not yet declared its lens set. This is a DECLARED meaning, not a failed lookup (ADR-0005's absent-vs-unrecognized distinction), so it is NOT an error: the node's agents are reported as a strict upper bound and the phase says so, reusing §M6:205's existing idiom.",
+      "measuredCappingTemplates": 11
+    },
+
+    "liveDefectNotFixedByD6": {
+      "$comment": "MEASURED. Four call sites invoke WIDTH outside the domain execution-modes.md:397 declares, over EVERY node, into the cast ledger — the audit artifact. Under all-out a scout node's row reads width:3 where §M6:185 says 1, and §M6:180's agents = Σ items(n) × width(n) computed from that ledger is 3x over on every non-verify node. Not fixed here: D6 rules on route_node and estimate_phase signatures, not templates.",
+      "sites": [
+        { "file": ".claude/skills/loop-orchestrate/templates/project-plan.workflow.js", "line": 290, "expr": "width:${WIDTH(n.taskType)}", "context": "cast log, every node in TASKS" },
+        { "file": ".claude/skills/loop-orchestrate/templates/project-plan.workflow.js", "line": 420, "expr": "width: WIDTH(n.taskType)", "context": "JSON ledger" },
+        { "file": ".claude/skills/loop-v1/templates/v1-conductor.workflow.js", "line": 208, "expr": "width:${WIDTH(n.taskType)}", "context": "cast log, every node" },
+        { "file": ".claude/skills/loop-v1/templates/v1-conductor.workflow.js", "line": 332, "expr": "width: WIDTH(n.taskType)", "context": "JSON ledger" }
+      ],
+      "whyNoGateCatchesIt": "scripts/validate.mjs reads only §M8 from execution-modes.md (:442-565) and diffs TEMPLATES AGAINST THE BLOCK, never a call site against §M5.",
+      "remedy": "Report the §M5 width at the ledger, not WIDTH(n.taskType) — the call sites are OUTSIDE the canonical block, so this needs no fleet-wide block change and no check-5 impact."
+    }
+  },
+
+  "D6_2_litePricing": {
+    "ruling": "EXPLICIT UNPRICED REFUSAL. estimate_phase with mode:'lite' or compareTo:'lite' returns ok:false, code mode_not_priceable. It does NOT return the balanced figures under any label.",
+    "measuredAbsence": { "bandHeaderLine": 209, "dataColumns": ["balanced", "all-out"], "liteColumnPresent": false },
+    "whyNotALabelledBalancedUpperBound": {
+      "verdict": "The bound is UNSOUND, and this is a derivation rather than a judgment call.",
+      "argument": "§M3's judgment rows (analyze, synthesize, verify, judge, critic) carry model:null under balanced — inherit the session model — while lite PINS claude-sonnet-5. Measured in the live block: lite.analyze at §M8:320 is {model:'claude-sonnet-5', effort:'medium'} and balanced.analyze at §M8:332 is {model:null, effort:'high'}. So balanced >= lite holds only if the session model is at least Sonnet. §M3:97 records Opus 5 as 'the default' but nothing pins it, and the server answers at authoring time (H10) and cannot read the session model at all.",
+      "invariantViolated": "ADR-0005 I1 — the ordering depends on a fact that is in no located byte range, so a bound derived from it is not a pure total function over located ranges."
+    },
+    "whyNotALiteColumnInM6": "§M6:219 sources the bands from run journals ('run journals are the source') and §M6:223 calls them 'calibration, not physics', naming all-out as already the thinner-evidence half. There are no lite run journals. A synthesised column is indistinguishable from a measured one at the point of use.",
+    "enumsStayAtThree": {
+      "rule": "mode and compareTo keep enum [lite, balanced, all-out] on BOTH tools.",
+      "why": "Removing lite from estimate_phase alone would make two tools on one server disagree about what a mode is, and a client that got a lite answer from route_node would hit an opaque -32602 instead of a sentence explaining why lite is unpriced. D3.3 pinned the advertised enum at exactly three across all tools, matching §M2:54's grammar."
+    },
+    "errorShape": {
+      "ok": false,
+      "code": "mode_not_priceable",
+      "messageMustName": ["the mode supplied", "that the BAND table has exactly two columns"],
+      "citationMustPointAt": { "file": ".claude/skills/loop-engine/references/execution-modes.md", "line": 225, "why": "A positive sentence stating the absence. Citing absence-by-omission from a table header is weak evidence; citing an explicit sentence is strong. This is why the doc fix was worth opening." },
+      "fix": "Re-run the estimate at --mode balanced or --mode all-out; lite has no published band.",
+      "fallback": "Today's instruction unchanged — read §M6's BAND table directly and note that it prices balanced and all-out only.",
+      "detailsMustCarry": {
+        "field": "agents",
+        "issue": "computable without BAND and therefore reported, but as diagnostic detail and never as a result",
+        "why": "§M6:180's agents = Σ items(n) × width(n) needs no BAND, and every lite width is 1 (measured). There is NO result field on the error branch, so a schema-driven client reading result.tokens finds nothing rather than a number that means something else. This is what keeps it outside ADR-0005 I2's no-partial-result rule."
+      }
+    },
+    "docFixApplied": {
+      "file": ".claude/skills/loop-engine/references/execution-modes.md",
+      "line": 225,
+      "kind": "additive paragraph after :223",
+      "isNot": "a lite column",
+      "states": ["the absence is deliberate", "the pre-flight fires only under all-out (§M6:166)", "bands are run-journal calibration and lite has no journals", "balanced is not a sound upper bound, with the inherit-vs-pin reason", "agents stays exactly computable at lite"]
+    }
+  },
+
+  "D6_3_flagSelectedBandRows": {
+    "ruling": "The BAND key is not taskType. It is a declared resolver over row labels read from the table itself, with exactly one declared exception.",
+    "resolver": {
+      "step1": "if node.taskType === 'planner' && flags.planner === 'fable' -> 'planner on Fable'   (§M6:201)",
+      "step2": "otherwise the unique row whose '/'-split label set contains node.taskType",
+      "rowLabelsReadFrom": "the BAND table at execution-modes.md:211-217, never hardcoded (ADR-0005: enums read from source)",
+      "declaredException": { "label": "planner on Fable", "line": 217, "doesNotSplitOnSlash": true, "isNotATaskType": true }
+    },
+    "measuredCoverage": {
+      "routesKeys": ["analyze", "critic", "doc", "gating", "implement", "judge", "planner", "scout", "synthesize", "verify"],
+      "bandSplitKeys": ["analyze", "critic", "doc", "gating", "implement", "judge", "planner", "scout", "synthesize", "verify"],
+      "setsEqual": true
+    },
+    "measuredCostOfKeyingOnTaskTypeAlone": [
+      { "mode": "balanced", "plainPlanner": "45k-110k", "plannerOnFable": "75k-200k", "understatedBy": "1.67x-1.82x", "missing": "30k-90k" },
+      { "mode": "all-out", "plainPlanner": "60k-140k", "plannerOnFable": "90k-230k", "understatedBy": "1.50x-1.64x", "missing": "30k-90k" }
+    ],
+
+    "D6_3_1_fableGateHasNoRow": {
+      "finding": "MEASURED — the BAND table has a 'gating' row and NO 'gating on Fable' row, while §M7b routes one lens of the all-out width-5 gating verify to Fable.",
+      "measuredUnderstatementIfIgnored": "10%-12% on the gating node, at the planner row's own Fable ratio",
+      "ruling": "Price the other four lenses from the 'gating' row. Report the Fable lens as unpricedLenses:1. The node total and the phase total carry lowerBound:true.",
+      "forbidden": "Deriving a Fable gating band by transposing the planner row's ratio across kinds. §M6:221 says the lift 'is per-kind, not a flat multiplier', and a transposed ratio is a value the server chose (ADR-0005 I1).",
+      "docFixApplied": { "line": 203, "states": "there is no gating on Fable band; name the lens as unpriced and report the node as a lower bound" }
+    },
+
+    "D6_3_2_fallbackIsUnpriced": {
+      "finding": "DERIVED — §M7a's automatic fallback means a --planner fable node can spend TWO agents. §M7a:277 makes this unconditional under zero data retention: every Fable request returns HTTP 400. A ZDR org therefore pays a wasted round-trip emitting no output tokens plus a full Opus planner, so its true cost sits near the plain planner row, not the Fable row.",
+      "ruling": "estimate_phase returns the Fable planner as two branches, never one number.",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["successPath", "fallbackPath", "condition", "alwaysUnderZDR"],
+        "properties": {
+          "successPath": { "bandKey": "planner on Fable", "citationRequired": true },
+          "fallbackPath": { "bandKey": "planner", "citationRequired": true },
+          "condition": { "type": "string", "const": "§M7a:281-284 — a refusal or an HTTP 400 under zero data retention resolves agent() to null and retries at claude-opus-5/max. Under ZDR this fires on every request (§M7a:277), so the fallback path is the normal case, not the exception." },
+          "alwaysUnderZDR": { "type": "boolean", "const": true }
+        }
+      },
+      "why": "§M6 is the consent screen. 'This figure assumes Fable answers' belongs on it. Both branches are located rows; nothing is invented."
+    },
+
+    "correctedDocClaim": {
+      "line": 203,
+      "before": "Both `width(n)` and `BAND` therefore depend on `input.planner` as well as on mode.",
+      "wasFalseBecause": "§M7a precondition 1 makes the planner a single node in every mode ('Single node only — never a fan-out'), so width(planner) is 1 regardless of the flag. --fable-gate likewise replaces one lens of an existing fan-out (§M7b precondition 2) and does not change width either. The flag moves the band and never the count.",
+      "after": "BAND depends on input.planner; width(n) does not — plus the explicit statement that --fable-gate selects no row at all."
+    }
+  },
+
+  "requiredAdditionsToD3Enum": {
+    "$comment": "mcp/tool-contracts.json declares its error code enum CLOSED. D6 did not edit it — it is D3's deliverable from this same phase. Lift these verbatim at implementation time, alongside D5's one-entry unknown_task_kind addition. Three total across D5 and D6.",
+    "path": "D3.5_errorEnvelope.schema.properties.code.enum",
+    "add": [
+      { "code": "width_undetermined", "doc": "Shape-valid input where the §M5/§M6 width cannot be determined without a field the caller did not supply. Today: askIsThorough absent in the one cell where it decides (balanced + adversarial-verify + non-gating). details[] names the field and the clause." },
+      { "code": "mode_not_priceable", "doc": "estimate_phase was asked to price a mode with no BAND column. Today: lite only. The citation points at execution-modes.md:225, which states the absence positively." }
+    ]
+  },
+
+  "D6_4_gateAssertions": {
+    "$comment": "Nine assertions on top of D3's fifteen, D4's nine and D5's nine. G6.1-G6.5 are pure-filesystem and need no SDK or network, so they belong in the cheap gate tier.",
+    "G6.1": "BAND row labels at :211-217, '/'-split and excluding the declared flag-selected row 'planner on Fable', are SET-EQUAL to Object.keys(ROUTES.balanced) from the live §M8 block. Fires if §M6 gains a row, loses one, or renames a kind.",
+    "G6.2": "The BAND table header has exactly two data columns and neither is 'lite'. If a lite column is ever added, D6.2's refusal is obsolete and must be re-ruled rather than silently kept.",
+    "G6.3": "estimate_phase(mode:'lite') and estimate_phase(compareTo:'lite') both return ok:false with code mode_not_priceable, a citation resolving to execution-modes.md:225, and NO result field.",
+    "G6.4": "estimate_phase with planner:'fable' selects bandKey 'planner on Fable' for the planner node and 'planner' for it when planner:'opus'. Assert the two totals differ by exactly the measured 30k-90k per planner node.",
+    "G6.5": "estimate_phase with fableGate:true on an all-out gating VERIFY returns unpricedLenses:1 and lowerBound:true on both the node and the phase, and its priced figure equals exactly 4 lenses at the gating band.",
+    "G6.6": "route_node called without nodeShape returns JSON-RPC -32602 (not an in-band envelope), and the -32602 is reachable for all ten taskTypes.",
+    "G6.7": "route_node returns width as an object carrying a non-empty governingClause.text whose citation round-trips: resources/read the cited file and recompute the sha256 over the cited range (D3.2).",
+    "G6.8": "For every (taskType, mode) pair, route_node's width.m8WidthWouldSay equals the live §M8 WIDTH(kind) evaluated in a vm, and width.agreesWithM8 equals (value === m8WidthWouldSay). Assert exactly 7 disagreements at all-out with nodeShape:'non-verify', matching the recorded table — a change in that count means §M8 or §M5 moved.",
+    "G6.9": "route_node with nodeShape:'adversarial-verify', mode:'balanced', taskType not 'gating', and askIsThorough absent returns in-band width_undetermined naming the field. The same call at mode:'all-out' succeeds and reports askIsThorough as inert."
+  },
+
+  "gateBaselineAfterD6": {
+    "validate": { "command": "node scripts/validate.mjs", "result": "PASSED", "assertions": 45252, "failures": 0, "warnings": 5, "exit": 0 },
+    "smoke": { "command": "node scripts/smoke.mjs", "passed": 26, "of": 27, "preExistingFailure": ".claude/skills/loop-v1/templates/v1-conductor.workflow.js — declares a planner node but --planner fable never routed to claude-fable-5", "attributableToD6": false },
+    "note": "Identical to the baseline recorded in ADR-0001 through ADR-0005. validate.mjs reads only §M8 from execution-modes.md (:442-565), so neither D6 edit is in its path — which is also why the §M5/§M6 drift D6 found survived."
+  },
+
+  "D6_5_notRuledHere": [
+    "The four live WIDTH(n.taskType) ledger call sites. Recorded above with the exact remedy; D6 rules on tool signatures, not templates.",
+    "§M8's WIDTH signature itself. The block is duplicated verbatim into 27 templates and any edit is a fleet-wide change requiring every copy in the same commit; the block is also correct for its declared domain.",
+    "Adding a lite BAND column or a gating-on-Fable BAND row. Both would be fabricated calibration; both need run journals first.",
+    "The eight dead MODE === 'full' comparisons in five templates (see the D6 open questions). Retired-vocabulary drift in the same neighbourhood, but a template concern.",
+    "Whether estimate_phase should price the §M7a fallback's wasted round-trip in tokens. D6 rules it is disclosed as a branch; quantifying a 400's token cost needs a run journal."
+  ]
+}

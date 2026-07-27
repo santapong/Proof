@@ -1,0 +1,210 @@
+{
+  "$comment": "NORMATIVE. The correctness invariant every theloopskill-mcp tool rests on, plus the arithmetic rules that make estimate_phase reproducible. Companion to docs/design/ADR-0005-correctness-invariant-no-silent-default.md. Composes with mcp/runtime-pin.json (D1), mcp/tool-contracts.json (D3) and mcp/extraction-contract.json (D4); amends none of them.",
+  "adr": "docs/design/ADR-0005-correctness-invariant-no-silent-default.md",
+  "decidedOn": "2026-07-27",
+  "decidedBy": "loop-algo (D5, phase 1 DECIDE)",
+  "appliesTo": "every tool and every resource read of theloopskill-mcp",
+  "measurementBaseline": {
+    "branch": "develop",
+    "commit": "4dd461a",
+    "note": "with D4's execution-modes.md repair applied (5 insertions / 5 deletions, uncommitted at measurement time)",
+    "probe": "scratchpad/d5probe/vmprobe.mjs plus inline node -e runs; not committed"
+  },
+
+  "D5_1_invariant": {
+    "oneSentence": "Every answer is derived from a located source span, or is an error naming the span it could not find.",
+    "I1_provenance": {
+      "statement": "Every field of every ok:true result is either (a) the content of a byte range of a named source file located by coordinate, or (b) the value of a pure total function applied to such ranges and to caller arguments already validated against an enumeration itself read from a source range.",
+      "prohibition": "No field is ever a value the server selected because a lookup failed."
+    },
+    "I2_totality": {
+      "statement": "Every call terminates in exactly one of two outcomes.",
+      "outcomeA": "ok:true, citations[] non-empty, every citation resolving (D3.2 round-trip).",
+      "outcomeB": "ok:false, naming the span it could not find — the file, and the heading or RFC 6901 JSON Pointer it looked under.",
+      "prohibition": "There is no third outcome: no partial result, no result carrying a substituted default, and no unnamed throw."
+    },
+    "layerArgument": {
+      "scriptLayer": "execution-modes.md §M8:306-392 — forgives, correctly, because H10 (harness-policy.md:76) leaves a script no way to refuse without dying mid-DAG.",
+      "parserLayer": "execution-modes.md §M2:59 — 'An unrecognized value is never guessed: name the three valid values and ask.'",
+      "ruling": "An MCP tool is a parser-layer citizen. It does not inherit §M8's fallbacks.",
+      "repoAcknowledgement": "execution-modes.md §M9.5:421 already names the hazard: 'ROUTES[MODE] falls back to balanced for any unrecognized value rather than failing loudly', and records the breaking rename it forced in loop-autopilot/templates/improvement-loop.workflow.js."
+    }
+  },
+
+  "D5_2_proof": {
+    "label": "PROVED",
+    "shape": "structural induction over the answer-construction function",
+    "precondition": "Every caller-supplied value used as a KEY into a source-derived table is checked for membership in that table's key set — read from the source — BEFORE any evaluation or lookup occurs.",
+    "preconditionOwner": "the server, in code. ADR-0001's hand-rolled zero-dependency runtime supplies no JSON-Schema enforcement, so the enum D3.6 advertises is documentation until the server enforces it.",
+    "baseCase": "a located span; provenance is the locator (file, heading regex, fence ordinal, line range) plus D3.2's sha256 over the LF-normalized range.",
+    "inductiveStep": [
+      "(i) projection or field read of a located value — provenance inherited",
+      "(ii) lookup T[k] where T derives from a located span and k was validated by the precondition — total on its domain, so the fallback arm is unreachable and provenance is inherited from T",
+      "(iii) arithmetic over located numerals — covered by D5_4"
+    ],
+    "completeness": "There is no fourth step shape: the only construct that can introduce an unsourced value is a fallback arm, and (ii) makes every such arm unreachable.",
+    "termination": "validation is a finite membership test over a finite enumeration; evaluation is bounded by D4.3's vm timeout of 1000 ms; every path reaches ok:true or an ok:false in D4.5's closed code set.",
+    "counterexamplesTheProofRejects": "the 11 measured adversarial inputs in D5_3_measuredSilentDefaults and D5_3_measuredKindFallback",
+    "notClaimed": "EVIDENCE-level generation was not run; the input domains are a 5-element and a 10-element enum, so D5_5 requires exhaustive enumeration instead."
+  },
+
+  "D5_3_measuredSilentDefaults": {
+    "$comment": "MEASURED 2026-07-27 by vm.runInContext over the REAL §M8 block located by D4.2's coordinate walk (lines 306-392, 6278 bytes), input constructed inside the vm per D4.3.",
+    "rows": [
+      { "inputMode": "balanced", "resolvedMODE": "balanced", "class": "exact" },
+      { "inputMode": "lite", "resolvedMODE": "lite", "class": "exact" },
+      { "inputMode": "all-out", "resolvedMODE": "all-out", "class": "exact" },
+      { "inputMode": "optimize", "resolvedMODE": "balanced", "class": "declared-alias", "source": "§M9.6:427" },
+      { "inputMode": "full", "resolvedMODE": "all-out", "class": "declared-alias", "source": "§M9.6:427" },
+      { "inputMode": "(absent)", "resolvedMODE": "balanced", "class": "declared-default", "source": "§M2:59 — legal, silent, by design" },
+      { "inputMode": "", "resolvedMODE": "balanced", "class": "declared-default" },
+      { "inputMode": "fast", "resolvedMODE": "balanced", "class": "SILENT-SUBSTITUTION", "note": "the exact scenario §M2:59 names as the failure" },
+      { "inputMode": "LITE", "resolvedMODE": "balanced", "class": "SILENT-SUBSTITUTION", "note": "§M2:59 opens with 'Both flags are case-insensitive'; §M8:311 uses indexOf, which is case-SENSITIVE. A layer split, not a typo." },
+      { "inputMode": "All-Out", "resolvedMODE": "balanced", "class": "SILENT-SUBSTITUTION", "note": "same" },
+      { "inputMode": "constructor", "resolvedMODE": "(the Object function)", "class": "UNNAMED-THROW", "error": "TypeError: Cannot read properties of undefined (reading 'analyze')", "cause": "MODE_ALIAS is a plain object literal, so its prototype chain is in the key domain; MODE_ALIAS['constructor'] is truthy, MODE becomes a function, ROUTES[MODE] is undefined, and §M8:351's `|| ROUTES[MODE].analyze` dereferences it." },
+      { "inputMode": "toString", "resolvedMODE": "(prototype member)", "class": "UNNAMED-THROW", "error": "TypeError: Cannot read properties of undefined (reading 'analyze')" },
+      { "inputMode": "valueOf", "resolvedMODE": "(prototype member)", "class": "UNNAMED-THROW", "error": "TypeError: Cannot read properties of undefined (reading 'analyze')" },
+      { "inputMode": "__proto__", "resolvedMODE": "(Object.prototype)", "class": "UNNAMED-THROW", "error": "TypeError: Cannot read properties of undefined (reading 'analyze')" }
+    ],
+    "notADefectInM8": "D5 does NOT rule on §M8 and proposes no edit to it. No flag parser can emit 'constructor', the block is duplicated verbatim into 27 templates where any edit is a fleet-wide change, and the fallbacks are correct for a script under H10. These rows are a statement about who must validate, not about who is wrong."
+  },
+
+  "D5_3_measuredKindFallback": {
+    "$comment": "MEASURED, same probe. §M8:351 `routeFor = (kind) => (ROUTES[MODE] && ROUTES[MODE][kind]) || ROUTES[MODE].analyze`. UNRULED before D5: D3.5's closed error enum has no unknown_task_kind, and D4.5's unknownModeInteraction covers only :311.",
+    "rows": [
+      { "taskType": "gating", "mode": "balanced", "correct": { "model": "claude-opus-5", "effort": "max", "width": 3 }, "afterTypo": { "model": null, "effort": "high", "width": 1 }, "delta": "model pin LOST (inherits session), effort max->high, width 3->1" },
+      { "taskType": "gating", "mode": "all-out", "correct": { "model": "claude-opus-5", "effort": "max", "width": 5 }, "afterTypo": { "model": "claude-opus-5", "effort": "xhigh", "width": 3 }, "delta": "effort max->xhigh, width 5->3" },
+      { "taskType": "implement", "mode": "lite", "correct": { "model": "claude-sonnet-5", "effort": null }, "afterTypo": { "model": "claude-sonnet-5", "effort": "medium" }, "delta": "effort silently ADDED" }
+    ],
+    "typoForms": ["gate", "Gating", "gatiing", "gating "],
+    "severity": "The sharper of the two branches. §M3:87 describes the gating row as 'a false all-clear ships the defect'. A one-character typo silently loses the model pin and two thirds of the verifier width, and returns a plausible, fully-formed, CITABLE route while doing it."
+  },
+
+  "D5_3_constraints": {
+    "D5_3_1_validateBeforeEvaluate": {
+      "rule": "Validate `mode` against the accepted five and `taskType` against the ten keys of ROUTES[MODE] BEFORE evaluating §M8.",
+      "enumSource": "READ FROM THE LOCATED BLOCK, never hardcoded. A hardcoded enum is itself a silent default about what the source says.",
+      "acceptedModes": ["lite", "balanced", "all-out", "optimize", "full"],
+      "advertisedModes": ["lite", "balanced", "all-out"],
+      "tenKinds": ["scout", "doc", "implement", "analyze", "synthesize", "verify", "judge", "critic", "gating", "planner"],
+      "absentIsLegal": "An ABSENT optional argument takes the default the SOURCE declares (mode -> balanced, §M2:59). An absent argument is not a failed lookup, so I1 is untouched. A PRESENT-but-unrecognized value has no declared default and is an error. This distinction is the whole rule.",
+      "rejection": "D3.5's in-band error envelope, and the message MUST name the valid values (§M2:59)."
+    },
+    "D5_3_2_unknownTaskKind": {
+      "rule": "Symmetric to unknown_mode. The message MUST enumerate the ten kinds and MUST NOT guess.",
+      "effect": "§M8:351's `|| ROUTES[MODE].analyze` arm becomes unreachable from the server while staying intact in the block for the 27 templates that need it."
+    },
+    "D5_3_3_probesThrowNamed": {
+      "rule": "A doc-shape probe failure (D4.7 E1-E8) is a STRUCTURAL error under D4.5. It names the file and the heading or fence it could not find. It is never converted into 'the previous answer' or 'the default block'.",
+      "seamWithD2": "The server does not die; the CALL does. initialize, tools/list and resources/list still succeed (ADR-0002 degrade-not-die). A missing document is answered in band, with the fix instruction, on the call that needed it."
+    },
+    "D5_3_4_crosscheckIsAnError": {
+      "rule": "A cross-check mismatch propagates as ok:false carrying BOTH readings with BOTH citations. Never resolved by precedence at call time.",
+      "why": "Both readings are located spans; I1 cannot pick between them without inventing a preference. Returning either as ok:true is a silent default about which file is right.",
+      "scope": "The D4.1 authority ladder settles which FILE to fix; it does not license answering while the other file misinforms every human who reads it."
+    },
+    "D5_3_5_noPartialTable": {
+      "rule": "The unit of parse-success is one Markdown table under one heading. Either every row parsed (parsed:true), or NONE of it is (parsed:false, raw text, plus a row in unparsedSections naming the reason).",
+      "prohibition": "Never some rows of one table.",
+      "why": "Half a table is the worst possible answer: a caller cannot distinguish 'this shelf has four standards' from 'this shelf has nine and five rows failed a regex'.",
+      "livePath": "MEASURED by D3: of 21 shelves, 2 yield zero table rows and 6 lack the three-grade vocabulary.",
+      "reconciliation": "This is how D3's 'degrade rather than promise rows' and D5's 'no silent default' are the same rule, not a compromise between them."
+    },
+    "D5_3_6_noClockNoRandomness": {
+      "rule": "Forbidden anywhere in estimate_phase's reachable code.",
+      "forbidden": ["Date.now()", "new Date() with no argument", "Math.random()", "process.hrtime", "process.hrtime.bigint", "performance.now()", "process.env reads", "toLocaleString / toLocaleDateString / Intl formatting", "filesystem mtime/atime/ctime"],
+      "sourceForFirstFour": "§M6:177 — 'pure deterministic arithmetic over the authored DAG. No sampling, no Date.now(), no Math.random(), no argless new Date().' D5 extends the list and binds it to the server.",
+      "whyItIsLoadBearing": "§M6:437 — 'the same DAG under the same mode yields byte-identical numbers on every run — which is exactly what makes an approved estimate diffable against actual spend.' §M6:237-241 stamps the approved figures into the script as `const ESTIMATE = {...}` so the gate can diff approved-vs-actual against journal.jsonl. One clock read destroys that permanently."
+    },
+    "D5_3_7_noCaching": {
+      "ruling": "v1 re-locates and re-reads on every call. No cache, no watch mode. A DECISION, not an omission.",
+      "measuredCost": {
+        "readBothSubstrates": "0.729 ms per call (145.76 ms over 200 iterations, warm page cache) for execution-modes.md 48550 bytes + boundary-audit.json 70859 bytes read and JSON.parsed",
+        "m8VmExtraction": "1.98 ms (MEASURED by D4, 50 iterations / 99.0 ms)",
+        "total": "under 3 ms against a model turn"
+      },
+      "argument": "Freshness becomes a property of the mechanism rather than an invariant somebody maintains: no cache key to get wrong, no invalidation to miss, no window in which the server answers from a document the user has already edited. That last one matters more here than in a normal service, because the expected editing session IS someone changing these documents and asking the server what they now say.",
+      "revisitCondition": "a measurement showing the read is material",
+      "revisitKey": "(path, size, mtimeNs, sha256) — never path alone, and never mtime alone: mtime has one-second granularity on some filesystems, which is a silent default about whether a file changed."
+    }
+  },
+
+  "D5_4_arithmetic": {
+    "$comment": "Makes §M6:437's byte-identity a PROVED property of the estimator rather than an accident of today's calibration table.",
+    "formula": "§M6:196 — tokens(n) = agents(n) × BAND[kind][mode] × SIZE[n.size], summed componentwise (low, high)",
+    "hazard": {
+      "statement": "§M6:225 defines SIZE compact as ×0.4. 0.4 is NOT representable in IEEE-754 binary64.",
+      "whyItDoesNotBiteToday": "MEASURED: all 19 distinct BAND endpoints in §M6:211-217 are divisible by 5, so band × 0.4 lands exactly on the integer 2·band/5 for every published value. 0 non-integer results over the full table; float and integer paths agree.",
+      "whyThatIsNotSafe": "The exactness rests on a property of the constants that nothing in the repo requires, documents, or checks — while §M6:223 mandates 'Re-baseline both columns at every gate', §M6:219 records every row was already lifted ~2.5× on 2026-07-27, and §M6:437 calls BAND and SIZE 'the only tunable numbers in this file'.",
+      "counterexampleClass": "any band b with 5 ∤ b",
+      "measuredCounterexamples": [
+        { "band": 12346, "float": 4938.400000000001, "exactRational": 4938.4 },
+        { "band": 12347, "float": 4938.8, "exactRational": 4938.8 },
+        { "band": 47501, "float": 19000.4, "exactRational": 19000.4 },
+        { "band": 62499, "float": 24999.600000000002, "exactRational": 24999.6 },
+        { "band": 33333, "float": 13333.2, "exactRational": 13333.2 }
+      ]
+    },
+    "A1_exactRationals": {
+      "rule": "SIZE is an exact rational pair, never a decimal literal. The multiplier never appears as 0.4 in server code.",
+      "SIZE": { "compact": [2, 5], "standard": [1, 1], "long-form": [3, 1] },
+      "prose": "§M6:225's '×0.4' stays as it is — it is the right thing to say to a human. D5 does not edit it.",
+      "pinnedEquivalence": "num/den === 0.4 at every published band — MEASURED true for all 19 endpoints. A re-baseline that breaks it fails the D5_5 canary rather than silently drifting."
+    },
+    "A2_roundAtNodeSumInIntegers": {
+      "rule": "subtotal = floor((2·agents·band·num + den) / (2·den)), all operands integers — round-half-up on the exact rational agents·band·num/den. Then sum the integer subtotals.",
+      "why": "Rounding happens at exactly ONE declared point with exactly ONE declared rule. A rounding rule that is declared and applied at a fixed point is not a silent default; an implicit float truncation appearing wherever the last operation happened to land is."
+    },
+    "A3_orderIndependence": {
+      "label": "PROVED",
+      "statement": "Under A2 every subtotal is a non-negative integer and every partial sum is a non-negative integer ≤ 2^53, hence exactly representable in binary64; binary64 addition of exactly-representable values whose exact sum is exactly representable is exact; exact integer addition is associative and commutative; therefore the total is independent of node iteration order.",
+      "precondition": "running total ≤ 2^53",
+      "measuredMargin": {
+        "worstRealisticNode": "25 agents × 230000 (the 'planner on Fable' all-out high band, §M6:217) × 3 (long-form)",
+        "maxIntermediate_2num_plus_den": 34500001,
+        "twoPow53": 9007199254740992,
+        "headroomFactor": 261078231,
+        "note": "§M6:254's ≤15-agents-per-workflow guideline keeps real DAGs well under this."
+      },
+      "measuredCorroboration": {
+        "experiment": "5 nodes with bands not divisible by 5, all 5! = 120 summation permutations",
+        "floatPath": { "distinctTotals": 3, "values": [249606.80000000002, 249606.8, 249606.80000000005] },
+        "integerPath": { "distinctTotals": 1, "values": [249607] },
+        "reading": "Three answers to one question is a DISPROOF of §M6:437's byte-identity for the float path under a re-baselined table."
+      }
+    },
+    "A4_guards": {
+      "safeInteger": "Assert Number.isSafeInteger on every subtotal and on the running total. A violation is `internal`, never a rounded answer.",
+      "exactFlag": "The estimator reports exact:true|false per node so a caller can tell a rounded subtotal from an exact one. That flag is derived, not defaulted."
+    },
+    "notRuledHere": "§M6's BAND and SIZE VALUES, which are calibration (§M6:437). D5 rules how they are combined, never what they are."
+  },
+
+  "D5_5_gateAssertions": [
+    { "id": "G5.1", "assert": "Every row of D5_3_measuredSilentDefaults with class SILENT-SUBSTITUTION or UNNAMED-THROW is REJECTED by the server with code unknown_mode, and the message text contains all three of 'lite', 'balanced', 'all-out'." },
+    { "id": "G5.2", "assert": "The accepted-five (lite|balanced|all-out|optimize|full) all succeed; optimize and full canonicalize on output and appear only in deprecations[] (D3.3)." },
+    { "id": "G5.3", "assert": "An ABSENT mode succeeds and resolves to balanced with no deprecation and no note — the declared default of §M2:59 is not an error." },
+    { "id": "G5.4", "assert": "Exhaustive over taskType: all ten kinds succeed; the four typo forms (gate, Gating, gatiing, 'gating ') are REJECTED with code unknown_task_kind and a message naming all ten kinds." },
+    { "id": "G5.5", "assert": "No route_node response in the whole gate run ever equals ROUTES[MODE].analyze when the requested taskType was not literally 'analyze'. The fallback arm is unreachable." },
+    { "id": "G5.6", "assert": "estimate_phase over one DAG in all 120 permutations of a 5-node ordering returns exactly 1 distinct (agents, tokensLow, tokensHigh) triple, and every component is Number.isSafeInteger." },
+    { "id": "G5.7", "assert": "Static scan of estimate_phase's reachable code finds zero occurrences of the eight forbidden non-determinism sources in D5_3_6.forbidden." },
+    { "id": "G5.8", "assert": "standards_shelf per-section atomicity: for every returned section, either entries.length equals the source table's row count with parsed:true, or entries is empty with parsed:false and a matching row in unparsedSections. Never a partial row set." },
+    { "id": "G5.9", "assert": "CANARY — every BAND endpoint parsed from §M6:211-217 satisfies band % 5 === 0. On failure the gate reports that a re-baseline reintroduced the float hazard and that A1/A2's integer path is the only thing still holding byte-identity. Advisory-loud: fails the gate, and the fix is to confirm the integer path, not to revert the calibration." }
+  ],
+
+  "requiredAdditionsToD3Enum": {
+    "$comment": "D5 does NOT edit mcp/tool-contracts.json — it is another agent's phase artifact and its error enum is declared closed. Recorded here so the implementer applies it, and raised as an open question.",
+    "file": "mcp/tool-contracts.json",
+    "path": "D3.5_errorEnvelope.schema.properties.code.enum",
+    "add": ["unknown_task_kind"],
+    "codeDoc": "A taskType outside the ten keys of ROUTES[MODE]. Message MUST name the ten valid kinds and MUST NOT guess (§M2:59, by symmetry with unknown_mode). Never resolve via §M8:351's analyze fallback."
+  },
+
+  "D5_6_notRuledHere": [
+    "The content of §M8 (execution-modes.md:306-392). D5 proposes no edit; the block is correct for a script under H10 and is duplicated verbatim into 27 templates.",
+    "§M6's BAND and SIZE VALUES — calibration, per §M6:437.",
+    "§M2:59's case-insensitivity promise versus §M8:311's case-sensitive indexOf. D5 records the split and rules that the server folds nothing and accepts nothing unfolded; it does not rule on whether §M8 should fold.",
+    "Whether the golden-query gate lives in CI — packaging, deferred by the approved v1 line and already flagged by D2 and D4.",
+    "The consumer routers' own validation. D5 binds the server only."
+  ]
+}
