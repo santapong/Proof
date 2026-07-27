@@ -213,7 +213,7 @@ The five relationships running `loop-operate → loop-incident → loop-debug �
 
 Each handoff is a **checkable question**, not a judgment call: *does a runbook exist and does running it restore the SLI?* · *is the service currently down, or is the defect merely reproducible?* · *is the rollout in flight, or baked?* The full 19-way matrix is in **[`docs/design/boundary-audit.json`](docs/design/boundary-audit.json)**, which is normative — it outranks any plan that disagrees with it.
 
-→ **[Component diagram](docs/c4/component.md)** opens `loop-engine` itself, and **[the architecture notes](docs/c4/README.md)** trace one invocation end to end and give the prior art behind each design idea.
+→ **[Component diagram](docs/c4/component.md)** opens `loop-engine` itself · **[the skill fleet](docs/c4/skills.md)** draws each role group and what is inside any one skill · **[skill anatomy](docs/c4/skill-anatomy.md)** explains why that shape · **[the architecture notes](docs/c4/README.md)** trace one invocation end to end with the prior art behind each idea.
 
 ## The autonomy ladder
 
@@ -342,7 +342,7 @@ Every skill follows the same shape: `SKILL.md` (thin router) + `references/` (de
 | `.claude/skills/loop-ship/` | Rollout strategies, migrations, DORA, release gates, supply-chain gate, rollback playbook, standards; `release-readiness-gate.workflow.js` |
 | `.claude/skills/loop-operate/` | SLO model, alerting, observability, runbooks, on-call triage, autonomy & rollback, standards; `health-response.workflow.js` |
 | `.claude/skills/loop-incident/` | Incident command, mitigation playbook, reproduction & timeline, postmortem, standards; `incident-reconstruction.workflow.js` |
-| `docs/c4/` | **Architecture**, documented with the C4 model: context, container, component, plus the mechanism, ideas and references |
+| `docs/c4/` | **Architecture**, documented with the C4 model: context, container, component, the skill fleet, skill anatomy, plus the mechanism, ideas and references |
 | `docs/design/` | **Normative design records** — the 18-skill boundary audit and the execution-mode spec |
 | `docs/plans/` | Release build plans |
 | `scripts/validate.mjs` | The validation gate, run by `.github/workflows/validate.yml` on every push and PR |

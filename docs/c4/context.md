@@ -2,7 +2,7 @@
 
 **What is this system, who uses it, and what does it depend on?**
 
-TheLoopSkill is a **Claude Code plugin**: eighteen composable engineering skills built on a multi-agent workflow engine. It ships no server and no runtime of its own — it is Markdown and JavaScript that the Claude Code host loads, reads, and executes on the developer's behalf. That is the single most important thing this diagram communicates, and it is why Claude Code appears *outside* the box rather than inside it.
+TheLoopSkill is a **Claude Code plugin**: nineteen composable engineering skills built on a multi-agent workflow engine. It ships no server and no runtime of its own — it is Markdown and JavaScript that the Claude Code host loads, reads, and executes on the developer's behalf. That is the single most important thing this diagram communicates, and it is why Claude Code appears *outside* the box rather than inside it.
 
 ```mermaid
 C4Context
@@ -52,7 +52,7 @@ Three placements are deliberate and worth defending, because getting them wrong 
 
 ## What is deliberately absent
 
-No skills, no policies, no templates, no `ROUTES` block, no phases. Eighteen skills drawn as eighteen peer boxes would be the classic Level-1 mistake: from the outside, this is one plugin with one entry point per task. Open the box at [Level 2 — Container](container.md).
+No skills, no policies, no templates, no `ROUTES` block, no phases. Nineteen skills drawn as nineteen peer boxes would be the classic Level-1 mistake: from the outside, this is one plugin with one entry point per task. Open the box at [Level 2 — Container](container.md).
 
 ---
 

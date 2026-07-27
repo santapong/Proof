@@ -7,6 +7,8 @@ Documented with the **C4 model**: a hierarchy of diagrams at decreasing altitude
 | **[1 — Context](context.md)** | What is this, who uses it, what does it depend on? | Anyone, including non-engineers |
 | **[2 — Container](container.md)** | What are the separately-loadable units, and what is each made of? | Engineers, integrators |
 | **[3 — Component](component.md)** | How does `loop-engine` actually turn an invocation into a running workflow? | Contributors |
+| **[The skill fleet](skills.md)** | What does one skill look like inside, and how do the nineteen relate? | Contributors |
+| **[Skill anatomy](skill-anatomy.md)** | Why does a skill have that shape? | Anyone adding a skill |
 
 C4's Level 4 (Code) is deliberately skipped — Brown's own advice is that it is rarely worth maintaining, and here it would be a class diagram of Markdown files.
 
@@ -22,13 +24,13 @@ A single trace, from typed command to merged work. This is the whole system in o
 /loop-review the auth changes on this branch --mode full
 ```
 
-**1 · Selection.** Claude Code matches the request against eighteen `description` fields. Nothing else is loaded and nothing else influences the choice — the descriptions *are* the routing table. This is why they are mutually exclusive by construction and why the [boundary audit](../design/boundary-audit.json) is normative rather than a design note.
+**1 · Selection.** Claude Code matches the request against nineteen `description` fields. Nothing else is loaded and nothing else influences the choice — the descriptions *are* the routing table. This is why they are mutually exclusive by construction and why the [boundary audit](../design/boundary-audit.json) is normative rather than a design note.
 
 **2 · Router loads.** `loop-review/SKILL.md` enters context: a thin numbered flow that *points at* references rather than containing them. Roughly 7 KB, not the 88-file library.
 
 **3 · Progressive disclosure.** The flow directs the agent to read `owasp-cwe.md` for the tagging taxonomy and `severity-model.md` for the reporting bar — two files, chosen for this task. The other 86 stay on disk.
 
-**4 · Law loads.** `harness-policy.md`, `loop-policy.md`, `execution-modes.md`. Read-only. These govern *shape* and *routing* and are the reason eighteen skills share one orchestration discipline rather than eighteen dialects.
+**4 · Law loads.** `harness-policy.md`, `loop-policy.md`, `execution-modes.md`. Read-only. These govern *shape* and *routing* and are the reason nineteen skills share one orchestration discipline rather than nineteen dialects.
 
 **5 · Phase mapping.** `AIDLC.md` supplies the phases and, critically, the **human gates** between them. One workflow per gate — never a monolith spanning three.
 
@@ -50,7 +52,7 @@ Seven load-bearing ideas. Each is someone else's, applied to a new substrate.
 
 ### 1 · Progressive disclosure — thin routers, deep references
 
-An agent's context window is the scarce resource. Eighteen skills of full depth would not fit and would drown the signal if they did. So each skill is a **thin router** (`SKILL.md`, ~6–11 KB) that names what it needs, and the depth lives in `references/` loaded on demand.
+An agent's context window is the scarce resource. Nineteen skills of full depth would not fit and would drown the signal if they did. So each skill is a **thin router** (`SKILL.md`, ~6–11 KB) that names what it needs, and the depth lives in `references/` loaded on demand.
 
 The cost is a real constraint on authoring: a router that grows into a reference file defeats the mechanism, which is why the validation gate checks router size and CONTRIBUTING states the rule.
 
@@ -121,4 +123,4 @@ Every skill additionally carries a version-pinned `references/standards.md` nami
 
 ---
 
-**Read next:** [Context (Level 1)](context.md) · [Container (Level 2)](container.md) · [Component (Level 3)](component.md) · [Design records](../design/README.md)
+**Read next:** [Context (Level 1)](context.md) · [Container (Level 2)](container.md) · [Component (Level 3)](component.md) · [The skill fleet](skills.md) · [Skill anatomy](skill-anatomy.md) · [Design records](../design/README.md)
