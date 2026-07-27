@@ -1,13 +1,13 @@
 # TheLoopSkill
 
-> **Run real engineering work as governed, multi-agent workflows** — a Claude Code plugin of 18 composable skills covering the whole lifecycle, from design and review through shipping, operating, and autonomous self-improvement.
+> **Run real engineering work as governed, multi-agent workflows** — a Claude Code plugin of 19 composable skills covering the whole lifecycle, from design and review through shipping, operating, and autonomous self-improvement.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills: 18](https://img.shields.io/badge/skills-18-6f42c1.svg)](#whats-in-the-box)
+[![Skills: 19](https://img.shields.io/badge/skills-19-6f42c1.svg)](#whats-in-the-box)
 [![Plugin: marketplace](https://img.shields.io/badge/plugin-marketplace-2ea44f.svg)](#installation)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](CONTRIBUTING.md)
 
-TheLoopSkill turns a task into a **multi-agent Workflow** — pipeline by default, parallel fan-out where it's earned, loops for unknown-size discovery — governed by explicit engineering policies and a pluggable lifecycle framework. Sixteen domain skills build on that engine to cover the lifecycle end to end — design, mechanism, build, review, integrate, ship, operate, respond — and one autonomous skill ties them into a self-improving loop.
+TheLoopSkill turns a task into a **multi-agent Workflow** — pipeline by default, parallel fan-out where it's earned, loops for unknown-size discovery — governed by explicit engineering policies and a pluggable lifecycle framework. Seventeen domain skills build on that engine to cover the lifecycle end to end — design, mechanism, build, review, integrate, ship, operate, respond — and one autonomous skill ties them into a self-improving loop.
 
 Every node of every workflow is routed to a model tier that matches the job, on one dial: `--mode optimize` spends carefully, `--mode full` spends everything.
 
@@ -37,7 +37,7 @@ It's for developers who want Claude Code to do *engineering*, not just answer qu
 
 ## What's in the box
 
-Eighteen skills, grouped by the engineering role they play. Every skill takes `[--mode <optimize|full>]` unless noted.
+Nineteen skills, grouped by the engineering role they play. Every skill takes `[--mode <optimize|full>]` unless noted.
 
 **Engine & planning**
 
@@ -45,6 +45,7 @@ Eighteen skills, grouped by the engineering role they play. Every skill takes `[
 |---|---|---|
 | **loop-engine** | `/loop-engine <task> [--planner <opus\|fable>] [--framework <name>] [--dry-run]` | Authors and executes a multi-agent Workflow script — pipeline by default, earned parallel barriers, loops for unknown-size discovery — governed by the harness & loop policies and a lifecycle framework (default AIDLC). |
 | **loop-orchestrate** | `/loop-orchestrate <project> [--planner <opus\|fable>] [--budget <tokens>]` | Planning layer on `loop-engine`: decomposes a project into a task DAG and routes the right Claude model + effort to each task ("right model for the right job"). |
+| **loop-skill** | `/loop-skill <skill-purpose>` | Authors a new skill for this plugin, or brings an existing one up to contract: discriminating description, graded standards shelf, thin router, references, ROUTES-carrying template — then proves it with the validation gate. |
 
 **Design & mechanism**
 
@@ -87,7 +88,7 @@ Eighteen skills, grouped by the engineering role they play. Every skill takes `[
 | **loop-harness** | `/loop-harness <project>` | Sets up a project's Claude Code harness from copy-paste scaffolds: permissions, hooks, MCP (`.mcp.json`), automation loops. No `--mode` — it ships no workflow template. |
 | **loop-autopilot** | `/loop-autopilot <repo>` | Autonomous engineering loop — reads feedback (issues/PRs/CI), acts as **draft** PRs with tests, researches improvements when idle. Propose-only, never merges. |
 
-**Which one when?** The four operational skills are the easiest to confuse, so they split on one checkable question each: is there a runbook that restores the SLI (`loop-operate`) or not (`loop-incident`)? Is the service currently down (`loop-incident`) or is the defect merely reproducible (`loop-debug`)? Is the rollout still in flight (`loop-ship`) or baked (`loop-operate`)? The full 18-way matrix is in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json).
+**Which one when?** The four operational skills are the easiest to confuse, so they split on one checkable question each: is there a runbook that restores the SLI (`loop-operate`) or not (`loop-incident`)? Is the service currently down (`loop-incident`) or is the defect merely reproducible (`loop-debug`)? Is the rollout still in flight (`loop-ship`) or baked (`loop-operate`)? The full 19-way matrix is in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json).
 
 ## Quickstart
 
@@ -146,7 +147,7 @@ The skills aren't a flat list — they build on `loop-engine` and **delegate rat
 
 ```mermaid
 C4Component
-    title Component diagram — how the eighteen skills compose
+    title Component diagram — how the nineteen skills compose
 
     Container_Boundary(gov, "Governance — read-only law") {
         Component(pol, "Engineering policies", "harness H1–H12 · loop L1–L8 · modes M1–M9", "Orchestration shape, iteration, and per-node model routing")
@@ -156,6 +157,7 @@ C4Component
     Component(eng, "loop-engine", "Orchestration engine", "pipeline · parallel · loop — authors and runs the workflow script")
     Component(orch, "loop-orchestrate", "Planning layer", "Decomposes a project into a task DAG and routes a model to each node")
     Component(auto, "loop-autopilot", "Autonomous loop", "Reads feedback, acts as draft PRs, never merges")
+    Component(mk, "loop-skill", "Meta", "Authors a conforming skill and proves it with the gate")
 
     Container_Boundary(build, "Design · build · verify") {
         Component(design, "loop-design", "Architecture", "Components, APIs, NFR and SLO targets")
@@ -185,6 +187,8 @@ C4Component
     Rel(fw, eng, "Supplies phases and gates")
     Rel(orch, eng, "Plans the DAG, routes models")
     Rel(auto, eng, "Runs the loop on")
+    Rel(mk, pol, "Authors against")
+    Rel(mk, eng, "Emits templates for")
 
     Rel(rev, pat, "Remediation")
     Rel(aud, rev, "Security dimension")
@@ -207,13 +211,13 @@ C4Component
 
 The five relationships running `loop-operate → loop-incident → loop-debug → loop-test → loop-ship → loop-operate` form a **closed cycle**, and that cycle is the reason those five are separate skills rather than one: `loop-operate` detects and auto-mitigates *known* conditions → `loop-incident` takes *novel* ones, mitigating before diagnosing → `loop-debug` finds the defect once the service is back → `loop-test` locks it with a regression → `loop-ship` redeploys → `loop-operate` owns it again once the rollout bakes.
 
-Each handoff is a **checkable question**, not a judgment call: *does a runbook exist and does running it restore the SLI?* · *is the service currently down, or is the defect merely reproducible?* · *is the rollout in flight, or baked?* The full 18-way matrix is in **[`docs/design/boundary-audit.json`](docs/design/boundary-audit.json)**, which is normative — it outranks any plan that disagrees with it.
+Each handoff is a **checkable question**, not a judgment call: *does a runbook exist and does running it restore the SLI?* · *is the service currently down, or is the defect merely reproducible?* · *is the rollout in flight, or baked?* The full 19-way matrix is in **[`docs/design/boundary-audit.json`](docs/design/boundary-audit.json)**, which is normative — it outranks any plan that disagrees with it.
 
 → **[Component diagram](docs/c4/component.md)** opens `loop-engine` itself, and **[the architecture notes](docs/c4/README.md)** trace one invocation end to end and give the prior art behind each design idea.
 
 ## The autonomy ladder
 
-The plugin isn't only eighteen skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
+The plugin isn't only nineteen skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
 
 ```mermaid
 flowchart TB
@@ -300,7 +304,7 @@ Every authored workflow obeys three policy documents:
 
 Lifecycle is governed by a **pluggable framework** — the default **AIDLC** (Inception → Construction → Operation, each ending at a human gate). Drop a new `frameworks/<Name>.md` in and invoke with `--framework <Name>`.
 
-**The boundaries are a committed artifact.** With eighteen skills, selection happens on the `description` field alone — so the mutually-exclusive scope matrix lives in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json) and outranks any build plan that disagrees with it.
+**The boundaries are a committed artifact.** With nineteen skills, selection happens on the `description` field alone — so the mutually-exclusive scope matrix lives in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json) and outranks any build plan that disagrees with it.
 
 **The gate can fail.** `node scripts/validate.mjs` runs in CI and rejects unparseable frontmatter, routing-block drift, banned clock/random calls in templates, and dangling reference paths. It was accepted only after a deliberately injected fault made it fail.
 

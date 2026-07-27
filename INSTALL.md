@@ -1,6 +1,6 @@
 # Installing TheLoopSkill
 
-TheLoopSkill ships eighteen Claude Code skills:
+TheLoopSkill ships nineteen Claude Code skills:
 
 | Skill | What it does |
 |---|---|
@@ -22,6 +22,7 @@ TheLoopSkill ships eighteen Claude Code skills:
 | `loop-ship` | Get a change safely to production: rollout strategy (rolling/blue-green/canary), feature flags, expand-contract migrations, go/no-go, tested rollback, DORA |
 | `loop-operate` | Operate a running service in steady state: SLIs/SLOs/error budgets, burn-rate alerts, self-healing runbooks, SLO-gated auto-rollback |
 | `loop-incident` | Respond to a live, user-impacting failure: severity triage, comms, mitigate before diagnosing, reproduction harness, blameless postmortem |
+| `loop-skill` | Author a new skill for this plugin or bring an existing one up to contract — boundary, standards shelf, router, references, template, gate |
 
 The **canonical location** is `.claude/skills/<name>/` — a single source of truth that works for all three install paths below. The plugin references these same files via the `skills` field in `.claude-plugin/plugin.json`, so nothing is duplicated.
 
@@ -73,7 +74,7 @@ Install the bundle into any project or user scope via the plugin system.
 # add this repo as a marketplace
 /plugin marketplace add santapong/TheLoopSkill
 
-# install the bundled plugin (all eighteen skills)
+# install the bundled plugin (all nineteen skills)
 /plugin install theloopskill@theloopskill
 ```
 
@@ -98,18 +99,16 @@ TheLoopSkill/
 ├── .claude/
 │   ├── settings.json        # extraKnownMarketplaces + enabledPlugins (web)
 │   └── skills/
-│       ├── loop-engine/
-│       ├── loop-review/
-│       ├── loop-design/
-│       ├── loop-orchestrate/
-│       ├── loop-research/
-│       ├── loop-audit/
-│       ├── loop-test/
-│       ├── loop-debug/
-│       ├── loop-docs/
-│       ├── loop-scout/
-│       ├── loop-harness/
-│       └── loop-autopilot/
+│       ├── loop-engine/      loop-orchestrate/  loop-skill/
+│       ├── loop-design/      loop-algo/         loop-pattern/
+│       ├── loop-test/        loop-review/       loop-audit/       loop-debug/
+│       ├── loop-integrate/   loop-ship/
+│       ├── loop-operate/     loop-incident/
+│       └── loop-research/    loop-scout/        loop-docs/        loop-harness/   loop-autopilot/
+├── docs/
+│   ├── c4/                  # architecture: context, container, component, skill anatomy
+│   └── design/              # normative: the boundary audit
+├── scripts/validate.mjs     # the validation gate (run by .github/workflows/validate.yml)
 ├── INSTALL.md
 └── README.md
 ```

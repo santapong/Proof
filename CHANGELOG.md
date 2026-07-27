@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_Nothing yet._
+### Added
+
+- **`loop-skill`** — the skill that authors skills. Drafts the discriminating description and registers the boundary, researches and grades the standards shelf, writes the thin router / on-demand references / ROUTES-carrying template, and proves conformance with the validation gate. Its scaffold template handles three-or-more skills at once, with the boundary check as an earned barrier because descriptions must be read side by side. Adding a skill is a **minor** bump; renaming one is major, because skill names are API from 1.0.0.
+- **`docs/c4/skill-anatomy.md`** — why a skill has the shape it has: the three loading regimes, the `description` field as API, the standards-shelf honesty convention, the sandbox contract, and the lifecycle of adding a skill. `CONTRIBUTING.md` covers the mechanics; this covers the reasoning.
+- Boundary-audit rows and overlap resolutions for `loop-skill` against `loop-harness` (permitted-to-do vs knows-how-to-do) and `loop-docs` (prose for a reader vs a directory that must pass the gate).
 
 ## [1.0.0] — 2026-07-27
 
