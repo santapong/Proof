@@ -129,7 +129,7 @@ Eight separately-loadable units, split by **loading regime**, which is the meani
 
 The skills aren't a flat list — they build on `loop-engine` and **delegate rather than duplicate**. Every edge below is a boundary that would otherwise be an overlap:
 
-![Component diagram — how the twenty skills compose](docs/c4/diagrams/skill-composition.svg)
+![Component diagram — how the twenty-one skills compose](docs/c4/diagrams/skill-composition.svg)
 
 <sub>Diagram source: [`docs/c4/diagrams/src/skill-composition.mmd`](docs/c4/diagrams/src/skill-composition.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
@@ -141,7 +141,7 @@ Each handoff is a **checkable question**, not a judgment call: *does a runbook e
 
 ## The autonomy ladder
 
-The plugin isn't only nineteen skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
+The plugin isn't only twenty-one skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
 
 ![The autonomy ladder — OBSERVE, VERIFY, SUSTAIN, SCALE](docs/c4/diagrams/autonomy-ladder.svg)
 
@@ -230,7 +230,7 @@ Every authored workflow obeys three policy documents:
 
 Lifecycle is governed by a **pluggable framework** — the default **AIDLC** (Inception → Construction → Operation, each ending at a human gate). Drop a new `frameworks/<Name>.md` in and invoke with `--framework <Name>`.
 
-**The boundaries are a committed artifact.** With nineteen skills, selection happens on the `description` field alone — so the mutually-exclusive scope matrix lives in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json) and outranks any build plan that disagrees with it.
+**The boundaries are a committed artifact.** With twenty-one skills, selection happens on the `description` field alone — so the mutually-exclusive scope matrix lives in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json) and outranks any build plan that disagrees with it.
 
 **The gate can fail.** `node scripts/validate.mjs` runs in CI and rejects unparseable frontmatter, routing-block drift, banned clock/random calls in templates, and dangling reference paths. It was accepted only after a deliberately injected fault made it fail.
 

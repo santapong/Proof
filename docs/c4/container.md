@@ -12,10 +12,10 @@ A C4 container is a *runtime or deploy boundary*, not a Docker container. For a 
 
 | Container | Loading regime | Why it is separate |
 |---|---|---|
-| **Skill Routers** | Into agent context, on invocation | The `description` field is API: it is the *only* thing the model sees when choosing a skill. Routers stay thin so nineteen of them can coexist without drowning the context window. |
+| **Skill Routers** | Into agent context, on invocation | The `description` field is API: it is the *only* thing the model sees when choosing a skill. Routers stay thin so twenty-one of them can coexist without drowning the context window. |
 | **Reference Library** | On demand, by the router's flow | Progressive disclosure. 93 files of standards-grade depth would never fit in context at once; the router decides which two or three matter for this task. |
 | **Workflow Templates** | Executed, never read into context | A different execution model entirely — plain JS in a sandbox with no filesystem, no clock, and no module access. That sandbox is what forces the `ROUTES` duplication rule (see [Component](component.md)). |
-| **Governance Policies** | Read-only, before authoring | Consumed by every skill and modified by none. Separating them is what lets nineteen skills share one orchestration discipline instead of nineteen dialects. |
+| **Governance Policies** | Read-only, before authoring | Consumed by every skill and modified by none. Separating them is what lets twenty-one skills share one orchestration discipline instead of twenty-one dialects. |
 | **Lifecycle Frameworks** | Read-only, selected by flag | Pluggable: `--framework <name>` resolves to a file. AIDLC is the default, not the only option. |
 | **Design Records** | Review-time, by humans and reviewers | Normative and machine-readable. Kept because three of its mandates were once dropped from a build plan and, since every review checked the plan instead, nobody noticed. |
 | **Validation Gate** | CI, on push and PR | The only container that *executes in the repo's own CI*. It exists because the host's `plugin validate` reads the marketplace manifest and never opens a `SKILL.md`. |
@@ -23,7 +23,7 @@ A C4 container is a *runtime or deploy boundary*, not a Docker container. For a 
 
 ## The three flows worth tracing
 
-**Selection.** `Developer → Claude Code → Skill Routers`. The host matches the request against nineteen `description` fields. Nothing else is loaded yet, and nothing else influences the choice — which is why the [boundary audit](../design/boundary-audit.json) treats those fields as the product's real API surface.
+**Selection.** `Developer → Claude Code → Skill Routers`. The host matches the request against twenty-one `description` fields. Nothing else is loaded yet, and nothing else influences the choice — which is why the [boundary audit](../design/boundary-audit.json) treats those fields as the product's real API surface.
 
 **Authoring.** `Router → Policies + Framework + References → Template`. The skill reads its law, maps the task onto phases, and fills a template's `EDIT ME` slots. This all happens *in the agent's context*, at authoring time, which is what makes it possible for an interactive pre-flight to exist at all — a script cannot prompt a human, but the session can.
 
