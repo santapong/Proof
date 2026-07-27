@@ -1,0 +1,27 @@
+C4Container
+    title Container diagram — inside any one skill
+
+    Person(dev, "Developer", "Invokes the skill")
+
+    System_Boundary(skill, "A skill — .claude/skills/<name>/") {
+        Container(router, "SKILL.md", "Markdown + YAML frontmatter, 6–13 KB", "Thin router. Its description is the sole input to skill selection; its body is a numbered flow that points at references rather than inlining them. Loaded into agent context on EVERY invocation")
+        Container(refs, "references/*.md", "Markdown, 5–7 files, ~100 KB", "The deep knowledge, including a version-pinned standards.md. Loaded ON DEMAND — costs nothing until the router asks")
+        Container(tmpl, "templates/*.workflow.js", "Plain JavaScript", "A runnable multi-agent script. EXECUTED by the Workflow tool, never read into agent context")
+    }
+
+    System_Ext(host, "Claude Code", "Selects the skill, loads context, runs the Workflow tool")
+    System_Ext(law, "Governance", "harness H1–H12 · loop L1–L8 · modes M1–M9")
+    System_Ext(gate, "scripts/validate.mjs", "CI — fails the build on a contract breach")
+    System_Ext(fleet, "Claude Model Fleet", "The agents the template spawns")
+
+    Rel(dev, host, "Types /loop-<name>")
+    Rel(host, router, "Matches on description, loads body", "Markdown")
+    Rel(router, refs, "Reads only what this task needs", "Markdown")
+    Rel(router, tmpl, "Authors from", "JavaScript")
+    Rel(law, router, "Binds", "read-only")
+    Rel(host, tmpl, "Executes in a sandbox with no FS, clock or modules", "Workflow tool")
+    Rel(tmpl, fleet, "Spawns agents at the tier ROUTES selects", "agent() opts")
+    Rel(gate, router, "Validates frontmatter, name, paths", "CI")
+    Rel(gate, tmpl, "Validates H10 rules and ROUTES byte-identity", "CI")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

@@ -1,0 +1,25 @@
+C4Component
+    title Component diagram — Knowledge & automation
+
+    Container_Boundary(g, "Knowledge & automation") {
+        Component(res, "loop-research", "Cited research", "Search fan-out → deep-read → refute-first verify → cited synthesis")
+        Component(scout, "loop-scout", "Prior art", "Build-vs-buy BEFORE building; terminates at a named recommendation")
+        Component(docs, "loop-docs", "Documentation", "Diátaxis; for a HUMAN READER seeking understanding")
+        Component(harn, "loop-harness", "Claude's harness", "Permissions, hooks, MCP, schedules — what Claude is PERMITTED to do")
+        Component(auto, "loop-autopilot", "Autonomous loop", "Reads feedback, acts on a branch, opens DRAFT PRs. Never merges")
+    }
+
+    Component_Ext(design, "loop-design", "Architecture", "")
+    Component_Ext(inc, "loop-incident", "Live failure", "")
+    Component_Ext(mk, "loop-skill", "Meta", "")
+    Component_Ext(many, "Domain skills", "review · test · debug · docs · scout · design · audit", "")
+
+    Rel(scout, res, "Delegates its searching")
+    Rel(docs, design, "Consumes the ADR / C4 it emits")
+    Rel(inc, docs, "Postmortem prose pass — incident owns the timeline")
+    Rel(harn, auto, "Unattended substrate")
+    Rel(auto, many, "Composes")
+    Rel(mk, harn, "Permitted-to-do vs knows-how-to-do")
+    Rel(mk, docs, "Gate-checked directory vs prose for a reader")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="2")

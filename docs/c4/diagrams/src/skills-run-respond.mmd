@@ -1,0 +1,21 @@
+C4Component
+    title Component diagram — Run & respond
+
+    Container_Boundary(g, "Run & respond") {
+        Component(ops, "loop-operate", "Steady state", "AUTOMATED mitigation of KNOWN conditions: SLIs, SLOs, error budgets, burn-rate alerts, self-healing runbooks, SLO-gated auto-rollback")
+        Component(inc, "loop-incident", "Exception state", "HUMAN-COORDINATED mitigation of NOVEL failures: triage, comms, mitigate before diagnosing, reproduction, postmortem")
+    }
+
+    Component_Ext(ship, "loop-ship", "Release", "")
+    Component_Ext(dbg, "loop-debug", "Root cause", "")
+    Component_Ext(auto, "loop-autopilot", "Autonomous loop", "")
+    Component_Ext(harn, "loop-harness", "Claude's harness", "")
+
+    Rel(ship, ops, "Rollout baked — hands the service over")
+    Rel(ops, ship, "Owns the SIGNAL that presses the rollback button ship authored")
+    Rel(ops, inc, "No runbook, or impact beyond its scope")
+    Rel(inc, dbg, "Service restored — hand the defect over")
+    Rel(ops, auto, "Cites the autonomy ladder; never redefines it")
+    Rel(harn, ops, "May deploy a runbook's schedule — composition, one-directional")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

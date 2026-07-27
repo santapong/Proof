@@ -116,27 +116,9 @@ The system is documented with the **[C4 model](https://c4model.com)** — a hier
 
 **What is this, who uses it, what does it depend on?** Note where the boundary sits: Claude Code is *outside* it. The plugin has no process, port, or lifecycle of its own — everything it "does" is done by the host on its instruction.
 
-```mermaid
-C4Context
-    title System Context — TheLoopSkill
+![System Context — TheLoopSkill (at a glance)](docs/c4/diagrams/context-glance.svg)
 
-    Person(dev, "Developer", "Invokes a skill; answers the questions raised at each phase gate")
-
-    System(tls, "TheLoopSkill", "Turns an engineering task into a governed multi-agent workflow, with the model matched to each job and a human at every phase gate")
-
-    System_Ext(cc, "Claude Code", "Host runtime: discovers and loads skills, executes the Workflow tool, enforces permissions")
-    System_Ext(fleet, "Claude Model Fleet", "Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5 — the agents a workflow spawns")
-    System_Ext(repo, "Target Repository", "The developer's codebase and git history")
-    System_Ext(forge, "GitHub", "Issues, PRs and CI signals consumed by the autonomous loop")
-
-    Rel(dev, tls, "Invokes a skill, answers gates")
-    Rel(cc, tls, "Loads it and spawns agents on its behalf", "plugin API")
-    Rel(tls, fleet, "Routes each node to a model tier", "agent() opts")
-    Rel(tls, repo, "Reads code; implement nodes write patches", "tool calls")
-    Rel(tls, forge, "Reads feedback; opens draft PRs, never merges", "REST")
-
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
-```
+<sub>Diagram source: [`docs/c4/diagrams/src/context-glance.mmd`](docs/c4/diagrams/src/context-glance.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
 ### Level 2 — Containers
 
@@ -146,72 +128,9 @@ Eight separately-loadable units, split by **loading regime**, which is the meani
 
 The skills aren't a flat list — they build on `loop-engine` and **delegate rather than duplicate**. Every edge below is a boundary that would otherwise be an overlap:
 
-```mermaid
-C4Component
-    title Component diagram — how the twenty skills compose
+![Component diagram — how the twenty skills compose](docs/c4/diagrams/skill-composition.svg)
 
-    Container_Boundary(gov, "Governance — read-only law") {
-        Component(pol, "Engineering policies", "harness H1–H12 · loop L1–L8 · modes M1–M9", "Orchestration shape, iteration, and per-node model routing")
-        Component(fw, "Lifecycle frameworks", "AIDLC", "Phases and the human gates between them")
-    }
-
-    Component(eng, "loop-engine", "Orchestration engine", "pipeline · parallel · loop — authors and runs the workflow script")
-    Component(orch, "loop-orchestrate", "Planning layer", "Decomposes a project into a task DAG and routes a model to each node")
-    Component(auto, "loop-autopilot", "Autonomous loop", "Reads feedback, acts as draft PRs, never merges")
-    Component(mk, "loop-skill", "Meta", "Authors a conforming skill and proves it with the gate")
-
-    Container_Boundary(build, "Design · build · verify") {
-        Component(design, "loop-design", "Architecture", "Components, APIs, NFR and SLO targets")
-        Component(algo, "loop-algo", "Mechanism", "Algorithms, complexity, invariants, benchmarks")
-        Component(pat, "loop-pattern", "Refactoring", "Patterns and idioms — emits a diff")
-    Component(fe, "loop-frontend", "UI craft", "Motion, type and perceived performance — enforces the motion a11y gates")
-        Component(rev, "loop-review", "Security + quality", "OWASP / CWE / ASVS — emits findings")
-        Component(test, "loop-test", "Tests", "Designs and writes them; verifies each fails for the right reason")
-        Component(aud, "loop-audit", "Change impact", "Blast radius, risk rating, coverage")
-        Component(dbg, "loop-debug", "Root cause", "Reproducible defects only")
-    }
-
-    Container_Boundary(run, "Integrate · ship · run") {
-        Component(intg, "loop-integrate", "Platform integration", "OAuth/OIDC, webhooks, idempotency, resilience")
-        Component(ship, "loop-ship", "Release", "Rollout strategy, migrations, tested rollback")
-        Component(ops, "loop-operate", "Steady state", "SLOs, alerts, runbooks, auto-rollback")
-        Component(inc, "loop-incident", "Live failure", "Triage, mitigate, reproduce, postmortem")
-    }
-
-    Container_Boundary(know, "Knowledge") {
-        Component(res, "loop-research", "Cited research", "Search, deep-read, refute-first verify")
-        Component(scout, "loop-scout", "Prior art", "Build-vs-buy before building")
-        Component(docs, "loop-docs", "Documentation", "Diátaxis; verified against code")
-        Component(harn, "loop-harness", "Claude Code harness", "Permissions, hooks, MCP, automation")
-    }
-
-    Rel(pol, eng, "Governs")
-    Rel(fw, eng, "Supplies phases and gates")
-    Rel(orch, eng, "Plans the DAG, routes models")
-    Rel(auto, eng, "Runs the loop on")
-    Rel(mk, pol, "Authors against")
-    Rel(mk, eng, "Emits templates for")
-
-    Rel(rev, pat, "Remediation")
-    Rel(aud, rev, "Security dimension")
-    Rel(aud, ship, "Risk memo as go/no-go")
-    Rel(docs, design, "Consumes ADR / C4")
-    Rel(scout, res, "Delegates search")
-    Rel(scout, intg, "Hands over a named provider")
-    Rel(intg, test, "Specifies contract tests")
-    Rel(design, algo, "Mechanism inside a component")
-    Rel(design, fe, "Renderer and budget vs curve and duration")
-    Rel(fe, scout, "Which library to adopt at all")
-    Rel(harn, auto, "Unattended substrate")
-
-    Rel(ops, inc, "No runbook, or beyond its scope")
-    Rel(inc, dbg, "Service restored — now find the defect")
-    Rel(dbg, test, "Lock it with a regression")
-    Rel(test, ship, "Ready to release")
-    Rel(ship, ops, "Bake complete — the service is yours")
-
-    UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="2")
-```
+<sub>Diagram source: [`docs/c4/diagrams/src/skill-composition.mmd`](docs/c4/diagrams/src/skill-composition.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
 The five relationships running `loop-operate → loop-incident → loop-debug → loop-test → loop-ship → loop-operate` form a **closed cycle**, and that cycle is the reason those five are separate skills rather than one: `loop-operate` detects and auto-mitigates *known* conditions → `loop-incident` takes *novel* ones, mitigating before diagnosing → `loop-debug` finds the defect once the service is back → `loop-test` locks it with a regression → `loop-ship` redeploys → `loop-operate` owns it again once the rollout bakes.
 
@@ -223,15 +142,9 @@ Each handoff is a **checkable question**, not a judgment call: *does a runbook e
 
 The plugin isn't only nineteen skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
 
-```mermaid
-flowchart TB
-    O["<b>OBSERVE</b> — report only<br/>loop: reports · human: reads &amp; acts<br/><code>loop-audit</code>, <code>loop-review</code>"]
-    V["<b>VERIFY</b> — propose, human merges<br/>loop: acts on a branch + adversarial verify · human: approves &amp; merges<br/><code>loop-autopilot</code> (default)"]
-    S["<b>SUSTAIN</b> — keep the loop honest<br/>loop: detects its own gaming / drift · human: reads the alarms<br/><code>verifier-integrity</code> + <code>held-out-eval</code> (AP6)"]
-    C["<b>SCALE</b> — autonomous delivery <i>(off by default)</i><br/>loop: merges behind a canary + self-rolls-back · human: handles exceptions<br/><code>deployment.md §Advanced</code> + <code>canary-merge</code>"]
-    O --> V --> S --> C
-    C -. "any alarm degrades autonomy one rung down — the floor is always safe" .-> V
-```
+![The autonomy ladder — OBSERVE, VERIFY, SUSTAIN, SCALE](docs/c4/diagrams/autonomy-ladder.svg)
+
+<sub>Diagram source: [`docs/c4/diagrams/src/autonomy-ladder.mmd`](docs/c4/diagrams/src/autonomy-ladder.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
 > **Why this one isn't a C4 diagram.** Every other diagram in this repo is C4 ([Context](#level-1--system-context) · [Container](docs/c4/container.md) · [Component](docs/c4/component.md)). This one isn't, deliberately: C4 models *structure* — systems, containers, components and the relationships between them — and a rung is not a component. "Degrades one rung down on an alarm" is a state transition, not a dependency. Drawing it in C4 notation would render, and would be semantically false. C4's own guidance is that it is a set of static structure diagrams, complemented by other notations where a different question is being asked; this is one of those.
 

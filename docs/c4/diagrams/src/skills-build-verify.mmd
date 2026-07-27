@@ -1,0 +1,23 @@
+C4Component
+    title Component diagram — Build & verify
+
+    Container_Boundary(g, "Build & verify") {
+        Component(test, "loop-test", "Tests", "Deliverable: test files that run and fail for the right reason")
+        Component(rev, "loop-review", "Security + quality", "Deliverable: a findings list. Judges; never refactors")
+        Component(aud, "loop-audit", "Change impact", "Deliverable: a backward-looking risk memo over a diff")
+        Component(dbg, "loop-debug", "Root cause", "Deliverable: a minimal fix + regression. Requires a REPRODUCIBLE defect")
+    }
+
+    Component_Ext(pat, "loop-pattern", "Refactoring", "")
+    Component_Ext(ship, "loop-ship", "Release", "")
+    Component_Ext(inc, "loop-incident", "Live failure", "")
+    Component_Ext(algo, "loop-algo", "Mechanism", "")
+
+    Rel(aud, rev, "Security dimension")
+    Rel(aud, ship, "Risk memo as go/no-go input")
+    Rel(rev, pat, "Each smell class points at its remediation")
+    Rel(inc, dbg, "Service restored — now find the defect")
+    Rel(dbg, test, "Lock the fix with a regression")
+    Rel(dbg, algo, "Never fast enough, rather than got slower")
+
+    UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="1")

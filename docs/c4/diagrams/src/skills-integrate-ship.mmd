@@ -1,0 +1,21 @@
+C4Component
+    title Component diagram — Integrate & ship
+
+    Container_Boundary(g, "Integrate & ship") {
+        Component(intg, "loop-integrate", "Platform integration", "Obeys someone else's contract and defends against it: OAuth/OIDC, webhooks, idempotency, retry and backoff")
+        Component(ship, "loop-ship", "Release", "Deploy start to bake complete: rollout strategy, flags, expand-contract migrations, tested rollback, DORA")
+    }
+
+    Component_Ext(scout, "loop-scout", "Prior art", "")
+    Component_Ext(test, "loop-test", "Tests", "")
+    Component_Ext(design, "loop-design", "Architecture", "")
+    Component_Ext(aud, "loop-audit", "Change impact", "")
+    Component_Ext(ops, "loop-operate", "Steady state", "")
+
+    Rel(scout, intg, "Provider already named — stop re-litigating the choice")
+    Rel(intg, test, "Specifies the contract; loop-test authors the files")
+    Rel(design, intg, "Publishes an API; loop-integrate consumes one")
+    Rel(aud, ship, "Backward-looking memo feeds the forward-looking gate")
+    Rel(ship, ops, "Bake complete — the service is yours")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

@@ -1,0 +1,24 @@
+C4Component
+    title Component diagram — Design & mechanism
+
+    Container_Boundary(g, "Design & mechanism") {
+        Component(design, "loop-design", "Architecture", "Deliverable: a box-and-arrow diagram, an API contract, an ADR, NFR and SLO targets")
+        Component(algo, "loop-algo", "Mechanism", "Deliverable: a Big-O, an invariant, a memory-ordering argument, a benchmark table")
+        Component(pat, "loop-pattern", "Refactoring", "Deliverable: a behaviour-preserving diff")
+    }
+
+    Component_Ext(ship, "loop-ship", "Release", "")
+    Component_Ext(ops, "loop-operate", "Steady state", "")
+    Component_Ext(test, "loop-test", "Tests", "")
+    Component_Ext(rev, "loop-review", "Review", "")
+    Component_Ext(scout, "loop-scout", "Prior art", "")
+
+    Rel(design, algo, "Mechanism inside a component")
+    Rel(design, ship, "Execution machinery lives there")
+    Rel(design, ops, "Measuring the targets lives there")
+    Rel(rev, pat, "Findings become remediation")
+    Rel(pat, test, "Behaviour preservation proved by")
+    Rel(algo, test, "Correctness oracle")
+    Rel(scout, pat, "Already-adopted dependency, so idiom not selection")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

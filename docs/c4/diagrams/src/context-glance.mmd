@@ -1,0 +1,19 @@
+C4Context
+    title System Context — TheLoopSkill
+
+    Person(dev, "Developer", "Invokes a skill; answers the questions raised at each phase gate")
+
+    System(tls, "TheLoopSkill", "Turns an engineering task into a governed multi-agent workflow, with the model matched to each job and a human at every phase gate")
+
+    System_Ext(cc, "Claude Code", "Host runtime: discovers and loads skills, executes the Workflow tool, enforces permissions")
+    System_Ext(fleet, "Claude Model Fleet", "Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5 — the agents a workflow spawns")
+    System_Ext(repo, "Target Repository", "The developer's codebase and git history")
+    System_Ext(forge, "GitHub", "Issues, PRs and CI signals consumed by the autonomous loop")
+
+    Rel(dev, tls, "Invokes a skill, answers gates")
+    Rel(cc, tls, "Loads it and spawns agents on its behalf", "plugin API")
+    Rel(tls, fleet, "Routes each node to a model tier", "agent() opts")
+    Rel(tls, repo, "Reads code; implement nodes write patches", "tool calls")
+    Rel(tls, forge, "Reads feedback; opens draft PRs, never merges", "REST")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

@@ -4,43 +4,9 @@
 
 A C4 container is a *runtime or deploy boundary*, not a Docker container. For a plugin with no server, the meaningful boundary is **what gets loaded, when, and by whom** — and that is genuinely different per unit. A `SKILL.md` enters the agent's context the moment a skill is invoked; a `references/*.md` file is read only if that skill's router decides it is needed; a `*.workflow.js` is never read by the agent at all — it is *executed* by the Workflow tool in a sandbox with no filesystem. Those are three different loading regimes, so they are three containers.
 
-```mermaid
-C4Container
-    title Container diagram — TheLoopSkill
+![C4 Container diagram — TheLoopSkill](diagrams/container.svg)
 
-    Person(dev, "Developer", "Invokes a skill; answers gate questions")
-
-    System_Boundary(tls, "TheLoopSkill") {
-        Container(routers, "Skill Routers", "19 × SKILL.md — Markdown + YAML frontmatter", "One thin router per skill. Its `description` is the sole input to skill selection; its body is a numbered flow that points at references rather than inlining them")
-        Container(refs, "Reference Library", "93 × Markdown", "The deep knowledge, loaded on demand. Every skill carries a version-pinned standards.md")
-        Container(templates, "Workflow Templates", "24 × plain JavaScript (*.workflow.js)", "Runnable multi-agent scripts. Executed by the Workflow tool, never read into agent context")
-        Container(policy, "Governance Policies", "Markdown — harness H1–H12, loop L1–L8, modes M1–M9", "Read-only law. Governs orchestration shape, iteration, and per-node model routing")
-        Container(frameworks, "Lifecycle Frameworks", "Markdown — AIDLC + _TEMPLATE", "Phase structure and the human gates between phases. Pluggable")
-        Container(design, "Design Records", "JSON + Markdown — docs/design/", "The boundary audit: the 19-skill scope matrix. Normative — it outranks any build plan")
-        Container(gate, "Validation Gate", "Node.js — scripts/validate.mjs + GitHub Actions", "Fails the build on unparseable frontmatter, ROUTES drift, H10 violations, dangling reference paths")
-        Container(manifest, "Plugin Manifests", "JSON — .claude-plugin/", "plugin.json and marketplace.json: how the host discovers and installs the plugin")
-    }
-
-    System_Ext(cc, "Claude Code", "Host runtime: skill discovery, agent loop, Workflow tool")
-    System_Ext(fleet, "Claude Model Fleet", "Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5")
-    System_Ext(repo, "Target Repository", "The developer's codebase and git history")
-
-    Rel(dev, cc, "Invokes /loop-*", "CLI / IDE / web")
-    Rel(cc, manifest, "Discovers the plugin from", "JSON")
-    Rel(cc, routers, "Loads into agent context on invocation", "Markdown")
-    Rel(routers, refs, "Reads on demand, as the flow directs", "Markdown")
-    Rel(routers, policy, "Consumes read-only before authoring", "Markdown")
-    Rel(routers, frameworks, "Maps the task onto phases and gates", "Markdown")
-    Rel(routers, templates, "Authors a script from", "JavaScript")
-    Rel(cc, templates, "Executes via the Workflow tool", "JS in a no-FS sandbox")
-    Rel(templates, fleet, "Spawns agents at the tier ROUTES selects", "agent() opts")
-    Rel(fleet, repo, "Reads code; implement nodes write patches", "tool calls")
-    Rel(gate, routers, "Validates frontmatter, names, paths", "CI")
-    Rel(gate, templates, "Validates H10 rules and ROUTES byte-identity", "CI")
-    Rel(design, routers, "Governs every description and boundary", "review-time")
-
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
-```
+<sub>Diagram source: [`diagrams/src/container.mmd`](diagrams/src/container.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
 ## The containers, and why each is its own unit
 

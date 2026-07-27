@@ -1,0 +1,23 @@
+C4Component
+    title Component diagram — Engine & planning
+
+    Container_Boundary(g, "Engine & planning") {
+        Component(eng, "loop-engine", "Orchestration engine", "Authors and runs the workflow script — pipeline, parallel, loop")
+        Component(orch, "loop-orchestrate", "Planning layer", "Decomposes a project into a task DAG; routes a model to each node")
+        Component(mk, "loop-skill", "Meta", "Authors a conforming skill directory and proves it with the gate")
+    }
+
+    Component_Ext(law, "Governance", "harness · loop · modes · AIDLC", "Read-only law")
+    Component_Ext(audit, "boundary-audit.json", "Normative", "The 19-skill scope matrix")
+    Component_Ext(gate, "validate.mjs", "CI gate", "Rejects a contract breach")
+    Component_Ext(all, "The other sixteen skills", "Domain skills", "Author through the engine")
+
+    Rel(law, eng, "Governs shape and routing")
+    Rel(orch, eng, "Hands over the DAG to execute")
+    Rel(all, eng, "Author their templates against")
+    Rel(mk, audit, "Registers a new boundary in")
+    Rel(mk, law, "Authors templates against")
+    Rel(mk, gate, "Proves conformance with")
+    Rel(mk, all, "Creates and repairs")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
