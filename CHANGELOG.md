@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [1.2.0] — 2026-07-27
+
+A third execution mode, a clearer name for all three, and a planning phase built for coverage rather than coherence. **No breaking changes** — the v1.1 mode names still work.
+
+### Added
+
+- **`--mode lite`** — a third rung below `balanced`, for small well-specified tasks: Haiku for mechanical work, Sonnet for everything reasoned at `medium` effort, verifier width 1, dry threshold 1. Roughly **0.2–0.4×** a balanced run.
+- **`loop-orchestrate/references/coverage-planning.md` + `templates/project-coverage-plan.workflow.js`** — planning built for coverage. A single planner produces a plan that is *coherent and incomplete*, and both failure modes are invisible from the inside: it frames the problem once, so anything outside that frame is **absent** rather than rejected; and a forgotten phase leaves no trace, because a plan with no test nodes reads exactly like a plan that deliberately skipped them. Three mechanisms attack this from directions each other cannot cover — **three independent framings** (risk-first, user-first, delivery-first) catch a wrong frame, a **roster sweep** over all twenty skills catches a forgotten phase, and **gap rounds until dry** catch the long tail. Every surviving node then ships a **charter**: objective, checkable acceptance criterion, explicit out-of-scope, inputs, owning skill, and what "done" means for the next node.
+- **`scripts/smoke.mjs` gains `lite` assertions** — that `lite` never leaves a node inheriting the session model, and never routes any node higher than `balanced` would.
+
+### Changed
+
+- **The mode ladder is renamed so the names say which is bigger:** `optimize` → **`balanced`**, `full` → **`all-out`**. The old values still resolve via a `MODE_ALIAS` map in the canonical block, so no existing invocation, persisted script or Routine breaks — which is why this is a minor bump. `smoke.mjs` asserts the alias routes identically to `balanced`, so the shim cannot rot silently while it exists.
+- **`all-out` lifted from graduated effort to a flat `xhigh` floor** on every node, with `max` still reserved for gating and planner. Roughly **3–5×** a balanced run.
+- **Gating and planner nodes are pinned to `claude-opus-5` in every mode, including `lite`.** They are single nodes whose wrong answer is inherited by everything downstream, so modifier B outranks the mode dial; `lite` lowers their effort, never their model.
+- **`lite` never inherits.** `inherit` means "take the session model", and the session default is Opus 5 — so a `lite` run that inherited on its judgment nodes would be *more* expensive than `balanced`. It pins downward on every row.
+- The canonical `ROUTES` block gained the third tier and was propagated byte-identically to all **26** templates; it still hashes to one fingerprint.
+
 ## [1.1.0] — 2026-07-27
 
 Two new skills and the architecture documentation for authoring more of them. Additive only — **no breaking changes**, and every 1.0.0 skill name, flag and reserved argument is unchanged.
@@ -144,7 +162,8 @@ Initial release: the 12-skill TheLoopSkill plugin, built and merged across PRs #
 - **`automating-improvements`** — a propose-only autonomous engineering loop that composes the other skills, plus the **credit-horizon** self-learning extension (per-kind trust ledger), an anti-patterns checklist, and a comprehension-rot digest.
 - **Plugin packaging** — `.claude-plugin/plugin.json` + `marketplace.json`, web enablement via `.claude/settings.json`, the MIT `LICENSE`, and `INSTALL.md` covering local, web, and marketplace install paths.
 
-[Unreleased]: https://github.com/santapong/TheLoopSkill/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/santapong/TheLoopSkill/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/santapong/TheLoopSkill/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/santapong/TheLoopSkill/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/santapong/TheLoopSkill/compare/v0.4.0...v1.0.0
 [0.4.0]: https://github.com/santapong/TheLoopSkill/compare/v0.3.0...v0.4.0
