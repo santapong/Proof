@@ -1,13 +1,15 @@
 # TheLoopSkill
 
-> **Run real engineering work as governed, multi-agent workflows** — a Claude Code plugin of 12 composable skills, from design and review to autonomous self-improvement.
+> **Run real engineering work as governed, multi-agent workflows** — a Claude Code plugin of 18 composable skills covering the whole lifecycle, from design and review through shipping, operating, and autonomous self-improvement.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills: 12](https://img.shields.io/badge/skills-12-6f42c1.svg)](#whats-in-the-box)
+[![Skills: 18](https://img.shields.io/badge/skills-18-6f42c1.svg)](#whats-in-the-box)
 [![Plugin: marketplace](https://img.shields.io/badge/plugin-marketplace-2ea44f.svg)](#installation)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](CONTRIBUTING.md)
 
-TheLoopSkill turns a task into a **multi-agent Workflow** — pipeline by default, parallel fan-out where it's earned, loops for unknown-size discovery — governed by explicit engineering policies and a pluggable lifecycle framework. Eleven domain skills build on that engine to cover the whole build lifecycle, and one autonomous skill ties them into a self-improving loop.
+TheLoopSkill turns a task into a **multi-agent Workflow** — pipeline by default, parallel fan-out where it's earned, loops for unknown-size discovery — governed by explicit engineering policies and a pluggable lifecycle framework. Sixteen domain skills build on that engine to cover the lifecycle end to end — design, mechanism, build, review, integrate, ship, operate, respond — and one autonomous skill ties them into a self-improving loop.
+
+Every node of every workflow is routed to a model tier that matches the job, on one dial: `--mode optimize` spends carefully, `--mode full` spends everything.
 
 ## Contents
 
@@ -16,6 +18,7 @@ TheLoopSkill turns a task into a **multi-agent Workflow** — pipeline by defaul
 - [Quickstart](#quickstart)
 - [How the skills compose](#how-the-skills-compose)
 - [The `loop-engine`](#the-loop-engine)
+- [Execution modes](#execution-modes--one-dial-for-the-whole-fleet)
 - [Architecture & philosophy](#architecture--philosophy)
 - [Installation](#installation)
 - [Repository layout](#repository-layout)
@@ -34,20 +37,57 @@ It's for developers who want Claude Code to do *engineering*, not just answer qu
 
 ## What's in the box
 
+Eighteen skills, grouped by the engineering role they play. Every skill takes `[--mode <optimize|full>]` unless noted.
+
+**Engine & planning**
+
 | Skill | Invoke | What it does |
 |---|---|---|
-| **loop-engine** | `/loop-engine <task> [--framework <name>] [--dry-run]` | Authors and executes a multi-agent Workflow script — pipeline by default, earned parallel barriers, loops for unknown-size discovery — governed by the harness & loop policies and a lifecycle framework (default AIDLC). |
-| **loop-review** | `/loop-review <target>` | Security + quality review using OWASP Top 10, CWE Top 25, ASVS, CVSS v4. Finder-per-category → dedup → adversarial verify; reports HIGH/MEDIUM at confidence ≥0.8. |
-| **loop-design** | `/loop-design <problem>` | Architecture & system design: pattern selection, API design, backend/data modeling, frontend performance, deployment, NFRs. Emits ADRs + C4 diagrams. |
-| **loop-orchestrate** | `/loop-orchestrate <project>` | Planning layer on `loop-engine`: decomposes a project into a task DAG and routes the right Claude model + effort to each task ("right model for the right job"). |
-| **loop-research** | `/loop-research <question>` | Multi-source research with adversarial fact-checking: search fan-out → deep-read → refute-first verify → cited synthesis. Every claim carries a source. |
-| **loop-audit** | `/loop-audit <diff\|PR\|range>` | Change/impact **report**: classifies changes, traces blast radius, rates risk, checks coverage; delegates the security dimension to `loop-review`. |
+| **loop-engine** | `/loop-engine <task> [--planner <opus\|fable>] [--framework <name>] [--dry-run]` | Authors and executes a multi-agent Workflow script — pipeline by default, earned parallel barriers, loops for unknown-size discovery — governed by the harness & loop policies and a lifecycle framework (default AIDLC). |
+| **loop-orchestrate** | `/loop-orchestrate <project> [--planner <opus\|fable>] [--budget <tokens>]` | Planning layer on `loop-engine`: decomposes a project into a task DAG and routes the right Claude model + effort to each task ("right model for the right job"). |
+
+**Design & mechanism**
+
+| Skill | Invoke | What it does |
+|---|---|---|
+| **loop-design** | `/loop-design <system>` | Architecture at component granularity: pattern selection, API design, backend/data modeling, frontend performance, NFR and SLO *targets*. Emits ADRs + C4 diagrams. No `--mode` — it ships no workflow template. |
+| **loop-algo** | `/loop-algo <mechanism>` | The mechanism *inside* a component: algorithm and data-structure choice, complexity analysis, invariants and correctness arguments, concurrency, benchmark-driven validation. |
+| **loop-pattern** | `/loop-pattern <target>` | Applies GoF patterns, Fowler refactorings, SOLID and language/framework idioms — and removes the smells that motivate them. Emits a **diff**; `loop-review` emits findings. |
+
+**Build & verify**
+
+| Skill | Invoke | What it does |
+|---|---|---|
 | **loop-test** | `/loop-test <target>` | Designs and writes tests (happy/edge/error/property), matches the repo's stack, and verifies each runs and fails for the right reason. |
-| **loop-debug** | `/loop-debug <symptom>` | Hypothesis-driven debugging: reproduce → localize → root-cause → minimal fix → regression test, with parallel hypothesis elimination. |
+| **loop-review** | `/loop-review <target>` | Security + quality review against OWASP Top 10:2025, the 2025 CWE Top 25, ASVS 5.0 and CVSS v4. Finder-per-category → dedup → adversarial verify. |
+| **loop-audit** | `/loop-audit <diff\|PR\|range>` | Change/impact **report**: classifies changes, traces blast radius, rates risk, checks coverage; delegates the security dimension to `loop-review`. |
+| **loop-debug** | `/loop-debug <symptom>` | Hypothesis-driven debugging on a **reproducible defect**: reproduce → localize → root-cause → minimal fix → regression test. |
+
+**Integrate & ship**
+
+| Skill | Invoke | What it does |
+|---|---|---|
+| **loop-integrate** | `/loop-integrate <integration>` | Third-party, cloud and SaaS integration: OAuth 2.0 / OIDC, token and secret handling, webhook verification, idempotency keys, rate limits, retry and backoff, contract tests. |
+| **loop-ship** | `/loop-ship <change>` | Getting a change safely to production: rollout strategy (rolling, blue-green, canary), feature flags, expand-contract migrations, release checklist and go/no-go, tested rollback, DORA. |
+
+**Run & respond**
+
+| Skill | Invoke | What it does |
+|---|---|---|
+| **loop-operate** | `/loop-operate <service>` | Steady-state operation: SLIs, SLOs and error budgets, burn-rate alerts, self-healing runbooks, SLO-gated auto-rollback. Owns automated mitigation of **known** conditions. |
+| **loop-incident** | `/loop-incident <incident>` | A **live, user-impacting** failure: severity triage, comms and roles, mitigate *before* diagnosing, reproduction harness, timeline, blameless postmortem. |
+
+**Knowledge & automation**
+
+| Skill | Invoke | What it does |
+|---|---|---|
+| **loop-research** | `/loop-research <question>` | Multi-source research with adversarial fact-checking: search fan-out → deep-read → refute-first verify → cited synthesis. Every claim carries a source. |
+| **loop-scout** | `/loop-scout <need>` | Prior-art / build-vs-buy check *before* building: stdlib → registries → services → standards. Guards against over-engineering. |
 | **loop-docs** | `/loop-docs <target>` | Writes/maintains docs (README, API, docstrings, ADRs) via the Diátaxis model, verifying every claim against the code. |
-| **loop-scout** | `/loop-scout <need>` | Prior-art / build-vs-buy check *before* building: stdlib → registries → services → standards, evaluate, recommend reuse. Guards against over-engineering. |
-| **loop-harness** | `/loop-harness <goal>` | Sets up a project's Claude Code harness from copy-paste scaffolds: permissions, hooks, MCP (`.mcp.json`), and automation loops. |
+| **loop-harness** | `/loop-harness <project>` | Sets up a project's Claude Code harness from copy-paste scaffolds: permissions, hooks, MCP (`.mcp.json`), automation loops. No `--mode` — it ships no workflow template. |
 | **loop-autopilot** | `/loop-autopilot <repo>` | Autonomous engineering loop — reads feedback (issues/PRs/CI), acts as **draft** PRs with tests, researches improvements when idle. Propose-only, never merges. |
+
+**Which one when?** The four operational skills are the easiest to confuse, so they split on one checkable question each: is there a runbook that restores the SLI (`loop-operate`) or not (`loop-incident`)? Is the service currently down (`loop-incident`) or is the defect merely reproducible (`loop-debug`)? Is the rollout still in flight (`loop-ship`) or baked (`loop-operate`)? The full 18-way matrix is in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json).
 
 ## Quickstart
 
@@ -105,7 +145,7 @@ At the base is `loop-engine` and the two policies that govern it. `loop-orchestr
 
 ## The autonomy ladder
 
-The plugin isn't only twelve skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
+The plugin isn't only eighteen skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
 
 ```mermaid
 flowchart TB
@@ -157,14 +197,44 @@ Verify   ✔ verify:… ×4  (3 findings refuted, 1 confirmed)
 
 Confirmed findings come back as structured data, with everything the verifiers refuted filtered out. With `--dry-run` you get the authored script itself; when a framework phase ends at a human gate, the run stops and presents that phase's deliverable for approval.
 
+## Execution modes — one dial for the whole fleet
+
+Every workflow node carries a `taskType`. A shared routing block maps that type, plus the mode, to a model and an effort level — so a mechanical enumeration and an adversarial security verdict never cost the same.
+
+```
+/loop-review the auth changes on this branch              # optimize (default)
+/loop-review the auth changes on this branch --mode full  # all-out
+```
+
+| | `--mode optimize` (default) | `--mode full` |
+|---|---|---|
+| Mechanical / scout / doc | Haiku 4.5 | Opus 5, `high` |
+| Implementation | Sonnet 5, `high` | Opus 5, `high` |
+| Judgment / verify / critic | inherit session model, `high` | Opus 5, `xhigh` |
+| Wide fan-out pushes a tier **down** | active | **disabled** |
+| Verifier width | 1, or 3 when the ask is thorough | always 3 (5 on a gating verify) |
+| Loop-until-dry threshold | 2 | 3 |
+| Pre-flight | none | deterministic estimate + **one confirmation before anything spawns** |
+
+The load-bearing difference is not the effort floor — it is that full mode **disables the tier-down modifier**, so a 300-item sweep that optimize would route to Haiku runs entirely on Opus 5. That is where the cost goes, so full mode prices the DAG and asks once before spending it.
+
+`--planner fable` is an orthogonal opt-in that routes the single planning node to Fable 5 for a deeper decomposition, and states its own tradeoffs at the point of use. Full contract: [`execution-modes.md`](.claude/skills/loop-engine/references/execution-modes.md).
+
 ## Architecture & philosophy
+
+**[📐 Architecture docs](docs/c4/README.md)** — the system documented with the **C4 model** at three levels ([Context](docs/c4/context.md) · [Container](docs/c4/container.md) · [Component](docs/c4/component.md)), plus the technical mechanism traced end to end and the seven ideas the design rests on, each with its prior art.
 
 Every authored workflow obeys two policy documents:
 
 - **[Harness Engineering Policy](.claude/skills/loop-engine/references/harness-policy.md)** — orchestration design: pipeline vs. earned parallel barriers, adversarial/diverse-lens verification, budget & concurrency, isolation, phase discipline.
 - **[Loop Engineering Policy](.claude/skills/loop-engine/references/loop-policy.md)** — iteration: loop-until-dry, budget-guarded loops, seen-set convergence, runaway prevention.
+- **[Execution Modes](.claude/skills/loop-engine/references/execution-modes.md)** — per-node model routing, the two modes, and the full-mode pre-flight.
 
 Lifecycle is governed by a **pluggable framework** — the default **AIDLC** (Inception → Construction → Operation, each ending at a human gate). Drop a new `frameworks/<Name>.md` in and invoke with `--framework <Name>`.
+
+**The boundaries are a committed artifact.** With eighteen skills, selection happens on the `description` field alone — so the mutually-exclusive scope matrix lives in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json) and outranks any build plan that disagrees with it.
+
+**The gate can fail.** `node scripts/validate.mjs` runs in CI and rejects unparseable frontmatter, routing-block drift, banned clock/random calls in templates, and dangling reference paths. It was accepted only after a deliberately injected fault made it fail.
 
 **Standards-grade knowledge.** Every skill carries a `references/standards.md` that names, version-pins, and maps the authoritative standards it applies — e.g. OWASP / CWE / CVSS v4 / NIST SSDF / SLSA for review, C4 / ISO-25010 / Google SRE for design, CRAAP / SIFT / PRISMA / GRADE for research, ISO 31000 for change audit, 5 Whys / ODC / OpenTelemetry for debugging. Skills reason from cited, edition-pinned standards, not vibes.
 
@@ -182,7 +252,7 @@ Every skill follows the same shape: `SKILL.md` (thin router) + `references/` (de
 
 | Path | What it is |
 |---|---|
-| `.claude/skills/loop-engine/` | The engine: `SKILL.md`, `references/` (harness & loop policies, standards), `templates/` (pipeline, parallel, loop-until-dry, loop-until-budget), `frameworks/` (AIDLC + scaffold) |
+| `.claude/skills/loop-engine/` | The engine: `SKILL.md`, `references/` (harness & loop policies, **execution-modes**, standards), `templates/` (pipeline, parallel, loop-until-dry, loop-until-budget), `frameworks/` (AIDLC + scaffold) |
 | `.claude/skills/loop-review/` | Security + quality review: methodology, OWASP/CWE, playbooks, severity model, standards, `security-review.workflow.js` |
 | `.claude/skills/loop-design/` | Architecture: patterns, API, backend, frontend, deployment, NFR, standards; ADR + C4 templates |
 | `.claude/skills/loop-orchestrate/` | Model routing + task decomposition + standards; `project-plan.workflow.js` |
@@ -194,6 +264,16 @@ Every skill follows the same shape: `SKILL.md` (thin router) + `references/` (de
 | `.claude/skills/loop-scout/` | Where to look, evaluation criteria, build-vs-buy, standards; `prior-art-search.workflow.js` |
 | `.claude/skills/loop-harness/` | Permissions, hooks, mcp, automation-loops, standards; settings/mcp/hook scaffolds |
 | `.claude/skills/loop-autopilot/` | Loop-design, feedback-intake, deployment (incl. SCALE), anti-patterns, comprehension-rot, credit-horizon, verifier-integrity + held-out-eval (the SUSTAIN rung), standards; loop + ledger + routine + held-out-eval + verifier-canary + canary-merge templates |
+| `.claude/skills/loop-algo/` | Complexity & structures, correctness, concurrency, randomized structures, benchmarking, standards; `algorithm-bakeoff.workflow.js` |
+| `.claude/skills/loop-pattern/` | Design patterns, refactoring catalog, SOLID & style, framework idioms, standards; `refactor-sweep.workflow.js` |
+| `.claude/skills/loop-integrate/` | Auth & secrets, webhooks & idempotency, resilience, contracts & promotion, standards; `integration-readiness-audit.workflow.js` |
+| `.claude/skills/loop-ship/` | Rollout strategies, migrations, DORA, release gates, supply-chain gate, rollback playbook, standards; `release-readiness-gate.workflow.js` |
+| `.claude/skills/loop-operate/` | SLO model, alerting, observability, runbooks, on-call triage, autonomy & rollback, standards; `health-response.workflow.js` |
+| `.claude/skills/loop-incident/` | Incident command, mitigation playbook, reproduction & timeline, postmortem, standards; `incident-reconstruction.workflow.js` |
+| `docs/c4/` | **Architecture**, documented with the C4 model: context, container, component, plus the mechanism, ideas and references |
+| `docs/design/` | **Normative design records** — the 18-skill boundary audit and the execution-mode spec |
+| `docs/plans/` | Release build plans |
+| `scripts/validate.mjs` | The validation gate, run by `.github/workflows/validate.yml` on every push and PR |
 | `.claude-plugin/plugin.json`, `marketplace.json` | Plugin + marketplace manifests |
 | `.claude/settings.json` | Enables the plugin for Claude Code on the web |
 | `INSTALL.md`, `CONTRIBUTING.md`, `CHANGELOG.md` | Install paths, contributor guide, version history |

@@ -1,6 +1,6 @@
 # Installing TheLoopSkill
 
-TheLoopSkill ships twelve Claude Code skills:
+TheLoopSkill ships eighteen Claude Code skills:
 
 | Skill | What it does |
 |---|---|
@@ -16,6 +16,12 @@ TheLoopSkill ships twelve Claude Code skills:
 | `loop-scout` | Prior-art / build-vs-buy check before building: search stdlib → registries → services → standards, evaluate, recommend reuse |
 | `loop-harness` | Set up a project's Claude Code harness: permissions, hooks, MCP (`.mcp.json`), and automation loops — from copy-paste scaffolds |
 | `loop-autopilot` | Autonomous engineering loop: read feedback (issues/PRs/CI), act as draft PRs with tests, research improvements when idle — propose-only, never merges |
+| `loop-algo` | The mechanism inside a component: algorithm and data-structure choice, complexity analysis, invariants, concurrency, benchmark-driven validation |
+| `loop-pattern` | Apply GoF patterns, Fowler refactorings, SOLID and language/framework idioms; remove the smells that motivate them — emits a diff |
+| `loop-integrate` | Third-party / cloud / SaaS integration: OAuth 2.0 + OIDC, webhook verification, idempotency keys, rate limits, retry and backoff, contract tests |
+| `loop-ship` | Get a change safely to production: rollout strategy (rolling/blue-green/canary), feature flags, expand-contract migrations, go/no-go, tested rollback, DORA |
+| `loop-operate` | Operate a running service in steady state: SLIs/SLOs/error budgets, burn-rate alerts, self-healing runbooks, SLO-gated auto-rollback |
+| `loop-incident` | Respond to a live, user-impacting failure: severity triage, comms, mitigate before diagnosing, reproduction harness, blameless postmortem |
 
 The **canonical location** is `.claude/skills/<name>/` — a single source of truth that works for all three install paths below. The plugin references these same files via the `skills` field in `.claude-plugin/plugin.json`, so nothing is duplicated.
 
@@ -67,7 +73,7 @@ Install the bundle into any project or user scope via the plugin system.
 # add this repo as a marketplace
 /plugin marketplace add santapong/TheLoopSkill
 
-# install the bundled plugin (all twelve skills)
+# install the bundled plugin (all eighteen skills)
 /plugin install theloopskill@theloopskill
 ```
 
