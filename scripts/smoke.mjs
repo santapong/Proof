@@ -31,7 +31,11 @@ function templates(dir, out = []) {
 }
 
 // Run one template with stubbed globals; return every agent() call it made.
-async function run(file, { mode, planner } = {}) {
+// `argsOverride` lets a specific check punch through the generic defaults below —
+// e.g. check 6 must clear the pre-planned `tasks` list, or a template that honors
+// loop policy L6 (skip planning when tasks arrive pre-planned) never reaches its
+// planner node at all, and the check would be asserting on a path that never ran.
+async function run(file, { mode, planner, argsOverride } = {}) {
   const src = readFileSync(file, 'utf8').replace(/^export\s+const\s+meta/m, 'const meta')
   const calls = []
   const logs = []
@@ -74,6 +78,7 @@ async function run(file, { mode, planner } = {}) {
     candidate: { id: 'c1', kind: 'docs', branch: 'claude/x', prNumber: 1 },
     autonomyIssueNumber: 1, ledgerIssueNumber: 2, baselineIssueNumber: 3,
     nowMs: 1753600000000, nowIso: '2026-07-27T00:00:00Z',
+    ...argsOverride,
   }
 
   const fn = new AsyncFunction('agent', 'parallel', 'pipeline', 'log', 'phase', 'budget', 'args', 'console', src)
@@ -142,9 +147,13 @@ for (const f of files) {
     }
 
     // 6. --planner fable must reach a planner node if the template declares one.
+    // tasks: [] forces any template that honors loop policy L6 (skip planning when a
+    // pre-planned work-list arrives) to actually run its Plan phase — otherwise the
+    // generic `tasks` default a few lines up short-circuits the very node this checks,
+    // and the assertion below would be evaluating a code path that never executed.
     const declaresPlanner = readFileSync(f, 'utf8').includes("taskType: 'planner'")
     if (declaresPlanner) {
-      const fable = await run(f, { mode: 'balanced', planner: 'fable' })
+      const fable = await run(f, { mode: 'balanced', planner: 'fable', argsOverride: { tasks: [] } })
       if (!fable.calls.some((c) => c.model === 'claude-fable-5')) {
         errs.push('declares a planner node but --planner fable never routed to claude-fable-5')
       }
