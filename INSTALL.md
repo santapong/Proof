@@ -34,6 +34,8 @@ The **canonical location** is `.claude/skills/<name>/` — a single source of tr
 
 **Option A — use this repo directly.** Open a Claude Code session anywhere inside the repo. Project skills under `.claude/skills/` are auto-discovered; type `/loop-engine`, `/loop-review`, etc. No enable step.
 
+The repo root also ships a project-scope `.mcp.json` that wires up `theloopskill-mcp` — the `route_node` / `estimate_phase` / `boundary_lookup` / `standards_shelf` / `run_gate` tools and the read-only skill/doc resources described in `mcp/`. Claude Code shows a one-time workspace-trust prompt the first time a session opens this repo with an unapproved `.mcp.json`; approve it there (or `claude mcp get theloopskill-mcp` / `claude mcp reset-project-choices` to inspect or reset the choice). **Do not** add `"enableAllProjectMcpServers": true` to `.claude/settings.json` to skip that prompt — it is a project-wide, silent auto-trust of every current *and future* project-scoped server for every teammate who opens the repo, which is a materially bigger grant than "trust this one server," and the prompt itself is the harness's own consent gate working as designed. If the prompt is a genuine friction point, the fix is a documented one-time `claude mcp` approval per teammate, not turning the gate off in a committed file.
+
 **Option B — copy into another project.** Copy the skill folders you want into that project's `.claude/skills/`:
 
 ```bash
@@ -89,15 +91,29 @@ To test the marketplace from a local checkout instead of GitHub:
 
 Marketplace manifest lives at `.claude-plugin/marketplace.json`; the plugin manifest at `.claude-plugin/plugin.json` (its `skills` field points at `./.claude/skills`, so the plugin exposes the same files as the project skills — no duplication).
 
+`.claude-plugin/plugin.json` also declares an `mcpServers` entry for `theloopskill-mcp`, using `${CLAUDE_PLUGIN_ROOT}` in place of the repo-root `.mcp.json`'s `${CLAUDE_PROJECT_DIR}`. This is not redundant with the repo-root `.mcp.json` above — the two are read on disjoint paths:
+
+- Opening this repo directly (Option 1) reads the **project-scope** `.mcp.json`, where `${CLAUDE_PROJECT_DIR}` correctly resolves to the repo you have open.
+- Installing the bundled plugin into some *other* project (Option 3) never reads that file — it reads the **plugin manifest's** `mcpServers`, where `${CLAUDE_PLUGIN_ROOT}` correctly resolves to wherever the plugin got installed, which is not the consuming project's directory. `${CLAUDE_PROJECT_DIR}` in a plugin manifest would resolve to the *consumer's* project and silently fail to find `mcp/server.mjs` there.
+
+Without the manifest entry, every marketplace/plugin-install consumer got the 21 skills and no server — the repo-root `.mcp.json` only ever serves a session opened inside this checkout. `mcpServers` is a recognized `plugin.json` field: `claude plugin validate . --strict` passes with it present (verified against this repo, 2026-07-28) and, as a negative control, flags an actually-unknown field added alongside it (`✘ Validation failed (--strict treats warnings as errors)` for a planted `definitelyBogusUnknownField12345`, removed before commit) — so this is not merely "the validator didn't complain," it demonstrably distinguishes a real field from a typo.
+
 ---
+
+## No `.gitignore`, on purpose
+
+This repo ships no `.gitignore`, and `mcp/`'s own law (`docs/design/ADR-0002-dependency-seam-and-boot-contract.md` §D2.2, §5) is explicit that one must not be added for `node_modules`: nothing in this repo is generated, `git status` is currently the *only* signal that a stray `npm install` violated the zero-dependency rule (`claude plugin validate --strict`, `scripts/validate.mjs` and `scripts/smoke.mjs` all measured blind to a planted `mcp/node_modules` — ADR-0002 §2), and an ignore entry would remove that last detector to buy tidiness. Anyone running `npm install` anywhere in this tree will see `?? node_modules/` in `git status` until they remove it — that nuisance is deliberate, not an oversight to "fix" with a `.gitignore`.
 
 ## Layout
 
 ```
 TheLoopSkill/
+├── .mcp.json                # project-scope MCP wiring for a direct checkout (Option 1)
 ├── .claude-plugin/
-│   ├── plugin.json          # plugin manifest (skills → ./.claude/skills)
+│   ├── plugin.json          # plugin manifest (skills → ./.claude/skills; mcpServers for plugin installs)
 │   └── marketplace.json     # marketplace manifest (plugin source → ./)
+├── mcp/                      # theloopskill-mcp: stdio MCP server (route_node, estimate_phase,
+│                              # boundary_lookup, standards_shelf, run_gate + read-only resources)
 ├── .claude/
 │   ├── settings.json        # extraKnownMarketplaces + enabledPlugins (web)
 │   └── skills/
