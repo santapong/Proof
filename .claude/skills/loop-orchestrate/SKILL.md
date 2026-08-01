@@ -161,7 +161,7 @@ Reuse the normal workflow reporting and add the PM layer on top:
 ## Files in this skill
 
 - `references/coverage-planning.md` — why one planner is not enough: three framings, the roster sweep, loop-until-dry, and the per-node charter.
-- `references/task-decomposition.md` — building the typed task DAG (node schema, edge rules, fan-out vs loop, phase grouping).
+- `references/task-decomposition.md` — building the typed task DAG (node schema, edge rules, fan-out vs loop, phase grouping).; plus the decomposition-failure catalogue (§9) — noun splits, false parallels, phantom edges, tier mismatch, the unpriced repair round
 - `references/model-routing.md` — the routing rationale: the fleet, the session-model check, both override modifiers under each mode, and the two-column worked example.
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow
 - `templates/project-coverage-plan.workflow.js` — the coverage-first planning run: 3 framings → reconcile → roster sweep → gap rounds until dry → charters.

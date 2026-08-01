@@ -103,7 +103,7 @@ Frameworks are pluggable: drop a new `<Name>.md` into `frameworks/` following `f
 
 ## Reference files
 
-- `references/harness-policy.md` — the Harness Engineering Policy: H1–H12, the orchestration-shape and verification rules every script obeys
+- `references/harness-policy.md` — the Harness Engineering Policy: H1–H12, the orchestration-shape and verification rules every script obeys; closes with the waste catalogue — six shapes that pass every rule as checked and still waste the run
 - `references/loop-policy.md` — the Loop Engineering Policy: L1–L8, the iteration, budget-guard and convergence rules
 - `references/execution-modes.md` — the execution-mode contract: the routing table (§M3), both override modifiers (§M4), verifier width and the loop-until-dry threshold (§M5), the full-mode pre-flight (§M6), the Fable opt-ins `--planner fable` / `--fable-gate` (§M7/§M7b), and the canonical `ROUTES` block (§M8)
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow

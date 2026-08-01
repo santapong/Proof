@@ -50,5 +50,5 @@ The conductor itself works inline between workflows — planning, gating and re-
 
 | File | What it holds |
 |---|---|
-| `references/conduct.md` | The method: v1 scoping, multi-planner reconcile + roster sweep, phase-to-skill routing, sequential gating, repair rounds, cache-busting, the ledger |
+| `references/conduct.md` | The method: v1 scoping, multi-planner reconcile + roster sweep, phase-to-skill routing, sequential gating, repair rounds, cache-busting, the ledger; plus the conduct-failure catalogue (§6) — gate theater, repair creep, the UNVERIFIED pile, ledger blindness, scope drift, the rubber-stamped gate |
 | `references/standards.md` | The pinned authorities — SemVer 2.0.0 for what "version one" promises, lifecycle and delivery-metrics shelves, with the confirmation log |
