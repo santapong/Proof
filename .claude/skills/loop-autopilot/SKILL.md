@@ -91,7 +91,7 @@ Work on a `claude/`-prefixed branch only.
 - `references/anti-patterns.md` — the seven ways an autonomous loop degrades (AP1–AP7), mapped to this loop's guards; the pre-deploy checklist and the capability-gating caveat
 - `references/verifier-integrity.md` — AP6 (verification runs but is fooled) and its three structural guards; the SUSTAIN hardening that gates SCALE
 - `references/held-out-eval.md` — the external detector for AP6 / meta-overfit: a frozen suite with hidden oracles, and the rising-false-accept alarm
-- `references/comprehension-rot.md` — the one cost with no structural guard, and the forced random-sample digest that makes it visible
+- `references/comprehension-rot.md` — the one cost with no structural guard, and the forced random-sample digest that makes it visible — plus the six distribution-drift trends only the digest reader can see (D1–D6) and what each adjusts
 - `references/credit-horizon.md` — closing the outcome-feedback gap: the trust ledger design and the three-knob mapping
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow
 - `templates/improvement-loop.workflow.js` — the budget-guarded loop skeleton (dry by default)
