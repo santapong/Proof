@@ -32,7 +32,7 @@ Full rules and rule syntax in **`references/permissions.md`**; scaffold in **`te
 
 ## 3. Hooks — automate around events
 
-Full event list, input JSON, and exit-code control in **`references/hooks.md`**; example scripts in **`templates/hooks/`**.
+Full event list, input JSON, and exit-code control in **`references/hooks.md`**; example scripts in **`templates/hooks/`**. To mechanize a *sibling skill's* rule (protected paths, never-push-main, never-end-red), pick the row from **`references/skill-hooks.md`** — install the two or three rows whose failure mode the project has actually shown, never the whole table.
 
 - Configured under `hooks` in `settings.json`, keyed by event → array of `{ matcher, hooks: [{ type: "command", command }] }`.
 - A hook reads a JSON event on **stdin** and controls flow by **exit code**: `0` = proceed (stdout JSON may add `additionalContext` or a `permissionDecision`); **`2` = block**, with stderr fed back to Claude; other = non-blocking warning.
@@ -87,6 +87,7 @@ Commit `settings.json`, `hooks/`, `loop.md`, and `.mcp.json`; gitignore `setting
 
 - `references/permissions.md` — settings.json locations/precedence, allow/deny/ask, rule syntax, safe defaults
 - `references/hooks.md` — hook events, settings structure, stdin input, exit-code control, common recipes
+- `references/skill-hooks.md` — the per-skill catalogue: which of the fleet's twenty-two skills' rules are worth mechanizing as project hooks, which belong in CI, and which must stay judgment
 - `references/mcp.md` — .mcp.json schema, transports, scopes, env expansion, trust
 - `references/automation-loops.md` — every recurring/automation mechanism and how to choose
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow
