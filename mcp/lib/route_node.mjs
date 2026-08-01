@@ -21,7 +21,7 @@
 // gate on it" ADR-0004 §C1 rejects, and precisely what ADR-0005 I1 exists to prevent: a value the
 // server invented because it declined to reuse the one place the value is correctly derived.
 //
-// This file's task brief (theloopskill-mcp Phase 3, S1) is explicit and specific: "the Phase-2
+// This file's task brief (heimdall-mcp Phase 3, S1) is explicit and specific: "the Phase-2
 // spine you are building on: mcp/lib/{modes,estimate,boundary,standards}.mjs — call the spine,
 // never reimplement it." Read together with mcp/lib/estimate.mjs's own comment that
 // `readModesM6`/`computeWidthM6` are "exported for testing/reuse", the more defensible reading is
@@ -80,7 +80,7 @@ import {
 const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/lib
 const DEFAULT_ROOT = path.resolve(HERE, '..', '..') // repo root, two levels up from mcp/lib
 const MODES_DOC_REL = path.join('.claude', 'skills', 'loop-engine', 'references', 'execution-modes.md')
-const SERVER_VERSION = '0.1.0'
+const SERVER_VERSION = '0.2.0'
 
 function resolveRoot(root) {
   return root ? path.resolve(root) : DEFAULT_ROOT
@@ -107,7 +107,7 @@ function sha256OfLines(lines, startLine, endLine) {
 }
 
 function resourceUri(file) {
-  return `theloopskill://${file}`
+  return `heimdall://${file}`
 }
 
 function withResourceUri(citation) {

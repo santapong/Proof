@@ -101,6 +101,21 @@ Stated as the invariant an implementer and a reviewer can both check in one comm
 
 That is the whole rule. It is stronger than "no `package.json`" (a bare `import 'zod'` needs no manifest to resolve if a sibling `node_modules` exists) and it is decidable by grep.
 
+**Phase-4 addendum (2026-08-01) — the intra-package carve-out, as flagged by Phase 3 S1.**
+The rule above, read literally, forbids the server's own spine: Phase 2/3 split the
+implementation into `mcp/lib/*.mjs`, and `server.mjs` reaches them by relative specifier.
+The ruling: the invariant's *purpose* is the dependency seam — no third-party code in the
+server's module graph — and a relative import inside `mcp/` crosses no seam. Codified:
+
+> Every import specifier reachable from `mcp/server.mjs` either begins with `node:` **or**
+> begins with `./`/`../` and resolves inside `mcp/`.
+
+Still decidable by grep, now enforced mechanically (validate.mjs CHECK 9): a specifier
+that is neither `node:`-prefixed nor relative fails the gate, and a relative specifier
+containing enough `..` to escape `mcp/` fails it too. `ERR_MODULE_NOT_FOUND` remains
+reachable only for a deleted/renamed spine file — a defect the gate catches at commit
+time, not a boot-contract concern.
+
 ### D2.2 — Manifest, lockfile and `node_modules`: the ruling table
 
 | Question | Ruling |

@@ -35,7 +35,7 @@ The **canonical location** is `.claude/skills/<name>/` — a single source of tr
 
 **Option A — use this repo directly.** Open a Claude Code session anywhere inside the repo. Project skills under `.claude/skills/` are auto-discovered; type `/loop-engine`, `/loop-review`, etc. No enable step.
 
-The repo root also ships a project-scope `.mcp.json` that wires up `theloopskill-mcp` — the `route_node` / `estimate_phase` / `boundary_lookup` / `standards_shelf` / `run_gate` tools and the read-only skill/doc resources described in `mcp/`. Claude Code shows a one-time workspace-trust prompt the first time a session opens this repo with an unapproved `.mcp.json`; approve it there (or `claude mcp get theloopskill-mcp` / `claude mcp reset-project-choices` to inspect or reset the choice). **Do not** add `"enableAllProjectMcpServers": true` to `.claude/settings.json` to skip that prompt — it is a project-wide, silent auto-trust of every current *and future* project-scoped server for every teammate who opens the repo, which is a materially bigger grant than "trust this one server," and the prompt itself is the harness's own consent gate working as designed. If the prompt is a genuine friction point, the fix is a documented one-time `claude mcp` approval per teammate, not turning the gate off in a committed file.
+The repo root also ships a project-scope `.mcp.json` that wires up `heimdall-mcp` — the `route_node` / `estimate_phase` / `boundary_lookup` / `standards_shelf` / `run_gate` tools and the read-only skill/doc resources described in `mcp/`. Claude Code shows a one-time workspace-trust prompt the first time a session opens this repo with an unapproved `.mcp.json`; approve it there (or `claude mcp get heimdall-mcp` / `claude mcp reset-project-choices` to inspect or reset the choice). **Do not** add `"enableAllProjectMcpServers": true` to `.claude/settings.json` to skip that prompt — it is a project-wide, silent auto-trust of every current *and future* project-scoped server for every teammate who opens the repo, which is a materially bigger grant than "trust this one server," and the prompt itself is the harness's own consent gate working as designed. If the prompt is a genuine friction point, the fix is a documented one-time `claude mcp` approval per teammate, not turning the gate off in a committed file.
 
 **Option B — copy into another project.** Copy the skill folders you want into that project's `.claude/skills/`:
 
@@ -92,7 +92,7 @@ To test the marketplace from a local checkout instead of GitHub:
 
 Marketplace manifest lives at `.claude-plugin/marketplace.json`; the plugin manifest at `.claude-plugin/plugin.json` (its `skills` field points at `./.claude/skills`, so the plugin exposes the same files as the project skills — no duplication).
 
-`.claude-plugin/plugin.json` also declares an `mcpServers` entry for `theloopskill-mcp`, using `${CLAUDE_PLUGIN_ROOT}` in place of the repo-root `.mcp.json`'s `${CLAUDE_PROJECT_DIR}`. This is not redundant with the repo-root `.mcp.json` above — the two are read on disjoint paths:
+`.claude-plugin/plugin.json` also declares an `mcpServers` entry for `heimdall-mcp`, using `${CLAUDE_PLUGIN_ROOT}` in place of the repo-root `.mcp.json`'s `${CLAUDE_PROJECT_DIR}`. This is not redundant with the repo-root `.mcp.json` above — the two are read on disjoint paths:
 
 - Opening this repo directly (Option 1) reads the **project-scope** `.mcp.json`, where `${CLAUDE_PROJECT_DIR}` correctly resolves to the repo you have open.
 - Installing the bundled plugin into some *other* project (Option 3) never reads that file — it reads the **plugin manifest's** `mcpServers`, where `${CLAUDE_PLUGIN_ROOT}` correctly resolves to wherever the plugin got installed, which is not the consuming project's directory. `${CLAUDE_PROJECT_DIR}` in a plugin manifest would resolve to the *consumer's* project and silently fail to find `mcp/server.mjs` there.
@@ -113,7 +113,7 @@ Heimdall/
 ├── .claude-plugin/
 │   ├── plugin.json          # plugin manifest (skills → ./.claude/skills; mcpServers for plugin installs)
 │   └── marketplace.json     # marketplace manifest (plugin source → ./)
-├── mcp/                      # theloopskill-mcp: stdio MCP server (route_node, estimate_phase,
+├── mcp/                      # heimdall-mcp: stdio MCP server (route_node, estimate_phase,
 │                              # boundary_lookup, standards_shelf, run_gate + read-only resources)
 ├── .claude/
 │   ├── settings.json        # extraKnownMarketplaces + enabledPlugins (web)
