@@ -86,7 +86,7 @@ Commit `settings.json`, `hooks/`, `loop.md`, and `.mcp.json`; gitignore `setting
 ## Reference files
 
 - `references/permissions.md` — settings.json locations/precedence, allow/deny/ask, rule syntax, safe defaults
-- `references/hooks.md` — hook events, settings structure, stdin input, exit-code control, common recipes
+- `references/hooks.md` — hook events, settings structure, stdin input, exit-code control, common recipes; plus the guardrail misuse catalogue — deny-vs-ask, CI duplication, the SessionStart tax, allowlist rot
 - `references/skill-hooks.md` — the per-skill catalogue: which of the fleet's twenty-two skills' rules are worth mechanizing as project hooks, which belong in CI, and which must stay judgment
 - `references/mcp.md` — .mcp.json schema, transports, scopes, env expansion, trust
 - `references/automation-loops.md` — every recurring/automation mechanism and how to choose

@@ -84,7 +84,7 @@ This is the parallel finder → dedup → adversarial-verify pattern from the **
 
 ## Reference files
 
-- `references/methodology.md` — the three-phase procedure in full
+- `references/methodology.md` — the three-phase procedure in full; closes with the false-positive taxonomy — the five shapes that convince and are not findings, each with its kill-check, and the unrun-kill-check confidence cap
 - `references/vulnerability-playbooks.md` — per-category detection, source/sink pairs, confirm/refute tests
 - `references/severity-model.md` — severity × confidence scoring and the reporting bar
 - `references/owasp-cwe.md` — OWASP Top 10, CWE Top 25, and ASVS mappings

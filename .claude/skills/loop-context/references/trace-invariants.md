@@ -44,6 +44,30 @@ result. An action whose precondition was checked in a different phase and never
 re-recorded fails — the state contract (Clause 3) says the checkpoint is what a phase
 knows. *Catches:* the gap between "the design says we check" and "this run checked".
 
+## The violation catalogue
+
+An invariant nobody can picture gets "checked" by skimming, and skimming is the
+ungrounded self-review this file exists to replace. Each violation below has a **fixed
+trace shape** — knowing it turns "review the trace" (a judgment call) into "run this
+detector" (mechanical), which is what lets the audit template's verify stage judge
+evidence quality instead of re-litigating rules. Each row carries only the shape and the
+detector; the rule stays with the invariant or clause that owns it.
+
+| Violation | What the trace shows | Detector | Violates |
+|---|---|---|---|
+| **Side-channel phase** | Phase N+1's segment contains reads against raw sources (files, URLs) that phase N already read and checkpointed. | Diff phase N+1's read targets against its entry checkpoint: every read must name a checkpoint field or a pointer the checkpoint carries. Any other read is the violation — even when both reads happened to agree. | Clause 3 (`shared-state.md`) — the trace form of its re-derivation anti-pattern |
+| **Keyless append** | A list field holds two entries identical except for timestamp: a resumed run's replayed phase appended its finding again. | Invariant 2's replay. Statically: grep the workflow script for appends into state with no key derivation. | Invariant 2; Clause 2 (the field's declared merge is append) |
+| **Summarize-and-destroy** | A compaction step whose output is prose naming no store records — nothing downstream can dereference. The summary *reads* complete; summaries always read complete to whoever compressed them, which is why eyeballing detects nothing here. | Invariant 1's paraphrase probes (`context-rules.md` §Testing). A probe that fails with no pointer to chase is the violation. | Invariant 1; the addressable-store rule |
+| **Zombie fact** | A decision rationale dated after a correction cites the retracted value, unlabeled — the store held the correction the whole time; assembly preferred the stale fact. | Invariant 3's grep, scoped to context assemblies and decision rationales. | Invariant 3; the retrieval-preference clause (`supersession.md`) |
+| **Unrecorded precondition** | An irreversible act whose phase segment contains no preceding check-with-result — the check usually *did* run, in an earlier phase, so this run's trace cannot prove the act was gated. | For each irreversible act, scan backward within its phase for the recorded check and its result. A check found only in another phase's segment does not count — that is invariant 4's point. | Invariant 4; Clause 3 |
+| **Prose relay** | A claim hardens across hops — hedged where it originated, asserted by the agent that consumed it as prose. No single hop looks wrong; the drift is only visible across hops. | Statically: grep the workflow script for `agent()` results consumed by a later prompt without a `schema`. In the trace: diff each hop's restatement of a claim against the hop that originated it. | Clause 1 (`shared-state.md`) |
+
+Two reading rules. **The detector's output is the finding's evidence** — a catalogue
+entry cited without the line its detector produced is an opinion, and the audit
+template's verify stage will treat it as one. **Absence of a known shape is not a
+pass** — the catalogue lists the shapes seen so far; the invariants quantify over the
+whole trace, and the checks under "Running them" remain the gate.
+
 ## Stating a new invariant
 
 Keep to the same grammar — a quantified statement over trace elements, checkable by

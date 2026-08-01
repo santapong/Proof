@@ -67,6 +67,6 @@ Run these via `templates/context-audit.workflow.js`, which audits a target (a re
 - `references/context-rules.md` — budget, placement, compaction: the measured rules and the traps (NIAH, StreamingLLM misread)
 - `references/shared-state.md` — the typed-state contract: fields, merge rules, checkpoints, handoff, when not to fan out
 - `references/supersession.md` — update-over-recall: two-timestamp facts, delta discipline, retrieval preference, the purge caveat
-- `references/trace-invariants.md` — the four invariants, how to state new ones, and what they cannot prove
+- `references/trace-invariants.md` — the four invariants, how to state new ones, and what they cannot prove — plus the violation catalogue: each invariant's concrete failure shape in a real trace
 - `references/standards.md` — the pinned authorities behind every rule above, graded, with the confirmation log
 - `templates/context-audit.workflow.js` — fan-out audit of a target against §2–§5, verified against trace evidence

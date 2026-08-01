@@ -62,7 +62,7 @@ This is the per-item **pipeline → adversarial-verify** pattern from the **`loo
 
 | File | Read it when |
 |---|---|
-| `references/doc-types.md` | Choosing a type; per-type skeletons and the "what goes where" map |
+| `references/doc-types.md` | Choosing a type; per-type skeletons and the "what goes where" map; plus the rot catalogue (§12) for diagnosing an existing doc set |
 | `references/style.md` | Drafting; the writing rules, example patterns, and anti-rot practices |
 | `references/standards.md` | Authoritative standards this skill applies — Diátaxis, Google/MS style, CommonMark, Conventional Commits, MADR — named, pinned, and mapped |
 | `templates/doc-generation.workflow.js` | Documenting many modules: extract-intent → draft → verify-accuracy pipeline |

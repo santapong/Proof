@@ -52,7 +52,7 @@ This is the parallel fan-out → converge pattern from the **`loop-engine`** ski
 
 ## Reference files
 
-- `references/methodology.md` — localization in full: `git bisect`, binary-searching the code path, instrumentation, and delta-debugging the input
+- `references/methodology.md` — localization in full: `git bisect`, binary-searching the code path, instrumentation, and delta-debugging the input; plus the debugging anti-pattern catalogue — shotgun, symptom-fix, Heisenbug capture-don't-interrupt, the cannot-reproduce tripwire rule
 - `references/hypothesis-testing.md` — enumerating falsifiable hypotheses, designing eliminating tests, and reading surprising results
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow
 - `templates/bug-diagnosis.workflow.js` — parallel hypotheses → eliminate/converge → fix workflow script

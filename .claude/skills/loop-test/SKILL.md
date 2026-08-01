@@ -78,6 +78,6 @@ This is the **pipeline** pattern (design → write → run per module, no barrie
 | File | Read it when |
 |---|---|
 | `references/framework-conventions.md` | Detecting the repo's stack, runner, naming, fixtures, and assertion style — or choosing a default when none exists |
-| `references/test-design.md` | Designing cases: happy/edge/error/property categories, the boundary checklist, minimal-mocking rules |
+| `references/test-design.md` | Designing cases: happy/edge/error/property categories, the boundary checklist, minimal-mocking rules; the test-smell catalogue (how a green suite lies) and the fake > stub > mock ladder |
 | `references/standards.md` | Authoritative standards this skill applies — xUnit Patterns, Pyramid/Trophy, FIRST, mutation testing, Pact, MC/DC — named, pinned, and mapped |
 | `templates/test-generation.workflow.js` | Generating tests across many modules: design → write → run pipeline workflow script |

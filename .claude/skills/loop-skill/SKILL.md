@@ -95,6 +95,6 @@ For **three or more skills at once**, use `templates/skill-scaffold.workflow.js`
 |---|---|
 | `references/boundary-design.md` | Writing a description that discriminates; the checkable-question test; registering in the boundary audit |
 | `references/standards-shelves.md` | The three grades, primary-source confirmation, the confirmation log, and the two failure modes this plugin has already shipped |
-| `references/authoring.md` | Thin-router discipline, progressive disclosure, reference sizing, the house voice |
+| `references/authoring.md` | Thin-router discipline, progressive disclosure, reference sizing, the house voice; the failure catalogue, anchored to defect classes this plugin has actually shipped |
 | `references/template-contract.md` | H10 sandbox rules, the `ROUTES` block, orchestration shape selection |
 | `references/standards.md` | The pinned authorities this skill itself reasons from |

@@ -103,7 +103,7 @@ This is the parallel fan-out → merge pattern from the **`loop-engine`** skill 
 
 ## Reference files
 
-- `references/incident-command.md` — declaring criteria, the IC / Ops Lead / Comms Lead split, the severity × blast-radius matrix, staffing thresholds, channel and cadence, re-escalation
+- `references/incident-command.md` — declaring criteria, the IC / Ops Lead / Comms Lead split, the severity × blast-radius matrix, staffing thresholds, channel and cadence, re-escalation; plus the anti-pattern catalog — six ways a response defeats itself
 - `references/mitigation-playbook.md` — mitigate-first and its one exception, the pattern catalog with when-safe/when-not, verifying user-visible recovery, timestamped action records
 - `references/reproduction-timeline.md` — building a faithful reproduction from production telemetry and reconstructing the multi-source timeline; the two artifacts handed to `loop-debug`
 - `references/postmortem.md` — blameless language, CoE structure, contributing-factor breadth, action items, the review gate, the recurrence check

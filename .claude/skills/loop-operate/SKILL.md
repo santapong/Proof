@@ -87,7 +87,7 @@ This is the parallel fan-out → earned-barrier → pipeline pattern from the **
 ## Reference files
 
 - `references/slo-model.md` — choosing SLIs, setting SLO targets, error-budget arithmetic and burn rate, and the error-budget policy
-- `references/alerting.md` — golden signals, RED vs USE, symptom-not-cause, the multi-window multi-burn-rate table, the paging bar and dedup
+- `references/alerting.md` — golden signals, RED vs USE, symptom-not-cause, the multi-window multi-burn-rate table, the paging bar and dedup; plus the misuse catalogue — six failures that look like working alerting
 - `references/observability.md` — logs/metrics/traces, the cardinality trap, one correlation ID, OpenTelemetry, and what the rest of this skill requires telemetry to carry
 - `references/runbooks.md` — runbook anatomy, the reversibility admission bar, the rung-gated eligibility table, the concurrency gap, and logging every attempted and skipped action
 - `references/on-call-triage.md` — severity from burn rate × blast radius, the routing decision tree, and the handoff contract into `loop-incident`
