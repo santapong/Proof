@@ -1,4 +1,4 @@
-// mcp/server.mjs — theloopskill-mcp, the stdio JSON-RPC shell (Phase 3, S7).
+// mcp/server.mjs — heimdall-mcp, the stdio JSON-RPC shell (Phase 3, S7).
 //
 // This file is deliberately the LAST thing written in Phase 3 and deliberately THIN: it owns
 // wire framing, protocol-version negotiation, method dispatch, the static tool/resource registry,
@@ -116,8 +116,8 @@ const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/
 const DEFAULT_ROOT = path.resolve(HERE, '..') // repo root, one level up from mcp/
 const ROOT = process.env.THELOOPSKILL_ROOT ? path.resolve(process.env.THELOOPSKILL_ROOT) : DEFAULT_ROOT
 
-const SERVER_NAME = 'theloopskill-mcp'
-const SERVER_VERSION = '0.1.0' // mcp/runtime-pin.json serverInfo.version — must move together
+const SERVER_NAME = 'heimdall-mcp'
+const SERVER_VERSION = '0.2.0' // mcp/runtime-pin.json serverInfo.version — must move together
 const PROTOCOL_ADVERTISE = '2025-06-18' // mcp/runtime-pin.json protocol.advertise
 const SUPPORTED_PROTOCOL_VERSIONS = Object.freeze([
   '2025-11-25',
@@ -129,23 +129,23 @@ const SUPPORTED_PROTOCOL_VERSIONS = Object.freeze([
 
 // -------------------------------------------------------------------------------------------------
 // stderr — the ONLY diagnostic channel (ADR-0001 point 1, ADR-0002 C2). Every line is prefixed
-// "theloopskill-mcp: " (ADR-0002 C3) so an operator scanning Claude Code's own stderr can grep it
+// "heimdall-mcp: " (ADR-0002 C3) so an operator scanning Claude Code's own stderr can grep it
 // out. No console.log anywhere in this file or reachable from it — stdout carries protocol bytes
 // only, including on every failure path.
 // -------------------------------------------------------------------------------------------------
 
 function stderrLine(text) {
-  process.stderr.write(`theloopskill-mcp: ${text}\n`)
+  process.stderr.write(`heimdall-mcp: ${text}\n`)
 }
 
 // ADR-0002 §D2.4 C4 — the three exact literal strings. Reproduced verbatim (not paraphrased; the
 // gate this ADR anticipates asserts on them byte-for-byte). <ROOT>/<process.version>/<mcp dir> are
 // substituted in, never the surrounding grammar.
 function sourceDocsMissingMessage(what) {
-  return `theloopskill-mcp: source docs not found — ${what} under ${ROOT} · fix: set THELOOPSKILL_ROOT to a TheLoopSkill checkout, or correct the server path in .mcp.json`
+  return `heimdall-mcp: source docs not found — ${what} under ${ROOT} · fix: set THELOOPSKILL_ROOT to a TheLoopSkill checkout, or correct the server path in .mcp.json`
 }
 function nodeTooOldMessage() {
-  return `theloopskill-mcp: node 18 or newer required — running ${process.version} · fix: upgrade node, or point .mcp.json "command" at a newer binary`
+  return `heimdall-mcp: node 18 or newer required — running ${process.version} · fix: upgrade node, or point .mcp.json "command" at a newer binary`
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -256,7 +256,7 @@ const CITATION_SCHEMA = Object.freeze({
     sha256: { type: 'string', pattern: '^[0-9a-f]{64}$' },
     excerpt: { type: 'string' },
     excerptTruncated: { type: 'boolean', default: false },
-    resourceUri: { type: 'string', description: "theloopskill:// URI of the same file, readable via this server's resources/read." },
+    resourceUri: { type: 'string', description: "heimdall:// URI of the same file, readable via this server's resources/read." },
   },
 })
 

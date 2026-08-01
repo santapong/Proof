@@ -92,7 +92,7 @@ import {
 
 const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/lib
 const DEFAULT_ROOT = path.resolve(HERE, '..', '..') // repo root, two levels up from mcp/lib
-const SERVER_VERSION = '0.1.0'
+const SERVER_VERSION = '0.2.0'
 
 function resolveRoot(root) {
   return root ? path.resolve(root) : DEFAULT_ROOT
@@ -108,7 +108,7 @@ function sha256OfLines(lines, startLine, endLine) {
 }
 
 function resourceUri(file) {
-  return `theloopskill://${file}`
+  return `heimdall://${file}`
 }
 
 function citeSpanLocal(relFile, lines, section, startLine, endLine) {

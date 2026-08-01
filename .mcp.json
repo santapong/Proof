@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "theloopskill-mcp": {
+    "heimdall-mcp": {
       "command": "node",
       "args": ["${CLAUDE_PROJECT_DIR}/mcp/server.mjs"]
     }

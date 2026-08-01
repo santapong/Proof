@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_Nothing yet._
+### Changed — BREAKING
+- **MCP server renamed: `theloopskill-mcp` → `heimdall-mcp` (server 0.1.0 → 0.2.0)** — the rename deferred at the plugin rename lands with MCP Phase 4. Server id in `.mcp.json` and the plugin manifest, `serverInfo.name`, the stderr prefix, the tool-name prefix (`mcp__heimdall-mcp__*`), and the resource URI scheme (`heimdall://…`) all change together. Any project `.mcp.json` or permission allowlist naming the old id must be updated. ADR-0001 keeps the old name — a decision record states what was decided at the time.
+
+### Added
+- **MCP Phase 4** — the intra-package carve-out flagged by Phase 3 S1 is codified: ADR-0002 gains the dated addendum (`node:`-prefixed **or** relative-inside-`mcp/`), and `validate.mjs` gains **CHECK 9**, mechanically failing any bare/scoped specifier or any relative import escaping `mcp/`. Live-verified over stdio after the rename: initialize handshake echoes `heimdall-mcp 0.2.0`; `route_node(gating, adversarial-verify, all-out)` → `claude-opus-5/max`, width 5, governing clause cited, all citations on the `heimdall://` scheme.
 
 ## [1.6.0] — 2026-08-01
 

@@ -127,7 +127,7 @@ function citeSpan(relFile, lines, section, startLine, endLine) {
     sha256: sha256OfLines(lines, startLine, endLine),
     excerpt: truncated ? excerptFull.slice(0, 2000) : excerptFull,
     excerptTruncated: truncated,
-    resourceUri: `theloopskill://${relFile}`,
+    resourceUri: `heimdall://${relFile}`,
   }
 }
 

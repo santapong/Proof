@@ -82,7 +82,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/lib
 const DEFAULT_ROOT = path.resolve(HERE, '..', '..') // repo root, two levels up from mcp/lib — the
 // SAME arithmetic mcp/server.mjs (S7, not yet written) must use one level up from mcp/, since both
 // anchor to their own file's import.meta.url rather than to process.cwd() (ADR-0002 §D2.4 C7).
-const SERVER_VERSION = '0.1.0'
+const SERVER_VERSION = '0.2.0'
 
 function resolveRoot(root) {
   return root ? path.resolve(root) : DEFAULT_ROOT
@@ -105,7 +105,7 @@ function sha256OfLines(lines, startLine, endLine) {
 }
 
 function resourceUri(file) {
-  return `theloopskill://${file}`
+  return `heimdall://${file}`
 }
 
 function dedupeCitations(list) {
