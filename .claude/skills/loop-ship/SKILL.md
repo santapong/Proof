@@ -82,7 +82,7 @@ For those, run **`templates/release-readiness-gate.workflow.js`** — one checke
 
 ## Reference files
 
-- `references/rollout-strategies.md` — deploy-vs-release, the three strategies plus the recreate baseline, the Risk → strategy table, feature-flag kinds and hygiene, IaC, environment topology, exemplars
+- `references/rollout-strategies.md` — deploy-vs-release, the three strategies plus the recreate baseline, the Risk → strategy table, feature-flag kinds and hygiene, IaC, environment topology, exemplars; plus the failure catalogue — how a green rollout lies (starved/unrepresentative canaries, bake vs incubation, blue-green over a shared schema, flag debt, rollback theater)
 - `references/migrations.md` — expand-contract sequencing across a real release, and the gate that blocks contract
 - `references/release-gates.md` — the pre-deploy checklist, the strategy decision tree, the CI/CD gate chain, SLO-gated promotion, sign-off
 - `references/supply-chain-gate.md` — the ship-time artifact gate: provenance, SBOM diff, signature; hard-block vs advisory; escalation
