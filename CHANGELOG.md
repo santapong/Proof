@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [1.5.0] — 2026-08-01
+
 ### Added
 - **`loop-context`** — the twenty-second skill: engineer what an agent carries at runtime. Context budgets (plan for 10–20% of the advertised window) and placement (the U-curve, compounding across hops), compaction under the addressable-store rule (nothing compacted out may be destroyed), a typed shared-state contract (per-field merge rules, phase-boundary checkpoints, decision-carrying handoffs), supersession discipline (two-timestamp facts, delta-not-rewrite, the purge caveat), and four homegrown property-based trace invariants with an evidence-anchored audit template (`context-audit.workflow.js`). Two-way boundary pointers added to `loop-engine` and `loop-harness`; boundary audit gains the row and three rated overlaps. Standards shelf pins the peer-reviewed anchors (TACL 2024, NeurIPS 2024, COLM 2024, ICML 2025, ICLR 2025, Findings of ACL 2026, ICSE 2026) and marks the 2026 preprint cluster as unreplicated.
 

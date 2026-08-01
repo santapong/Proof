@@ -37,7 +37,27 @@ It's for developers who want Claude Code to do *engineering*, not just answer qu
 
 ## What's in the box
 
-Twenty-one skills, grouped by the engineering role they play. Every skill takes `[--mode <lite|balanced|all-out>]` unless noted.
+Twenty-two skills, grouped by the engineering role they play. Every skill takes `[--mode <lite|balanced|all-out>]` unless noted.
+
+**Start here — say what is in front of you, and one row applies:**
+
+| You have... | Reach for |
+|---|---|
+| An idea and nothing else | `loop-build` (whole project) or `loop-design` (just the architecture) |
+| A big job to split across many agents | `loop-orchestrate` to plan it, `loop-engine` to run one workflow |
+| Code that is wrong, and you can run it | `loop-debug` |
+| Code that works but is slow, messy, or unidiomatic | `loop-algo` (mechanism) / `loop-pattern` (shape) |
+| A diff, PR, or repo to judge without changing it | `loop-review` (defects) / `loop-audit` (impact & risk) |
+| A UI that renders but feels cheap | `loop-frontend` |
+| A third-party API to wire up | `loop-integrate` (`loop-scout` first if the provider isn't chosen) |
+| A change ready to reach production | `loop-ship` — including many task branches to land as one (see the integration train below) |
+| A live service to keep healthy / a live outage | `loop-operate` / `loop-incident` |
+| A question needing cited evidence | `loop-research` |
+| Docs to write or fix | `loop-docs` |
+| An agent that forgets, repeats itself, or acts on stale facts | `loop-context` |
+| Claude's own setup: permissions, hooks, MCP, schedules | `loop-harness` |
+| A repo that should improve itself on a schedule | `loop-autopilot` |
+| A new skill for this plugin | `loop-skill` |
 
 **Engine & planning**
 
@@ -45,6 +65,7 @@ Twenty-one skills, grouped by the engineering role they play. Every skill takes 
 |---|---|---|
 | **loop-engine** | `/loop-engine <task> [--planner <opus\|fable>] [--framework <name>] [--dry-run]` | Authors and executes a multi-agent Workflow script — pipeline by default, earned parallel barriers, loops for unknown-size discovery — governed by the harness & loop policies and a lifecycle framework (default AIDLC). |
 | **loop-orchestrate** | `/loop-orchestrate <project> [--planner <opus\|fable>] [--budget <tokens>]` | Planning layer on `loop-engine`: decomposes a project into a task DAG and routes the right Claude model + effort to each task ("right model for the right job"). |
+| **loop-context** | `/loop-context <target>` | What an agent **carries** at runtime: context budgets and placement, compaction with an addressable store, typed shared state (per-field merge rules, phase checkpoints) handed between agents, supersession of stale facts, and evidence-confirmed audits via four trace invariants. |
 | **loop-skill** | `/loop-skill <skill-purpose>` | Authors a new skill for this plugin, or brings an existing one up to contract: discriminating description, graded standards shelf, thin router, references, ROUTES-carrying template — then proves it with the validation gate. |
 | **loop-build** | `/loop-build <project-brief>` | Conducts a brief to a shipped version one: scopes the v1 contract, plans with three reconciled planners plus a roster sweep, drives every phase through the owning domain skills with sequential gates and repair rounds, releases, and ships the full cast-and-cost ledger. |
 
@@ -88,10 +109,19 @@ Twenty-one skills, grouped by the engineering role they play. Every skill takes 
 | **loop-scout** | `/loop-scout <need>` | Prior-art / build-vs-buy check *before* building: stdlib → registries → services → standards. Guards against over-engineering. |
 | **loop-docs** | `/loop-docs <target>` | Writes/maintains docs (README, API, docstrings, ADRs) via the Diátaxis model, verifying every claim against the code. |
 | **loop-harness** | `/loop-harness <project>` | Sets up a project's Claude Code harness from copy-paste scaffolds: permissions, hooks, MCP (`.mcp.json`), automation loops. No `--mode` — it ships no workflow template. |
-| **loop-context** | `/loop-context <target> [--mode <lite|balanced|all-out>]` | Engineers what an agent carries at runtime: context budgets/placement, compaction with an addressable store, typed shared state with merge rules and checkpoints, supersession of stale facts, and evidence-confirmed audits via trace invariants. |
 | **loop-autopilot** | `/loop-autopilot <repo>` | Autonomous engineering loop — reads feedback (issues/PRs/CI), acts as **draft** PRs with tests, researches improvements when idle. Propose-only, never merges. |
 
 **Which one when?** The four operational skills are the easiest to confuse, so they split on one checkable question each: is there a runbook that restores the SLI (`loop-operate`) or not (`loop-incident`)? Is the service currently down (`loop-incident`) or is the defect merely reproducible (`loop-debug`)? Is the rollout still in flight (`loop-ship`) or baked (`loop-operate`)? The full 20-way matrix is in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json).
+
+## Branch-per-task and the integration train
+
+When one project has several pieces of work in flight at once, the fleet runs them **one branch per task** and lands them **as one gated unit**:
+
+1. **Branch per task.** Parallel file-mutating agents each get their own git worktree and their own `claude/`- or `feature/`-prefixed branch (harness policy H7 — two writers in one checkout is the AP5 anti-pattern). `loop-autopilot` does this per intake item; `loop-engine` does it for any workflow via `isolation: 'worktree'`.
+2. **Collect onto a train.** When the tasks are done, cut `integration/<milestone>` from `develop`, merge the task branches onto it in declared dependency order, and resolve conflicts once, on the train — the procedure, the drop-a-wagon revert rule, and when a train is *not* worth it are in [`loop-ship/references/integration-train.md`](.claude/skills/loop-ship/references/integration-train.md).
+3. **One gate, one merge.** The expensive checks run once on the train; it lands in `develop` as a single reviewed unit, and promotion to `main` follows `loop-ship`'s release gates.
+
+What crosses those branch boundaries is a contract, not prose: `loop-context` owns the typed state, merge rules, and decision-carrying handoffs that keep parallel workers from making individually reasonable, mutually incompatible choices.
 
 ## Quickstart
 
