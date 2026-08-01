@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [1.6.0] — 2026-08-01
+
 ### Added
 - **`loop-harness/references/skill-hooks.md`** — the per-skill hook catalogue: all twenty-two skills walked, each rule graded into mechanize-as-a-project-hook (7 rows, with events and deny/ask semantics), belongs-in-CI-or-the-engine, or must-stay-judgment. Deployment rule: per-project, selective, one incident earns one hook — never plugin-global.
 
