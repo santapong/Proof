@@ -1,11 +1,14 @@
 # Changelog
 
-All notable changes to TheLoopSkill are documented here.
+All notable changes to Heimdall (formerly TheLoopSkill; renamed 1 Aug 2026) are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changed
+- **Plugin renamed: TheLoopSkill → Heimdall** — the watchman who sees everything and guards the passage; the plugin had outgrown a loop-only name (it owns harness engineering below the loop and orchestration above it). The `loop-*` skill prefix is unchanged, the GitHub repository URL is unchanged, and the MCP server id `theloopskill-mcp` is deliberately unchanged until the in-flight MCP Phase 3 lands (renaming it breaks installed configurations). Historical CHANGELOG entries and ADRs keep the old name — a record states what was true at the time.
 
 ## [1.4.0] — 2026-07-27
 

@@ -106,7 +106,7 @@ Reading the source cannot confirm most of what this skill asserts. Six of the se
 
 Emit the check list — **this skill specifies, `loop-test` authors** the files in whatever stack the project already runs. Put the three accessibility checks in CI; they have a named WCAG criterion behind them and no legitimate reason to fail.
 
-Adding no dependency to the plugin is deliberate: these run against the user's project, not against TheLoopSkill, which is stdlib-only by design.
+Adding no dependency to the plugin is deliberate: these run against the user's project, not against Heimdall, which is stdlib-only by design.
 
 ### 10. Report
 

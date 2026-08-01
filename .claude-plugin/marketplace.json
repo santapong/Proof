@@ -1,13 +1,13 @@
 {
-  "name": "theloopskill",
-  "description": "TheLoopSkill marketplace \u2014 workflow orchestration and engineering skills for Claude Code.",
+  "name": "heimdall",
+  "description": "Heimdall marketplace \u2014 workflow orchestration and engineering skills for Claude Code.",
   "owner": {
     "name": "santapong",
     "email": "santapongsondhi@gmail.com"
   },
   "plugins": [
     {
-      "name": "theloopskill",
+      "name": "heimdall",
       "source": "./",
       "description": "Twenty-one composable engineering skills for Claude Code on a governed multi-agent workflow engine: pipeline/parallel/loop orchestration under explicit harness and loop policies, per-node model routing with optimize and full execution modes, and lifecycle coverage from design, algorithms, patterns and UI craft through review, testing, integration, release, operations and incident response, to an autonomous propose-only improvement loop.",
       "version": "1.4.0",

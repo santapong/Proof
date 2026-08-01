@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// TheLoopSkill validation gate.
+// Heimdall validation gate.
 //
 // `claude plugin validate --strict` only reads .claude-plugin/*.json — it never opens a SKILL.md.
 // `node --check` is parse-only. This script covers the surface those two leave uninspected:
@@ -603,7 +603,7 @@ async function main() {
     ? walk(SKILLS_DIR, (n) => n.endsWith('.workflow.js')).sort()
     : []
 
-  out('TheLoopSkill validation gate')
+  out('Heimdall validation gate')
   out(`  root: ${ROOT}`)
   out(`  skills: ${fs.existsSync(SKILLS_DIR) ? fs.readdirSync(SKILLS_DIR).filter((d) => fs.statSync(path.join(SKILLS_DIR, d)).isDirectory()).length : 0}   workflow templates: ${templates.length}`)
   out('')
