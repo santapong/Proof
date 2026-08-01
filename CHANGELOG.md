@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_Nothing yet._
+### Added
+- **Verify category deepened (passes 5–8)** — one drawback-first catalogue per skill, drafted by an 8-agent verified workflow (all four landed verifier-revised; the review draft was rejected outright and rebuilt): `loop-review` gains the false-positive taxonomy (five shapes that convince and are not findings — dead-code sink, sanitizer-upstream, framework-mitigates, config-not-code, wrong-trust-boundary — each with its kill-check, and the rule that an unrun kill-check caps confidence below 0.8); `loop-test` gains the test-smell catalogue (mock-echo, change-detector, shared-fixture coupling, sleep-based async, the 100%-coverage trap) plus the fake > stub > mock ladder; `loop-debug` gains the anti-pattern catalogue (shotgun, symptom-fix, Heisenbug capture-don't-interrupt, confirmation-bias localization, the cannot-reproduce tripwire, fix-without-regression-test); `loop-audit` gains the blast-radius underestimation catalogue (flag flips, dependency bumps, schema migrations, shared-utility edits, contract changes, "dead"-code deletion, CI-script edits) closing on the worst-plausible-reader rule. Verifier catches this round included near-verbatim duplication of severity-model.md's escape hatches and a backwards claim about which review phase kills sloppy matches.
 
 ## [2.0.0] — 2026-08-01
 

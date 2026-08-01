@@ -83,7 +83,7 @@ This is the parallel-analyze → barrier → synthesis pattern from the **`loop-
 
 | File | What it holds |
 |---|---|
-| `references/methodology.md` | Blast-radius tracing: callers, transitive dependents, public API, schema/config/data surface |
+| `references/methodology.md` | Blast-radius tracing: callers, transitive dependents, public API, schema/config/data surface; the underestimation catalogue — change shapes that read smaller than they are, with the worst-plausible-reader rule |
 | `references/report-template.md` | The fixed audit report structure — summary, per-change entries, risk verdict, gaps |
 | `references/standards.md` | Authoritative standards this skill applies — ISO 31000, DORA, SemVer impact, ITIL — named, pinned, and mapped |
 | `templates/change-audit.workflow.js` | Per-area analyze → parallel impact assess → synthesize-report workflow script |
