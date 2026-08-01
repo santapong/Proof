@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **C4 docs de-staled** — the "nineteen skills" counts across context/README/skill-anatomy/skills (the refresh deferred since v1.4.0's known-stale note) updated to twenty-two.
 
 ### Added
+- **The repo eats its own harness** — `.claude/hooks/` + wired `settings.json`, installed per `loop-harness`'s skill-hook catalogue rows: never-end-red (`stop-gate.sh` — a session leaving skills/mcp/scripts dirty cannot stop while the validation gate is red), and ask-on-one-way-doors (`harness-guard.py` — editing harness config or pushing `main` surfaces an explicit ask, never a deny). Plus two slash commands: `/gate` (all three gates, one report) and `/release <version>` (the whole release procedure, including the semver sanity check).
 - **MCP Phase 4** — the intra-package carve-out flagged by Phase 3 S1 is codified: ADR-0002 gains the dated addendum (`node:`-prefixed **or** relative-inside-`mcp/`), and `validate.mjs` gains **CHECK 9**, mechanically failing any bare/scoped specifier or any relative import escaping `mcp/`. Live-verified over stdio after the rename: initialize handshake echoes `heimdall-mcp 0.2.0`; `route_node(gating, adversarial-verify, all-out)` → `claude-opus-5/max`, width 5, governing clause cited, all citations on the `heimdall://` scheme.
 
 ## [1.6.0] — 2026-08-01
