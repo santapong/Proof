@@ -33,3 +33,5 @@ During the 1.0.0 build these files lived in a scratch directory. Three of the au
 **On the fixed prose inside these files.** Both were written during the 1.0.0 build and their narrative text says "eighteen skills". That wording is left alone deliberately — a design record states what was specified at the time. The `matrix` and `overlaps` arrays in `boundary-audit.json` are the live parts and **are** kept current; the surrounding prose is history.
 
 `scripts/validate.mjs` enforces what is mechanically checkable (frontmatter validity, `name`/directory agreement, reference paths). The boundary semantics are not mechanically checkable and are reviewed against this file by hand.
+
+> **Note (1 Aug 2026):** the plugin described in ADRs and historical records as *TheLoopSkill* was renamed to **Heimdall**. ADRs are not rewritten; they state what was decided at the time.

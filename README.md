@@ -1,4 +1,4 @@
-# TheLoopSkill
+# Heimdall
 
 > **Run real engineering work as governed, multi-agent workflows** — a Claude Code plugin of 20 composable skills covering the whole lifecycle, from design and review through shipping, operating, and autonomous self-improvement.
 
@@ -7,7 +7,7 @@
 [![Plugin: marketplace](https://img.shields.io/badge/plugin-marketplace-2ea44f.svg)](#installation)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](CONTRIBUTING.md)
 
-TheLoopSkill turns a task into a **multi-agent Workflow** — pipeline by default, parallel fan-out where it's earned, loops for unknown-size discovery — governed by explicit engineering policies and a pluggable lifecycle framework. Eighteen domain skills build on that engine to cover the lifecycle end to end — design, mechanism, build, review, integrate, ship, operate, respond — and one autonomous skill ties them into a self-improving loop.
+Heimdall turns a task into a **multi-agent Workflow** — pipeline by default, parallel fan-out where it's earned, loops for unknown-size discovery — governed by explicit engineering policies and a pluggable lifecycle framework. Eighteen domain skills build on that engine to cover the lifecycle end to end — design, mechanism, build, review, integrate, ship, operate, respond — and one autonomous skill ties them into a self-improving loop.
 
 Every node of every workflow is routed to a model tier that matches the job, on one dial with three rungs: **`lite`** for small tasks, **`balanced`** (the default) for real work, **`all-out`** when the answer matters more than the bill.
 
@@ -27,7 +27,7 @@ Every node of every workflow is routed to a model tier that matches the job, on 
 
 ## Why
 
-A single agent handed a big task drifts: it skips verification, forgets what it already did, and hides how confident it is. TheLoopSkill answers that with **structure** — the same three moves the best engineers make, encoded as reusable skills:
+A single agent handed a big task drifts: it skips verification, forgets what it already did, and hides how confident it is. Heimdall answers that with **structure** — the same three moves the best engineers make, encoded as reusable skills:
 
 - **Decompose and fan out** so breadth is covered in parallel, not serially.
 - **Verify adversarially** — findings must survive a refutation attempt before they're reported.
@@ -97,7 +97,7 @@ Twenty-one skills, grouped by the engineering role they play. Every skill takes 
 ```
 # 1. Add the marketplace and install the plugin
 /plugin marketplace add santapong/TheLoopSkill
-/plugin install theloopskill@theloopskill
+/plugin install heimdall@heimdall
 
 # 2. Run your first workflow (dry-run shows the script without executing)
 /loop-engine audit this repo's docs for quality issues --dry-run
@@ -117,7 +117,7 @@ The system is documented with the **[C4 model](https://c4model.com)** — a hier
 
 **What is this, who uses it, what does it depend on?** Note where the boundary sits: Claude Code is *outside* it. The plugin has no process, port, or lifecycle of its own — everything it "does" is done by the host on its instruction.
 
-![System Context — TheLoopSkill (at a glance)](docs/c4/diagrams/context-glance.svg)
+![System Context — Heimdall (at a glance)](docs/c4/diagrams/context-glance.svg)
 
 <sub>Diagram source: [`docs/c4/diagrams/src/context-glance.mmd`](docs/c4/diagrams/src/context-glance.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
@@ -242,7 +242,7 @@ Three ways to use these skills — see **[INSTALL.md](INSTALL.md)** for full det
 
 - **Local (project skills)** — the skills live in `.claude/skills/` and are auto-discovered in any Claude Code session opened in this repo. Copy an individual skill directory into another project's `.claude/skills/` to reuse it.
 - **Remote (Claude Code on the web)** — web sessions see only committed project files; everything here is committed. Open the repo on [code.claude.com](https://code.claude.com) and the skills are available. `.claude/settings.json` enables the plugin for web sessions.
-- **Plugin (marketplace)** — `/plugin marketplace add santapong/TheLoopSkill` then `/plugin install theloopskill@theloopskill`.
+- **Plugin (marketplace)** — `/plugin marketplace add santapong/TheLoopSkill` then `/plugin install heimdall@heimdall`.
 
 ## Repository layout
 

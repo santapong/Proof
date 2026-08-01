@@ -1,6 +1,6 @@
-# Installing TheLoopSkill
+# Installing Heimdall
 
-TheLoopSkill ships twenty-one Claude Code skills:
+Heimdall ships twenty-one Claude Code skills:
 
 | Skill | What it does |
 |---|---|
@@ -61,8 +61,8 @@ Web sessions start from a **fresh clone and see only committed project files** �
 
   ```json
   {
-    "extraKnownMarketplaces": { "theloopskill": { "source": "./" } },
-    "enabledPlugins": { "theloopskill@theloopskill": true }
+    "extraKnownMarketplaces": { "heimdall": { "source": "./" } },
+    "enabledPlugins": { "heimdall@heimdall": true }
   }
   ```
 
@@ -79,14 +79,14 @@ Install the bundle into any project or user scope via the plugin system.
 /plugin marketplace add santapong/TheLoopSkill
 
 # install the bundled plugin (all twenty-one skills)
-/plugin install theloopskill@theloopskill
+/plugin install heimdall@heimdall
 ```
 
 To test the marketplace from a local checkout instead of GitHub:
 
 ```
 /plugin marketplace add ./
-/plugin install theloopskill@theloopskill
+/plugin install heimdall@heimdall
 ```
 
 Marketplace manifest lives at `.claude-plugin/marketplace.json`; the plugin manifest at `.claude-plugin/plugin.json` (its `skills` field points at `./.claude/skills`, so the plugin exposes the same files as the project skills — no duplication).
@@ -107,7 +107,7 @@ This repo ships no `.gitignore`, and `mcp/`'s own law (`docs/design/ADR-0002-dep
 ## Layout
 
 ```
-TheLoopSkill/
+Heimdall/
 ├── .mcp.json                # project-scope MCP wiring for a direct checkout (Option 1)
 ├── .claude-plugin/
 │   ├── plugin.json          # plugin manifest (skills → ./.claude/skills; mcpServers for plugin installs)

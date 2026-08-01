@@ -1,4 +1,4 @@
-# Architecture — TheLoopSkill
+# Architecture — Heimdall
 
 Documented with the **C4 model**: a hierarchy of diagrams at decreasing altitude, where each level answers one question for one audience and refuses to answer the next level's. The value of C4 is the discipline of *stopping* — a Context diagram that leaks container names, or a Container diagram with no technology in it, has failed at its own level while pretending to cover another.
 

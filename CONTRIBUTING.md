@@ -1,6 +1,6 @@
-# Contributing to TheLoopSkill
+# Contributing to Heimdall
 
-Thanks for helping improve TheLoopSkill. This repo is a Claude Code plugin of skills, so "contributing" usually means **adding or improving a skill**, **deepening a skill's reference standards**, or **adding a lifecycle framework**. This guide covers the conventions and how to validate a change.
+Thanks for helping improve Heimdall. This repo is a Claude Code plugin of skills, so "contributing" usually means **adding or improving a skill**, **deepening a skill's reference standards**, or **adding a lifecycle framework**. This guide covers the conventions and how to validate a change.
 
 ## Repository shape
 

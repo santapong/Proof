@@ -1,17 +1,17 @@
-# C4 System Context (Level 1) — TheLoopSkill
+# C4 System Context (Level 1) — Heimdall
 
 **What is this system, who uses it, and what does it depend on?**
 
-TheLoopSkill is a **Claude Code plugin**: nineteen composable engineering skills built on a multi-agent workflow engine. It ships no server and no runtime of its own — it is Markdown and JavaScript that the Claude Code host loads, reads, and executes on the developer's behalf. That is the single most important thing this diagram communicates, and it is why Claude Code appears *outside* the box rather than inside it.
+Heimdall is a **Claude Code plugin**: nineteen composable engineering skills built on a multi-agent workflow engine. It ships no server and no runtime of its own — it is Markdown and JavaScript that the Claude Code host loads, reads, and executes on the developer's behalf. That is the single most important thing this diagram communicates, and it is why Claude Code appears *outside* the box rather than inside it.
 
-![C4 System Context — TheLoopSkill](diagrams/context.svg)
+![C4 System Context — Heimdall](diagrams/context.svg)
 
 <sub>Diagram source: [`diagrams/src/context.mmd`](diagrams/src/context.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
 ## Reading it back, one sentence per arrow
 
 - The **developer** invokes a skill and answers the questions the lifecycle gates raise.
-- **Claude Code** discovers the plugin, loads the skill into context, and executes the workflow scripts the skill authors — TheLoopSkill never runs anything itself.
+- **Claude Code** discovers the plugin, loads the skill into context, and executes the workflow scripts the skill authors — Heimdall never runs anything itself.
 - The system **routes each node** of that workflow to a model tier, so a mechanical enumeration and an adversarial security verdict do not cost the same.
 - It **reads the target repository** freely; only `implement` nodes write, and only within the phase a human approved.
 - It **reads GitHub feedback and opens draft PRs** — the autonomous loop proposes and never merges.
