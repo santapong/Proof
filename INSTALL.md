@@ -15,6 +15,7 @@ Heimdall ships twenty-one Claude Code skills:
 | `loop-docs` | Write + maintain docs (README, API, docstrings, ADRs) via the Diátaxis model, verified against code |
 | `loop-scout` | Prior-art / build-vs-buy check before building: search stdlib → registries → services → standards, evaluate, recommend reuse |
 | `loop-harness` | Set up a project's Claude Code harness: permissions, hooks, MCP (`.mcp.json`), and automation loops — from copy-paste scaffolds |
+| `loop-context` | Engineer agent context & state: budgets, placement, compaction with an addressable store, typed shared state, supersession, trace-invariant audits |
 | `loop-autopilot` | Autonomous engineering loop: read feedback (issues/PRs/CI), act as draft PRs with tests, research improvements when idle — propose-only, never merges |
 | `loop-algo` | The mechanism inside a component: algorithm and data-structure choice, complexity analysis, invariants, concurrency, benchmark-driven validation |
 | `loop-pattern` | Apply GoF patterns, Fowler refactorings, SOLID and language/framework idioms; remove the smells that motivate them — emits a diff |
