@@ -101,7 +101,7 @@ Phases end at gates. At a gate the run **stops**, presents its deliverable and i
 
 ### 6 · Duplication as a rule, not an apology
 
-The `ROUTES` block is copy-pasted byte-identically into 19 templates. This is normally a smell. Here it is the **only expressible form**: the execution sandbox has no module system and no filesystem, so an import cannot be written.
+The `ROUTES` block is copy-pasted byte-identically into all 28 templates. This is normally a smell. Here it is the **only expressible form**: the execution sandbox has no module system and no filesystem, so an import cannot be written.
 
 The design's response is to make duplication *governed* rather than merely tolerated — one source of truth, drift is a defect, and a CI check that extracts the canonical block and diffs every copy against it. **When a constraint makes the clean form impossible, name the constraint and mechanise the workaround.** Untended duplication rots; checked duplication does not.
 
