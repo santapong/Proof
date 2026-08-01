@@ -21,7 +21,7 @@
 // gate on it" ADR-0004 §C1 rejects, and precisely what ADR-0005 I1 exists to prevent: a value the
 // server invented because it declined to reuse the one place the value is correctly derived.
 //
-// This file's task brief (theloopskill-mcp Phase 3, S1) is explicit and specific: "the Phase-2
+// This file's task brief (heimdall-mcp Phase 3, S1) is explicit and specific: "the Phase-2
 // spine you are building on: mcp/lib/{modes,estimate,boundary,standards}.mjs — call the spine,
 // never reimplement it." Read together with mcp/lib/estimate.mjs's own comment that
 // `readModesM6`/`computeWidthM6` are "exported for testing/reuse", the more defensible reading is
@@ -80,7 +80,7 @@ import {
 const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/lib
 const DEFAULT_ROOT = path.resolve(HERE, '..', '..') // repo root, two levels up from mcp/lib
 const MODES_DOC_REL = path.join('.claude', 'skills', 'loop-engine', 'references', 'execution-modes.md')
-const SERVER_VERSION = '0.1.0'
+const SERVER_VERSION = '0.2.0'
 
 function resolveRoot(root) {
   return root ? path.resolve(root) : DEFAULT_ROOT
@@ -107,7 +107,7 @@ function sha256OfLines(lines, startLine, endLine) {
 }
 
 function resourceUri(file) {
-  return `theloopskill://${file}`
+  return `heimdall://${file}`
 }
 
 function withResourceUri(citation) {
@@ -439,7 +439,7 @@ function routeNode(rawInput, options = {}) {
       // would be a silent default in the exact sense ADR-0005 I1 forbids. Left empty and disclosed
       // rather than faked; ADR-0002's degrade-not-die C4/C6 message is what actually reaches the
       // user in this case, at the server layer (S7), not here.
-      fixText: 'set THELOOPSKILL_ROOT to a TheLoopSkill checkout, or correct the server path in .mcp.json',
+      fixText: 'set HEIMDALL_ROOT to a Heimdall checkout, or correct the server path in .mcp.json',
     })
   }
 
@@ -529,7 +529,7 @@ function routeNode(rawInput, options = {}) {
   // --- §M4, §M5, §M7 — this file's own locators (neither spine module reads these sections). ---
   const doc = readWholeDoc(root)
   if (!doc.ok) {
-    return structuralError({ sourceRoot, internalResult: doc, citations, fixText: 'set THELOOPSKILL_ROOT to a TheLoopSkill checkout, or correct the server path in .mcp.json' })
+    return structuralError({ sourceRoot, internalResult: doc, citations, fixText: 'set HEIMDALL_ROOT to a Heimdall checkout, or correct the server path in .mcp.json' })
   }
   const m4sec = locateM4Section(doc)
   const m5sec = locateM5Section(doc)

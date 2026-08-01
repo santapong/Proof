@@ -162,7 +162,7 @@ function findKeyArrayOpen(text, key, fromIdx = 0) {
 // ---------------------------------------------------------------------------
 // Public: readBoundaryAudit — locate, JSON.parse and index the whole file, live, on every call.
 // Every row (matrix / overlaps / descriptionRewrites) and every useInsteadWhen edge carries a D3.2
-// citation computed from the SAME parse pass, so a caller can fetch theloopskill://<file> over
+// citation computed from the SAME parse pass, so a caller can fetch heimdall://<file> over
 // resources/read and recompute the sha256 independently.
 // ---------------------------------------------------------------------------
 
@@ -209,7 +209,7 @@ function readBoundaryAudit(root) {
       sha256: sha256OfLines(ls, startLine, endLine),
       excerpt: truncated ? excerptFull.slice(0, 2000) : excerptFull,
       excerptTruncated: truncated,
-      resourceUri: `theloopskill://${relFile}`,
+      resourceUri: `heimdall://${relFile}`,
     }
   }
 

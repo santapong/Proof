@@ -129,3 +129,45 @@ Asymptotic analysis deliberately discards constants, and on real hardware the co
 **Step 4 — the answer, and the honest caveat.** If the reporting job is rare and offline, take the **hash table** and serve the report by sorting a snapshot (Θ(n log n), once, off the hot path). If range queries are on the request path at any meaningful rate, take the **B-tree**: it is within a small constant on the 90% case and asymptotically better on the case the hash table cannot do.
 
 **Label it.** Everything above is `DERIVED-ONLY` — a cost model in cache misses, not a measurement. The crossover claim ("within a small constant on lookups") is exactly the kind of statement that should be measured before it is relied on; `benchmarking.md` §2–3 is how, and §5 is why the label stays attached until then.
+
+## 7. The selection catalogue — situation → structure → why not the runner-up
+
+§3 keys on the access pattern; this table keys on the *situation* and defends each choice against the alternative someone will propose in review. A selection you cannot defend against its runner-up is a habit, not a decision.
+
+| Situation | Take | Why not the runner-up |
+|---|---|---|
+| Key → value, no order or range query, ever | Hash map | An ordered map pays Θ(log n) plus pointer-chasing misses on *every* operation for an ordering you never ask about; a trie pays memory for prefix operations you don't have. |
+| Range, predecessor/successor, ordered iteration, in memory | Ordered map (red-black/AVL, or in-memory B-tree) | A hash map cannot answer the query at all; a sorted array gives up cheap mutation; a skip list buys nothing here without concurrency (§8). |
+| Ordered map under heavy concurrent mutation | Skip list, lock-free or fine-grained | A concurrent balanced tree must rebalance across multiple nodes atomically — notoriously hard (`concurrency.md` §1); a global lock over an ordered map serializes the workload you were trying to scale. |
+| Repeated min/max and nothing else | Binary heap | An ordered map maintains a total order you never read, in scattered nodes; the heap is contiguous and its constant is smaller. Need cancellation → heap plus hash side-index (§4). |
+| Prefix search, autocomplete, longest-prefix match | Radix tree (path-compressed trie) | A hash map cannot do prefixes at all; an ordered map can fake it (seek, then scan) but pays Θ(log n) comparisons to reach the prefix, where the trie pays Θ(k) in key length alone, independent of n (§4). |
+| "Are these two in the same group", groups only ever merge | Union-find | Re-deriving connectivity by BFS/DFS is O(n + m) per query; union-find with path compression + union by rank is O(α(n)) amortized — inverse Ackermann, ≤ 5 for any input that fits on physical hardware. |
+| Set algebra (AND/OR/count) over dense small-integer keys | Bitset; roaring bitmap when keys are 32-bit or mixed-density | A hash set spends bytes per element where a bitset spends one bit, and bitwise ops vectorize; roaring keeps that win when density varies by storing each 2¹⁶ block as array or bitmap, whichever is smaller. |
+| Membership test where the exact set won't fit in memory | Bloom filter (cuckoo filter if you need deletes) | A hash set costs Θ(n · key size); a Bloom filter costs ~9.6 bits per element at 1% false positives *independent of key size*. The price is exactness — sizing and traps in `randomized-structures.md` §2. |
+| Per-key frequencies / heavy hitters over a stream | Count-min sketch | An exact counter map grows with the number of distinct keys, unbounded on an open stream. The price is one-sided, mass-relative error — `randomized-structures.md` §4. |
+| Distinct-count over a stream | HyperLogLog | An exact set costs Θ(n) memory to produce one number. The price is an error bar you must carry with the answer — `randomized-structures.md` §3. |
+| On-disk index, read- or range-dominant | B+ tree | An LSM charges read amplification on every lookup to buy write throughput this workload doesn't need. The default of every classic RDBMS engine, for this reason. |
+| On-disk index, write-dominant / ingest-heavy | LSM tree | A B+ tree turns each insert into a random page write; the LSM makes writes sequential and defers ordering to compaction. The price is the amplification triangle — §8. |
+
+In practice the last two rows are usually decided one layer up: you pick a storage engine (and it brings its structure), you don't hand-build the tree. The row's job is to make you pick the *engine* by the read:write ratio rather than by familiarity.
+
+## 8. Drawback-first profiles — the structures people pick before reading the fine print
+
+Each entry leads with what the structure takes from you, because that is the part that surfaces in production rather than in the design review. The approximate structures' fine print — Bloom's build-time false-positive commitment and no-delete rule, HyperLogLog's error bar and intersection trap, count-min's mass-relative noise floor — is already written, with the formulas to recompute it, in `randomized-structures.md` §§2–4 and its §6 honesty rule. It is deliberately not restated here; quote it from there.
+
+**LSM — the amplification triangle.** §4 gave the mechanism and the read-vs-write trade per compaction policy; the design frame is that **write amplification, read amplification, and space amplification trade against each other, and no compaction policy minimizes all three**. Space amp is the axis §4 left out: size-tiered leaves overlapping runs — including superseded versions of the same key — alive on disk until a merge claims them, while leveled reclaims that space at the cost of rewriting data many times over. Every tuning knob is a budget shift on this triangle, not a free win — the per-run Bloom filters of §4 buy back read amp by spending memory. State which corner you sacrificed, because the workload will find it.
+
+**Skip list — the honest comparison.** The bound discipline is already on file: expected, not worst-case, and the tail exists even without an adversary (§4; `randomized-structures.md` §5). What those sections do not say: single-threaded, a good B-tree-backed ordered map usually wins on constants — the skip list chases a pointer per level where the B-tree scans packed, prefetchable nodes (§5). The one defensible reason to pick it is the one §4 named — concurrent ordered mutation — and it is why Redis sorted sets and Java's `ConcurrentSkipListMap` exist. If your code is single-threaded and you chose a skip list, you chose it for aesthetics.
+
+**Union-find.** Near-constant amortized, but strictly one-way: merges never unmerge, and there is no delete or split. Undo requires either a rebuild or a rollback variant (union by rank *without* path compression, plus an undo stack) — which surrenders the α(n) bound back to O(log n) worst-case per operation. If the requirement says "groups can split," this is the wrong structure, not a structure to patch.
+
+## 9. Default rules
+
+Defaults, not laws — each names the cost it avoids, and each yields to a named requirement.
+
+- **Hash map until you need order or range.** The ordering tax is paid on every operation from day one; buy it only when a real query needs predecessor, range, or sorted iteration.
+- **Contiguous array until n proves otherwise.** Below n in the low thousands, the constant beats the exponent — §5's cache arithmetic is the entire reason. Treat any claimed crossover as `DERIVED-ONLY` until measured (`benchmarking.md` §5).
+- **Exact until memory forces approximate — then state ε.** The moment you adopt a Bloom filter, HLL, or count-min, its error bound becomes part of the interface contract, quoted in the same sentence as the space saving (`randomized-structures.md` §6).
+- **Bitset when keys are dense small integers; roaring when wide or mixed.** Reaching for a hash set of integers is the most common way to pay ~50–100× the memory the problem required — a 32–64-bit slot plus load-factor headroom, against one bit.
+- **On disk: B+ tree by default, LSM when writes dominate.** And decide it at the storage-engine layer, where the choice actually lives (§7).
+- **Two boring structures beat one clever one.** Heap + hash side-index for cancellable priority queues, map + doubly-linked list for LRU: composition of structures you can reason about is the idiomatic answer to "I need something that does both," and it keeps each half's §1-style bound quotable.

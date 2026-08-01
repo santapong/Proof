@@ -82,7 +82,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/lib
 const DEFAULT_ROOT = path.resolve(HERE, '..', '..') // repo root, two levels up from mcp/lib — the
 // SAME arithmetic mcp/server.mjs (S7, not yet written) must use one level up from mcp/, since both
 // anchor to their own file's import.meta.url rather than to process.cwd() (ADR-0002 §D2.4 C7).
-const SERVER_VERSION = '0.1.0'
+const SERVER_VERSION = '0.2.0'
 
 function resolveRoot(root) {
   return root ? path.resolve(root) : DEFAULT_ROOT
@@ -105,7 +105,7 @@ function sha256OfLines(lines, startLine, endLine) {
 }
 
 function resourceUri(file) {
-  return `theloopskill://${file}`
+  return `heimdall://${file}`
 }
 
 function dedupeCitations(list) {
@@ -209,7 +209,7 @@ function resolveGateScript(root) {
       ok: false,
       code: 'gate_unavailable',
       message: `cannot resolve the repo root ${sourceRoot}: ${e.code === 'ENOENT' ? 'no such directory' : e.message}`,
-      fix: 'Verify THELOOPSKILL_ROOT (or the default two-levels-up-from-mcp/lib resolution) points at a real TheLoopSkill checkout.',
+      fix: 'Verify HEIMDALL_ROOT (or the default two-levels-up-from-mcp/lib resolution) points at a real Heimdall checkout.',
     }
   }
 
@@ -221,7 +221,7 @@ function resolveGateScript(root) {
       ok: false,
       code: 'gate_unavailable',
       message: `gate script not found at ${relPosix(sourceRoot, candidate)}: ${e.code === 'ENOENT' ? 'no such file' : e.message}`,
-      fix: 'Verify this checkout has scripts/validate.mjs; a packaged/relocated install may need THELOOPSKILL_ROOT set.',
+      fix: 'Verify this checkout has scripts/validate.mjs; a packaged/relocated install may need HEIMDALL_ROOT set.',
     }
   }
 
@@ -231,7 +231,7 @@ function resolveGateScript(root) {
       ok: false,
       code: 'internal',
       message: `refusing to spawn ${candidate} — its resolved real path ${realCandidate} escapes the repo root ${realRoot} (symlink or misconfigured checkout)`,
-      fix: 'This indicates the server itself is misconfigured, not a caller error — verify .mcp.json / THELOOPSKILL_ROOT point at a genuine, unmodified TheLoopSkill checkout.',
+      fix: 'This indicates the server itself is misconfigured, not a caller error — verify .mcp.json / HEIMDALL_ROOT point at a genuine, unmodified TheLoopSkill checkout.',
     }
   }
 

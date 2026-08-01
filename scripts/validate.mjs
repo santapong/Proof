@@ -594,6 +594,46 @@ function checkRoutes(templates) {
   }
 }
 
+
+// ---------------------------------------------------------------------------
+// CHECK 9 — MCP dependency seam (ADR-0002 D2.1 + the Phase-4 carve-out).
+// Every import specifier under mcp/ is either node:-prefixed or relative and
+// resolving INSIDE mcp/. A bare or scoped specifier is a third-party dependency
+// crossing the seam; a relative path escaping mcp/ is the same seam crossed
+// sideways. Decidable by grep, per the ADR — this is that grep, with teeth.
+// ---------------------------------------------------------------------------
+
+function checkMcpSeam() {
+  const mcpDir = path.join(ROOT, 'mcp')
+  if (!fs.existsSync(mcpDir)) return
+  const files = walk(mcpDir, (n) => n.endsWith('.mjs')).sort()
+  const spec = /(?:from\s+|import\()\s*['"]([^'"]+)['"]/g
+  for (const f of files) {
+    const rel = path.relative(ROOT, f)
+    const dir = path.dirname(f)
+    const ls = fs.readFileSync(f, 'utf8').split('\n')
+    for (let i = 0; i < ls.length; i++) {
+      const line = ls[i]
+      if (/^\s*(\/\/|\*)/.test(line)) continue // comments quote specifiers as prose
+      let m
+      spec.lastIndex = 0
+      while ((m = spec.exec(line))) {
+        const s = m[1]
+        checksRun++
+        if (s.startsWith('node:')) continue
+        if (s.startsWith('./') || s.startsWith('../')) {
+          const resolved = path.resolve(dir, s)
+          if (!resolved.startsWith(mcpDir + path.sep) && resolved !== mcpDir) {
+            fail('mcp-seam', rel, i + 1, "relative import escapes mcp/: '" + s + "' (ADR-0002 Phase-4 carve-out is intra-package only)")
+          }
+          continue
+        }
+        fail('mcp-seam', rel, i + 1, "non-node:, non-relative specifier '" + s + "' - a third-party dependency crossing the ADR-0002 seam")
+      }
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Driver
 // ---------------------------------------------------------------------------
@@ -610,20 +650,22 @@ async function main() {
 
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'loopskill-validate-'))
   try {
-    out('  [1/8] SKILL.md frontmatter parses and carries name/description/argument-hint')
-    out('  [2/8] frontmatter `name` matches its directory')
-    out('  [6/8] relative reference paths in SKILL.md resolve on disk')
+    out('  [1/9] SKILL.md frontmatter parses and carries name/description/argument-hint')
+    out('  [2/9] frontmatter `name` matches its directory')
+    out('  [6/9] relative reference paths in SKILL.md resolve on disk')
     checkSkills()
-    out('  [3/8] every *.workflow.js parses under node --check (runtime wrapping)')
+    out('  [3/9] every *.workflow.js parses under node --check (runtime wrapping)')
     checkTemplatesParse(templates, tmpDir)
-    out('  [4/8] no H10-banned clock/random calls in template code')
+    out('  [4/9] no H10-banned clock/random calls in template code')
     checkH10(templates)
-    out('  [5/8] canonical ROUTES block reproduced verbatim; no inline routing literals')
+    out('  [5/9] canonical ROUTES block reproduced verbatim; no inline routing literals')
     checkRoutes(templates)
-    out('  [7/8] export const meta is a pure literal; phases match the phase: strings used')
+    out('  [7/9] export const meta is a pure literal; phases match the phase: strings used')
     await checkMeta(templates)
-    out('  [8/8] every reference/template file is named in its SKILL.md')
+    out('  [8/9] every reference/template file is named in its SKILL.md')
     checkOrphans()
+    out('  [9/9] mcp/ import seam: node:-prefixed or intra-package relative only (ADR-0002)')
+    checkMcpSeam()
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true })
   }

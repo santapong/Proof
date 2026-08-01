@@ -71,6 +71,58 @@ By stack and need, not preference. **Re-read the version and licence from the re
 - *"GSAP costs money / needs a Club membership."* Stale since **April 2025**, following Webflow's October 2024 acquisition of GreenSock. Core plus all former Club plugins are free for commercial use.
 - *"GSAP is open source."* Also wrong. It is free-of-charge and proprietary. Say the accurate thing: **free to use commercially, under a licence with competitive-use restrictions.**
 
+## Mechanism selection — situation first, drawback first
+
+The ladder says how far to climb; this table says which rung a given situation lands on — and why the neighbouring rungs are wrong for it. Read the third column before the second: every mechanism here is chosen by the drawbacks of its alternatives, not its own appeal.
+
+| Situation | Mechanism | Why not the alternatives |
+|---|---|---|
+| Hover, focus, toggle, drawer — anything the user can reverse mid-flight | CSS `transition` (rung 1) | `@keyframes` cannot retarget — an interrupted keyframe animation snaps or restarts (see below). WAAPI is runtime JS, and a library is bytes, spent on two endpoints CSS already expresses |
+| Enter/exit sequence or ambient loop with intermediate states | CSS `@keyframes` (rung 2) | A transition only knows two endpoints. WAAPI adds runtime JS for values that were known at authoring time |
+| An element that persists across a route or state change | View Transitions (rung 3) | Hand-rolled FLIP in a library rebuilds what the browser tweens for free; keyframes cannot tween between two different DOM states at all. The cost you do accept: mandatory a11y work — see `accessibility.md` |
+| Scroll-linked reveal or progress scrub, no pinning | Scroll-driven CSS (rung 4) | A JS scroll listener runs on the main thread on every frame of scroll — `scroll-cinema.md` calls that the harshest budget in frontend, and owns the fallback pattern. A library scrub only earns its bytes once pinning enters (rung 6, reason 4) |
+| One-off tween of runtime-measured values | WAAPI `Element.animate()` (rung 5) | Stylesheets cannot see a measured distance without custom-property plumbing; a library at this point is a paid wrapper around the engine you already have |
+| Spring physics, scrubbed multi-element timeline, path morphing, pinning, gesture hand-off | Library (rung 6) | The only row where the platform genuinely cannot. The admission criteria are the five reasons in the ladder above — nothing softer |
+
+If a situation matches two rows, take the row nearer the top — the table is ordered by cost, and the ladder's rule is to climb only for a named reason.
+
+## The property decides before the mechanism does
+
+The hard default, stated once here and owned in full by `choreography.md`: **animate `transform` and `opacity` only.** Everything below assumes it.
+
+What that rule means *for selection*: no mechanism in the table rescues a layout-triggering property. A CSS transition on `width` re-runs layout every frame and is worse than a library tweening `transform`. If the motion looks like layout, restructure it (FLIP, View Transitions — see `choreography.md`) before touching the mechanism question.
+
+Within compositor-only properties the mechanisms are still not equal, and the difference is *which thread does the per-frame work*. A CSS or WAAPI animation of `transform`/`opacity` can run on the compositor thread and keeps moving while the main thread is busy. A rAF-driven library computes the value in JS and writes a style every frame — no layout, no paint, but every frame is hostage to main-thread availability, which is exactly when frames drop.
+
+So the two decisions come in this order:
+
+1. **Property** — compositor-only, or restructure the motion first. Non-negotiable.
+2. **Mechanism** — the table above, knowing that the platform rungs also buy off-main-thread execution, while a library additionally spends main-thread time parsing and executing its bytes before any motion exists — the ladder's founding argument, not a new one.
+
+## Interruptibility — the tie-breaker between rungs 1 and 2
+
+The most common wrong choice inside CSS itself: keyframes where a transition belonged. The difference shows the moment a user changes their mind mid-flight.
+
+| Mechanism | Interrupted mid-flight |
+|---|---|
+| CSS `transition` | **Retargets cleanly.** Change the target and a new transition starts from the current computed value — no snap, no restart |
+| CSS `@keyframes` | **Does not retarget.** Remove or swap the animation mid-run and the element snaps to its underlying value; re-trigger it and it restarts from frame zero |
+| WAAPI | Retargets like a transition when the replacement tween leaves its start keyframe implicit, plus direct control that CSS-declared motion only exposes indirectly through `getAnimations()`: `pause()`, `reverse()`, `playbackRate`, a `finished` promise |
+| Library | As WAAPI, plus velocity-aware hand-off if it implements real springs — reason 2 in the ladder |
+
+**The rule: anything the user can flip while it moves — hover, accordion, drawer, toggle — is a transition or WAAPI, never keyframes.** Keyframes are for sequences that run to completion: entrances, exits, ambient loops. A hover effect built on `@keyframes` is a bug you can feel — mouse out mid-animation and watch it snap.
+
+## SSR and hydration — where JS motion pays twice
+
+The pure-CSS rungs — 1, 2 and 4 — ship in the stylesheet: they exist before any JavaScript runs and cost the bundle nothing. JS mechanisms (rungs 5–6) wait for hydration, and in a server-rendered app that opens two traps:
+
+- **The entrance flash.** A JS-driven entrance animation means the element server-renders in its final state, then jumps to its hidden state at hydration, then animates in. The user sees the content, loses it, and gets it back.
+- **The invisible-content failure.** The usual fix — hide the initial state in CSS so JS can reveal it — inverts the failure: if hydration is slow or JS never arrives, server-rendered content stays invisible forever. Content the server rendered must be visible without JavaScript — the SSR twin of `scroll-cinema.md`'s rule that content exists without the animation.
+
+Rung 3 sits between the two groups: `document.startViewTransition()` is JS, but it fires on a navigation the user initiates after load, so neither trap applies. A rung-6 library also typically needs client-only loading in SSR frameworks (dynamic imports, client directives), which is integration surface the CSS rungs simply do not have.
+
+**The rule: entrance and above-the-fold motion is CSS. JS-driven motion is confined to states that only exist after hydration anyway — gestures, drags, post-interaction sequences.** Four of the ladder's five rung-6 reasons are interaction-shaped for exactly this reason: the motion a library legitimately owns is mostly motion that could not have happened before the JS arrived. Path morphing is the exception — and the rung-6 case to watch for the entrance flash.
+
 ## Why the ladder rather than a pinned default
 
 This space moves fast enough to break a pin. GSAP's licence changed materially inside fifteen months; anime.js shipped a breaking rewrite in roughly the same window, with further breaking changes inside its 4.x minors.

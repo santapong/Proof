@@ -36,7 +36,7 @@ Write these down as the brief. Everything downstream cites them. Full intake che
 
 Choose the coarse shape. **Default: a modular monolith** — one deployable, hard module boundaries inside. It is the highest-leverage default because it preserves the option to extract services later without paying distributed-systems tax now.
 
-Escalate off the default only for a *named, requirements-backed reason*: independent scaling of a hot path, independent deploy cadence for autonomous teams, hard fault isolation, or polyglot needs. When you do split, split along the module seams the monolith already revealed. Decision criteria, the monolith→services extraction path, event-driven vs. request-response, and when serverless earns its keep: **`references/architecture-patterns.md`**.
+Escalate off the default only for a *named, requirements-backed reason*: independent scaling of a hot path, independent deploy cadence for autonomous teams, hard fault isolation, or polyglot needs. When you do split, split along the module seams the monolith already revealed. Decision criteria, the monolith→services extraction path, event-driven vs. request-response, when serverless earns its keep, and the second-order catalogue — CQRS, event sourcing, sagas (orchestration vs choreography), BFF, strangler-fig migration — each with its shape sketch, benefits, drawbacks, and failure modes: **`references/architecture-patterns.md`**.
 
 ### 3. Data & consistency
 

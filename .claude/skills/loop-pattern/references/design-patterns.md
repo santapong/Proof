@@ -135,3 +135,92 @@ discountFor(customer, amount):
 **Step 7 — Propagate and clean up.** `InvoiceRenderer` and `QuoteBuilder` now call through the same lookup; their switches disappear. *Remove Dead Code* on the original per-tier branches. Tests green. Commit.
 
 **What was bought.** Adding a tier is now one new class plus one map entry, in one place — the Open/Closed violation is gone and the Repeated Switches smell with it. **What was paid.** Three classes, one interface, and one lookup where there used to be one switch. That trade is only worth it because the switch was repeated *three times* and tiers demonstrably get added. With one switch and a stable tier set, step 2 was the correct stopping point — and knowing where to stop is the substance of §4.
+
+## 6. Misuse-cost catalog — what the popular patterns cost when they ship wrong
+
+§2 diagnoses when a pattern applies and §4 recognizes pattern-happy code before it merges. This section prices the misuses that merge anyway — the patterns people reach for first: what each is *for*, the wrong version that actually ships, and the cheaper construct that usually suffices in a language with first-class functions. The recurring finding: the misuse is rarely the pattern done badly. It is the pattern applied where its problem shape never existed, so the cost is pure and the benefit zero.
+
+| Pattern | It is for | The misuse that ships | What the misuse costs, daily | What usually suffices |
+|---|---|---|---|---|
+| **Singleton** | Exactly one instance where a *second would be incorrect* (a hardware handle, a process-wide lock registry) — the narrow shape §1 already flags as usually a smell. | A convenient global: mutable state written from anywhere, reachable without appearing in any signature. | The coupling is invisible — no parameter names the dependency, so tests interact through state they never mention and cannot run in parallel: §1's order-dependence, priced per CI run. "Who changed this" is unanswerable from any call site. | Construct once at the composition root and pass it in (§1). Uniqueness is a wiring decision, not a property of the class. |
+| **Observer** | One subject notifying a set of dependents it must not know (§2). | Observers that mutate state which fires other observers; subscriptions nobody disposes. | Cascade storms — one change fans out re-entrantly and causality vanishes from the stack trace. Leaked subscriptions pin dead objects in memory and keep delivering events into them. | The platform's event/stream/signal primitive with subscription lifetime owned explicitly. A plain list of callbacks plus a dispose handle covers most of the rest. |
+| **Strategy** | Interchangeable algorithms behind one signature, where the selecting conditional *repeats* (§2, §5). | An interface, N classes, and a registry for a conditional that occurs once. | Five files where three lines were; every new variant is a class, a registration, and a naming debate; readers chase the dispatch to learn what runs. | Pass a function. A map from enum to function when selection is data-driven. |
+| **Factory Method / Abstract Factory** | Creation that must vary by subclass; whole *families* that must vary together (§1). | The §4 tell shipped: a factory whose product count is one and will stay one. | Every "where is this created" answer gains a hop; the constructor's compile-time checking is traded for runtime wiring, for nothing. | Call the constructor. If a test needs a substitute, inject the *instance*, not a maker of instances. An Abstract Factory shrinks to a record of constructor functions. |
+| **Decorator** | Independent responsibilities combined per-object at runtime, where a subclass per combination explodes (§1). | A five-deep wrapper stack assembled far from the call site, with order-dependent semantics nobody wrote down (§2's watch-out, realized). | Debugging is onion-peeling: a breakpoint on the real work sits under N forwarding frames, and the stack trace is all wrapper. Reordering two wrappers changes behavior silently. | The framework's middleware/pipeline if one exists; otherwise compose functions. If the combinations never actually vary at runtime, it is a field on the class. |
+| **Adapter** | Two interfaces that must meet when you can change *neither* (§2). | An adapter class over an interface you own — or one that quietly grows logic until it is a shadow domain layer. | A permanent extra type doing what a rename would have done; business rules hidden where nobody looks for business rules. | Change the interface you own (§2). Where one side is a function type, a converter function at the call site *is* the whole pattern. |
+| **Facade** | A narrow, stable entry point over a wide subsystem's common case (§2). | §2's watch-out realized — a method per caller until the facade is the subsystem's surface plus one hop; or it hides so much that callers bypass it, leaving two live entry points. | You maintain the subsystem *and* its echo: every subsystem change is designed twice and reviewed twice, and the two surfaces drift. | A module with a deliberately small export list. In most languages the facade is a file, not a class. |
+| **Visitor** | Double dispatch: operations that churn over an element set that does *not* (§2). | Visitor over an element set that does churn. | Exactly inverted rigidity (§2): each new element type edits every visitor in the codebase — an N×M edit matrix growing on the wrong axis, plus the accept-method boilerplate on every node. | Pattern matching over a sealed/union type, where the compiler names every match a new element breaks. A map from type to function where matching is unavailable. |
+| **Builder** | Multi-step construction where the same steps must yield different representations (§1). | A builder mirroring every field of one class, in a language that has named and default arguments (§2). | Double the API surface; every field change edits two places; objects escape half-built when the only validation lives in `build()`. | Named/default arguments; records/dataclasses; a validating constructor. The construction problem GoF Builder solves mostly does not exist in these languages. |
+
+The fourth column is the argument. Each cost is paid at every debugging session, test run, and field change — while the pattern's benefit was contingent on a second case that, per §4's honest test, never arrived.
+
+### 6.1 Decorator, Proxy, Adapter, Facade — the wrapper line-up
+
+Four patterns all produce "a class holding another object and forwarding calls," and misdiagnosis among them is common enough to earn the only diagrams in this file. The shapes differ on exactly two questions: **does the interface change**, and **what does the wrapper add**.
+
+```mermaid
+classDiagram
+  class Target { +request() }
+  class Adaptee { +legacyCall() }
+  Client --> Target
+  Adapter ..|> Target
+  Adapter --> Adaptee : translates
+```
+
+**Adapter** changes the interface and adds nothing else. If behavior is being added, it is not an Adapter.
+
+```mermaid
+classDiagram
+  class Component { +operation() }
+  ConcreteComponent ..|> Component
+  Decorator ..|> Component
+  Decorator o--> Component : wraps — possibly another Decorator
+```
+
+**Decorator** keeps the interface and adds behavior. Its reference points at `Component`, not `ConcreteComponent` — that is what lets decorators stack, and stacking is the point.
+
+```mermaid
+classDiagram
+  class Subject { +request() }
+  RealSubject ..|> Subject
+  Proxy ..|> Subject
+  Proxy --> RealSubject : controls access
+```
+
+**Proxy** keeps the interface and controls *access* — laziness, caching, remoting, permission. There is one proxy, not a stack, and the client must not be able to tell it is there.
+
+| Question | Adapter | Decorator | Proxy | Facade |
+|---|---|---|---|---|
+| Interface changes? | Yes — that is the job | No | No | Yes — a new, smaller one |
+| Adds behavior? | No | Yes | No — gates access | No — sequences calls |
+| Stacks? | No | Yes — the point | No | No |
+| Wraps how many objects? | One | One, recursively | One | Many |
+
+Section 7 — Pattern → modern-language replacement (append after §6)
+## 7. Pattern → what a modern language already gives you
+
+A large share of the GoF catalog compensates for what its 1994 implementation languages could not say cheaply: C++ had no closures, and neither C++ nor Smalltalk had sum types with compiler-checked matching. Where the language provides the mechanism, use the mechanism — the pattern's *name* still earns its keep in conversation and review, but the class structure does not.
+
+| Pattern | The language construct that replaces it | What the construct does *not* give you |
+|---|---|---|
+| Strategy | A function argument; a lambda | A home for per-variant *state* — if variants carry configuration, a closure or a small class returns |
+| Command | A closure — the function plus its captured arguments | Undo: the inverse operation must still be written explicitly |
+| Template Method | A function taking its varying steps as function parameters | A subclass's ability to override later without touching the call site |
+| Factory Method | A function returning the type; a constructor reference | Nothing, in the single-product case |
+| Abstract Factory | A record or module of constructor functions | Nothing, once families are just values |
+| Observer | Events, streams, signals, channels — whatever the platform ships | Disposal discipline: the lifetime leak of §6 survives the syntax change |
+| Iterator | The iteration protocol; generators | Nothing — never hand-roll this (§1) |
+| Singleton | A module-level value; a container-scoped instance | Global reach from anywhere — losing that is the point |
+| Decorator | Function composition; a middleware chain | Per-wrapper state, on the occasions a wrapper genuinely carries some |
+| Visitor | Pattern matching over sealed/union types | Visitor accumulates state across visits naturally; with matching you thread it yourself |
+| Builder | Named + default arguments; records/dataclasses | Enforced step ordering, in the rare case steps genuinely must run in sequence |
+| State | Sum types + match; sometimes a coroutine that *is* the machine | Nothing at small scale; a State class earns its keep only when transitions carry behavior |
+
+The replacements are not automatically better — a lambda with three captured locals is a Strategy with worse discoverability. The rule stays §2's: diagnose the problem shape first, then reach for the *cheapest* construct that answers it, which in a modern language is usually not a class.
+
+Drafting notes for the caller
+- Target file (unmodified, per brief): /mnt/data/company/TheLoopSkill/.claude/skills/loop-pattern/references/design-patterns.md — existing numbering ends at §5, so the draft continues at §6/§7.
+- Additivity: the file already flags Singleton (§1), one-product factories and once-only Strategy conditionals (§2 watch-outs, §4 tells), Builder-vs-named-args (§2), and Visitor inversion (§2). The new §6 cites those anchors and adds only the *cost accounting* of the misuse once shipped — it does not restate the diagnosis.
+- Diagrams: exactly three mermaid class sketches (Adapter, Decorator, Proxy), per the brief's 3–4 limit, plus a 4-way discriminator table including Facade. No loop-pattern sibling uses diagrams — these are the first in this directory; the inline-mermaid precedent within the plugin is `loop-design/references/architecture-patterns.md` (a different skill's reference, not a sibling). The C4-to-SVG rule in project memory applies to product docs, not these skill references.
+- Attribution discipline: GoF's example languages were C++ and Smalltalk (certain); the closure gap is attributed to C++ only — Smalltalk blocks are first-class closures — and the sum-type gap to both. The functions-replace-patterns idea is stated without attribution or counts, per the rules.
+- Length: the two sections total roughly 95 lines, under the ~120 budget.

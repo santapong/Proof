@@ -71,9 +71,9 @@ This is the parallel finder → dedup → verify pattern from the **`loop-engine
 
 ## Reference files
 
-- `references/refactoring-catalog.md` — Fowler's catalog indexed by code smell, the mechanics discipline, the safety-net precondition, and when *not* to refactor
-- `references/design-patterns.md` — the GoF catalog as a problem-shape index, refactoring-to-patterns, and the pattern-happy anti-pattern
-- `references/solid-and-style.md` — SOLID per principle with the smell each answers, and the language → canonical style-source table
+- `references/refactoring-catalog.md` — Fowler's catalog indexed by code smell, the mechanics discipline, the safety-net precondition, and when *not* to refactor; plus the tie-break table and the inverse-pairs section (refactoring has a reverse gear — reflex in one direction is a style tic)
+- `references/design-patterns.md` — the GoF catalog as a problem-shape index, refactoring-to-patterns, and the pattern-happy anti-pattern; plus the misuse-cost catalog (what each popular pattern costs when it ships wrong, the wrapper line-up disambiguation, and the pattern → modern-language replacement table)
+- `references/solid-and-style.md` — SOLID per principle with the smell each answers, and the language → canonical style-source table; plus the over-application table — one entry per letter, detection signal and walk-back, principles as pressure gauges, not laws
 - `references/framework-idioms.md` — idiomatic use of an already-chosen framework (React, Django, Spring) and "fighting the framework" as a smell
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow
 - `templates/refactor-sweep.workflow.js` — scan fan-out → dedup barrier → apply-and-verify workflow script

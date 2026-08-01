@@ -51,7 +51,7 @@ The failure this prevents is the confidently-wrong claim — the same failure th
 
 ## 3. Complexity and structure selection
 
-Open **`references/complexity-and-structures.md`**. It carries: stating a bound correctly (worst-case vs average-case vs amortized, and why conflating them silently is the most common error in this skill's domain); the three amortized-analysis methods with a worked example each; the **access-pattern decision table** that turns "which data structure" into a trade-off search over point lookup / range scan / ordered iteration / insert-heavy / read-heavy / memory-constrained; per-structure profiles; and the space-time framing that explains when a *worse* asymptotic bound wins on real hardware.
+Open **`references/complexity-and-structures.md`**. It carries: stating a bound correctly (worst-case vs average-case vs amortized, and why conflating them silently is the most common error in this skill's domain); the three amortized-analysis methods with a worked example each; the **access-pattern decision table** that turns "which data structure" into a trade-off search over point lookup / range scan / ordered iteration / insert-heavy / read-heavy / memory-constrained; per-structure profiles; the space-time framing that explains when a *worse* asymptotic bound wins on real hardware; and the **selection catalogue** — situation → structure → why-not-the-runner-up, with drawback-first profiles of the structures people pick before reading the fine print (Bloom/cuckoo, count-min, HLL, LSM vs B+, skip lists).
 
 Do not pick a structure from familiarity. Name the access pattern first, then read the table.
 
@@ -61,7 +61,7 @@ Open **`references/correctness.md`**. A mechanism you cannot state an invariant 
 
 ## 5. Concurrency mechanisms
 
-Open **`references/concurrency.md`** whenever the mechanism involves more than one thread. It carries the four-rung ladder (coarse lock → fine-grained lock → lock-free CAS-retry → wait-free) and what each rung actually buys, linearizability and how to state a linearization point, the CAS-retry pattern with ABA and its three fixes, the concrete memory models (C++23 `memory_order` and the Java Memory Model's happens-before edges), the scalability ceilings that bound a speedup claim before any benchmark runs, and the decision table for when a plain lock is the right answer.
+Open **`references/concurrency.md`** whenever the mechanism involves more than one thread. It carries the four-rung ladder (coarse lock → fine-grained lock → lock-free CAS-retry → wait-free) and what each rung actually buys, linearizability and how to state a linearization point, the CAS-retry pattern with ABA and its three fixes, the concrete memory models (C++23 `memory_order` and the Java Memory Model's happens-before edges), the scalability ceilings that bound a speedup claim before any benchmark runs, the decision table for when a plain lock is the right answer, and the **mechanism selection table** — situation → mechanism (sharded locks, RWLock, CAS, channels/actors, STM, single-writer) → why not the alternatives, with false sharing named as the failure mode of the fixes and the sharding rule and when it flips.
 
 **The rule that matters most: a concurrency correctness claim must cite the exact ordering it depends on.** "It's atomic" is not an argument. "The release store on `tail` publishes the node's fields to the acquire load in the consumer" is.
 
@@ -102,6 +102,6 @@ This is the parallel finder → barrier → adversarial-verify pattern from the 
 - `references/correctness.md` — the invariant-proof shape, worked proofs, property-based testing as an oracle, and the evidence-vs-proof rule
 - `references/concurrency.md` — the lock → lock-free → wait-free ladder, linearizability, ABA, C++23 and Java memory models, and the scalability ceilings
 - `references/randomized-structures.md` — Bloom, HyperLogLog, Count-Min, reservoir sampling and skip lists, with the exact error bounds and sizing examples
-- `references/benchmarking.md` — benchmark pitfalls, the JMH and pytest-benchmark workflows, the statistical bar, and the measured-vs-derived rule
+- `references/benchmarking.md` — benchmark pitfalls (incl. the detection-before-fix catalogue: coordinated omission, DCE, warmup, thermal lies), the JMH and pytest-benchmark workflows, the statistical bar, and the measured-vs-derived rule
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow
 - `templates/algorithm-bakeoff.workflow.js` — candidate fan-out → barrier → adversarial stress-test → synthesis workflow script

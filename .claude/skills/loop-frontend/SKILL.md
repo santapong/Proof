@@ -57,7 +57,7 @@ Write the numbers down before picking a curve. Both figures are research-backed 
 
 ### 4. Climb the escalation ladder — stop at the first rung that works
 
-This is the skill's central discipline and the answer to "should I use anime.js?". Per `references/motion-toolkit.md`:
+This is the skill's central discipline and the answer to "should I use anime.js?". Per `references/motion-toolkit.md` — which also carries the situation→mechanism selection table, the interruptibility tie-breaker (transitions retarget cleanly; keyframes snap), and the SSR/hydration cost split:
 
 | Rung | Mechanism | Use it for |
 |---|---|---|
@@ -84,7 +84,7 @@ At rung 6, route by stack, not preference — the pinned table with versions and
 
 ### 5. Choose the curve, then the choreography
 
-Per `references/choreography.md`. Linear reads mechanical; the expensive feel comes from **asymmetry** — decelerate on entry, accelerate on exit — and from motion that respects where an element came from. Shared-element continuity beats a cross-fade wherever the same object persists across states.
+Per `references/choreography.md` (its §5 misuse catalogue diagnoses the failures from the symptom side, detection signal before fix). Linear reads mechanical; the expensive feel comes from **asymmetry** — decelerate on entry, accelerate on exit — and from motion that respects where an element came from. Shared-element continuity beats a cross-fade wherever the same object persists across states.
 
 ### 6. Set type and space
 
