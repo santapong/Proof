@@ -429,6 +429,29 @@
           "condition": "The codebase already exists and only the release to production remains."
         }
       ]
+    },
+    {
+      "skill": "loop-context",
+      "scope": "Engineers the information an agent carries at runtime: context budgets/placement, compaction with an addressable store, typed shared state with merge rules and checkpoints between phases, supersession of stale facts, and trace invariants; deliverable is a context/state design or an evidence-confirmed audit.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-harness",
+          "condition": "The subject is what Claude is PERMITTED to do — permissions, hooks, MCP servers, schedules — not the information it carries."
+        },
+        {
+          "otherSkill": "loop-engine",
+          "condition": "The subject is the orchestration shape itself (pipeline vs parallel, barriers, loop guards), not the state flowing through it."
+        },
+        {
+          "otherSkill": "loop-design",
+          "condition": "The subject is a product's persistent data model or database schema, not an agent's runtime state."
+        },
+        {
+          "otherSkill": "loop-docs",
+          "condition": "The deliverable is prose for a human reader rather than a context/state contract or audit."
+        }
+      ],
+      "description": "Engineer what an agent carries at runtime: context budgets and placement, compaction paired with an addressable store, typed shared state with per-field merge rules and checkpoints handed between workflow phases, supersession of stale facts, and property-based invariants over agent traces. Use when the user asks to manage or debug agent context or agent memory, decide what to keep, compact, or evict, design the state passed between agents or phases, fix an agent that forgets, repeats itself, or acts on a stale fact, or verify that compaction lost nothing that mattered. The subject is the information an agent carries while it runs. For Claude's own configuration — permissions, hooks, MCP servers, schedules — use loop-harness. For the orchestration shapes that execute (pipeline, parallel, guarded loops), use loop-engine. For a product's database schema or data model, use loop-design. For prose a human reads, use loop-docs."
     }
   ],
   "overlaps": [
@@ -627,6 +650,24 @@
       "risk": "Both edit component files in a frontend codebase.",
       "severity": "medium",
       "resolution": "Split on what a screenshot can see: loop-pattern's output is a behaviour-preserving refactor backed by tests that a screenshot cannot distinguish; loop-frontend's output is visible by definition and no unit test catches its regression. If both touch one file, loop-pattern decides where the component boundary goes and loop-frontend decides what crosses it in 240ms."
+    },
+    {
+      "skillA": "loop-context",
+      "skillB": "loop-engine",
+      "risk": "loop-engine owns pipeline/parallel/loop shapes and its harness policies (H3 schemas, H7 isolation) already touch state discipline at the single-result scale; a state contract could be read as engine policy.",
+      "resolution": "Checkable question: is the defect in the SHAPE of the run (which stages, which barriers, when to stop) or in the INFORMATION crossing a boundary (what fields, which merge rule, what survives compaction)? Shape → loop-engine; information → loop-context. loop-engine's H3 stays: it governs one agent's return; loop-context governs what accumulates across returns."
+    },
+    {
+      "skillA": "loop-context",
+      "skillB": "loop-harness",
+      "risk": "'Agent memory' colloquially covers both Claude's memory-dir configuration (harness) and runtime context handling (this skill).",
+      "resolution": "Checkable question: does the fix land in .claude/settings.json, hooks, or MCP config (loop-harness) or in how prompts/state are assembled at runtime (loop-context)?"
+    },
+    {
+      "skillA": "loop-context",
+      "skillB": "loop-design",
+      "risk": "Bi-temporal/supersession vocabulary is shared with database data-modeling.",
+      "resolution": "Checkable question: is the store the PRODUCT's (users query it) or the AGENT's (the model queries it mid-run)? Product → loop-design; agent → loop-context."
     }
   ],
   "descriptionRewrites": [

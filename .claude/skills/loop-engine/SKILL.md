@@ -1,6 +1,6 @@
 ---
 name: loop-engine
-description: "Author and execute a multi-agent Workflow script (pipeline, parallel with an earned barrier, or a guarded loop) governed by the harness and loop engineering policies and a pluggable lifecycle framework (default AIDLC). Use when the user asks to run a task as a workflow, orchestrate with subagents, fan out agents, or execute a phase-structured job (audit, migration, review sweep, feature build) at multi-agent scale. This is the execution engine every other skill's templates target. For decomposing a whole project into a phased DAG with model routing before execution, use loop-orchestrate."
+description: "Author and execute a multi-agent Workflow script (pipeline, parallel with an earned barrier, or a guarded loop) governed by the harness and loop engineering policies and a pluggable lifecycle framework (default AIDLC). Use when the user asks to run a task as a workflow, orchestrate with subagents, fan out agents, or execute a phase-structured job (audit, migration, review sweep, feature build) at multi-agent scale. This is the execution engine every other skill's templates target. For decomposing a whole project into a phased DAG with model routing before execution, use loop-orchestrate. For the information agents carry and hand between phases — context budgets, shared state, compaction — use loop-context."
 argument-hint: <task> [--mode <lite|balanced|all-out>] [--planner <opus|fable>] [--fable-gate] [--framework <name>] [--dry-run]
 ---
 
