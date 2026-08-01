@@ -28,6 +28,17 @@ Prefer the modular variant below for anything you expect to live more than a few
 
 ### Modular monolith (the default)
 
+```mermaid
+flowchart LR
+  subgraph One deployable
+    A[Orders] -->|interface| B[Billing]
+    A -->|interface| C[Inventory]
+  end
+  A --- DBa[(orders data)]
+  B --- DBb[(billing data)]
+  C --- DBc[(inventory data)]
+```
+
 One deployable, hard module boundaries inside: modules communicate through explicit in-process interfaces, own their data, and depend in one direction.
 
 - **When to use**: **almost always, first.** Any system where you don't yet have a *named, requirements-backed* reason to distribute. It scales to surprisingly large teams and codebases (see exemplars).
@@ -36,6 +47,14 @@ One deployable, hard module boundaries inside: modules communicate through expli
 
 ### Microservices
 
+```mermaid
+flowchart LR
+  GW[API gateway] --> O[Orders svc] & B[Billing svc]
+  O --- DBo[(own DB)]
+  B --- DBb[(own DB)]
+  O -. events .-> K[[broker]] -.-> B
+```
+
 Many independently deployable services, each owning its data, communicating over the network (sync RPC and/or async events).
 
 - **When to use**: only when one or more **extraction triggers** below is real. The unit of a microservice is a team's bounded context, not a noun.
@@ -43,6 +62,14 @@ Many independently deployable services, each owning its data, communicating over
 - **Failure modes**: the **distributed monolith** — services that must deploy together, share a database, or call each other synchronously in deep chains. You pay every distribution cost and get none of the independence. Also: chatty sync call graphs (one user request fans into 30 internal hops), and eventual consistency bolted onto a domain that needed a transaction.
 
 ### Event-driven
+
+```mermaid
+flowchart LR
+  P1[Producer] --> K[[event log / broker]]
+  K --> C1[Consumer: projections]
+  K --> C2[Consumer: notifications]
+  K --> C3[Consumer added later — producer untouched]
+```
 
 Components communicate by producing and consuming events over a broker (or an internal event bus) rather than calling each other directly. Includes pub/sub, event streaming, and event sourcing.
 
@@ -54,6 +81,15 @@ Components communicate by producing and consuming events over a broker (or an in
 
 ### Hexagonal (ports and adapters)
 
+```mermaid
+flowchart LR
+  H[HTTP adapter] --> Pi([driving port])
+  Pi --> D{{domain core}}
+  D --> Po([driven port])
+  Po --> DB[DB adapter]
+  Po --> V[vendor adapter]
+```
+
 Domain logic at the center, depending on nothing external. All I/O (DB, HTTP, queues, third-party APIs) sits behind **ports** (interfaces the domain defines) implemented by **adapters** at the edge. Dependencies point inward.
 
 - **When to use**: domains with real business logic worth protecting from framework and infrastructure churn; systems that must swap infrastructure (DB, message broker, external vendor) or test the core without spinning up I/O. Pairs naturally with domain-driven design.
@@ -62,11 +98,96 @@ Domain logic at the center, depending on nothing external. All I/O (DB, HTTP, qu
 
 ### Layered (n-tier)
 
+```mermaid
+flowchart TB
+  P[presentation] --> A2[application] --> D2[domain] --> DA[data access]
+```
+
 Horizontal layers — presentation → application/service → domain → data-access — each depending only on the one below.
 
 - **When to use**: the familiar default *inside* a service or monolith; well understood, easy to onboard into, adequate for straightforward line-of-business apps.
 - **Trade-offs**: simple and universally understood; clear where a given kind of code goes. Cost: layers are horizontal, so a single feature usually cuts through all of them, and "the data layer" becomes a shared dumping ground that couples unrelated features.
 - **Failure modes**: an **anemic domain** — business rules leak up into fat service classes and down into the database, leaving the domain layer as dumb data holders; and skip-layer calls (presentation reaching straight into data access) that dissolve the only guarantee the pattern offered.
+
+### CQRS (command–query responsibility segregation)
+
+```mermaid
+flowchart LR
+  U[client] -->|commands| W[write model] --> DB[(write store)]
+  DB -. project .-> R[(read model / views)]
+  U -->|queries| R
+```
+
+Separate models for mutation and for reading: commands hit a write model that enforces invariants; queries hit read models shaped for each screen, kept up to date by projection.
+
+- **Benefits**: read and write sides scale and evolve independently; queries stop contorting the domain model; read models can be denormalized per consumer (search index, cache, report table) without touching write logic.
+- **Drawbacks**: two models to keep coherent; projections make reads **eventually consistent** — the UI must tolerate reading slightly stale data it just wrote (or you re-introduce read-your-writes machinery); every "simple field" now exists in N places.
+- **Failure modes**: CQRS-by-default on a CRUD domain — the split costs coherence and buys nothing when reads and writes want the same shape. Start with one model; split when a *measured* read/write asymmetry or a genuinely divergent query shape appears.
+
+### Event sourcing
+
+```mermaid
+flowchart LR
+  C[command] --> A[aggregate] -->|appends| L[(event log — source of truth)]
+  L -. replay .-> A
+  L -. project .-> V[(read views)]
+```
+
+State is not stored — it is **derived**: the log of domain events is the source of truth, current state is a fold over it, and read views are projections.
+
+- **Benefits**: a complete, replayable audit trail by construction; temporal queries ("what did this account look like on the 3rd?") are native; new read models can be built from history retroactively; pairs naturally with CQRS's projections.
+- **Drawbacks**: the hardest pattern here to retrofit *or* to leave — event **schema evolution** is forever (old events never go away, so every consumer handles every historical version); deletion mandates collide with an immutable log (the same purge problem as agent memory — crypto-shredding or excision, decided up front); replays get slow without snapshotting.
+- **Failure modes**: event-sourcing a domain that never needed the history — paying permanent schema archaeology for an audit log nobody reads; events that record *state changes* ("FieldXUpdated") instead of *domain facts* ("PaymentCaptured"), which makes the log meaningless as history.
+
+Use it for ledgers, compliance-audit domains, and anywhere "how did we get here" is a business question. Do not use it as a house style.
+
+### Sagas — distributed workflows without distributed transactions
+
+Once data is split across services, a multi-step business action (order → charge → reserve → ship) can't be one transaction. A saga runs it as a sequence of local transactions, each with a **compensating action** for rollback. Two shapes:
+
+```mermaid
+flowchart LR
+  subgraph Orchestration
+    S[saga orchestrator] --> A[charge] --> S --> B[reserve] --> S
+  end
+  subgraph Choreography
+    E1[OrderPlaced] --> X[billing] --> E2[PaymentCaptured] --> Y[inventory]
+  end
+```
+
+- **Orchestration** — one coordinator drives the steps. *Benefits*: the workflow is legible in one place; timeouts, retries and compensation live together; easy to answer "where is order 123 stuck". *Drawbacks*: the orchestrator is a coupling point and can accrete business logic that belongs in the services.
+- **Choreography** — each service reacts to the previous event. *Benefits*: no central coupling point; services stay autonomous. *Drawbacks*: the workflow exists nowhere — it is emergent from N subscriptions, so tracing a stuck order means archaeology across services; cycles and implicit ordering creep in unobserved.
+- **Rule of thumb**: choreography for short, stable, 2–3-step flows; orchestration the moment the flow has branching, timeouts, human steps, or anyone has asked "where did it get stuck". **Failure mode common to both**: compensations that don't actually compensate (you can void a charge; you cannot un-send an email — model those steps as explicitly irreversible and sequence them last).
+
+### Backend-for-frontend (BFF)
+
+```mermaid
+flowchart LR
+  W[web app] --> BW[web BFF] --> S1[services...]
+  M[mobile app] --> BM[mobile BFF] --> S1
+```
+
+One aggregation layer **per client type**, owned by that client's team, translating between the client's screen-shaped needs and the services' domain-shaped APIs.
+
+- **Benefits**: mobile stops over-fetching web-shaped payloads; each frontend team ships without negotiating a shared gateway's roadmap; client churn stays out of the domain services.
+- **Drawbacks**: N clients → N thin backends to build, secure, and keep patched; shared concerns (auth, rate limits) must be factored below the BFFs or they diverge.
+- **Failure modes**: the BFF that grows domain logic (it is a *translator*, not a *service*); a single "general-purpose BFF" shared by all clients — that is just a gateway with a misleading name.
+
+### Strangler fig — the migration pattern
+
+```mermaid
+flowchart LR
+  U[traffic] --> F[routing facade]
+  F -->|migrated slices| N[new system]
+  F -->|everything else| L[legacy]
+  N -. grows, L shrinks .-> X[retire legacy]
+```
+
+Not a target architecture but **how you get from one to another without a big-bang rewrite**: put a facade in front of the legacy system, carve off one capability at a time to the new implementation, route per-slice, retire the old system when nothing routes to it.
+
+- **Benefits**: every increment ships and takes real traffic, so risk is paid in slices; a stalled migration still leaves you better off than day zero; the facade gives you per-slice rollback for free.
+- **Drawbacks**: the facade is live infrastructure on the critical path; both systems run (and cost) simultaneously for the whole migration; data synchronization between old and new during the overlap is the genuinely hard part (expand–contract applies — see `loop-ship`).
+- **Failure modes**: the **immortal middle** — the migration loses funding at 60% and the facade + two half-systems become the permanent architecture; slicing by technical layer ("migrate the data layer first") instead of by capability, which means nothing ships end-to-end until everything does.
 
 ## When to split: the extraction triggers
 
@@ -140,6 +261,11 @@ ADRs are **immutable and append-only**: you don't edit a past decision, you writ
 | Fire-and-forget fan-out to many/unknown consumers | Event-driven for those interactions |
 | Caller needs the result to proceed | Request/response (sync) — do not use events |
 | Spiky, event-triggered, or glue workload | Serverless functions |
+| Measured read/write asymmetry or divergent query shapes | CQRS on that context (not house-wide) |
+| "How did we get here" is a business question (ledger, audit) | Event sourcing on that context |
+| Multi-step action across services, needs rollback | Saga — orchestrated if branching/timeouts, choreographed if 2–3 stable steps |
+| Several client types fighting over one API's shape | One BFF per client type |
+| Replacing a legacy system that must stay live | Strangler fig, sliced by capability |
 | "It'll be cleaner" / "best practice" / "might scale later" | Modular monolith — no trigger, no split |
 
 ## Exemplars (illustrations only)
