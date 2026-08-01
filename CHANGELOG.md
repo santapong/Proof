@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [2.0.0] — 2026-08-01
+
 ### Changed — BREAKING
 - **MCP server renamed: `theloopskill-mcp` → `heimdall-mcp` (server 0.1.0 → 0.2.0)** — the rename deferred at the plugin rename lands with MCP Phase 4. Server id in `.mcp.json` and the plugin manifest, `serverInfo.name`, the stderr prefix, the tool-name prefix (`mcp__heimdall-mcp__*`), and the resource URI scheme (`heimdall://…`) all change together. Any project `.mcp.json` or permission allowlist naming the old id must be updated. ADR-0001 keeps the old name — a decision record states what was decided at the time.
 
