@@ -88,7 +88,7 @@ This is a specialization of `loop-review/templates/security-review.workflow.js` 
 ## Reference files
 
 - `references/auth-and-secrets.md` — grant selection, the RFC 9700 checklist, and the third-party credential lifecycle
-- `references/webhooks-and-idempotency.md` — both directions of at-least-once delivery: verification, dedup, and idempotency keys
+- `references/webhooks-and-idempotency.md` — both directions of at-least-once delivery: verification, dedup, and idempotency keys; plus the failure-shape catalogue (§6): forged events, double charges, retry storms, sandbox lies, refresh races, silent sunsets
 - `references/resilience.md` — rate-limit headers, backoff with full jitter, circuit breakers, timeouts, bulkheads, degradation
 - `references/contracts-and-promotion.md` — provider-spec validation, the Pact boundary, and the sandbox → production cutover
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow
