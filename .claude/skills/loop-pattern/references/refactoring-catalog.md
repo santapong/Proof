@@ -107,3 +107,50 @@ Saying no is part of the skill. Do not refactor when:
 - **The motive is churn.** Reformatting to a personal preference, renaming across a repo to match a style guide the repo does not follow, or restructuring code nobody is going to touch. The repo's own convention outranks the style guides (`standards.md` → defer-to-repo-convention), and a large diff with no reader is a cost with no benefit.
 - **The code is scheduled for deletion or replacement.** Refactoring a module that is being removed next sprint is pure waste. Check first.
 - **The abstraction is speculative.** "We might need a second implementation" is not a smell; it is the *Speculative Generality* smell arriving from the other direction. Wait for the second implementation.
+
+## 6. Two moves fit — the tie-break table
+
+§1 tells you which smell you have; it does not settle the cases where two treatments both plausibly apply. This table does. Every row is priced against the one cost §1 never states:
+
+**Every extraction adds a name the reader must now resolve.** Indirection is not paid once at write time — it is a toll charged at every future read: one more hop, one more name to trust or verify. The toll is worth paying only when the name carries real meaning — when it lets the reader *skip* the body. If the reader still has to open the body to trust the name, the extraction made the code longer, the read slower, and delivered nothing.
+
+| Situation | Reach for | Not the alternative, because |
+|---|---|---|
+| Same statements in two sibling subclasses | **Pull Up Method** | Not **Extract Function** into a shared helper — the helper is a third home both siblings must now depend on; the superclass already is the shared home |
+| A block needs a comment to say *what* it does | **Extract Function**, named after the comment | Not a better comment — the comment rots silently the next time the block changes; the name travels to every call site and is read every time |
+| One opaque expression in an otherwise clear function | **Extract Variable** | Not **Extract Function** — a function is visible module-wide and invites calls the logic has not earned; a variable scopes the name to exactly the read that needs it |
+| One switch over a type code, in one place | Keep the switch | Not **Replace Conditional with Polymorphism** — one readable conditional beats a class hierarchy the reader must reassemble across files; the hierarchy pays only for *Repeated Switches* (§1), and `design-patterns.md` §5 works the stopping point in full |
+| Callers walking `a.getB().getC()` | **Hide Delegate** | Not **Extract Function** around the chain at one call site — that hides the chain from one caller and leaves every other caller coupled to the structure |
+| A pending feature the current shape fights | Preparatory refactoring, own diff (§4) | Not refactoring while implementing — the mixed diff breaks the two-hats rule (§2) and gives the reviewer a change set where neither claim can be checked |
+| A wrapper whose body is one call and whose name adds nothing | **Inline Function** | Not leaving it because it is "harmless" — the hop is charged at every read forever; harmless-per-instance is the tax Middle Man (§1) is made of |
+
+**The preparatory shape.** §4 names the rule — "make the change easy, then make the easy change" (Kent Beck's line, and he warns the first half may be hard). Here is its executable shape:
+
+1. State the pending change in one sentence, before touching anything.
+2. Refactor only what shrinks that change's diff — §4's scope test, applied per step.
+3. Land the refactor as its own green, behavior-free commit.
+4. Make the now-easy change as a small, behavior-carrying diff.
+
+Abort signal: the preparatory diff has grown larger than the change it prepares. You are no longer preparing, you are renovating — stop, land only what shrinks the change, and book the rest as separate work with its own §4 justification.
+
+## 7. Inverse pairs — refactoring has a reverse gear
+
+The catalog pairs many of its moves with a legitimate inverse, and both directions are real refactorings with real occasions. Direction is a decision, not a default.
+
+| Pair | Forward, when | Inverse, when |
+|---|---|---|
+| **Extract Function** ↔ **Inline Function** | The name says something the body doesn't, or the body is needed in a second place | The name merely restates the body, and the hop costs more than reading the code would |
+| **Extract Variable** ↔ **Inline Variable** | The expression is opaque and the name explains it | The variable's name adds nothing over the expression it holds |
+| **Extract Class** ↔ **Inline Class** | A field/method cluster has its own reason to change | The class no longer earns its existence (Lazy Element) — fold it into its one user |
+| **Pull Up Method/Field** ↔ **Push Down Method/Field** | The behavior is genuinely shared by every subclass | Only some subclasses want it — pushing down is the treatment for Refused Bequest |
+| **Hide Delegate** ↔ **Remove Middle Man** | Callers are coupled to the delegate's internal structure | The class does nothing but forward — Middle Man |
+| **Replace Parameter with Query** ↔ **Replace Query with Parameter** | The callee can derive the value itself and every call site simplifies | The query buries a dependency you want visible and swappable — pass it in |
+
+§1 already prescribes the inverse moves as treatments — for Speculative Generality, Lazy Element, and Middle Man. That is the point: over-abstraction is a smell like any other, and un-extracting is its cure, with the same evidence bar as extracting — the same call `design-patterns.md` §4 makes for simplifying a pattern back out.
+
+**The honesty rule.** A refactoring applied by reflex in one direction is a style tic, not a design decision. A history of a hundred extractions and zero inlines is not evidence of consistently good judgment — it is evidence that no judgment is occurring, because the same reflex would have fired on code that needed the opposite move. Two tests keep the direction honest:
+
+- **State the reversal condition.** When proposing an extraction, say what observation would make you inline it back — the name stopped meaning anything, the second caller never arrived. If no observation could ever send you the other way, you are enforcing an aesthetic, not treating a smell.
+- **The inverse must have been a live candidate.** For any pair above, the alternative to the forward move is not "do nothing" — it is the inverse move. If the inverse was never considered, the smell diagnosis (§1) was skipped, and this file's rule — no smell, no refactor — was violated in spirit.
+
+Both directions end the same way: the same tests, unchanged and green (§3). Inverse moves are not exempt from the safety net because they "only delete indirection" — inlining past a subtle override or a shadowed variable changes behavior exactly as quietly as extraction does.
