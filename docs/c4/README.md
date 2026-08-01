@@ -36,7 +36,7 @@ A single trace, from typed command to merged work. This is the whole system in o
 
 **3 · Progressive disclosure.** The flow directs the agent to read `owasp-cwe.md` for the tagging taxonomy and `severity-model.md` for the reporting bar — two files, chosen for this task. The other 86 stay on disk.
 
-**4 · Law loads.** `harness-policy.md`, `loop-policy.md`, `execution-modes.md`. Read-only. These govern *shape* and *routing* and are the reason nineteen skills share one orchestration discipline rather than nineteen dialects.
+**4 · Law loads.** `harness-policy.md`, `loop-policy.md`, `execution-modes.md`. Read-only. These govern *shape* and *routing* and are the reason twenty-two skills share one orchestration discipline rather than twenty-two dialects.
 
 **5 · Phase mapping.** `AIDLC.md` supplies the phases and, critically, the **human gates** between them. One workflow per gate — never a monolith spanning three.
 
