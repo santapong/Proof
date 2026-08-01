@@ -2,7 +2,7 @@
   "name": "heimdall",
   "displayName": "Heimdall",
   "description": "Twenty-two composable engineering skills for Claude Code on a governed multi-agent workflow engine: pipeline/parallel/loop orchestration under explicit harness and loop policies, per-node model routing with optimize and full execution modes, and lifecycle coverage from design, algorithms, patterns and UI craft through review, testing, integration, release, operations and incident response, to an autonomous propose-only improvement loop.",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "author": {
     "name": "santapong",
     "email": "santapongsondhi@gmail.com"
