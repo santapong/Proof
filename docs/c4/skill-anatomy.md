@@ -1,6 +1,6 @@
 # Anatomy of a skill
 
-Every one of the nineteen skills has the same shape. This document explains **why** that shape, because the constraints are not obvious and several of them were learned by shipping the wrong thing first. `CONTRIBUTING.md` tells you the mechanics — what to write and how to validate it. This tells you what each part is *for*, which is what you need before adding a nineteenth.
+Every one of the twenty-two skills has the same shape. This document explains **why** that shape, because the constraints are not obvious and several of them were learned by shipping the wrong thing first. `CONTRIBUTING.md` tells you the mechanics — what to write and how to validate it. This tells you what each part is *for*, which is what you need before adding a nineteenth.
 
 The `loop-skill` skill scaffolds all of this for you. Read this to understand what it emits and why, or to review a skill someone else wrote.
 
@@ -30,7 +30,7 @@ A skill that inlines its references into `SKILL.md` still *works* — and quietl
 
 ## The `description` field is the product's API
 
-Skill selection happens on `description` **alone**, before any body is read. With nineteen skills the field is doing real discriminative work, and it is the single highest-leverage text in a skill.
+Skill selection happens on `description` **alone**, before any body is read. With twenty-two skills the field is doing real discriminative work, and it is the single highest-leverage text in a skill.
 
 Three rules, each earned:
 
@@ -88,7 +88,7 @@ Shape follows the [harness policy](../../.claude/skills/loop-engine/references/h
 3. **Research the standards.** Confirm every version against a primary source. Grade honestly.
 4. **Author** router → references → template, in that order, so the router's flow determines what the references need to contain.
 5. **Validate**: `node scripts/validate.mjs`. It runs in CI on every push and PR.
-6. **Re-check the neighbours.** A nineteenth skill is more selection pressure on the other eighteen, not the same. Every overlap it touches needs its pointer on both sides.
+6. **Re-check the neighbours.** Each added skill is more selection pressure on the other eighteen, not the same. Every overlap it touches needs its pointer on both sides.
 
 ## What the gate can and cannot check
 

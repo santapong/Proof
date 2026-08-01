@@ -212,7 +212,7 @@ function buildResourceIndex(root) {
       ok: false,
       code: 'source_missing',
       error: `cannot resolve repo root ${sourceRoot}`,
-      fix: 'Verify the server was started against a real TheLoopSkill checkout.',
+      fix: 'Verify the server was started against a real Heimdall checkout.',
     }
   }
 

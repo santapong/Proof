@@ -103,18 +103,24 @@ const PLANNER_VALUES = Object.freeze(['opus', 'fable']) // §M7a/§M7b — not e
 // process.cwd()." mcp/server.mjs sits ONE level above mcp/lib/, so this is one path.resolve(HERE,
 // '..') where every mcp/lib/*.mjs file itself does path.resolve(HERE, '..', '..') from mcp/lib/ —
 // same arithmetic, different depth, exactly as run_gate.mjs's own header comment predicted this
-// file would need. THELOOPSKILL_ROOT overrides it (the packaged-install escape hatch); none of the
-// mcp/lib/*.mjs files read that env var themselves (verified: no THELOOPSKILL_ROOT reference in any
+// file would need. HEIMDALL_ROOT overrides it (THELOOPSKILL_ROOT accepted as a deprecated alias) (the packaged-install escape hatch); none of the
+// mcp/lib/*.mjs files read that env var themselves (verified: no HEIMDALL_ROOT or THELOOPSKILL_ROOT reference in any
 // of them), so this resolved ROOT is passed explicitly as { root: ROOT } on every handler call
 // below — omitting it would silently fall back to each handler's OWN independently-computed
 // DEFAULT_ROOT, which happens to agree with this file's DEFAULT_ROOT but would silently ignore an
-// operator's THELOOPSKILL_ROOT override. That would be exactly the silent default ADR-0005
+// operator's HEIMDALL_ROOT override. That would be exactly the silent default ADR-0005
 // forbids, so it is never omitted.
 // -------------------------------------------------------------------------------------------------
 
 const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/
 const DEFAULT_ROOT = path.resolve(HERE, '..') // repo root, one level up from mcp/
-const ROOT = process.env.THELOOPSKILL_ROOT ? path.resolve(process.env.THELOOPSKILL_ROOT) : DEFAULT_ROOT
+// HEIMDALL_ROOT is the name; THELOOPSKILL_ROOT is accepted one major as a deprecated
+// alias (renamed with heimdall-mcp 0.2.0) so existing wiring keeps booting — but it says
+// so on stderr, once, at startup (see below), rather than silently.
+const LEGACY_ROOT = process.env.THELOOPSKILL_ROOT
+const ROOT = process.env.HEIMDALL_ROOT
+  ? path.resolve(process.env.HEIMDALL_ROOT)
+  : LEGACY_ROOT ? path.resolve(LEGACY_ROOT) : DEFAULT_ROOT
 
 const SERVER_NAME = 'heimdall-mcp'
 const SERVER_VERSION = '0.2.0' // mcp/runtime-pin.json serverInfo.version — must move together
@@ -138,11 +144,15 @@ function stderrLine(text) {
   process.stderr.write(`heimdall-mcp: ${text}\n`)
 }
 
+if (!process.env.HEIMDALL_ROOT && LEGACY_ROOT) {
+  stderrLine('THELOOPSKILL_ROOT is deprecated (server renamed heimdall-mcp in 0.2.0) — rename the variable to HEIMDALL_ROOT; the alias will be dropped in the next major')
+}
+
 // ADR-0002 §D2.4 C4 — the three exact literal strings. Reproduced verbatim (not paraphrased; the
 // gate this ADR anticipates asserts on them byte-for-byte). <ROOT>/<process.version>/<mcp dir> are
 // substituted in, never the surrounding grammar.
 function sourceDocsMissingMessage(what) {
-  return `heimdall-mcp: source docs not found — ${what} under ${ROOT} · fix: set THELOOPSKILL_ROOT to a TheLoopSkill checkout, or correct the server path in .mcp.json`
+  return `heimdall-mcp: source docs not found — ${what} under ${ROOT} · fix: set HEIMDALL_ROOT to a Heimdall checkout, or correct the server path in .mcp.json`
 }
 function nodeTooOldMessage() {
   return `heimdall-mcp: node 18 or newer required — running ${process.version} · fix: upgrade node, or point .mcp.json "command" at a newer binary`
@@ -219,7 +229,7 @@ function runDocShapeProbes() {
     if (!result || result.ok !== true) {
       const detail = (result && (result.error || result.file)) || 'unknown probe failure'
       stderrLine(
-        `boot doc-shape probe failed — ${probe.label}: ${detail} · fix: set THELOOPSKILL_ROOT to a TheLoopSkill checkout, or correct the server path in .mcp.json ` +
+        `boot doc-shape probe failed — ${probe.label}: ${detail} · fix: set HEIMDALL_ROOT to a Heimdall checkout, or correct the server path in .mcp.json ` +
           `(non-fatal — ADR-0002 §D2.4 C6 degrade-not-die: initialize and tools/list still succeed; the affected tool(s) will answer isError:true with this same diagnosis)`
       )
     }
