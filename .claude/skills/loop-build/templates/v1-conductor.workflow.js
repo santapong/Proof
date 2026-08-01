@@ -1,6 +1,6 @@
 // Template: V1 CONDUCTOR — realize one gated phase of a version-one conduct.
 // This is an ordinary ../../loop-engine script under the unchanged harness policy.
-// The loop-v1 additions: three planner FRAMINGS reconciled by the single decompose
+// The loop-build additions: three planner FRAMINGS reconciled by the single decompose
 // node (multi-planner coverage), delegated-law task prompts (each task authored
 // against its owning skill's references), SEQUENTIAL gating dispatch (§M5's
 // dispatch rule), one bounded repair round, and the cumulative cast ledger.

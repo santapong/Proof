@@ -174,7 +174,7 @@
     "bothReadingsOfM5_156_wereFalse": "Read as a claim about the quoted MODE line, the quote is the retired v1.1 two-mode definition. Read as a claim about the DRY_LIMIT line in the fence above it, there is no DRY_LIMIT line in §M8 to be identical to.",
     "gatesAfterRepair": {
       "validate": "PASSED — 45252 assertions, 0 failures, 5 warnings",
-      "smoke": "26 of 27 — same pre-existing loop-v1/v1-conductor planner failure recorded in mcp/runtime-pin.json.gateBaseline",
+      "smoke": "26 of 27 — same pre-existing loop-build/v1-conductor planner failure recorded in mcp/runtime-pin.json.gateBaseline",
       "identicalToBaselineIn": ["ADR-0001", "ADR-0002", "ADR-0003"],
       "whyTheRepairIsSafe": "smoke.mjs never opens execution-modes.md; validate.mjs reads only §M8 via MODES_DOC (:25). Neither gate reads §M5 or §M6 prose — which is exactly why the drift survived."
     }

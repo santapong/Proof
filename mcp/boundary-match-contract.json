@@ -7,7 +7,7 @@
     "head": "4dd461a",
     "gateBaseline": {
       "validate": "PASSED — 45252 assertions, 0 failures, 5 warnings (exit 0)",
-      "smoke": "26 of 27 — the pre-existing loop-v1 v1-conductor planner failure recorded in mcp/runtime-pin.json gateBaseline; unrelated to and untouched by D7",
+      "smoke": "26 of 27 — the pre-existing loop-build v1-conductor planner failure recorded in mcp/runtime-pin.json gateBaseline; unrelated to and untouched by D7",
       "gitDiffStat": "only .claude/skills/loop-engine/references/execution-modes.md, from D4 and D6; D7 modified no existing file"
     }
   },
@@ -78,15 +78,15 @@
         { "index": 27, "pair": "loop-frontend|loop-pattern", "severity": "medium", "storedOnlyOn": "loop-frontend" }
       ],
       "ratedOverlapsAbsentFromMatrixBothWays": 0,
-      "skillsWithNoRatedOverlap": ["loop-v1"],
-      "skillsWithNoApprovedDescription": ["loop-skill", "loop-frontend", "loop-v1"],
+      "skillsWithNoRatedOverlap": ["loop-build"],
+      "skillsWithNoApprovedDescription": ["loop-skill", "loop-frontend", "loop-build"],
       "approvedVsLiveDescription": {
         "current": 16,
         "drifted": [
           { "skill": "loop-algo", "liveChars": 845, "approvedChars": 753, "delta": "live adds the loop-debug clause 'or that used to be fast and is not any more … an unexplained regression is a defect, not a mechanism choice'" },
           { "skill": "loop-operate", "liveChars": 839, "approvedChars": 699, "delta": "live adds a whole loop-ship pointer sentence absent from the approved text" }
         ],
-        "unrecorded": ["loop-skill", "loop-frontend", "loop-v1"]
+        "unrecorded": ["loop-skill", "loop-frontend", "loop-build"]
       }
     },
     "citationMechanics": {
@@ -114,7 +114,7 @@
   "D7_2_corpus": {
     "scoredFields": [
       { "field": "scope", "pointer": "/matrix/{i}/scope", "weight": [3, 5] },
-      { "field": "description", "pointer": "/descriptionRewrites/{k}/newDescription", "weight": [2, 5], "presentOn": 18, "absentOn": ["loop-skill", "loop-frontend", "loop-v1"] }
+      { "field": "description", "pointer": "/descriptionRewrites/{k}/newDescription", "weight": [2, 5], "presentOn": 18, "absentOn": ["loop-skill", "loop-frontend", "loop-build"] }
     ],
     "neverScored": [
       "matrix[].useInsteadWhen[].condition — see D7_2_diversion",
@@ -128,7 +128,7 @@
       "measuredWhyNotOwnRow": {
         "query": "plan a whole project into phases with a task DAG and per-node model routing",
         "correct": "loop-orchestrate",
-        "allFieldsTop3": [["loop-engine", 24.66], ["loop-v1", 17.65], ["loop-orchestrate", 15.36]],
+        "allFieldsTop3": [["loop-engine", 24.66], ["loop-build", 17.65], ["loop-orchestrate", 15.36]],
         "ownFieldsTop3": [["loop-orchestrate", 15.36], ["loop-engine", 14.92], ["loop-docs", 4.83]],
         "cause": "/matrix/0/useInsteadWhen/0 reads 'The unit of work is a whole project needing phase decomposition, a task DAG, and per-node model/effort routing before any script is written.' -> use loop-orchestrate. The best evidence for loop-engine is a sentence that disclaims loop-engine."
       },
@@ -163,7 +163,7 @@
       "renormalisation": "Weights are renormalised over the fields ACTUALLY PRESENT. For the 3 rows with no approved description, scope carries weight 1 and fieldsScored records ['scope'].",
       "noLengthNormalisation": {
         "b": 0,
-        "measured": "b=0.75 lifts the three description-less rows from mean rank 15.67 to 12.00 on a query none of them own (loop-skill 14->8, loop-v1 12->7). A scorer that pays a row for absent data is a silent default in ADR-0005's sense."
+        "measured": "b=0.75 lifts the three description-less rows from mean rank 15.67 to 12.00 on a query none of them own (loop-skill 14->8, loop-build 12->7). A scorer that pays a row for absent data is a silent default in ADR-0005's sense."
       }
     },
     "arithmetic": {
@@ -208,10 +208,10 @@
     "answerShape": {
       "ok": true,
       "isError": false,
-      "neverNotFound": "not_found is for an unknown KEY (D7_9). The absence of an owner is a different fact from the absence of a key; collapsing them would leave loop-v1's roster sweep unable to tell a typo from a decomposition smell.",
+      "neverNotFound": "not_found is for an unknown KEY (D7_9). The absence of an owner is a different fact from the absence of a key; collapsing them would leave loop-build's roster sweep unable to tell a typo from a decomposition smell.",
       "neverEmpty": "candidates[] is still populated with the top 3, each carrying its score and its zero-or-one discriminating terms, so the caller can see HOW nothing matched. An empty array is indistinguishable from a broken parse.",
       "requiredFields": ["queryDiscriminatingTerms", "topDiscriminatingCount", "decompositionSmell"],
-      "decompositionSmell": "No row of the 21-skill matrix matches this ask on two or more discriminating terms. Per .claude/skills/loop-v1/SKILL.md:31, a task with no owning skill is a decomposition smell: split the task until each part has an owner, or record deliberately that it falls outside the fleet. Do not assign the highest-scoring row by default."
+      "decompositionSmell": "No row of the 21-skill matrix matches this ask on two or more discriminating terms. Per .claude/skills/loop-build/SKILL.md:31, a task with no owning skill is a decomposition smell: split the task until each part has an owner, or record deliberately that it falls outside the fleet. Do not assign the highest-scoring row by default."
     }
   },
 
@@ -276,7 +276,7 @@
       "from": { "type": "boolean" },
       "to": { "type": "string", "enum": ["current", "drifted", "unrecorded"] },
       "why": "A boolean cannot honestly describe the 3 rows with no approved text. `false` there asserts 'the live text matches what was approved' when nothing was approved — a silent default in ADR-0005's sense.",
-      "measuredToday": { "current": 16, "drifted": ["loop-algo", "loop-operate"], "unrecorded": ["loop-skill", "loop-frontend", "loop-v1"] },
+      "measuredToday": { "current": 16, "drifted": ["loop-algo", "loop-operate"], "unrecorded": ["loop-skill", "loop-frontend", "loop-build"] },
       "notApplied": "tool-contracts.json is D3's deliverable from this same phase. Queued here alongside D5's unknown_task_kind and D6's width_undetermined / mode_not_priceable."
     }
   },
@@ -292,8 +292,8 @@
       "matrixSize": 21, "edgeCount": 76, "reciprocalEdges": 54, "oneWayEdges": 22,
       "zeroInDegreeSkills": ["loop-skill", "loop-frontend"],
       "overlapCount": 28, "ratedOverlapsOneWayInMatrix": 9,
-      "skillsWithNoApprovedDescription": ["loop-skill", "loop-frontend", "loop-v1"],
-      "skillsWithNoRatedOverlap": ["loop-v1"],
+      "skillsWithNoApprovedDescription": ["loop-skill", "loop-frontend", "loop-build"],
+      "skillsWithNoRatedOverlap": ["loop-build"],
       "pairsWithNoStoredDiscriminator": 161,
       "descriptionDrift": ["loop-algo", "loop-operate"]
     },
@@ -304,7 +304,7 @@
   "D7_9_exactLookup": {
     "rule": "`skill:` alone is an exact key lookup. outcome:'exact'. The scorer never runs and `unowned` is never returned.",
     "absentKey": "not_found per mcp/tool-contracts.json D3.5_errorEnvelope — 'boundary_lookup on a skill absent from the 21-entry matrix'",
-    "why": "The absence of a KEY (a typo, a renamed skill, a stale plan) is a different fact from the absence of an OWNER (a decomposition smell). loop-v1's roster sweep must be able to tell them apart."
+    "why": "The absence of a KEY (a typo, a renamed skill, a stale plan) is a different fact from the absence of an OWNER (a decomposition smell). loop-build's roster sweep must be able to tell them apart."
   },
 
   "D7_10_measuredQuality": {
@@ -333,14 +333,14 @@
     "G7.9 Every adjacent pair in the shortlist carries a separation object; where storedDiscriminator is true every proposition string is byte-identical to the file at its pointer; where false, propositions is [] and a notes[] entry names the gap.",
     "G7.10 A contrived query whose top-2 pair is one of the 161 pairs with no stored discriminator returns storedDiscriminator:false — assert the null branch actually executes rather than being dead code.",
     "G7.11 auditIntegrity is computed live: plant a synthetic 22nd matrix row in a SCRATCH COPY of the tree and assert matrixSize becomes 22 and DF_MAX becomes 5 (floor(22/4)); never mutate the repo.",
-    "G7.12 descriptionIsStale returns 'unrecorded' for loop-skill, loop-frontend and loop-v1, 'drifted' for loop-algo and loop-operate, 'current' for the other 16.",
+    "G7.12 descriptionIsStale returns 'unrecorded' for loop-skill, loop-frontend and loop-build, 'drifted' for loop-algo and loop-operate, 'current' for the other 16.",
     "G7.13 Citation round-trip (inherits ADR-0003 D3.9): every citation's sha256 recomputes over the LF-normalised line range, and the excerpt is asserted NOT to JSON.parse standalone for a matrix row, since it is a fragment.",
     "G7.14 boundary_lookup with skill:'loop-nonexistent' returns ok:false code 'not_found' — never outcome:'unowned'.",
     "G7.15 The verdict string is never parsed: assert no result field is derived from /verdict other than a citation whose line range is exactly 742..742."
   ],
 
   "D7_12_notRuledHere": [
-    "Repairing the audit's 22 one-way edges, 9 one-way rated overlaps, 2 zero-in-degree skills, 3 missing approved descriptions, 2 drifted descriptions or loop-v1's absent overlap rows. D7 rules on the TOOL, not the file; every one of these is reported by auditIntegrity and owned by nobody.",
+    "Repairing the audit's 22 one-way edges, 9 one-way rated overlaps, 2 zero-in-degree skills, 3 missing approved descriptions, 2 drifted descriptions or loop-build's absent overlap rows. D7 rules on the TOOL, not the file; every one of these is reported by auditIntegrity and owned by nobody.",
     "The wording of any consumer-router edit. ADR-0003 D3.8 keys fallbacks to call sites; D7 adds outcome:'unowned', which D3.8's table has no row for.",
     "Whether boundary_lookup should also read the live SKILL.md descriptions as a SECOND ranked corpus, since docs/c4/README.md:33 makes those the actual selector. D7 rules one authority in the ranking; a second, separately-reported ranking is a coherent future option and is not decided here.",
     "Synonym or stem handling. The tokenizer does no stemming; 'tests' and 'testing' are distinct terms. Measured impact was not isolated.",

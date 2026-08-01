@@ -128,8 +128,8 @@
       "sites": [
         { "file": ".claude/skills/loop-orchestrate/templates/project-plan.workflow.js", "line": 290, "expr": "width:${WIDTH(n.taskType)}", "context": "cast log, every node in TASKS" },
         { "file": ".claude/skills/loop-orchestrate/templates/project-plan.workflow.js", "line": 420, "expr": "width: WIDTH(n.taskType)", "context": "JSON ledger" },
-        { "file": ".claude/skills/loop-v1/templates/v1-conductor.workflow.js", "line": 208, "expr": "width:${WIDTH(n.taskType)}", "context": "cast log, every node" },
-        { "file": ".claude/skills/loop-v1/templates/v1-conductor.workflow.js", "line": 332, "expr": "width: WIDTH(n.taskType)", "context": "JSON ledger" }
+        { "file": ".claude/skills/loop-build/templates/v1-conductor.workflow.js", "line": 208, "expr": "width:${WIDTH(n.taskType)}", "context": "cast log, every node" },
+        { "file": ".claude/skills/loop-build/templates/v1-conductor.workflow.js", "line": 332, "expr": "width: WIDTH(n.taskType)", "context": "JSON ledger" }
       ],
       "whyNoGateCatchesIt": "scripts/validate.mjs reads only §M8 from execution-modes.md (:442-565) and diffs TEMPLATES AGAINST THE BLOCK, never a call site against §M5.",
       "remedy": "Report the §M5 width at the ledger, not WIDTH(n.taskType) — the call sites are OUTSIDE the canonical block, so this needs no fleet-wide block change and no check-5 impact."
@@ -246,7 +246,7 @@
 
   "gateBaselineAfterD6": {
     "validate": { "command": "node scripts/validate.mjs", "result": "PASSED", "assertions": 45252, "failures": 0, "warnings": 5, "exit": 0 },
-    "smoke": { "command": "node scripts/smoke.mjs", "passed": 26, "of": 27, "preExistingFailure": ".claude/skills/loop-v1/templates/v1-conductor.workflow.js — declares a planner node but --planner fable never routed to claude-fable-5", "attributableToD6": false },
+    "smoke": { "command": "node scripts/smoke.mjs", "passed": 26, "of": 27, "preExistingFailure": ".claude/skills/loop-build/templates/v1-conductor.workflow.js — declares a planner node but --planner fable never routed to claude-fable-5", "attributableToD6": false },
     "note": "Identical to the baseline recorded in ADR-0001 through ADR-0005. validate.mjs reads only §M8 from execution-modes.md (:442-565), so neither D6 edit is in its path — which is also why the §M5/§M6 drift D6 found survived."
   },
 

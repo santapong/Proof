@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Plugin renamed: TheLoopSkill → Heimdall** — the watchman who sees everything and guards the passage; the plugin had outgrown a loop-only name (it owns harness engineering below the loop and orchestration above it). The `loop-*` skill prefix is unchanged, the GitHub repository URL is unchanged, and the MCP server id `theloopskill-mcp` is deliberately unchanged until the in-flight MCP Phase 3 lands (renaming it breaks installed configurations). Historical CHANGELOG entries and ADRs keep the old name — a record states what was true at the time.
+- **Skill renamed: `loop-v1` → `loop-build`** — the name now says what the description always said ("build a project end to end"); `v1` named an output version, not a purpose. Invocation is `/loop-build <project-brief>`. Historical CHANGELOG entries and plan documents keep the old name.
 
 ## [1.4.0] — 2026-07-27
 

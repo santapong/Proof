@@ -13,7 +13,7 @@
           "condition": "The run must recur unattended over a repository on a schedule rather than execute once now."
         },
         {
-          "otherSkill": "loop-v1",
+          "otherSkill": "loop-build",
           "condition": "The unit of work is a whole project brief spanning phases and multiple domain skills, to be conducted end to end to a v1."
         }
       ]
@@ -35,7 +35,7 @@
           "condition": "The decomposition wanted is of a software system into components, not of work into agent tasks."
         },
         {
-          "otherSkill": "loop-v1",
+          "otherSkill": "loop-build",
           "condition": "The ask is to take a brief all the way to a shipped version one — plan AND conduct — rather than produce the plan."
         }
       ]
@@ -57,7 +57,7 @@
           "condition": "The ask is how to schedule/configure the runner (Routine, hook, permissions) rather than what the loop should do."
         },
         {
-          "otherSkill": "loop-v1",
+          "otherSkill": "loop-build",
           "condition": "The job is a one-shot greenfield conduct from brief to version one, not a standing maintenance loop."
         }
       ]
@@ -315,7 +315,7 @@
           "condition": "The deploy already failed and users are affected — declare and mitigate first."
         },
         {
-          "otherSkill": "loop-v1",
+          "otherSkill": "loop-build",
           "condition": "Nothing exists yet — the project must be scoped, planned and built before there is anything to release."
         }
       ]
@@ -409,7 +409,7 @@
       ]
     },
     {
-      "skill": "loop-v1",
+      "skill": "loop-build",
       "scope": "Conducts a project brief to a shipped version one: scopes the v1 contract, plans with multiple reconciled planners, drives every phase through the owning domain skills with gates and repair rounds; deliverable is the working, gate-passed v1 plus release checklist and ledger.",
       "useInsteadWhen": [
         {

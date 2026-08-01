@@ -43,7 +43,7 @@ Measured on this tree, `develop` @ `4dd461a`, 2026-07-27:
 
 **So the gates do not decide this.** All three options are mechanically green. The decision rests on the law text, the distribution model, and the measured cost — not on CI.
 
-> The single `smoke.mjs` failure (`loop-v1/templates/v1-conductor.workflow.js` — "declares a planner node but `--planner fable` never routed to `claude-fable-5`") is **pre-existing on `develop` before any `mcp/` work**. It is recorded here as a baseline fact so the implementer is not blamed for it, and is out of scope for D1.
+> The single `smoke.mjs` failure (`loop-build/templates/v1-conductor.workflow.js` — "declares a planner node but `--planner fable` never routed to `claude-fable-5`") is **pre-existing on `develop` before any `mcp/` work**. It is recorded here as a baseline fact so the implementer is not blamed for it, and is out of scope for D1.
 
 ### What distribution actually does
 

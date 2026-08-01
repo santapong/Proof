@@ -592,7 +592,7 @@ function routeNode(rawInput, options = {}) {
 
   if (!agreesWithM8) {
     notes.push(
-      `width disagrees with the literal §M8 WIDTH('${input.taskType}') under mode '${mode}': the §M5/§M6-correct width is ${widthValue} (width.value), but the ROUTES block's own WIDTH() function would compute ${m8WidthResult.width} (width.m8WidthWouldSay). This is a KNOWN, disclosed gap, not a bug in this answer — ADR-0006 §C1/§C2: WIDTH's domain is adversarial-verify nodes only and it is wrong when called outside that domain, which is exactly what four live template call sites do today (loop-orchestrate/templates/project-plan.workflow.js:290,420 and loop-v1/templates/v1-conductor.workflow.js:208,332, both in their cast-ledger and JSON-ledger rows). This tool reports the §M5/§M6-correct value in width.value and the literal block's answer in width.m8WidthWouldSay precisely so the two can be told apart.`
+      `width disagrees with the literal §M8 WIDTH('${input.taskType}') under mode '${mode}': the §M5/§M6-correct width is ${widthValue} (width.value), but the ROUTES block's own WIDTH() function would compute ${m8WidthResult.width} (width.m8WidthWouldSay). This is a KNOWN, disclosed gap, not a bug in this answer — ADR-0006 §C1/§C2: WIDTH's domain is adversarial-verify nodes only and it is wrong when called outside that domain, which is exactly what four live template call sites do today (loop-orchestrate/templates/project-plan.workflow.js:290,420 and loop-build/templates/v1-conductor.workflow.js:208,332, both in their cast-ledger and JSON-ledger rows). This tool reports the §M5/§M6-correct value in width.value and the literal block's answer in width.m8WidthWouldSay precisely so the two can be told apart.`
     )
   }
 

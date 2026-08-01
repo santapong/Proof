@@ -193,7 +193,7 @@ function readLiveDescription(root, skill) {
 }
 
 // §D7.7 — "unrecorded" when the audit never approved a description for this skill (3 skills, measured
-// today: loop-skill, loop-frontend, loop-v1); "current"/"drifted" by exact string comparison against
+// today: loop-skill, loop-frontend, loop-build); "current"/"drifted" by exact string comparison against
 // the approved text when one exists; "live_unreadable" — the disclosed 4th state (see file header) —
 // when an approved text exists but the live SKILL.md could not be read/parsed to compare against it.
 function computeDescriptionIsStale(root, skill, approvedDescription) {

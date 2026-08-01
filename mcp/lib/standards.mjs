@@ -13,7 +13,7 @@
 // mcp/lib/boundary.mjs: this module knows nothing about JSON-RPC, tool schemas or envelopes — it
 // locates and parses 21 Markdown files and hands back plain data. Testable with `node -e` alone:
 //
-//   node -e 'import("./mcp/lib/standards.mjs").then(m => console.log(m.readStandardsShelf(undefined, "loop-v1").ok))'
+//   node -e 'import("./mcp/lib/standards.mjs").then(m => console.log(m.readStandardsShelf(undefined, "loop-build").ok))'
 //
 // (double-quoted specifier above deliberately, so this doc comment does not itself match
 // ADR-0002 §D2.3.6's assertNoDependencies() grep for a single-quoted import(...) specifier)
@@ -38,7 +38,7 @@
 // they are returned as sections, never forced into a row shape they do not have.
 //
 // The confirmation-log extractor below is a coordinate-plus-content walk, not a per-file special case:
-// it tries an H2 heading whose text contains "confirmation log" (catches loop-v1's bare "## Confirmation
+// it tries an H2 heading whose text contains "confirmation log" (catches loop-build's bare "## Confirmation
 // log" and loop-design's "## Re-check cadence and confirmation log") first, because a heading changes
 // what content to return (the whole section) rather than one line; failing that, it scans the WHOLE
 // document for a line beginning (optionally after a `-` bullet or `N.` numbered marker) with the bold
@@ -403,7 +403,7 @@ function lineHasOpenItemMarker(line) {
   return findOpenItemMarker(line) !== -1
 }
 
-// Public: locateConfirmationLog — try the H2-heading shape first (loop-v1's bare "## Confirmation
+// Public: locateConfirmationLog — try the H2-heading shape first (loop-build's bare "## Confirmation
 // log", loop-design's "## Re-check cadence and confirmation log"), then the inline shape (bold
 // paragraph / bold bullet / numbered item — every other shelf, including the four that also carry a
 // "see the foot" preamble sentence, which never matches CONFIRMATION_INLINE_RE because it is not
