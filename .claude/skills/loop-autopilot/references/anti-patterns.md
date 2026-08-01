@@ -1,7 +1,8 @@
 # Anti-Patterns
 
-Five ways an autonomous loop degrades by **skipping a move** (AP1–AP5), plus a sixth
-(AP6) where a move **runs but is fooled**. Each is a single failure, not a vague
+Five ways an autonomous loop degrades by **skipping a move** (AP1–AP5), a sixth (AP6)
+where a move **runs but is fooled**, and a seventh (AP7) where every move runs honestly
+and the **search space quietly narrows to one lineage**. Each is a single failure, not a vague
 "quality" problem — naming which pattern you're looking at tells you which one thing
 broke, not the whole system. Run this checklist before deploying as a Cloud Routine,
 and re-run it any time the loop's behavior feels off or its guards change. AP1–AP5 are
@@ -117,14 +118,28 @@ a running best:
   *brevity bias* — and mitigates by applying itemized delta updates instead of rewriting
   the accumulated context wholesale.
 
-**Fix (to apply):** dedup against `seen` decides what is *new*; it must not also decide
-what is *worth pursuing*. Keep a candidate archive across rounds and select from a
-frontier rather than a single best — retain proposals that scored lower but explore a
-different area (different subsystem, different intake kind, different risk class), and
-sample from that frontier when intake is thin, before crediting a dry round. Never let a
-dry counter increment on a round that only re-derived the current lineage. Where the loop
-accumulates config over time (rubric, credit ledger), prefer itemized updates over
-wholesale rewrites, per ACE.
+**Fix (applied — `improvement-loop.workflow.js`):** dedup against `seen` decides what is
+*new*; it no longer also decides what is *worth pursuing*. Four mechanisms:
+
+1. **A per-run archive with coverage tracking** — every candidate is recorded with the
+   *area* it explored (its `area` tag, falling back to intake kind) and its outcome
+   (`proposed` / `blocked` / `triaged-out` / `idea`), and travels out with the result.
+   Blocked and triaged-out candidates are part of the record, not noise.
+2. **Frontier-steered research** — idle rounds hand the research agent the run's coverage
+   map and instruct it to prefer unexplored areas: a solid idea in fresh territory beats
+   a better-sounding idea in a covered one.
+3. **A territory-aware dry counter** — an idle round increments `dry` only when its ideas
+   all landed in already-covered areas (that round re-derived the current lineage); a
+   round that opens an uncovered area resets it. Runaway is impossible — L4's
+   `MAX_ROUNDS` backstops even a research pass that names a "new" area every time.
+4. **Kind-interleaved Act ordering** — priority sorts *within* each intake kind, but
+   kinds round-robin, so one noisy kind (a flood of `ci-failure`s) cannot monopolize
+   every Act slot and collapse the round onto one neighbourhood. Order changes; every
+   fresh item is still handled.
+
+The archive is per-run by design: cross-run persistence is the draft PR itself (AP2).
+Where the loop accumulates config over time (rubric, credit ledger), prefer itemized
+updates over wholesale rewrites, per ACE.
 
 **Interaction with AP6.** These two pull in opposite directions and must be held apart.
 AP6 hardening says *freeze what measures you*; AP7 says *keep exploring what you propose*.
@@ -161,4 +176,4 @@ suite before trusting the loop's output rather than assuming it transfers.
 | AP4 | Blind Loop | Discovery | ✅ guarded |
 | AP5 | Tangled Loop | Handoff | ✅ guarded (worktree isolation, live mode) |
 | AP6 | Gamed Loop | Make verification un-gameable | ✅ guarded (canary + diff-integrity + cross-check, & held-out detector) — see `verifier-integrity.md` |
-| AP7 | Monoculture Loop | Keep a population, not a running best | ⚠️ open — dedup + dry counter only; no candidate archive or frontier selection yet |
+| AP7 | Monoculture Loop | Keep a population, not a running best | ✅ guarded (coverage archive, frontier-steered research, territory-aware dry counter, kind interleave) |
