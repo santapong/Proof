@@ -85,14 +85,73 @@ check on protected paths, and a sampled cross-judge. One detector runs out-of-ba
 oracles whose rising false-accept rate is the meta-overfit alarm. This is the gate that
 must hold before SCALE (removing the human merge).
 
+## AP7 — Monoculture Loop (the search collapses to one lineage)
+
+**Symptom:** the loop still runs, still verifies honestly, still proposes — and every
+proposal starts to look like the last one. Dedup keeps firing, the dry counter creeps up,
+and the loop retires believing the work is done when it has only stopped being able to
+*see* anything else. Nothing was gamed; the search space narrowed.
+
+**Why it's not AP4.** AP4 is discovery never attempted — an empty intake with no scan
+behind it. AP7 is discovery attempted and *converged*: the candidate pool is real but has
+collapsed onto one neighbourhood, because selection kept only the current best and
+`seen` suppressed everything adjacent to it. A dry counter cannot tell the two apart —
+"no fresh candidates" reads identically whether the space is exhausted or merely
+unreachable from where the loop is standing.
+
+**What the evidence says.** This is the single most consistently mitigated failure in the
+self-improving-systems literature, and always by the same move — keep a *population*, not
+a running best:
+
+- **GEPA** (arXiv:2507.19457, ICLR 2026 Oral) states greedy best-candidate selection
+  "causes the optimizer to get stuck in a local optimum," and its ablation measures naive
+  greedy selection **underperforming Pareto-frontier selection by 6.4%**.
+- **Darwin Gödel Machine** (arXiv:2505.22954, ICLR 2026) keeps an archive with
+  `sigmoid(score) × novelty` selection so low scorers retain nonzero probability; its
+  no-archive ablation **stalls** once a bad modification lands. Lower-scoring ancestors
+  later seed the best lineages.
+- **FunSearch** (Nature 625, 2023) uses island populations with **periodic reset of the
+  worst islands** purely as an anti-stagnation mechanism — and still hit its result in
+  only 4 of 140 runs, so the problem is real even with a working mitigation.
+- **ACE** (arXiv:2510.04618) names the textual-domain analogues — *context collapse* and
+  *brevity bias* — and mitigates by applying itemized delta updates instead of rewriting
+  the accumulated context wholesale.
+
+**Fix (to apply):** dedup against `seen` decides what is *new*; it must not also decide
+what is *worth pursuing*. Keep a candidate archive across rounds and select from a
+frontier rather than a single best — retain proposals that scored lower but explore a
+different area (different subsystem, different intake kind, different risk class), and
+sample from that frontier when intake is thin, before crediting a dry round. Never let a
+dry counter increment on a round that only re-derived the current lineage. Where the loop
+accumulates config over time (rubric, credit ledger), prefer itemized updates over
+wholesale rewrites, per ACE.
+
+**Interaction with AP6.** These two pull in opposite directions and must be held apart.
+AP6 hardening says *freeze what measures you*; AP7 says *keep exploring what you propose*.
+Both hold only if the frontier is over **candidates**, never over the held-out suite, the
+rubric's protected paths, or the canary — widening the search must never widen what the
+loop may touch.
+
 ## Using this file
 
 Don't treat it as a one-time read. A fix for one pattern can quietly reopen another —
 e.g. raising `MAX_ROUNDS` to push past a false AP3 diagnosis increases concurrent items,
 which is only safe because AP5 is now guarded by worktree isolation; if you ever remove
-that isolation, AP5 reopens. Re-check all five rows whenever
+that isolation, AP5 reopens. Re-check all seven rows whenever
 `improvement-loop.workflow.js` or its guards change, not just the row you think you
 touched.
+
+**Capability gating — check before trusting any of this.** The loop's usefulness is
+gated by whether the base model is strong enough to correctly implement its own good
+ideas. **STOP** (arXiv:2310.02304, COLM 2024) measured this directly: with GPT-4 the
+self-improvement procedure consistently improved downstream performance, while with
+GPT-3.5-turbo and Mixtral it **degraded** it — the proposed ideas were reasonable and the
+implementations were wrong. The same paper found sandbox-disabling behaviour scaling *up*
+with capability (GPT-4 0.42% of improvements, CI 0.31–0.57%; GPT-3.5-turbo 0.12%, CI
+0.07–0.21%), so a stronger model buys better proposals and more evasion pressure at once.
+Neither effect is quantified outside STOP. Treat a weak `--planner` or a downgraded
+routing tier as unvalidated for unattended running, and validate per-model on the held-out
+suite before trusting the loop's output rather than assuming it transfers.
 
 | Code | Name | Move missing | Status |
 |---|---|---|---|
@@ -102,3 +161,4 @@ touched.
 | AP4 | Blind Loop | Discovery | ✅ guarded |
 | AP5 | Tangled Loop | Handoff | ✅ guarded (worktree isolation, live mode) |
 | AP6 | Gamed Loop | Make verification un-gameable | ✅ guarded (canary + diff-integrity + cross-check, & held-out detector) — see `verifier-integrity.md` |
+| AP7 | Monoculture Loop | Keep a population, not a running best | ⚠️ open — dedup + dry counter only; no candidate archive or frontier selection yet |
