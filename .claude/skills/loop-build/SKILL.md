@@ -1,10 +1,10 @@
 ---
-name: loop-v1
+name: loop-build
 description: "Conduct a project brief all the way to a shipped version one: scope the smallest shippable v1, plan it with multiple independent planners reconciled into one task DAG, then drive every phase through whichever domain skills the tasks need — design, build, verify, ship — with human gates, repair rounds, and a full cast-and-cost ledger. Use when the user asks to build a project end to end, take an idea to v1, finish version one, or wants one command that composes the fleet for a whole project. Produces a working, gate-passed v1 plus its release checklist. For producing only the plan and routing without conducting the build, use loop-orchestrate. For authoring and running a single already-scoped workflow, use loop-engine. For a standing scheduled loop that maintains an existing repository, use loop-autopilot. For releasing an existing codebase rather than building one, use loop-ship."
 argument-hint: <project-brief> [--mode <lite|balanced|all-out>] [--dry-run]
 ---
 
-# loop-v1
+# loop-build
 
 **The deliverable is a shipped version one — working tree, passing gates, release checklist, ledger — conducted end to end from a brief.** That is the discriminator: if the ask stops at a plan, it is `loop-orchestrate`; if it is one workflow for one scoped task, it is `loop-engine`; if it recurs on a schedule over an existing repo, it is `loop-autopilot`; if the code already exists and only the release remains, it is `loop-ship`.
 

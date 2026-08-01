@@ -642,7 +642,7 @@ function rankCandidates(root, query, { limit = 5 } = {}) {
     notes,
     authority: AUTHORITY,
     ...(outcome === 'unowned'
-      ? { decompositionSmell: 'No row of the matrix matches this ask on two or more discriminating terms. Per .claude/skills/loop-v1/SKILL.md:31, a task with no owning skill is a decomposition smell: split the task until each part has an owner, or record deliberately that it falls outside the fleet. Do not assign the highest-scoring row by default.' }
+      ? { decompositionSmell: 'No row of the matrix matches this ask on two or more discriminating terms. Per .claude/skills/loop-build/SKILL.md:31, a task with no owning skill is a decomposition smell: split the task until each part has an owner, or record deliberately that it falls outside the fleet. Do not assign the highest-scoring row by default.' }
       : {}),
   }
 }
@@ -650,7 +650,7 @@ function rankCandidates(root, query, { limit = 5 } = {}) {
 // ---------------------------------------------------------------------------
 // Public: exactLookup — §D7.9. `skill:` alone is an exact key lookup: not_found when absent from the
 // matrix, outcome:'exact' when present. Never runs the scorer, never returns 'unowned' — the absence
-// of a KEY is a different fact from the absence of an OWNER (a decomposition smell), and loop-v1's
+// of a KEY is a different fact from the absence of an OWNER (a decomposition smell), and loop-build's
 // roster sweep must be able to tell them apart.
 // ---------------------------------------------------------------------------
 

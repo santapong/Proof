@@ -18,7 +18,7 @@
 // loop-operate/loop-pattern/loop-review/loop-scout/loop-ship/loop-skill), or, for loop-design alone, an
 // H2 heading whose text contains "re-check" ("## Re-check cadence and confirmation log"), where the
 // cadence sentence is the section's first paragraph. The remaining 8 shelves (loop-audit, loop-debug,
-// loop-engine, loop-frontend, loop-orchestrate, loop-research, loop-test, loop-v1) either never mention
+// loop-engine, loop-frontend, loop-orchestrate, loop-research, loop-test, loop-build) either never mention
 // re-checking at all, or only in ordinary (non-bold) prose with no anchor a coordinate walk can pick
 // out without guessing WHICH sentence is "the" cadence — those correctly come back with
 // recheckCadence:null and an explained reason, never a guess. This module implements exactly that

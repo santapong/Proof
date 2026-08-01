@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Skill renamed: `loop-v1` → `loop-build`** — the name now says what the description always said ("build a project end to end"); `v1` named an output version, not a purpose. Invocation is `/loop-build <project-brief>`. Historical CHANGELOG entries and plan documents keep the old name.
+
 ## [1.4.0] — 2026-07-27
 
 ### Added

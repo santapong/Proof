@@ -97,7 +97,7 @@
       "exit": 1,
       "executed": 27,
       "passed": 26,
-      "preExistingFailure": ".claude/skills/loop-v1/templates/v1-conductor.workflow.js — declares a planner node but --planner fable never routed to claude-fable-5",
+      "preExistingFailure": ".claude/skills/loop-build/templates/v1-conductor.workflow.js — declares a planner node but --planner fable never routed to claude-fable-5",
       "note": "pre-existing on develop before any mcp/ work; not caused by and not in scope for D1"
     },
     "mcpDirIsGateNeutral": "validate.mjs scopes its walk to .claude/skills (line 24) and node --checks in os.tmpdir() (line 287); smoke.mjs walks ROOT but skips node_modules by name (line 25) and collects only *.workflow.js"

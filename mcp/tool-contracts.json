@@ -437,7 +437,7 @@
               "newFailures": { "type": "array", "items": { "type": "string" }, "description": "Failures NOT in the recorded baseline — the only ones the caller caused." },
               "citation": { "$ref": "#/D3.2_citation/schema" }
             },
-            "description": "REQUIRED. smoke.mjs is red on develop @ 4dd461a for a pre-existing reason recorded in runtime-pin.json (loop-v1 v1-conductor: declares a planner node but --planner fable never routed to claude-fable-5). Without this field every caller rediscovers that failure and misattributes it to their own change."
+            "description": "REQUIRED. smoke.mjs is red on develop @ 4dd461a for a pre-existing reason recorded in runtime-pin.json (loop-build v1-conductor: declares a planner node but --planner fable never routed to claude-fable-5). Without this field every caller rediscovers that failure and misattributes it to their own change."
           }
         }
       },
@@ -453,10 +453,10 @@
       "measuredHeterogeneity": {
         "note": "MEASURED at head 4dd461a, not assumed. The 21 shelves are NOT uniformly structured, so this tool must degrade rather than promise rows it cannot produce.",
         "shelvesWithZeroMarkdownTableRows": ["loop-incident", "loop-operate"],
-        "shelvesLackingTheThreeGradeVocabulary": ["loop-algo", "loop-frontend", "loop-integrate", "loop-ship", "loop-skill", "loop-v1"],
+        "shelvesLackingTheThreeGradeVocabulary": ["loop-algo", "loop-frontend", "loop-integrate", "loop-ship", "loop-skill", "loop-build"],
         "gradeVocabularyPresentIn": "15 of 21",
         "confirmationLogPresentIn": "21 of 21",
-        "smallestShelf": "loop-v1 — 17 lines, 6 table rows, 1 H2 heading",
+        "smallestShelf": "loop-build — 17 lines, 6 table rows, 1 H2 heading",
         "consequence": "A table-row parser returns NOTHING for loop-incident and loop-operate, whose shelves are prose under H2 headings. So the contract is: parse Markdown table rows where they exist; otherwise return the H2 section's raw text with parsed:false. Never guess a row out of prose, and never report an empty shelf as an empty SHELF when it is an unparsed one."
       },
       "inputSchema": {
@@ -553,9 +553,9 @@
       },
       {
         "tool": "boundary_lookup",
-        "callSites": [".claude/skills/loop-skill/SKILL.md step 3 (:40)", ".claude/skills/loop-v1/SKILL.md step 3 (:20) — the roster sweep already says to walk ../../../docs/design/boundary-audit.json"],
+        "callSites": [".claude/skills/loop-skill/SKILL.md step 3 (:40)", ".claude/skills/loop-build/SKILL.md step 3 (:20) — the roster sweep already says to walk ../../../docs/design/boundary-audit.json"],
         "fallback": "Read docs/design/boundary-audit.json. It is 743 lines of JSON and grep-friendly.",
-        "degradation": "Real for loop-v1's roster sweep, which walks all 21 entries — that is a lot of context to pull in whole. The fallback is correct but expensive."
+        "degradation": "Real for loop-build's roster sweep, which walks all 21 entries — that is a lot of context to pull in whole. The fallback is correct but expensive."
       },
       {
         "tool": "run_gate",
@@ -571,8 +571,8 @@
       }
     ],
     "consumerRouterCount": {
-      "four": ["loop-engine", "loop-orchestrate", "loop-skill", "loop-v1"],
-      "derivation": "These are the four skills whose steps already read the five source documents: loop-engine and loop-orchestrate are the only two flag parsers and the only two that run the §M6 pre-flight (§M2:63); loop-skill owns boundary registration, the standards shelf and the validate gate (its steps 3, 4 and 6); loop-v1 walks boundary-audit.json for the roster sweep (:20). No other skill has a step that reads these files.",
+      "four": ["loop-engine", "loop-orchestrate", "loop-skill", "loop-build"],
+      "derivation": "These are the four skills whose steps already read the five source documents: loop-engine and loop-orchestrate are the only two flag parsers and the only two that run the §M6 pre-flight (§M2:63); loop-skill owns boundary registration, the standards shelf and the validate gate (its steps 3, 4 and 6); loop-build walks boundary-audit.json for the roster sweep (:20). No other skill has a step that reads these files.",
       "status": "DERIVED, not previously ruled. If the approved v1 line meant a different four, this is the set to correct."
     }
   },
