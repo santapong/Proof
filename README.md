@@ -1,13 +1,13 @@
-# TheLoopSkill
+# Heimdall
 
 > **Run real engineering work as governed, multi-agent workflows** — a Claude Code plugin of 20 composable skills covering the whole lifecycle, from design and review through shipping, operating, and autonomous self-improvement.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills: 20](https://img.shields.io/badge/skills-20-6f42c1.svg)](#whats-in-the-box)
+[![Skills: 21](https://img.shields.io/badge/skills-21-6f42c1.svg)](#whats-in-the-box)
 [![Plugin: marketplace](https://img.shields.io/badge/plugin-marketplace-2ea44f.svg)](#installation)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](CONTRIBUTING.md)
 
-TheLoopSkill turns a task into a **multi-agent Workflow** — pipeline by default, parallel fan-out where it's earned, loops for unknown-size discovery — governed by explicit engineering policies and a pluggable lifecycle framework. Eighteen domain skills build on that engine to cover the lifecycle end to end — design, mechanism, build, review, integrate, ship, operate, respond — and one autonomous skill ties them into a self-improving loop.
+Heimdall turns a task into a **multi-agent Workflow** — pipeline by default, parallel fan-out where it's earned, loops for unknown-size discovery — governed by explicit engineering policies and a pluggable lifecycle framework. Eighteen domain skills build on that engine to cover the lifecycle end to end — design, mechanism, build, review, integrate, ship, operate, respond — and one autonomous skill ties them into a self-improving loop.
 
 Every node of every workflow is routed to a model tier that matches the job, on one dial with three rungs: **`lite`** for small tasks, **`balanced`** (the default) for real work, **`all-out`** when the answer matters more than the bill.
 
@@ -27,7 +27,7 @@ Every node of every workflow is routed to a model tier that matches the job, on 
 
 ## Why
 
-A single agent handed a big task drifts: it skips verification, forgets what it already did, and hides how confident it is. TheLoopSkill answers that with **structure** — the same three moves the best engineers make, encoded as reusable skills:
+A single agent handed a big task drifts: it skips verification, forgets what it already did, and hides how confident it is. Heimdall answers that with **structure** — the same three moves the best engineers make, encoded as reusable skills:
 
 - **Decompose and fan out** so breadth is covered in parallel, not serially.
 - **Verify adversarially** — findings must survive a refutation attempt before they're reported.
@@ -37,7 +37,27 @@ It's for developers who want Claude Code to do *engineering*, not just answer qu
 
 ## What's in the box
 
-Twenty skills, grouped by the engineering role they play. Every skill takes `[--mode <lite|balanced|all-out>]` unless noted.
+Twenty-two skills, grouped by the engineering role they play. Every skill takes `[--mode <lite|balanced|all-out>]` unless noted.
+
+**Start here — say what is in front of you, and one row applies:**
+
+| You have... | Reach for |
+|---|---|
+| An idea and nothing else | `loop-build` (whole project) or `loop-design` (just the architecture) |
+| A big job to split across many agents | `loop-orchestrate` to plan it, `loop-engine` to run one workflow |
+| Code that is wrong, and you can run it | `loop-debug` |
+| Code that works but is slow, messy, or unidiomatic | `loop-algo` (mechanism) / `loop-pattern` (shape) |
+| A diff, PR, or repo to judge without changing it | `loop-review` (defects) / `loop-audit` (impact & risk) |
+| A UI that renders but feels cheap | `loop-frontend` |
+| A third-party API to wire up | `loop-integrate` (`loop-scout` first if the provider isn't chosen) |
+| A change ready to reach production | `loop-ship` — including many task branches to land as one (see the integration train below) |
+| A live service to keep healthy / a live outage | `loop-operate` / `loop-incident` |
+| A question needing cited evidence | `loop-research` |
+| Docs to write or fix | `loop-docs` |
+| An agent that forgets, repeats itself, or acts on stale facts | `loop-context` |
+| Claude's own setup: permissions, hooks, MCP, schedules | `loop-harness` |
+| A repo that should improve itself on a schedule | `loop-autopilot` |
+| A new skill for this plugin | `loop-skill` |
 
 **Engine & planning**
 
@@ -45,7 +65,9 @@ Twenty skills, grouped by the engineering role they play. Every skill takes `[--
 |---|---|---|
 | **loop-engine** | `/loop-engine <task> [--planner <opus\|fable>] [--framework <name>] [--dry-run]` | Authors and executes a multi-agent Workflow script — pipeline by default, earned parallel barriers, loops for unknown-size discovery — governed by the harness & loop policies and a lifecycle framework (default AIDLC). |
 | **loop-orchestrate** | `/loop-orchestrate <project> [--planner <opus\|fable>] [--budget <tokens>]` | Planning layer on `loop-engine`: decomposes a project into a task DAG and routes the right Claude model + effort to each task ("right model for the right job"). |
+| **loop-context** | `/loop-context <target>` | What an agent **carries** at runtime: context budgets and placement, compaction with an addressable store, typed shared state (per-field merge rules, phase checkpoints) handed between agents, supersession of stale facts, and evidence-confirmed audits via four trace invariants. |
 | **loop-skill** | `/loop-skill <skill-purpose>` | Authors a new skill for this plugin, or brings an existing one up to contract: discriminating description, graded standards shelf, thin router, references, ROUTES-carrying template — then proves it with the validation gate. |
+| **loop-build** | `/loop-build <project-brief>` | Conducts a brief to a shipped version one: scopes the v1 contract, plans with three reconciled planners plus a roster sweep, drives every phase through the owning domain skills with sequential gates and repair rounds, releases, and ships the full cast-and-cost ledger. |
 
 **Design & mechanism**
 
@@ -91,12 +113,22 @@ Twenty skills, grouped by the engineering role they play. Every skill takes `[--
 
 **Which one when?** The four operational skills are the easiest to confuse, so they split on one checkable question each: is there a runbook that restores the SLI (`loop-operate`) or not (`loop-incident`)? Is the service currently down (`loop-incident`) or is the defect merely reproducible (`loop-debug`)? Is the rollout still in flight (`loop-ship`) or baked (`loop-operate`)? The full 20-way matrix is in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json).
 
+## Branch-per-task and the integration train
+
+When one project has several pieces of work in flight at once, the fleet runs them **one branch per task** and lands them **as one gated unit**:
+
+1. **Branch per task.** Parallel file-mutating agents each get their own git worktree and their own `claude/`- or `feature/`-prefixed branch (harness policy H7 — two writers in one checkout is the AP5 anti-pattern). `loop-autopilot` does this per intake item; `loop-engine` does it for any workflow via `isolation: 'worktree'`.
+2. **Collect onto a train.** When the tasks are done, cut `integration/<milestone>` from `develop`, merge the task branches onto it in declared dependency order, and resolve conflicts once, on the train — the procedure, the drop-a-wagon revert rule, and when a train is *not* worth it are in [`loop-ship/references/integration-train.md`](.claude/skills/loop-ship/references/integration-train.md).
+3. **One gate, one merge.** The expensive checks run once on the train; it lands in `develop` as a single reviewed unit, and promotion to `main` follows `loop-ship`'s release gates.
+
+What crosses those branch boundaries is a contract, not prose: `loop-context` owns the typed state, merge rules, and decision-carrying handoffs that keep parallel workers from making individually reasonable, mutually incompatible choices.
+
 ## Quickstart
 
 ```
 # 1. Add the marketplace and install the plugin
 /plugin marketplace add santapong/TheLoopSkill
-/plugin install theloopskill@theloopskill
+/plugin install heimdall@heimdall
 
 # 2. Run your first workflow (dry-run shows the script without executing)
 /loop-engine audit this repo's docs for quality issues --dry-run
@@ -116,27 +148,9 @@ The system is documented with the **[C4 model](https://c4model.com)** — a hier
 
 **What is this, who uses it, what does it depend on?** Note where the boundary sits: Claude Code is *outside* it. The plugin has no process, port, or lifecycle of its own — everything it "does" is done by the host on its instruction.
 
-```mermaid
-C4Context
-    title System Context — TheLoopSkill
+![System Context — Heimdall (at a glance)](docs/c4/diagrams/context-glance.svg)
 
-    Person(dev, "Developer", "Invokes a skill; answers the questions raised at each phase gate")
-
-    System(tls, "TheLoopSkill", "Turns an engineering task into a governed multi-agent workflow, with the model matched to each job and a human at every phase gate")
-
-    System_Ext(cc, "Claude Code", "Host runtime: discovers and loads skills, executes the Workflow tool, enforces permissions")
-    System_Ext(fleet, "Claude Model Fleet", "Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5 — the agents a workflow spawns")
-    System_Ext(repo, "Target Repository", "The developer's codebase and git history")
-    System_Ext(forge, "GitHub", "Issues, PRs and CI signals consumed by the autonomous loop")
-
-    Rel(dev, tls, "Invokes a skill, answers gates")
-    Rel(cc, tls, "Loads it and spawns agents on its behalf", "plugin API")
-    Rel(tls, fleet, "Routes each node to a model tier", "agent() opts")
-    Rel(tls, repo, "Reads code; implement nodes write patches", "tool calls")
-    Rel(tls, forge, "Reads feedback; opens draft PRs, never merges", "REST")
-
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
-```
+<sub>Diagram source: [`docs/c4/diagrams/src/context-glance.mmd`](docs/c4/diagrams/src/context-glance.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
 ### Level 2 — Containers
 
@@ -146,72 +160,9 @@ Eight separately-loadable units, split by **loading regime**, which is the meani
 
 The skills aren't a flat list — they build on `loop-engine` and **delegate rather than duplicate**. Every edge below is a boundary that would otherwise be an overlap:
 
-```mermaid
-C4Component
-    title Component diagram — how the twenty skills compose
+![Component diagram — how the twenty-one skills compose](docs/c4/diagrams/skill-composition.svg)
 
-    Container_Boundary(gov, "Governance — read-only law") {
-        Component(pol, "Engineering policies", "harness H1–H12 · loop L1–L8 · modes M1–M9", "Orchestration shape, iteration, and per-node model routing")
-        Component(fw, "Lifecycle frameworks", "AIDLC", "Phases and the human gates between them")
-    }
-
-    Component(eng, "loop-engine", "Orchestration engine", "pipeline · parallel · loop — authors and runs the workflow script")
-    Component(orch, "loop-orchestrate", "Planning layer", "Decomposes a project into a task DAG and routes a model to each node")
-    Component(auto, "loop-autopilot", "Autonomous loop", "Reads feedback, acts as draft PRs, never merges")
-    Component(mk, "loop-skill", "Meta", "Authors a conforming skill and proves it with the gate")
-
-    Container_Boundary(build, "Design · build · verify") {
-        Component(design, "loop-design", "Architecture", "Components, APIs, NFR and SLO targets")
-        Component(algo, "loop-algo", "Mechanism", "Algorithms, complexity, invariants, benchmarks")
-        Component(pat, "loop-pattern", "Refactoring", "Patterns and idioms — emits a diff")
-    Component(fe, "loop-frontend", "UI craft", "Motion, type and perceived performance — enforces the motion a11y gates")
-        Component(rev, "loop-review", "Security + quality", "OWASP / CWE / ASVS — emits findings")
-        Component(test, "loop-test", "Tests", "Designs and writes them; verifies each fails for the right reason")
-        Component(aud, "loop-audit", "Change impact", "Blast radius, risk rating, coverage")
-        Component(dbg, "loop-debug", "Root cause", "Reproducible defects only")
-    }
-
-    Container_Boundary(run, "Integrate · ship · run") {
-        Component(intg, "loop-integrate", "Platform integration", "OAuth/OIDC, webhooks, idempotency, resilience")
-        Component(ship, "loop-ship", "Release", "Rollout strategy, migrations, tested rollback")
-        Component(ops, "loop-operate", "Steady state", "SLOs, alerts, runbooks, auto-rollback")
-        Component(inc, "loop-incident", "Live failure", "Triage, mitigate, reproduce, postmortem")
-    }
-
-    Container_Boundary(know, "Knowledge") {
-        Component(res, "loop-research", "Cited research", "Search, deep-read, refute-first verify")
-        Component(scout, "loop-scout", "Prior art", "Build-vs-buy before building")
-        Component(docs, "loop-docs", "Documentation", "Diátaxis; verified against code")
-        Component(harn, "loop-harness", "Claude Code harness", "Permissions, hooks, MCP, automation")
-    }
-
-    Rel(pol, eng, "Governs")
-    Rel(fw, eng, "Supplies phases and gates")
-    Rel(orch, eng, "Plans the DAG, routes models")
-    Rel(auto, eng, "Runs the loop on")
-    Rel(mk, pol, "Authors against")
-    Rel(mk, eng, "Emits templates for")
-
-    Rel(rev, pat, "Remediation")
-    Rel(aud, rev, "Security dimension")
-    Rel(aud, ship, "Risk memo as go/no-go")
-    Rel(docs, design, "Consumes ADR / C4")
-    Rel(scout, res, "Delegates search")
-    Rel(scout, intg, "Hands over a named provider")
-    Rel(intg, test, "Specifies contract tests")
-    Rel(design, algo, "Mechanism inside a component")
-    Rel(design, fe, "Renderer and budget vs curve and duration")
-    Rel(fe, scout, "Which library to adopt at all")
-    Rel(harn, auto, "Unattended substrate")
-
-    Rel(ops, inc, "No runbook, or beyond its scope")
-    Rel(inc, dbg, "Service restored — now find the defect")
-    Rel(dbg, test, "Lock it with a regression")
-    Rel(test, ship, "Ready to release")
-    Rel(ship, ops, "Bake complete — the service is yours")
-
-    UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="2")
-```
+<sub>Diagram source: [`docs/c4/diagrams/src/skill-composition.mmd`](docs/c4/diagrams/src/skill-composition.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
 The five relationships running `loop-operate → loop-incident → loop-debug → loop-test → loop-ship → loop-operate` form a **closed cycle**, and that cycle is the reason those five are separate skills rather than one: `loop-operate` detects and auto-mitigates *known* conditions → `loop-incident` takes *novel* ones, mitigating before diagnosing → `loop-debug` finds the defect once the service is back → `loop-test` locks it with a regression → `loop-ship` redeploys → `loop-operate` owns it again once the rollout bakes.
 
@@ -221,17 +172,11 @@ Each handoff is a **checkable question**, not a judgment call: *does a runbook e
 
 ## The autonomy ladder
 
-The plugin isn't only nineteen skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
+The plugin isn't only twenty-one skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
 
-```mermaid
-flowchart TB
-    O["<b>OBSERVE</b> — report only<br/>loop: reports · human: reads &amp; acts<br/><code>loop-audit</code>, <code>loop-review</code>"]
-    V["<b>VERIFY</b> — propose, human merges<br/>loop: acts on a branch + adversarial verify · human: approves &amp; merges<br/><code>loop-autopilot</code> (default)"]
-    S["<b>SUSTAIN</b> — keep the loop honest<br/>loop: detects its own gaming / drift · human: reads the alarms<br/><code>verifier-integrity</code> + <code>held-out-eval</code> (AP6)"]
-    C["<b>SCALE</b> — autonomous delivery <i>(off by default)</i><br/>loop: merges behind a canary + self-rolls-back · human: handles exceptions<br/><code>deployment.md §Advanced</code> + <code>canary-merge</code>"]
-    O --> V --> S --> C
-    C -. "any alarm degrades autonomy one rung down — the floor is always safe" .-> V
-```
+![The autonomy ladder — OBSERVE, VERIFY, SUSTAIN, SCALE](docs/c4/diagrams/autonomy-ladder.svg)
+
+<sub>Diagram source: [`docs/c4/diagrams/src/autonomy-ladder.mmd`](docs/c4/diagrams/src/autonomy-ladder.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
 > **Why this one isn't a C4 diagram.** Every other diagram in this repo is C4 ([Context](#level-1--system-context) · [Container](docs/c4/container.md) · [Component](docs/c4/component.md)). This one isn't, deliberately: C4 models *structure* — systems, containers, components and the relationships between them — and a rung is not a component. "Degrades one rung down on an alarm" is a state transition, not a dependency. Drawing it in C4 notation would render, and would be semantically false. C4's own guidance is that it is a set of static structure diagrams, complemented by other notations where a different question is being asked; this is one of those.
 
@@ -316,7 +261,7 @@ Every authored workflow obeys three policy documents:
 
 Lifecycle is governed by a **pluggable framework** — the default **AIDLC** (Inception → Construction → Operation, each ending at a human gate). Drop a new `frameworks/<Name>.md` in and invoke with `--framework <Name>`.
 
-**The boundaries are a committed artifact.** With nineteen skills, selection happens on the `description` field alone — so the mutually-exclusive scope matrix lives in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json) and outranks any build plan that disagrees with it.
+**The boundaries are a committed artifact.** With twenty-one skills, selection happens on the `description` field alone — so the mutually-exclusive scope matrix lives in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json) and outranks any build plan that disagrees with it.
 
 **The gate can fail.** `node scripts/validate.mjs` runs in CI and rejects unparseable frontmatter, routing-block drift, banned clock/random calls in templates, and dangling reference paths. It was accepted only after a deliberately injected fault made it fail.
 
@@ -328,7 +273,7 @@ Three ways to use these skills — see **[INSTALL.md](INSTALL.md)** for full det
 
 - **Local (project skills)** — the skills live in `.claude/skills/` and are auto-discovered in any Claude Code session opened in this repo. Copy an individual skill directory into another project's `.claude/skills/` to reuse it.
 - **Remote (Claude Code on the web)** — web sessions see only committed project files; everything here is committed. Open the repo on [code.claude.com](https://code.claude.com) and the skills are available. `.claude/settings.json` enables the plugin for web sessions.
-- **Plugin (marketplace)** — `/plugin marketplace add santapong/TheLoopSkill` then `/plugin install theloopskill@theloopskill`.
+- **Plugin (marketplace)** — `/plugin marketplace add santapong/TheLoopSkill` then `/plugin install heimdall@heimdall`.
 
 ## Repository layout
 

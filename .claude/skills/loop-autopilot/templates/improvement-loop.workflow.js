@@ -192,7 +192,7 @@ const RESEARCH_SCHEMA = {
       type: 'array',
       items: {
         type: 'object',
-        properties: { title: { type: 'string' }, rationale: { type: 'string' }, source: { type: 'string' } },
+        properties: { title: { type: 'string' }, rationale: { type: 'string' }, source: { type: 'string' }, area: { type: 'string' } },
         required: ['title', 'rationale'],
       },
     },
@@ -205,6 +205,26 @@ const seen = new Set()
 const proposals = []
 let dry = 0
 let round = 0
+
+// AP7 (Monoculture Loop) guard — keep a population, not a running best (anti-patterns.md).
+// `seen` decides what is NEW; it must not also decide what is WORTH PURSUING. The archive
+// records every candidate this run touched — proposed, blocked, triaged out, or idea — keyed
+// by the AREA it explored, so idle rounds can steer research toward unexplored territory
+// instead of re-deriving the current lineage (GEPA measures greedy selection at −6.4% vs a
+// frontier; DGM's no-archive ablation stalls). The archive is per-run by design: cross-run
+// persistence is the draft PR itself (AP2), and cross-run config accumulates by itemized
+// delta, never wholesale rewrite (ACE). Areas widen only the CANDIDATE search — never the
+// protected paths AP6 freezes (held-out suite, rubric, canary, CI gates).
+const archive = []
+const covered = new Map() // area -> count of candidates that explored it this run
+const areaOf = (it) => (it.area || it.kind || 'general')
+const record = (it, status) => {
+  const a = areaOf(it)
+  covered.set(a, (covered.get(a) || 0) + 1)
+  archive.push({ key: key(it), area: a, status })
+}
+const coverageLine = () =>
+  covered.size ? [...covered.entries()].map(([a, n]) => `${a}(${n})`).join(', ') : 'none yet'
 
 if (RUN_MODE === 'dry') log('DRY run mode: no branches, PRs, or merges — returning proposal objects only')
 if (!budget.total) log('no budget target set — running a single bounded round')
@@ -223,21 +243,43 @@ do {
 
   if (!fresh.length) {
     // IDLE → one research/tech-debt round (produces proposal ideas, not code).
-    dry++
+    // AP7: steer research AWAY from areas this run already explored — a lower-value idea in
+    // an unexplored area beats another idea in a covered one. Frontier prompt, not free-run.
     const research = await agent(
-      `Repo: ${REPO.owner}/${REPO.name}. No pending feedback. Propose high-value improvements grounded in the project plus market/ecosystem trends and research (use research tools if available). Verify each idea against a real source; dedup against any open issue proposing the same. Return proposals.`,
+      `Repo: ${REPO.owner}/${REPO.name}. No pending feedback. Propose high-value improvements grounded in the project plus market/ecosystem trends and research (use research tools if available). Verify each idea against a real source; dedup against any open issue proposing the same. Tag each proposal with the AREA it explores (a subsystem, doc set, or concern — e.g. "ci", "docs", "auth", "perf"). Areas already explored this run: ${coverageLine()}. PREFER UNEXPLORED AREAS: a solid idea in fresh territory beats a better-sounding idea in a covered one. Return proposals.`,
       optsFor({ taskType: 'analyze', phase: 'Research', schema: RESEARCH_SCHEMA }, `research:r${round}`),
     )
     const ideas = ((research && research.proposals) || []).filter((p) => !seen.has(key({ title: p.title })))
     ideas.forEach((p) => seen.add(key({ title: p.title })))
-    proposals.push(...ideas.map((p) => ({ source: 'research', title: p.title, rationale: p.rationale, ref: p.source })))
-    log(`round ${round} [mode=${MODE}]: idle -> ${ideas.length} research proposals (dry=${dry}/${DRY_LIMIT})`)
+    // AP7: the dry counter only increments when the round failed to reach NEW TERRITORY.
+    // A round that produced ideas only in already-covered areas re-derived the current
+    // lineage — that IS a dry round, whatever its item count says. A round that opened an
+    // uncovered area resets the counter. Runaway is impossible: L4's MAX_ROUNDS backstops
+    // even a research pass that names a "new" area every time.
+    const frontier = ideas.filter((p) => !covered.has(areaOf(p)))
+    if (frontier.length) { dry = 0 } else { dry++ }
+    ideas.forEach((p) => record(p, 'idea'))
+    proposals.push(...ideas.map((p) => ({ source: 'research', title: p.title, rationale: p.rationale, ref: p.source, area: areaOf(p) })))
+    log(`round ${round} [mode=${MODE}]: idle -> ${ideas.length} research proposals, ${frontier.length} in new areas (dry=${dry}/${DRY_LIMIT}; covered: ${coverageLine()})`)
     continue
   }
   dry = 0
 
-  // ACT -> VERIFY per item, no barrier (H1). Prioritize highest first.
-  const ordered = fresh.slice().sort((a, b) => (b.priority || 0) - (a.priority || 0))
+  // ACT -> VERIFY per item, no barrier (H1). AP7: priority within a kind, but INTERLEAVED
+  // across kinds — a pure priority sort lets one noisy kind (e.g. a flood of ci-failures)
+  // monopolize every Act slot and the run converges on a single neighbourhood. Round-robin
+  // across kinds preserves priority order inside each kind while keeping the round's
+  // coverage plural. This changes ORDER only; every fresh item is still handled.
+  const byKind = new Map()
+  for (const it of fresh.slice().sort((a, b) => (b.priority || 0) - (a.priority || 0))) {
+    const k = it.kind || 'general'
+    if (!byKind.has(k)) byKind.set(k, [])
+    byKind.get(k).push(it)
+  }
+  const ordered = []
+  while (ordered.length < fresh.length) {
+    for (const q of byKind.values()) { if (q.length) ordered.push(q.shift()) }
+  }
   const handled = await pipeline(
     ordered,
     (it) =>
@@ -295,8 +337,9 @@ do {
 
   // PROPOSE gate — collect proposals. NEVER merge.
   for (const h of handled.filter(Boolean)) {
-    if (!h.triage || !h.triage.worthDoing) { log(`skip ${key(h.it)}: triaged out`); continue }
-    if (!h.act || !h.verify || !h.verify.safeToPropose) { log(`skip ${key(h.it)}: not safe to propose`); continue }
+    if (!h.triage || !h.triage.worthDoing) { record(h.it, 'triaged-out'); log(`skip ${key(h.it)}: triaged out`); continue }
+    if (!h.act || !h.verify || !h.verify.safeToPropose) { record(h.it, 'blocked'); log(`skip ${key(h.it)}: not safe to propose`); continue }
+    record(h.it, 'proposed')
     // EDIT ME (live mode): open a DRAFT PR from h.act.branch and post a summary comment here —
     //   mcp__github__create_pull_request({ draft: true, head: h.act.branch, base: 'main', ... })
     //   mcp__github__add_issue_comment(...). NEVER call merge_pull_request.
@@ -309,5 +352,8 @@ do {
 
 // Ledger line (L5). This template runs UNATTENDED, so the execution mode is recorded explicitly:
 // a transcript with no mode in it is unreadable after the fact.
-log(`done: ${round} round(s), ${proposals.length} proposals · mode=${MODE} runMode=${RUN_MODE} verifyWidth=${VERIFY_WIDTH} dryLimit=${DRY_LIMIT} maxRounds=${MAX_ROUNDS} — nothing merged`)
-return { mode: RUN_MODE, executionMode: MODE, rounds: round, proposals }
+log(`done: ${round} round(s), ${proposals.length} proposals · mode=${MODE} runMode=${RUN_MODE} verifyWidth=${VERIFY_WIDTH} dryLimit=${DRY_LIMIT} maxRounds=${MAX_ROUNDS} · areas: ${coverageLine()} — nothing merged`)
+// The archive travels with the result (AP7): blocked and triaged-out candidates are part of
+// the record — a future round (or human) re-weighing them is frontier selection working, not
+// noise. Dedup vs `seen` kept them from re-running; the archive keeps them from vanishing.
+return { mode: RUN_MODE, executionMode: MODE, rounds: round, proposals, archive, coverage: Object.fromEntries(covered) }

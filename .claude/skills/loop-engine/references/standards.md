@@ -22,6 +22,7 @@ This is not a compliance checklist. Unlike a versioned standard (see `../../loop
 | `agent()` isolation, no shared memory | **Actor model** | Hewitt 1973; Agha, *Actors* (MIT, 1986) | H3, H7 |
 | loop-until-dry shared result set | **Blackboard architecture** | Hearsay-II, *ACM Computing Surveys* 1980; Nii, *AI Magazine* 1986 | L1, L3 |
 | orchestrator + judge/verify panels | **Contract Net / multi-agent orchestration** | Smith, *IEEE Trans. Computers* 1980; FIPA specs (2002) | H4, H12 |
+| loop guards + verify stages | **MAST — empirical multi-agent failure taxonomy** | Cai et al., arXiv:2503.13657 (NeurIPS 2025) | L1, L3, L4, H4 |
 
 ## Fan-out / fan-in (Scatter–Gather)
 
@@ -70,6 +71,28 @@ The central design tension the harness policy resolves is **barrier vs. stream**
 | When correct | A stage truly needs the whole set (dedup, zero-count early-exit, "compare to the other findings") | Every stage is per-item independent |
 
 **H1/H2 pick streaming as the default and force barriers to be earned** precisely because the pipeline wins on wall-clock whenever stages are independent, and the only thing a barrier buys is cross-item context. Reach for a barrier only when a stage genuinely consumes the full set; otherwise the "reduce" is a per-item transform hiding in the wrong shape.
+
+## Multi-agent failure modes (MAST)
+
+**Authoritative — no** (peer-reviewed paper, not a specification). Cai et al., *Why Do Multi-Agent LLM Systems Fail?* — arXiv:2503.13657, **NeurIPS 2025**, UC Berkeley.
+
+This is the first entry on the "LLM multi-agent orchestration" layer that the edition discipline below leaves deliberately unpinned, and it is added as its own section rather than retrofitted into Contract Net — per this file's own rule. It earns the section because it is **empirical rather than programmatic**: 1,600+ annotated execution traces across seven multi-agent frameworks, 14 failure modes in 3 categories, at κ=0.88 inter-annotator agreement. It describes how these systems actually break, which is what a homegrown policy layer needs to defend its guards by the cost they avoid.
+
+**Modes this engine's policies already answer:**
+
+| MAST mode | Measured share | Policy that addresses it |
+|---|---|---|
+| Step repetition | 15.7% | L1 dry counter; L3 dedup against *seen* |
+| Reasoning–action mismatch | 13.2% | schema-forced `agent()` output; verify stages |
+| Unaware of termination | 12.4% | L1 dry counter + L4 hard round cap |
+
+Two interventions the paper *tested*, both cheap and both applicable here: **role-specification clarification (+9.4% success)** and **verification enhancement (+15.6%)**. The first argues for precise per-agent prompts over generic ones; the second is why verify stages earn their cost.
+
+**Cite it carefully.** The modes are **per-trace and non-exclusive** — one trace can exhibit several — so they do not sum to 100% and there is no clean per-category split. A tidy category-level breakdown (41.8% / 36.9% / 21.3%) circulates in secondary sources and **could not be confirmed against the primary text**; do not reproduce it. Cite the per-mode figures above, or the paper.
+
+**Termination has no theory behind it — say so.** "Unaware of termination" is a measured top-three failure, yet no peer-reviewed formalism for agent-loop stopping criteria exists; the area is entirely 2026 preprints. L1/L4 are sound engineering, not a result. Defend them by the cost they avoid, never as "the literature says."
+
+**The adjacent finding, deliberately not promoted to a policy.** Three top-venue papers — **AFlow** (ICLR 2025, MCTS over workflow graphs), **MaAS** (ICML 2025 Oral, a learned agentic supernet) and **ScoreFlow** (gradient-DPO) — independently find that *searched* topology beats hand-designed at a fraction of the cost (AFlow reports GPT-4o-level quality at 4.55% of it). This engine's templates are hand-designed, and that stays defensible for narrow domains: **MetaGPT** and **ChatDev** (both peer-reviewed) show fixed pipelines remain competitive there, and no paper in this literature runs a head-to-head against hand-designed pipelines on a shared benchmark. Recorded as a known open question, not a pending migration. **MacNet** (ICLR 2025) is the useful companion: collaborative gains follow a logistic curve saturating near ~100 agents, and irregular topologies beat regular mesh/tree/chain shapes while running ~52% faster — a caution against always reaching for the tidy shape.
 
 ## Edition discipline
 

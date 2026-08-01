@@ -18,7 +18,7 @@ Six of seven need a browser. **That is the gap this file closes.**
 
 ## The plugin adds no dependency — and that is deliberate
 
-TheLoopSkill has **zero npm dependencies**: `scripts/validate.mjs` and `scripts/smoke.mjs` are Node stdlib only, with no `package.json` and no lockfile. It is a library of skill definitions with no frontend of its own to test, so bundling a browser would add hundreds of megabytes of binaries and a lockfile to maintain for something that never runs against this repo.
+Heimdall has **zero npm dependencies**: `scripts/validate.mjs` and `scripts/smoke.mjs` are Node stdlib only, with no `package.json` and no lockfile. It is a library of skill definitions with no frontend of its own to test, so bundling a browser would add hundreds of megabytes of binaries and a lockfile to maintain for something that never runs against this repo.
 
 The checks below run against **your project**, using whatever it already has. The division of labour is the one this skill already uses for contract tests:
 

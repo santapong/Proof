@@ -1,6 +1,6 @@
 ---
 name: loop-harness
-description: "Engineer a project's Claude Code harness: permissions, hooks, MCP servers, and in-repo automation, from reusable scaffolds. Use when the user wants to set up or harden .claude/settings.json, add or design hooks, configure permissions (allow/deny/ask), wire up MCP servers via .mcp.json, or schedule recurring Claude work (SessionStart setup, /loop, scheduled tasks, PR-watch, headless runs, Cloud Routines). The subject is Claude's own configuration, not the product's runtime. For operating the deployed service the repo produces, use loop-operate. For the content of the autonomous loop the harness schedules, use loop-autopilot."
+description: "Engineer a project's Claude Code harness: permissions, hooks, MCP servers, and in-repo automation, from reusable scaffolds. Use when the user wants to set up or harden .claude/settings.json, add or design hooks, configure permissions (allow/deny/ask), wire up MCP servers via .mcp.json, or schedule recurring Claude work (SessionStart setup, /loop, scheduled tasks, PR-watch, headless runs, Cloud Routines). The subject is Claude's own configuration, not the product's runtime. For operating the deployed service the repo produces, use loop-operate. For the content of the autonomous loop the harness schedules, use loop-autopilot. For what an agent carries at runtime (context, state, supersession) rather than what it is permitted to do, use loop-context."
 argument-hint: <project>
 ---
 

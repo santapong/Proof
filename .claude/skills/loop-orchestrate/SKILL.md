@@ -1,7 +1,7 @@
 ---
 name: loop-orchestrate
 description: "Plan multi-agent project work: decompose a project into a typed task DAG, choose pipeline or parallel shapes per phase, route the right Claude model and effort tier to each task, and produce a cost ledger. Use when the user asks to plan or orchestrate a project, break a large job into subtasks across agents, decide which model to use for which task, or drive a multi-phase build, audit, or migration at scale. Produces the plan; loop-engine executes it. For a single task that needs one workflow script rather than a multi-phase plan, use loop-engine directly. For a standing scheduled loop over a repository, use loop-autopilot."
-argument-hint: <project> [--mode <lite|balanced|all-out>] [--planner <opus|fable>] [--budget <tokens>] [--dry-run]
+argument-hint: <project> [--mode <lite|balanced|all-out>] [--planner <opus|fable>] [--fable-gate] [--budget <tokens>] [--dry-run]
 ---
 
 # Orchestrating Projects
@@ -26,6 +26,7 @@ From the skill args, extract:
 - **project** — everything that is not a flag: the goal to orchestrate. If empty, ask the user what project to run.
 - **`--mode <lite|balanced|all-out>`** — the run-level routing dial. Default: `balanced`, resolved **silently** when the flag is absent. `lite` pins every node *downward* — Haiku mechanical, Sonnet reasoned at `medium`, width 1 — for a small, well-specified project; note that gating and planner nodes stay on `claude-opus-5` even here, because their wrong answer is inherited by everything downstream. `all-out` pins every node to `claude-opus-5`, disables override modifier A, widens verifiers to 3 (5 on gating nodes), raises the loop-until-dry threshold to 3, and fires the pre-flight in step 8. Full contract in `../loop-engine/references/execution-modes.md`.
 - **`--planner <opus|fable>`** — routes only the single decompose/planning node. Default: `opus`. Orthogonal to `--mode` and legal in both. `fable` is an opt-in with a stated price — print the §M7 disclosure verbatim before the planner spawns, and record the choice in the cast ledger and the gate deliverable.
+- **`--fable-gate`** — routes one lens of the all-out gating vote to `claude-fable-5`, with a logged fallback to `claude-opus-5` on a refusal or ZDR 400. Legal only under `--mode all-out`; inert and logged elsewhere. Full contract: `../loop-engine/references/execution-modes.md` §M7b.
 - **`--budget <tokens>`** — a total token ceiling for the whole project (e.g. `--budget 2000000`). Splits across phases in the ledger (step 9). Omit for no ceiling.
 - **`--dry-run`** — if present, produce the plan (DAG + ledger + first-phase script) and show it to the user, but do NOT execute.
 

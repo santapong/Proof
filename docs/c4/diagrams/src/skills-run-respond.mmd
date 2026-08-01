@@ -1,0 +1,25 @@
+---
+title: "Skill group — run & respond"
+---
+flowchart TB
+    subgraph g["<b>Run &amp; respond</b>"]
+        ops["<b>loop-operate</b><br/><i>«component» steady state</i><br/>AUTOMATED mitigation of KNOWN conditions:<br/>SLIs/SLOs, burn-rate alerts, runbooks, auto-rollback"]
+        inc["<b>loop-incident</b><br/><i>«component» exception state</i><br/>HUMAN-COORDINATED mitigation of NOVEL failures:<br/>triage, comms, mitigate first, postmortem"]
+    end
+
+    ship["<b>loop-ship</b><br/><i>«external» release</i>"]
+    dbg["<b>loop-debug</b><br/><i>«external» root cause</i>"]
+    auto["<b>loop-autopilot</b><br/><i>«external» autonomous loop</i>"]
+    harn["<b>loop-harness</b><br/><i>«external» Claude's harness</i>"]
+
+    ship <-- "ship hands over after bake;<br/>ops owns the rollback signal" --> ops
+    ops -- "no runbook, or impact<br/>beyond its scope" --> inc
+    inc -- "service restored —<br/>hand the defect over" --> dbg
+    ops -- "cites the autonomy ladder;<br/>never redefines it" --> auto
+    harn -- "may deploy a runbook's schedule —<br/>composition, one-directional" --> ops
+
+    classDef component fill:#85BBF0,stroke:#5D82A8,color:#000
+    classDef extc fill:#BFBFBF,stroke:#8A8A8A,color:#000
+    class ops,inc component
+    class ship,dbg,auto,harn extc
+    style g fill:none,stroke:#444444,stroke-dasharray:5 5

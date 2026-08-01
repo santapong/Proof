@@ -1,0 +1,25 @@
+---
+title: "System Context — TheLoopSkill (at a glance)"
+---
+flowchart TB
+    dev["<b>Developer</b><br/><i>«person»</i><br/>Invokes a skill; answers each phase gate"]
+
+    tls["<b>TheLoopSkill</b><br/><i>«system»</i><br/>Engineering task → governed multi-agent workflow;<br/>the model matched to each job, a human at every gate"]
+
+    cc["<b>Claude Code</b><br/><i>«external system»</i><br/>Host runtime: loads skills,<br/>executes the Workflow tool"]
+    fleet["<b>Claude Model Fleet</b><br/><i>«external system»</i><br/>Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5"]
+    repo["<b>Target Repository</b><br/><i>«external system»</i><br/>The developer's codebase and git history"]
+    forge["<b>GitHub</b><br/><i>«external system»</i><br/>Issues, PRs and CI signals"]
+
+    dev -- "invokes, answers gates" --> tls
+    cc -- "loads it; spawns agents<br/>on its behalf" --> tls
+    tls -- "routes each node<br/>to a model tier" --> fleet
+    tls -- "reads code; implement<br/>nodes write patches" --> repo
+    tls -- "reads feedback; draft PRs,<br/>never merges" --> forge
+
+    classDef person fill:#08427B,stroke:#052E56,color:#fff
+    classDef system fill:#1168BD,stroke:#0B4884,color:#fff
+    classDef ext fill:#999999,stroke:#6B6B6B,color:#fff
+    class dev person
+    class tls system
+    class cc,fleet,repo,forge ext

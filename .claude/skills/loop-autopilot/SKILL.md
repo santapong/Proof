@@ -58,7 +58,7 @@ Work on a `claude/`-prefixed branch only.
 ## 6. Run it — supervised or unattended
 
 - **A single supervised pass**: run **`templates/improvement-loop.workflow.js`** (defaults to `runMode: "dry"` — produces proposal objects, opens nothing). Flip to live only when you want it to actually open draft PRs.
-- **Before deploying unattended, run every row of `references/anti-patterns.md` against the current design** — it's the pre-flight checklist for the five ways an autonomous loop degrades.
+- **Before deploying unattended, run every row of `references/anti-patterns.md` against the current design** — it's the pre-flight checklist for the seven ways an autonomous loop degrades, and it carries the **capability-gating check**: a weak `--planner` or downgraded routing tier is unvalidated for unattended running (STOP, COLM 2024, measured self-improvement *degrading* with weaker base models).
 - **Unattended**: deploy as a **Cloud Routine** using **`templates/routine-prompt.md`**, on a schedule plus a `pull_request` trigger. Full setup, safety scopes, and the issue-polling caveat (Routines don't trigger on issues) are in **`references/deployment.md`**, which builds on the `loop-harness` skill's `automation-loops.md`.
 - **Two companion Routines** run separately (both in `references/deployment.md`): the **credit-ledger reconcile** (`templates/credit-ledger.workflow.js`, daily) so the loop learns which proposal kinds get merged, and the **comprehension digest** (`templates/comprehension-digest.routine.md`, weekly) so a human actually reads what shipped.
 
@@ -88,7 +88,7 @@ Work on a `claude/`-prefixed branch only.
 - `references/loop-design.md` — the intake→act→verify→propose loop, guards, and convergence
 - `references/feedback-intake.md` — the four sources and the exact GitHub tools; dedup
 - `references/deployment.md` — running it unattended (Cloud Routine / Action), safety scopes, notification, and the two companion Routines
-- `references/anti-patterns.md` — the five ways an autonomous loop degrades (AP1–AP5), mapped to this loop's guards; the pre-deploy checklist
+- `references/anti-patterns.md` — the seven ways an autonomous loop degrades (AP1–AP7), mapped to this loop's guards; the pre-deploy checklist and the capability-gating caveat
 - `references/verifier-integrity.md` — AP6 (verification runs but is fooled) and its three structural guards; the SUSTAIN hardening that gates SCALE
 - `references/held-out-eval.md` — the external detector for AP6 / meta-overfit: a frozen suite with hidden oracles, and the rising-false-accept alarm
 - `references/comprehension-rot.md` — the one cost with no structural guard, and the forced random-sample digest that makes it visible

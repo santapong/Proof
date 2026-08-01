@@ -1,0 +1,74 @@
+---
+title: "Component diagram — how the twenty-one skills compose"
+---
+flowchart TB
+    subgraph gov["<b>Governance</b> — read-only law"]
+        pol["<b>Engineering policies</b><br/><i>harness H1–H12 · loop L1–L8 · modes M1–M9</i>"]
+        fw["<b>Lifecycle frameworks</b><br/><i>AIDLC — phases and human gates</i>"]
+    end
+
+    eng["<b>loop-engine</b><br/><i>«component» orchestration engine</i><br/>pipeline · parallel · loop"]
+    orch["<b>loop-orchestrate</b><br/><i>«component» planning layer</i>"]
+    auto["<b>loop-autopilot</b><br/><i>«component» autonomous loop</i><br/>draft PRs, never merges"]
+    mk["<b>loop-skill</b><br/><i>«component» meta</i>"]
+    v1["<b>loop-v1</b><br/><i>«component» v1 conductor</i><br/>brief → shipped version one"]
+
+    subgraph build["<b>Design · build · verify</b>"]
+        design["<b>loop-design</b><br/><i>architecture</i>"]
+        algo["<b>loop-algo</b><br/><i>mechanism</i>"]
+        pat["<b>loop-pattern</b><br/><i>refactoring</i>"]
+        fe["<b>loop-frontend</b><br/><i>UI craft</i>"]
+        rev["<b>loop-review</b><br/><i>security + quality</i>"]
+        test["<b>loop-test</b><br/><i>tests</i>"]
+        aud["<b>loop-audit</b><br/><i>change impact</i>"]
+        dbg["<b>loop-debug</b><br/><i>root cause</i>"]
+    end
+
+    subgraph run["<b>Integrate · ship · run</b>"]
+        intg["<b>loop-integrate</b><br/><i>platform integration</i>"]
+        ship["<b>loop-ship</b><br/><i>release</i>"]
+        ops["<b>loop-operate</b><br/><i>steady state</i>"]
+        inc["<b>loop-incident</b><br/><i>live failure</i>"]
+    end
+
+    subgraph know["<b>Knowledge</b>"]
+        res["<b>loop-research</b><br/><i>cited research</i>"]
+        scout["<b>loop-scout</b><br/><i>prior art</i>"]
+        docs["<b>loop-docs</b><br/><i>documentation</i>"]
+        harn["<b>loop-harness</b><br/><i>Claude Code harness</i>"]
+    end
+
+    pol -. "governs" .-> eng
+    fw -. "phases + gates" .-> eng
+    orch -- "plans the DAG,<br/>routes models" --> eng
+    auto -- "runs the loop on" --> eng
+    mk -. "authors against" .-> pol
+    mk -- "emits templates for" --> eng
+    v1 -- "plans with, then<br/>conducts phases through" --> eng
+
+    rev -- "remediation" --> pat
+    aud -- "security dimension" --> rev
+    aud -- "risk memo as go/no-go" --> ship
+    docs -- "consumes ADR / C4" --> design
+    scout -- "delegates search" --> res
+    scout -- "hands over a<br/>named provider" --> intg
+    intg -- "specifies contract tests" --> test
+    design -- "mechanism inside<br/>a component" --> algo
+    design -- "renderer + budget vs<br/>curve + duration" --> fe
+    fe -- "which library<br/>to adopt at all" --> scout
+    harn -- "unattended substrate" --> auto
+
+    ops -- "no runbook, or<br/>beyond its scope" --> inc
+    inc -- "service restored —<br/>now find the defect" --> dbg
+    dbg -- "lock it with<br/>a regression" --> test
+    test -- "ready to release" --> ship
+    ship -- "bake complete —<br/>the service is yours" --> ops
+
+    classDef component fill:#85BBF0,stroke:#5D82A8,color:#000
+    classDef law fill:#BFBFBF,stroke:#8A8A8A,color:#000
+    class eng,orch,auto,mk,v1,design,algo,pat,fe,rev,test,aud,dbg,intg,ship,ops,inc,res,scout,docs,harn component
+    class pol,fw law
+    style gov fill:none,stroke:#444444,stroke-dasharray:5 5
+    style build fill:none,stroke:#444444,stroke-dasharray:5 5
+    style run fill:none,stroke:#444444,stroke-dasharray:5 5
+    style know fill:none,stroke:#444444,stroke-dasharray:5 5

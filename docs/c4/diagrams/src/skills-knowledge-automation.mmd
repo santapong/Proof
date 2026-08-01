@@ -1,0 +1,30 @@
+---
+title: "Skill group — knowledge & automation"
+---
+flowchart TB
+    subgraph g["<b>Knowledge &amp; automation</b>"]
+        res["<b>loop-research</b><br/><i>«component» cited research</i><br/>Search fan-out → deep-read →<br/>refute-first verify → cited synthesis"]
+        scout["<b>loop-scout</b><br/><i>«component» prior art</i><br/>Build-vs-buy BEFORE building;<br/>ends at a named recommendation"]
+        docs["<b>loop-docs</b><br/><i>«component» documentation</i><br/>Diátaxis; for a HUMAN READER<br/>seeking understanding"]
+        harn["<b>loop-harness</b><br/><i>«component» Claude's harness</i><br/>Permissions, hooks, MCP, schedules —<br/>what Claude is PERMITTED to do"]
+        auto["<b>loop-autopilot</b><br/><i>«component» autonomous loop</i><br/>Reads feedback, acts on a branch,<br/>opens DRAFT PRs; never merges"]
+    end
+
+    design["<b>loop-design</b><br/><i>«external» architecture</i>"]
+    inc["<b>loop-incident</b><br/><i>«external» live failure</i>"]
+    mk["<b>loop-skill</b><br/><i>«external» meta</i>"]
+    many["<b>Domain skills</b><br/><i>«external»</i><br/>review · test · debug · docs ·<br/>scout · design · audit"]
+
+    scout -- "delegates its searching" --> res
+    docs -- "consumes the<br/>ADR / C4 it emits" --> design
+    inc -- "postmortem prose pass —<br/>incident owns the timeline" --> docs
+    harn -- "unattended substrate" --> auto
+    auto -- "composes" --> many
+    mk -- "permitted-to-do vs<br/>knows-how-to-do" --> harn
+    mk -- "gate-checked directory vs<br/>prose for a reader" --> docs
+
+    classDef component fill:#85BBF0,stroke:#5D82A8,color:#000
+    classDef extc fill:#BFBFBF,stroke:#8A8A8A,color:#000
+    class res,scout,docs,harn,auto component
+    class design,inc,mk,many extc
+    style g fill:none,stroke:#444444,stroke-dasharray:5 5

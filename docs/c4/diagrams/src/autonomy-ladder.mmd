@@ -1,0 +1,7 @@
+flowchart TB
+    O["<b>OBSERVE</b> — report only<br/>loop: reports · human: reads &amp; acts<br/><code>loop-audit</code>, <code>loop-review</code>"]
+    V["<b>VERIFY</b> — propose, human merges<br/>loop: acts on a branch + adversarial verify · human: approves &amp; merges<br/><code>loop-autopilot</code> (default)"]
+    S["<b>SUSTAIN</b> — keep the loop honest<br/>loop: detects its own gaming / drift · human: reads the alarms<br/><code>verifier-integrity</code> + <code>held-out-eval</code> (AP6)"]
+    C["<b>SCALE</b> — autonomous delivery <i>(off by default)</i><br/>loop: merges behind a canary + self-rolls-back · human: handles exceptions<br/><code>deployment.md §Advanced</code> + <code>canary-merge</code>"]
+    O --> V --> S --> C
+    C -. "any alarm degrades autonomy one rung down — the floor is always safe" .-> V

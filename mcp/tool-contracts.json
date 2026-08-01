@@ -1,0 +1,605 @@
+{
+  "$comment": "Machine-readable API contract for ADR-0003. Normative: an implementation, a consumer router, or a gate that disagrees with this file is wrong. Prose and rationale: docs/design/ADR-0003-tool-contracts-and-call-sites.md. Runtime/protocol pins: mcp/runtime-pin.json (D1). Boot contract: docs/design/ADR-0002 §D2.4.",
+  "adr": "docs/design/ADR-0003-tool-contracts-and-call-sites.md",
+  "decidedOn": "2026-07-27",
+  "repoState": { "branch": "develop", "head": "4dd461a" },
+  "server": {
+    "name": "theloopskill-mcp",
+    "version": "0.1.0",
+    "toolNamePrefix": "mcp__theloopskill-mcp__",
+    "toolNamePrefixSource": ".claude/skills/loop-harness/references/permissions.md:51 — `mcp__<server>__<tool>`; wildcards are for deny/ask only, so an allow-list must enumerate all five",
+    "capabilities": { "tools": {}, "resources": {} },
+    "capabilitiesNote": "resources declares neither `subscribe` nor `listChanged` — the surface is read-only and static for the process lifetime. No prompts, no sampling, no elicitation, no completions (deferred by D1)."
+  },
+
+  "D3.0_scopeRule": {
+    "authoringTimeOnly": true,
+    "statement": "All five tools are authoring-time aids consumed by the orchestrating session while it WRITES a workflow template or a skill. None is reachable from inside a running workflow script.",
+    "why": "H10 (.claude/skills/loop-engine/references/harness-policy.md:76-81) — `No filesystem or Node.js API access inside scripts`. The sandbox exposes ambient globals and nothing else; there is no MCP client, no fetch, no require, no import.",
+    "measuredGlobals": ["agent", "parallel", "pipeline", "log", "phase", "budget", "args", "console"],
+    "measuredGlobalsSource": "scripts/smoke.mjs:79 — new AsyncFunction('agent','parallel','pipeline','log','phase','budget','args','console', src)",
+    "measuredGlobalsCaveat": "smoke.mjs is a STUB of the Workflow runtime, so this is evidence of what templates consume, not a published spec of what the runtime provides. No identifier `workflow` appears anywhere in the repo as a callable global. The unreachability conclusion does not depend on the exact list: H10 removes the filesystem and the module system, which removes every transport an MCP client could use.",
+    "corollaries": [
+      "route_node NEVER replaces the verbatim §M8 paste. The block is duplicated into every routed template by rule (execution-modes.md:399), and scripts/validate.mjs check 5 diffs each copy against §M8 at runtime (scripts/validate.mjs:446-470 canonicalBlock, checkRoutes).",
+      "A route_node answer must never be transcribed into a template as a bare `model:`/`effort:` literal — CONTRIBUTING.md:77 and check 5 fail on any such literal outside the ROUTES block.",
+      "estimate_phase is H10-aligned by construction: §M6 already places the pre-flight `in the orchestrating session, after the phase's script is authored and before the Workflow tool is called` and calls that placement `the H10 answer` (execution-modes.md:166-168).",
+      "Every tool's structuredContent carries `authoringTimeOnly: true` as a const. It is gate-asserted."
+    ]
+  },
+
+  "D3.1_envelope": {
+    "rule": "Every tools/call on every tool returns ONE envelope. `isError` on the MCP result is true if and only if `ok` is false.",
+    "alwaysReturnBoth": "structuredContent (conforming to the tool's outputSchema) AND content[0] = { type: 'text', text: JSON.stringify(structuredContent, null, 2) }. A 2024-11-05 client ignores structuredContent, so the text block is the compatibility floor. outputSchema/structuredContent are available from protocol 2025-06-18, which is what mcp/runtime-pin.json advertises.",
+    "whyWrapped": "The envelope wraps both the success and the failure branch so that an isError:true result STILL conforms to the declared outputSchema. A bare error object would violate the schema the tool advertises, which is the common way an MCP server's outputSchema becomes a lie under failure.",
+    "envelopeSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "tool", "authoringTimeOnly", "serverVersion", "citations"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "tool": { "type": "string", "enum": ["route_node", "boundary_lookup", "estimate_phase", "run_gate", "standards_shelf"] },
+        "authoringTimeOnly": { "const": true, "description": "This answer is for a session authoring a template or a skill. It is unreachable from inside a running workflow script (H10)." },
+        "serverVersion": { "type": "string", "const": "0.1.0" },
+        "sourceRoot": { "type": "string", "description": "Absolute path of the repo root the answer was parsed from, so a caller can tell WHICH checkout answered." },
+        "result": { "description": "Present if and only if ok is true. Shape is per-tool." },
+        "error": { "$ref": "#/D3.5_errorEnvelope/schema" },
+        "citations": { "type": "array", "minItems": 1, "items": { "$ref": "#/D3.2_citation/schema" } },
+        "deprecations": { "type": "array", "items": { "$ref": "#/D3.3_mode/deprecationSchema" }, "default": [] },
+        "notes": { "type": "array", "items": { "type": "string" }, "default": [] }
+      },
+      "allOf": [
+        { "if": { "properties": { "ok": { "const": true } } }, "then": { "required": ["result"] } },
+        { "if": { "properties": { "ok": { "const": false } } }, "then": { "required": ["error"] } }
+      ]
+    },
+    "citationsRequiredOnFailure": "citations has minItems 1 on BOTH branches. On a failure the citations say where the server LOOKED — a `source_missing` for §M8 cites the path and the line range it expected. An error with no citation is indistinguishable from the server not having tried."
+  },
+
+  "D3.2_citation": {
+    "rule": "NON-NEGOTIABLE (task requirement 1). Every answer cites the file, the section and the line range it was parsed from, so a caller can check the server rather than trust it.",
+    "why": "The prose in the source docs is already provably stale in at least one place that no gate catches: execution-modes.md:156 asserts `MODE` is `const MODE = (input && input.mode) === 'full' ? 'full' : 'optimize'` and claims that line is `byte-identical to the one there` — but §M8:309-311 defines RAW_MODE/MODE_ALIAS/MODE and has not looked like that since v1.1. validate.mjs check 5 diffs TEMPLATES against §M8; it never diffs the surrounding prose of execution-modes.md against itself. A tool that answered from prose would be confidently wrong, and the citation is the only thing that lets the caller catch it.",
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "section", "startLine", "endLine", "sha256", "resourceUri"],
+      "properties": {
+        "file": { "type": "string", "description": "Repo-relative POSIX path, e.g. .claude/skills/loop-engine/references/execution-modes.md" },
+        "section": { "type": "string", "description": "Markdown: the nearest enclosing ATX heading, verbatim, e.g. '## M8. Mapping mode to `agent()` opts — the canonical `ROUTES` block'. JSON: the RFC 6901 pointer to the cited node, e.g. '/matrix/3/scope'." },
+        "startLine": { "type": "integer", "minimum": 1, "description": "1-indexed, inclusive." },
+        "endLine": { "type": "integer", "minimum": 1, "description": "1-indexed, inclusive. For a JSON source, bounds the smallest enclosing object." },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "SHA-256 of the LF-normalized bytes of lines startLine..endLine inclusive, each line terminated by a single \\n. node:crypto only — no dependency." },
+        "excerpt": { "type": "string", "description": "The cited text itself, capped at 2000 characters." },
+        "excerptTruncated": { "type": "boolean", "default": false },
+        "resourceUri": { "type": "string", "description": "theloopskill:// URI of the same file. resources/read on it is the caller's verification channel." }
+      }
+    },
+    "roundTripRule": "GATE-ASSERTED. For every citation on every golden query, the gate re-reads file[startLine..endLine], recomputes the sha256, and asserts it equals the returned value; and where `excerpt` is present, asserts it is a prefix of those lines (modulo the truncation marker). This is what converts 'cites its source' from a claim into a check.",
+    "tieToResources": "A citation's sha256 is computed the same way over the same bytes that resources/read returns, so tools and resources are two views of one substrate. That is the mechanism behind 'check the server rather than trust it' — the caller can fetch the cited file over the SAME connection and recompute."
+  },
+
+  "D3.3_mode": {
+    "rule": "NON-NEGOTIABLE (task requirement 2). The advertised enum is exactly lite|balanced|all-out. optimize|full are accepted on input, canonicalized on output, and NEVER advertised.",
+    "advertisedEnum": ["lite", "balanced", "all-out"],
+    "advertisedDefault": "balanced",
+    "acceptedButUnadvertised": ["optimize", "full"],
+    "aliasMap": { "optimize": "balanced", "full": "all-out" },
+    "why": "§M9.6 (execution-modes.md:427-429) — the aliases `will be removed in the next major` and are `a compatibility shim, not a second vocabulary`. Freezing them into a published inputSchema enum re-legitimizes them: a client that generates calls from the schema would start EMITTING them, which is how a shim acquires new callers and stops being removable.",
+    "whyAcceptAnyway": "§M9.6:427 — `no existing invocation, persisted script or Routine breaks`. A persisted script's args carry whatever mode it was authored against, and §M9.4 freezes mode at first author. Rejecting `optimize` would break exactly the callers the shim exists for.",
+    "precedentInRepo": "This advertise-three / accept-five split is NOT invented here — it already exists. §M2's published grammar (execution-modes.md:54) advertises `--mode <lite|balanced|all-out>` with no mention of the aliases, while §M8:310's MODE_ALIAS accepts them at runtime. The schema mirrors the grammar; the handler mirrors the block.",
+    "validationSeam": "The server does NOT validate `mode` against the advertised enum. It validates against the accepted five and canonicalizes. A mode outside the five is `unknown_mode`, never a guess — §M2:59: `An unrecognized value is never guessed: name the three valid values and ask`. `--mode fast` must not silently become balanced.",
+    "outputRule": "The canonical value is echoed on output as `result.mode`. The supplied alias is NEVER echoed as the value; it appears only inside deprecations[].",
+    "deprecationSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field", "supplied", "canonical", "removedIn", "citation"],
+      "properties": {
+        "field": { "type": "string", "const": "mode" },
+        "supplied": { "type": "string", "enum": ["optimize", "full"] },
+        "canonical": { "type": "string", "enum": ["balanced", "all-out"] },
+        "removedIn": { "type": "string", "const": "next major" },
+        "message": { "type": "string", "const": "The v1.1 mode names are a deprecated compatibility shim (§M9.6). Prefer lite|balanced|all-out; the aliases are removed in the next major." },
+        "citation": { "$ref": "#/D3.2_citation/schema" }
+      }
+    },
+    "appliesTo": ["route_node.mode", "estimate_phase.mode", "estimate_phase.compareTo"]
+  },
+
+  "D3.4_annotations": {
+    "rule": "Four tools are read-only; run_gate is not, because it spawns a child process.",
+    "specNote": "Per the MCP tool-annotations contract, destructiveHint and idempotentHint are only meaningful when readOnlyHint is false. They are stated explicitly on all five anyway so the gate has a fixed value to assert, and so run_gate's non-destructiveness is a written promise rather than a default.",
+    "table": {
+      "route_node":      { "readOnlyHint": true,  "destructiveHint": false, "idempotentHint": true, "openWorldHint": false },
+      "boundary_lookup": { "readOnlyHint": true,  "destructiveHint": false, "idempotentHint": true, "openWorldHint": false },
+      "estimate_phase":  { "readOnlyHint": true,  "destructiveHint": false, "idempotentHint": true, "openWorldHint": false },
+      "standards_shelf": { "readOnlyHint": true,  "destructiveHint": false, "idempotentHint": true, "openWorldHint": false },
+      "run_gate":        { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false }
+    },
+    "runGateJustification": {
+      "notReadOnly": "It calls child_process.spawn on `node scripts/validate.mjs` / `node scripts/smoke.mjs`. Both create and remove a temp directory under os.tmpdir() (scripts/validate.mjs mkdtempSync in main(), rmSync in the finally). Declaring readOnlyHint:true for something that spawns a process is the lie that makes annotations worthless.",
+      "notDestructive": "Neither gate writes inside the repo. validate.mjs's only write is the tmpdir it also removes; smoke.mjs executes templates against stubbed globals and writes nothing.",
+      "idempotent": "Both gates are pure functions of the tree. Re-running with the same arguments on an unchanged tree yields the same verdict and no additional effect.",
+      "closedWorld": "Neither gate touches the network. This is exactly why scripts/render-diagrams.mjs is NOT offered as a gate: it fetches the renderer via npx (render-diagrams.mjs:7-8) and requires a Chromium binary, which would flip openWorldHint to true and put a network dependency behind an allow-listed tool."
+    }
+  },
+
+  "D3.5_errorEnvelope": {
+    "rule": "ONE error envelope for all five tools. A domain failure is a SUCCESSFUL tools/call result carrying isError:true — never a JSON-RPC error object. (mcp/runtime-pin.json protocol.domainFailureShape.)",
+    "houseStyle": "Follows .claude/skills/loop-design/references/api-design.md:99-113 — one shape everywhere, machine-readable `code`, human `message`, optional per-field `details`. Two deltas, both deliberate: `request_id` is dropped (JSON-RPC already carries a correlating `id` at the transport layer, and inventing a second identifier that correlates with nothing is cargo), and `fix` is added to match the imperative-fix shape ADR-0002 §D2.4 pinned for boot failures, so a user reads the same `what failed — value · fix: imperative` grammar on stderr and in band.",
+    "protocolSeam": {
+      "jsonRpcMinus32602": "Reserved for SHAPE violations the schema itself rejects: unknown property under additionalProperties:false, wrong JSON type, missing required property. Analogous to api-design.md's 400.",
+      "isErrorEnvelope": "Everything semantic: shape-valid input the server cannot answer. Analogous to api-design.md's 422. This includes an unknown skill name, an unreadable source doc, and a gate that would not start.",
+      "why": "A model-driven caller can repair a semantic failure if it can read the reason; a JSON-RPC error is frequently surfaced to the model as an opaque transport fault. Keeping semantics in band is what makes `fix:` actionable."
+    },
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "fix"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": ["invalid_argument", "unknown_mode", "not_found", "source_missing", "source_unparseable", "gate_unavailable", "internal"]
+        },
+        "message": { "type": "string", "description": "One human sentence naming what failed and the concrete value that failed." },
+        "fix": { "type": "string", "description": "One imperative instruction. Same grammar as the ADR-0002 §D2.4 stderr literals." },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["field", "issue"],
+            "properties": { "field": { "type": "string" }, "issue": { "type": "string" }, "supplied": {}, "expected": {} }
+          }
+        },
+        "fallback": { "type": "string", "description": "The manual procedure that answers this question with the server absent — the same text as the call site's fallback in D3.7. An error that does not tell the caller how to proceed without the server has made the caller worse off than not calling." }
+      }
+    },
+    "codes": {
+      "invalid_argument": "Shape-valid but semantically wrong — e.g. estimate_phase with fanOut:'unknown' and no maxRounds/angles, so §M6's upper bound is not computable.",
+      "unknown_mode": "A mode outside the accepted five. Message MUST name the three advertised values and MUST NOT guess (§M2:59).",
+      "not_found": "The queried key has no entry — boundary_lookup on a skill absent from the 21-entry matrix, standards_shelf on a skill with no references/standards.md.",
+      "source_missing": "A source document is absent from the tree. DEGRADES, never dies — ADR-0002 §D2.4: initialize and tools/list always succeed, tools/call returns a successful result with isError:true.",
+      "source_unparseable": "Present but structurally gone — e.g. the five canonicalBlock() failure strings at scripts/validate.mjs:446-470 (`no \"## M8.\" heading`, `no ```js fence under the §M8 heading`, `the §M8 ```js fence is never closed`, `the §M8 code fence is empty`, and the missing `// Canonical ROUTES block` opener). The server reuses those exact strings so one vocabulary describes the failure in both the gate and the server.",
+      "gate_unavailable": "run_gate could not start: the script is missing, node could not be spawned, or the run exceeded timeoutMs. Distinct from a gate that ran and FAILED — a failing gate is ok:true with verdict:'FAIL'.",
+      "internal": "Anything else. Carries no stack trace (api-design.md:129 — never leak stack traces)."
+    },
+    "gateFailIsNotAnError": "GATE-ASSERTED. `run_gate` on a tree where validate.mjs exits 1 returns ok:true, isError:false, verdict:'FAIL'. The tool succeeded; the gate failed. Conflating the two makes a red gate indistinguishable from a broken tool, and the smoke gate is red on develop today."
+  },
+
+  "D3.6_tools": [
+    {
+      "name": "route_node",
+      "title": "Route a workflow node (§M3/§M8)",
+      "description": "Resolve the model, effort, verifier width and dry-limit a workflow node gets under a given mode, parsed live from loop-engine/references/execution-modes.md §M3 and §M8, with the file, section and line range cited for every value. Authoring-time only: this explains what the canonical ROUTES block will compute at run time. It does NOT replace the block — a routed template must still carry §M8 verbatim, and scripts/validate.mjs check 5 fails any bare model:/effort: literal outside it.",
+      "annotations": { "readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false },
+      "sources": [
+        { "file": ".claude/skills/loop-engine/references/execution-modes.md", "section": "§M3", "atLine": 77, "for": "the per-node-kind routing table" },
+        { "file": ".claude/skills/loop-engine/references/execution-modes.md", "section": "§M5", "atLine": 126, "for": "width and DRY_LIMIT" },
+        { "file": ".claude/skills/loop-engine/references/execution-modes.md", "section": "§M8", "atLine": 303, "for": "the canonical ROUTES block; extracted with the same algorithm as scripts/validate.mjs:446 canonicalBlock()" }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["taskType"],
+        "properties": {
+          "taskType": {
+            "type": "string",
+            "enum": ["scout", "doc", "implement", "analyze", "synthesize", "verify", "judge", "critic", "gating", "planner"],
+            "description": "The node's taskType. These ten are exactly the keys of every ROUTES[mode] map in §M8."
+          },
+          "mode": { "type": "string", "enum": ["lite", "balanced", "all-out"], "default": "balanced", "description": "Run-level routing dial. Absent resolves to balanced silently (§M2:59)." },
+          "planner": { "type": "string", "enum": ["opus", "fable"], "default": "opus", "description": "§M7a. Affects taskType:'planner' nodes and nothing else." },
+          "fableGate": { "type": "boolean", "default": false, "description": "§M7b. Legal only under mode all-out; accepted, ignored and reported as inert elsewhere." },
+          "nodeShape": {
+            "type": "string",
+            "enum": ["adversarial-verify", "gating-decision", "deterministic-measurement"],
+            "description": "§M5's two width-1-in-all-modes carve-outs. A gating DECISION node and a deterministic measurement stay at width 1 in every mode; taskType:'gating' on a VERIFY node widens to 5 under all-out."
+          },
+          "askIsThorough": { "type": "boolean", "default": false, "description": "§M5: under balanced, a standard verify/judge/critic widens 1→3 when the ask is thorough/audit/comprehensive." },
+          "declaredLenses": { "type": "integer", "minimum": 0, "description": "How many lenses the node declares. §M5: mode picks how many of a node's DECLARED lenses run and never invents new ones; a node declaring none is pinned at width 1 regardless of mode." },
+          "includeCanonicalBlock": { "type": "boolean", "default": false, "description": "Return the §M8 block verbatim as live-parsed text plus its citation and sha256." }
+        }
+      },
+      "resultSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["mode", "planner", "route", "opts", "width", "dryLimit", "modifierA", "templateRule"],
+        "properties": {
+          "mode": { "type": "string", "enum": ["lite", "balanced", "all-out"], "description": "Canonical. Never an alias." },
+          "planner": { "type": "string", "enum": ["opus", "fable"] },
+          "route": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["model", "effort", "pinning"],
+            "properties": {
+              "model": { "type": ["string", "null"], "enum": ["claude-haiku-4-5", "claude-sonnet-5", "claude-opus-5", "claude-fable-5", null], "description": "null means OMIT opts.model and inherit the session model (H8)." },
+              "effort": { "type": ["string", "null"], "enum": ["medium", "high", "xhigh", "max", null], "description": "null means OMIT opts.effort. 'low' is never emitted — §M8:312: `Haiku has no effort dial — omit, never 'low'`." },
+              "pinning": { "type": "string", "enum": ["pinned", "inherit"] }
+            }
+          },
+          "opts": { "type": "object", "description": "Exactly the keys optsFor() would set on the agent() call, with omitted keys ABSENT rather than null — mirroring §M8's `if (r.model) opts.model = r.model`." },
+          "width": { "type": "integer", "enum": [1, 3, 5] },
+          "widthReason": { "type": "string", "description": "Which §M5 clause produced it, cited." },
+          "dryLimit": { "type": "integer", "enum": [1, 2, 3], "description": "§M5: all-out 3, lite 1, else 2." },
+          "modifierA": { "type": "string", "enum": ["active", "disabled-logged"], "description": "§M4: disabled in all-out, and the suppression must be log()ged by the template." },
+          "dispatchRule": { "type": "string", "description": "§M5: a same-model verify fan-out of width >= 3 dispatches staggered or sequentially — three consecutive width-5 all-out bursts died whole to API 529 on 2026-07-27." },
+          "canonicalBlock": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["text", "sha256", "citation"],
+            "properties": { "text": { "type": "string" }, "sha256": { "type": "string" }, "citation": { "$ref": "#/D3.2_citation/schema" } }
+          },
+          "templateRule": {
+            "type": "string",
+            "const": "Authoring-time answer. Do NOT write these values into the template as literals: scripts/validate.mjs check 5 fails any bare model:/effort: literal outside the ROUTES block (CONTRIBUTING.md:77). Carry the canonical §M8 block verbatim and let optsFor(node, label) compute this at run time. Copy the block from execution-modes.md and prove it with `node scripts/validate.mjs`.",
+            "description": "Constant. Gate-asserted present and exact on every route_node answer."
+          }
+        }
+      }
+    },
+
+    {
+      "name": "boundary_lookup",
+      "title": "Look up a skill boundary (boundary-audit.json)",
+      "description": "Answer 'which skill owns this, and what does it hand off to' from docs/design/boundary-audit.json — the 21-skill scope matrix, its 28 rated overlaps with resolutions, and the approved description text — citing the RFC 6901 pointer and line range for every field. The audit outranks any plan or manifest (docs/design/README.md).",
+      "annotations": { "readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false },
+      "sources": [
+        { "file": "docs/design/boundary-audit.json", "section": "/matrix", "count": 21, "for": "one mutually-exclusive scope line per skill plus its useInsteadWhen pointers" },
+        { "file": "docs/design/boundary-audit.json", "section": "/overlaps", "count": 28, "for": "rated overlaps with severity and resolution" },
+        { "file": "docs/design/boundary-audit.json", "section": "/descriptionRewrites", "count": 18, "for": "approved description text" }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "skill": { "type": "string", "description": "A skill name as it appears in /matrix, e.g. loop-design." },
+          "against": { "type": "string", "description": "Restrict overlaps to the pair (skill, against)." },
+          "query": { "type": "string", "description": "Free text matched case-insensitively against scope, useInsteadWhen conditions, overlap risk and resolution." },
+          "include": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["scope", "useInsteadWhen", "overlaps", "description"] },
+            "default": ["scope", "useInsteadWhen"],
+            "description": "Which fields to return. overlaps and description are large; asking for everything by default would blow the context this tool exists to save."
+          },
+          "limit": { "type": "integer", "minimum": 1, "maximum": 21, "default": 5 }
+        },
+        "anyOf": [{ "required": ["skill"] }, { "required": ["query"] }]
+      },
+      "resultSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["matches", "matrixSize", "auditAuthority"],
+        "properties": {
+          "matches": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["skill", "citation"],
+              "properties": {
+                "skill": { "type": "string" },
+                "scope": { "type": "string" },
+                "useInsteadWhen": { "type": "array", "items": { "type": "object", "required": ["otherSkill", "condition"], "properties": { "otherSkill": { "type": "string" }, "condition": { "type": "string" } }, "additionalProperties": false } },
+                "overlaps": { "type": "array", "items": { "type": "object", "required": ["skillA", "skillB", "severity", "risk", "resolution"], "properties": { "skillA": { "type": "string" }, "skillB": { "type": "string" }, "severity": { "type": "string" }, "risk": { "type": "string" }, "resolution": { "type": "string" } }, "additionalProperties": false } },
+                "approvedDescription": { "type": "string" },
+                "descriptionIsStale": { "type": "boolean", "description": "True when the live SKILL.md frontmatter description differs from /descriptionRewrites. The audit records what was APPROVED; the SKILL.md records what SHIPPED. Reporting the approved text while the file says something else is exactly the silent divergence committing the audit was meant to end (docs/design/README.md)." },
+                "citation": { "$ref": "#/D3.2_citation/schema" }
+              }
+            }
+          },
+          "matrixSize": { "type": "integer", "description": "Live count of /matrix entries — 21 as of head 4dd461a. Reported rather than hardcoded so a caller sees a stale audit." },
+          "auditAuthority": { "type": "string", "const": "boundary-audit.json outranks any plan or build manifest; where they disagree, the audit wins (docs/design/README.md). Its narrative prose says 'eighteen skills' by deliberate design-record convention — only /matrix and /overlaps are kept current." }
+        }
+      }
+    },
+
+    {
+      "name": "estimate_phase",
+      "title": "Price a phase's DAG (§M6 pre-flight arithmetic)",
+      "description": "Run §M6's deterministic pre-flight arithmetic over an authored DAG: agents per node, the low-high output-token band, the same DAG priced at the comparison mode, the ≤15-agent split check and the --budget refusal check. Returns the four-part table and the exact confirmation sentence. It does NOT ask the human and it cannot: the question belongs to the orchestrating session, and no agent may spawn before the answer.",
+      "annotations": { "readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false },
+      "sources": [
+        { "file": ".claude/skills/loop-engine/references/execution-modes.md", "section": "§M6", "atLine": 164, "for": "the pre-flight contract, the formula, the confirmation sentence" },
+        { "file": ".claude/skills/loop-engine/references/execution-modes.md", "section": "§M6 BAND table", "atLine": 209, "for": "per-agent output-token bands, both columns" },
+        { "file": ".claude/skills/loop-engine/references/execution-modes.md", "section": "§M6 SIZE", "atLine": 225, "for": "compact x0.4, standard x1, long-form x3" }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["nodes"],
+        "properties": {
+          "mode": { "type": "string", "enum": ["lite", "balanced", "all-out"], "default": "all-out", "description": "The mode being priced." },
+          "compareTo": { "type": "string", "enum": ["lite", "balanced", "all-out"], "default": "balanced", "description": "§M6 prices the SAME DAG twice so the human sees the delta, not just an absolute." },
+          "planner": { "type": "string", "enum": ["opus", "fable"], "default": "opus", "description": "Selects the 'planner on Fable' BAND row for the planner node. §M6:201 — that row is chosen by the FLAG, not by a taskType, and ignoring it prices a --planner fable run as if it were Opus." },
+          "budgetTokens": { "type": "integer", "minimum": 1, "description": "If set and the estimate's HIGH end exceeds it, the pre-flight refuses to start and returns the three exits. Deliberately stricter than H6's mid-run throw." },
+          "nodes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["label", "taskType"],
+              "properties": {
+                "label": { "type": "string" },
+                "taskType": { "type": "string", "enum": ["scout", "doc", "implement", "analyze", "synthesize", "verify", "judge", "critic", "gating", "planner"] },
+                "phase": { "type": "string" },
+                "fanOut": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "const": "unknown" }], "default": 1, "description": "A known work-list count, or 'unknown' for a discovery loop — which then requires maxRounds and angles." },
+                "maxRounds": { "type": "integer", "minimum": 1, "description": "Required when fanOut is 'unknown'. §M6: items = MAX_ROUNDS x ANGLES.length." },
+                "angles": { "type": "integer", "minimum": 1, "description": "Required when fanOut is 'unknown'." },
+                "size": { "type": "string", "enum": ["compact", "standard", "long-form"], "default": "standard" },
+                "nodeShape": { "type": "string", "enum": ["adversarial-verify", "gating-decision", "deterministic-measurement"] },
+                "askIsThorough": { "type": "boolean", "default": false }
+              }
+            }
+          }
+        }
+      },
+      "resultSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["mode", "compareTo", "perNode", "total", "comparison", "whatModeChanged", "risks", "confirmationPrompt", "requiresHumanConfirmation", "bandRevision", "calibrationWarning"],
+        "properties": {
+          "mode": { "type": "string" },
+          "compareTo": { "type": "string" },
+          "perNode": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["label", "taskType", "items", "width", "agents", "bandKind", "tokensLow", "tokensHigh", "isUpperBound", "citation"],
+              "properties": {
+                "label": { "type": "string" }, "taskType": { "type": "string" },
+                "items": { "type": "integer" }, "width": { "type": "integer", "enum": [1, 3, 5] },
+                "agents": { "type": "integer" },
+                "multiplicandString": { "type": "string", "description": "§M6:180 — shown as its multiplicands ('verify-sweep: 5 items x 3 lenses = 15') so the number is auditable rather than asserted." },
+                "bandKind": { "type": "string", "enum": ["scout / doc", "implement", "analyze / synthesize", "verify / judge / critic", "gating", "planner", "planner on Fable"] },
+                "sizeMultiplier": { "type": "number", "enum": [0.4, 1, 3] },
+                "tokensLow": { "type": "integer" }, "tokensHigh": { "type": "integer" },
+                "isUpperBound": { "type": "boolean", "description": "True for a discovery loop. §M6:227 — state the result explicitly as a STRICT UPPER BOUND; a loop that goes dry early comes in under it." },
+                "citation": { "$ref": "#/D3.2_citation/schema" }
+              }
+            }
+          },
+          "total": { "type": "object", "additionalProperties": false, "required": ["agents", "phases", "tokensLow", "tokensHigh"], "properties": { "agents": { "type": "integer" }, "phases": { "type": "integer" }, "tokensLow": { "type": "integer" }, "tokensHigh": { "type": "integer" } } },
+          "comparison": { "type": "object", "additionalProperties": false, "required": ["mode", "agents", "tokensLow", "tokensHigh", "ratioLow", "ratioHigh"], "properties": { "mode": { "type": "string" }, "agents": { "type": "integer" }, "tokensLow": { "type": "integer" }, "tokensHigh": { "type": "integer" }, "ratioLow": { "type": "number" }, "ratioHigh": { "type": "number" } } },
+          "whatModeChanged": { "type": "array", "items": { "type": "string" } },
+          "risks": { "type": "array", "items": { "type": "string" }, "description": "§M6:186 — one rate-limit bucket, and concurrency capped at min(16, cores-2) per workflow (H6), so a wide full-mode phase queues rather than parallelizes." },
+          "agentGuidelineBreach": { "type": "object", "additionalProperties": false, "required": ["exceeds", "guideline"], "properties": { "exceeds": { "type": "boolean" }, "guideline": { "type": "integer", "const": 15 }, "instruction": { "type": "string", "description": "§M6 DECIDED — the guideline wins. Split the phase into two gated workflows and surface the split." } } },
+          "budgetRefusal": { "type": "object", "additionalProperties": false, "required": ["refuses"], "properties": { "refuses": { "type": "boolean" }, "exits": { "type": "array", "items": { "type": "string" }, "description": "Exactly three: re-run at balanced, raise the budget to a stated figure, or narrow the scope." } } },
+          "confirmationPrompt": { "type": "string", "description": "§M6's exact sentence, with the §M7 variant substituted verbatim when planner is fable, because the clause 'every node pinned to claude-opus-5' is FALSE on that run and it is the screen where consent is given." },
+          "requiresHumanConfirmation": { "type": "boolean", "const": true, "description": "The server cannot ask. MCP elicitation is deferred (D1), and §M6:166 places the question in the orchestrating session anyway. Hard rule: no agent spawns before the answer. Silence is not consent and a timeout is not a yes." },
+          "estimateBlock": { "type": "string", "description": "The pure-literal line to stamp into the script on a yes: const ESTIMATE = { agents: N, tokensLow: X, tokensHigh: Y, mode: '...' }" },
+          "bandRevision": { "type": "string", "description": "The dated revision note parsed live from the BAND table (execution-modes.md:219, currently 'Revision 2026-07-27'). Parsed, never hardcoded, so a stale calibration is visible in the answer." },
+          "calibrationWarning": { "type": "string", "const": "BAND and SIZE are calibration, not physics. Re-baseline them from <transcriptDir>/journal.jsonl at every gate. The all-out column is the thinner-evidence half. This estimate is deterministic arithmetic over the numbers currently in §M6 — it is not a measurement." }
+        }
+      },
+      "determinism": "GATE-ASSERTED. No sampling, no clock, no randomness (§M6:188). The same DAG at the same mode against the same execution-modes.md returns byte-identical numbers on every call, which is exactly what makes an approved estimate diffable against actual spend."
+    },
+
+    {
+      "name": "run_gate",
+      "title": "Run a repo gate (validate / smoke)",
+      "description": "Run scripts/validate.mjs and/or scripts/smoke.mjs and return the parsed verdict — assertion and failure counts, and every failure as a file/line/check/message record. The gate choice is a closed enum; there is no free-form command parameter. A failing gate is a successful call with verdict FAIL.",
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false },
+      "closedEnumRule": "SECURITY. `gate` is a closed enum and there is NO command/args/cwd/env parameter. Permissions are granted per tool name (permissions.md:51 `mcp__<server>__<tool>`), so an allow-listed run_gate that accepted a caller-supplied command would be an allow-listed shell wearing a gate's name.",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "gate": { "type": "string", "enum": ["validate", "smoke", "both"], "default": "validate" },
+          "verbose": { "type": "boolean", "default": false, "description": "Passes --verbose, which both scripts accept." },
+          "timeoutMs": { "type": "integer", "minimum": 1000, "maximum": 600000, "default": 120000 }
+        }
+      },
+      "resultSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["runs", "baseline"],
+        "properties": {
+          "runs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["gate", "command", "exitCode", "verdict", "durationMs"],
+              "properties": {
+                "gate": { "type": "string", "enum": ["validate", "smoke"] },
+                "command": { "type": "string" },
+                "exitCode": { "type": "integer" },
+                "verdict": { "type": "string", "enum": ["PASS", "FAIL", "CRASH"], "description": "validate.mjs:10 — 0 = every check passed, 1 = at least one check failed, 2 = the checker itself broke. smoke.mjs exits 1 on any failure, 0 otherwise; it has no documented 2." },
+                "assertions": { "type": "integer", "description": "validate only." },
+                "failureCount": { "type": "integer" },
+                "warningCount": { "type": "integer", "description": "validate only. Warnings are printed and counted but never change the exit code." },
+                "executed": { "type": "integer", "description": "smoke only — templates executed." },
+                "passed": { "type": "integer", "description": "smoke only." },
+                "failures": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["message"],
+                    "properties": { "file": { "type": "string" }, "line": { "type": "integer" }, "check": { "type": "string" }, "message": { "type": "string" }, "citation": { "$ref": "#/D3.2_citation/schema" } }
+                  },
+                  "description": "Each entry carries a citation into the OFFENDING file, not into the gate script — that is where the reader has to go."
+                },
+                "warnings": { "type": "array", "items": { "type": "object" } },
+                "stdoutTail": { "type": "string", "description": "Last 4000 characters, so a parse miss is still diagnosable." },
+                "durationMs": { "type": "integer" }
+              }
+            }
+          },
+          "baseline": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["recorded", "matchesRecorded", "citation"],
+            "properties": {
+              "recorded": { "type": "object", "description": "gateBaseline read live from mcp/runtime-pin.json." },
+              "matchesRecorded": { "type": "boolean" },
+              "newFailures": { "type": "array", "items": { "type": "string" }, "description": "Failures NOT in the recorded baseline — the only ones the caller caused." },
+              "citation": { "$ref": "#/D3.2_citation/schema" }
+            },
+            "description": "REQUIRED. smoke.mjs is red on develop @ 4dd461a for a pre-existing reason recorded in runtime-pin.json (loop-build v1-conductor: declares a planner node but --planner fable never routed to claude-fable-5). Without this field every caller rediscovers that failure and misattributes it to their own change."
+          }
+        }
+      },
+      "citationRule": "run_gate parses no doctrine, so its envelope citations point at the gate script's own output-emitting driver (scripts/validate.mjs main(), scripts/smoke.mjs tail) — letting a caller check the server's PARSER against the emitter it parsed. Per-failure citations point into the offending file."
+    },
+
+    {
+      "name": "standards_shelf",
+      "title": "Query a skill's standards shelf",
+      "description": "Return what a skill's references/standards.md SAYS about a standard — body, edition, authority grade, role, and when the shelf last confirmed it — with the heading and line range cited. It reports the shelf's claim and the shelf's confirmation date. It never asserts that an edition is current: the shelves themselves warn they rot and must be re-checked on a cadence.",
+      "annotations": { "readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false },
+      "sources": [{ "file": ".claude/skills/*/references/standards.md", "count": 21, "for": "one shelf per skill" }],
+      "measuredHeterogeneity": {
+        "note": "MEASURED at head 4dd461a, not assumed. The 21 shelves are NOT uniformly structured, so this tool must degrade rather than promise rows it cannot produce.",
+        "shelvesWithZeroMarkdownTableRows": ["loop-incident", "loop-operate"],
+        "shelvesLackingTheThreeGradeVocabulary": ["loop-algo", "loop-frontend", "loop-integrate", "loop-ship", "loop-skill", "loop-build"],
+        "gradeVocabularyPresentIn": "15 of 21",
+        "confirmationLogPresentIn": "21 of 21",
+        "smallestShelf": "loop-build — 17 lines, 6 table rows, 1 H2 heading",
+        "consequence": "A table-row parser returns NOTHING for loop-incident and loop-operate, whose shelves are prose under H2 headings. So the contract is: parse Markdown table rows where they exist; otherwise return the H2 section's raw text with parsed:false. Never guess a row out of prose, and never report an empty shelf as an empty SHELF when it is an unparsed one."
+      },
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "skill": { "type": "string", "description": "Omit to search all 21 shelves." },
+          "query": { "type": "string", "description": "Case-insensitive match against standard name, body, and role text." },
+          "grade": { "type": "string", "enum": ["yes", "draft", "no"], "description": "The plugin's three authority grades. Filtering by grade returns nothing from the six shelves that do not carry the vocabulary — reported in unparsedSections, never silently." },
+          "limit": { "type": "integer", "minimum": 1, "maximum": 50, "default": 10 }
+        },
+        "anyOf": [{ "required": ["skill"] }, { "required": ["query"] }]
+      },
+      "resultSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["entries", "unparsedSections", "shelvesSearched", "authorityNote"],
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["skill", "section", "parsed", "citation"],
+              "properties": {
+                "skill": { "type": "string" },
+                "section": { "type": "string", "description": "The H2 heading verbatim." },
+                "parsed": { "type": "boolean", "description": "true = a Markdown table row was parsed into fields. false = the section is prose and rawText carries it." },
+                "standard": { "type": "string" }, "body": { "type": "string" },
+                "edition": { "type": "string", "description": "Verbatim as written. Includes 'unconfirmed as of <date>' when that is what the shelf says — loop-skill SKILL.md step 4 requires that form rather than an asserted edition." },
+                "grade": { "type": "string", "enum": ["yes", "draft", "no", "unstated"] },
+                "role": { "type": "string" },
+                "rawText": { "type": "string", "description": "Present when parsed is false." },
+                "citation": { "$ref": "#/D3.2_citation/schema" }
+              }
+            }
+          },
+          "unparsedSections": { "type": "array", "items": { "type": "object", "required": ["skill", "section", "reason"], "properties": { "skill": { "type": "string" }, "section": { "type": "string" }, "reason": { "type": "string" } }, "additionalProperties": false }, "description": "REQUIRED. What the parser could not turn into rows. Omitting this turns a parser limitation into an apparent absence of standards." },
+          "shelfConfirmation": { "type": "object", "additionalProperties": false, "properties": { "confirmedOn": { "type": "string" }, "recheckCadence": { "type": "string" }, "openItems": { "type": "array", "items": { "type": "string" } }, "citation": { "$ref": "#/D3.2_citation/schema" } }, "description": "The shelf's own confirmation log — present on 21 of 21." },
+          "shelvesSearched": { "type": "integer" },
+          "authorityNote": { "type": "string", "const": "This reports what the shelf SAYS and when the shelf last checked, never what is true today. Editions rot; the shelves say so and set a re-check cadence. Confirm against a primary source before citing an edition in a deliverable — loop-skill SKILL.md step 4: confirm every version, edition, licence and date against a primary source, not from memory." }
+        }
+      }
+    }
+  ],
+
+  "D3.7_resources": {
+    "rule": "Skill and design files are exposed as READ-ONLY resources over the same connection, so a caller can fetch the file a citation names and recompute its sha256.",
+    "uriScheme": "theloopskill://<repo-relative-posix-path>",
+    "whyNotFileUri": "A file:// URI hardcodes an absolute machine-specific path into every citation and every resources/list entry, which makes two checkouts disagree about the identity of the same file. The custom scheme keeps the identifier repo-relative and stable; sourceRoot on the envelope carries the absolute path once.",
+    "surface": {
+      "included": [
+        ".claude/skills/*/SKILL.md (21)",
+        ".claude/skills/*/references/*.md (105)",
+        ".claude/skills/*/templates/* (39)",
+        ".claude/skills/*/frameworks/* (3)",
+        "docs/design/* (4)"
+      ],
+      "countAtHead": 172,
+      "excluded": ["scripts/*", ".claude-plugin/*", ".claude/settings.json", "CONTRIBUTING.md", "README.md", "CHANGELOG.md", "docs/c4/*", "docs/plans/*", "everything outside the repo root"],
+      "exclusionRationale": "The resource surface is exactly what the five tools parse, plus the skill tree they parse it from. A surface wider than the tool surface is unaudited reach for no benefit. scripts/ is excluded because run_gate already exposes what a caller needs from it, and .claude/settings.json is excluded on principle — a settings file is where a token would eventually land."
+    },
+    "hardRules": [
+      "Read-only. No resources/write, no subscribe, no listChanged. The declared capability is `resources: {}`.",
+      "Path traversal is rejected: the resolved absolute path must remain within sourceRoot after realpath, and a symlink escaping the root is refused. A URI outside the enumerated surface is refused even if it resolves inside the root.",
+      "Every resources/read result carries mimeType (text/markdown, application/json, text/javascript) and text content — no blobs in v1.",
+      "resources/list is generated by walking the surface at request time, not cached (caching is deferred by D1), so a file added mid-session appears.",
+      "A missing file is an MCP resource error, NOT the isError tool envelope — that envelope is a tools/call shape and does not exist on resources/read."
+    ],
+    "verificationTie": "GATE-ASSERTED. For at least one golden query per tool, the gate takes a citation from the tool answer, calls resources/read on citation.resourceUri, slices startLine..endLine, recomputes the sha256, and asserts equality. That single assertion is what makes 'cites its source' checkable end to end over the wire."
+  },
+
+  "D3.8_callSitesAndFallbacks": {
+    "rule": "NON-NEGOTIABLE (task requirement 3). Every call site states its fallback, because NOT CONNECTED is the default state, not the edge case.",
+    "why": "A project .mcp.json requires a workspace-trust approval the first time a repo is opened (.claude/skills/loop-harness/references/mcp.md:55). A fresh checkout therefore has the server present in the file and absent from the session until a human approves it. There is also no .mcp.json in the repo at head 4dd461a, so today the answer is always 'absent'.",
+    "bindingConstraints": [
+      "Every router edit is ADDITIVE and CONDITIONAL: 'if theloopskill-mcp is connected, X; otherwise Y'. Y must be the instruction that is there today, unchanged.",
+      "No router may make a tool call mandatory, and no step may be reachable only through a tool.",
+      "A router sentence must never phrase the server as the authority. Not 'ask route_node what the routing is' but 'route_node answers this from §M3/§M8 and cites the lines; execution-modes.md remains the source of truth'. The server is a reader of the law, never a second copy of it.",
+      "The fallback text is duplicated into the error envelope's `fallback` field, so a caller that reaches the server and gets a failure is told the same thing a caller that never reached it was told."
+    ],
+    "sites": [
+      {
+        "tool": "route_node",
+        "callSites": [".claude/skills/loop-engine/SKILL.md step 2 (:32-36) and the authoring steps", ".claude/skills/loop-orchestrate/SKILL.md step 2 item 3 (:43)"],
+        "fallback": "Read .claude/skills/loop-engine/references/execution-modes.md §M3 (:77) for the routing table and §M5 (:126) for width, and copy the §M8 block (:303) verbatim. This is the instruction those two files already carry; the tool changes nothing about it.",
+        "degradation": "None of substance. The tool saves reading a 439-line file and adds a line-cited answer; it removes no capability."
+      },
+      {
+        "tool": "estimate_phase",
+        "callSites": [".claude/skills/loop-engine/SKILL.md:82-86", ".claude/skills/loop-orchestrate/SKILL.md:134-138"],
+        "fallback": "Do §M6's arithmetic by hand against the BAND table (:209) and SIZE (:225). This is the status quo and it is fully specified — §M6 is deliberately pure arithmetic over literals precisely so it can be done without tooling.",
+        "degradation": "Arithmetic done by a language model by hand is the error-prone part, so this is the tool with the largest real benefit and it is still only an accuracy improvement, never a capability."
+      },
+      {
+        "tool": "boundary_lookup",
+        "callSites": [".claude/skills/loop-skill/SKILL.md step 3 (:40)", ".claude/skills/loop-build/SKILL.md step 3 (:20) — the roster sweep already says to walk ../../../docs/design/boundary-audit.json"],
+        "fallback": "Read docs/design/boundary-audit.json. It is 743 lines of JSON and grep-friendly.",
+        "degradation": "Real for loop-build's roster sweep, which walks all 21 entries — that is a lot of context to pull in whole. The fallback is correct but expensive."
+      },
+      {
+        "tool": "run_gate",
+        "callSites": [".claude/skills/loop-skill/SKILL.md step 6 (:70-78)"],
+        "fallback": "Run `node scripts/validate.mjs` in Bash. Identical result.",
+        "degradation": "Essentially none — which makes run_gate the weakest of the five on value. It earns its place on the parsed verdict and the baseline comparison, not on access."
+      },
+      {
+        "tool": "standards_shelf",
+        "callSites": [".claude/skills/loop-skill/SKILL.md step 4 (:54-60)"],
+        "fallback": "Read .claude/skills/<skill>/references/standards.md.",
+        "degradation": "None, and given the measured heterogeneity of the 21 shelves the fallback is frequently BETTER than the tool — prose sections come back as raw text either way, and a human reading the file loses nothing."
+      }
+    ],
+    "consumerRouterCount": {
+      "four": ["loop-engine", "loop-orchestrate", "loop-skill", "loop-build"],
+      "derivation": "These are the four skills whose steps already read the five source documents: loop-engine and loop-orchestrate are the only two flag parsers and the only two that run the §M6 pre-flight (§M2:63); loop-skill owns boundary registration, the standards shelf and the validate gate (its steps 3, 4 and 6); loop-build walks boundary-audit.json for the roster sweep (:20). No other skill has a step that reads these files.",
+      "status": "DERIVED, not previously ruled. If the approved v1 line meant a different four, this is the set to correct."
+    }
+  },
+
+  "D3.9_goldenQueryGate": {
+    "inheritedRequirement": "Must drive the server through the real SDK Client + StdioClientTransport (mcp/runtime-pin.json goldenQueryGate), SDK acquired at test time outside the repo (ADR-0002 §D2.3).",
+    "assertionsAddedByD3": [
+      "Envelope conformance: every tools/call on all five tools returns structuredContent validating against the tool's declared outputSchema, on BOTH the ok:true and ok:false branches.",
+      "isError parity: result.isError === (structuredContent.ok === false), on every call.",
+      "authoringTimeOnly === true on every answer from every tool.",
+      "Citation round-trip: for every citation returned, re-read file[startLine..endLine], recompute sha256, assert equality; assert excerpt is a prefix of those lines when present.",
+      "Citation-over-the-wire: for at least one citation per tool, fetch citation.resourceUri via resources/read and recompute the sha256 from the returned text.",
+      "Mode enum: tools/list advertises exactly ['lite','balanced','all-out'] for every mode property and NOWHERE advertises 'optimize' or 'full' — assert by scanning the serialized tools/list payload for those two strings.",
+      "Alias acceptance: mode:'optimize' returns ok:true with result.mode === 'balanced' and exactly one deprecations[] entry; the string 'optimize' never appears as a result.mode value.",
+      "Unknown mode: mode:'fast' returns ok:false, code 'unknown_mode', and a message naming all three advertised values.",
+      "Annotations: tools/list carries the D3.4 table byte-for-byte, with run_gate the only readOnlyHint:false tool.",
+      "run_gate FAIL is not an error: on a tree where smoke.mjs exits 1, the call returns ok:true / isError:false / verdict:'FAIL', and baseline.matchesRecorded is true with newFailures empty.",
+      "Degrade-not-die: with execution-modes.md temporarily absent from a scratch copy of the tree, initialize and tools/list still succeed and route_node returns ok:false with code 'source_missing' and a populated `fallback`.",
+      "templateRule constant present and exact on every route_node answer.",
+      "Determinism: estimate_phase called twice with identical input returns byte-identical structuredContent.",
+      "Resource containment: a resources/read on 'theloopskill://../../etc/passwd' and on 'theloopskill://scripts/validate.mjs' are both refused."
+    ]
+  },
+
+  "D3.10_notRuledHere": [
+    "The .mcp.json content itself and its permission entries (mcp__theloopskill-mcp__* allow-list) — harness wiring, not API shape.",
+    "The exact router sentences to paste into the four SKILL.md files. D3 fixes the constraints they must satisfy; the edits are law-file edits this ruling is not authorized to make.",
+    "Caching, journal tools, HTTP transport, packaging — deferred by the approved v1 line and unchanged here."
+  ]
+}

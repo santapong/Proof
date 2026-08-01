@@ -1,11 +1,39 @@
 # Changelog
 
-All notable changes to TheLoopSkill are documented here.
+All notable changes to Heimdall (formerly TheLoopSkill; renamed 1 Aug 2026) are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+_Nothing yet._
+
+## [1.5.0] — 2026-08-01
+
+### Added
+- **`loop-context`** — the twenty-second skill: engineer what an agent carries at runtime. Context budgets (plan for 10–20% of the advertised window) and placement (the U-curve, compounding across hops), compaction under the addressable-store rule (nothing compacted out may be destroyed), a typed shared-state contract (per-field merge rules, phase-boundary checkpoints, decision-carrying handoffs), supersession discipline (two-timestamp facts, delta-not-rewrite, the purge caveat), and four homegrown property-based trace invariants with an evidence-anchored audit template (`context-audit.workflow.js`). Two-way boundary pointers added to `loop-engine` and `loop-harness`; boundary audit gains the row and three rated overlaps. Standards shelf pins the peer-reviewed anchors (TACL 2024, NeurIPS 2024, COLM 2024, ICML 2025, ICLR 2025, Findings of ACL 2026, ICSE 2026) and marks the 2026 preprint cluster as unreplicated.
+
+- **`loop-ship/references/integration-train.md`** — the missing step between parallel task branches and `develop`: cut `integration/<milestone>`, merge wagons in declared dependency order, run the full gate once on the train, land as one reviewed unit. Names when a train is NOT worth it (file-disjoint work with a cheap gate) and the drop-a-wagon revert rule.
+
+### Changed
+- **Plugin renamed: TheLoopSkill → Heimdall** — the watchman who sees everything and guards the passage; the plugin had outgrown a loop-only name (it owns harness engineering below the loop and orchestration above it). The `loop-*` skill prefix is unchanged, the GitHub repository URL is unchanged, and the MCP server id `theloopskill-mcp` is deliberately unchanged until the in-flight MCP Phase 3 lands (renaming it breaks installed configurations). Historical CHANGELOG entries and ADRs keep the old name — a record states what was true at the time.
+- **`loop-autopilot` AP7 guard implemented** — `improvement-loop.workflow.js` now keeps a per-run coverage archive (every candidate recorded with its area and outcome), steers idle-round research toward unexplored areas, increments the dry counter only when a round fails to reach new territory, and interleaves Act ordering across intake kinds so one noisy kind cannot monopolize a round. AP7's table row flips to guarded.
+- **Skill renamed: `loop-v1` → `loop-build`** — the name now says what the description always said ("build a project end to end"); `v1` named an output version, not a purpose. Invocation is `/loop-build <project-brief>`. Historical CHANGELOG entries and plan documents keep the old name.
+
+## [1.4.0] — 2026-07-27
+
+### Added
+- **`loop-v1`** — the twenty-first skill: conduct a project brief to a shipped version one. Multi-planner coverage (three framings + reconcile + roster sweep), delegated-law build (every task authored under its owning skill's references), sequential gating with a bounded repair round, three-state verdicts (PASS / REFUTED / UNVERIFIED), release phase and a cumulative cast-and-cost ledger. Template: `v1-conductor.workflow.js`.
+- **`--fable-gate`** (§M7b) — second sanctioned Fable opt-in: routes exactly one lens of an all-out gating vote to `claude-fable-5` through `fableGateAgent()`, with a logged fallback to `claude-opus-5` on refusal or ZDR 400. The canonical §M8 block gains the optional `FABLE_GATE` + `fableGateAgent` segment; `validate.mjs` sanctions it as the fourth omissible member.
+
+### Changed
+- **§M6 `BAND` re-baselined ~2.5× upward** from the maison-aurel ladder run: the old figures assumed prompt-answer verifiers; tool-heavy verifiers measured 50–120k output each.
+- **§M5 gains the dispatch rule**: same-model verify fan-outs of width ≥ 3 dispatch staggered or sequentially — three parallel width-5 all-out bursts died whole to API 529 on 2026-07-27 while the same lenses dispatched sequentially completed 6/6.
+- `model-routing.md` Fable sections now name the two sanctioned entry points and the extended bounding argument.
+
+### Known-stale
+- The C4 composition diagram still says "twenty skills"; refresh deferred to the next docs pass.
 
 _Nothing yet._
 

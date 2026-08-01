@@ -1,13 +1,18 @@
 #!/usr/bin/env node
-// TheLoopSkill validation gate.
+// Heimdall validation gate.
 //
 // `claude plugin validate --strict` only reads .claude-plugin/*.json — it never opens a SKILL.md.
 // `node --check` is parse-only. This script covers the surface those two leave uninspected:
 // skill frontmatter, name/directory agreement, template syntax, harness policy H10, canonical
 // ROUTES conformance, and reference-link resolution.
 //
-// Usage:  node scripts/validate.mjs [--verbose]
+// Usage:  node scripts/validate.mjs [--verbose] [--json]
 // Exit:   0 = every check passed, 1 = at least one check failed, 2 = the checker itself broke.
+//
+// --json suppresses the human-formatted progress/summary lines and instead prints one JSON object
+// to stdout: {passed, checksRun, failures[{check,file,line,message}], warnings[]}. Exit codes are
+// unchanged by --json — it is an output-format switch, not a different gate. The default (no
+// --json) console output is untouched byte-for-byte.
 //
 // No dependencies. Node stdlib only, deliberately: the plugin ships no package manifest and must
 // not grow one. The frontmatter parser below is a minimal YAML subset covering exactly what a
@@ -24,6 +29,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SKILLS_DIR = path.join(ROOT, '.claude', 'skills')
 const MODES_DOC = path.join(SKILLS_DIR, 'loop-engine', 'references', 'execution-modes.md')
 const VERBOSE = process.argv.includes('--verbose')
+const JSON_MODE = process.argv.includes('--json')
 
 const failures = []
 const warnings = []
@@ -38,6 +44,11 @@ function warn(check, file, line, message) {
 }
 function note(msg) {
   if (VERBOSE) console.log(`     ${msg}`)
+}
+// Human-formatted progress/summary output — suppressed under --json so stdout carries only the
+// JSON object. Default (no --json) behavior is unchanged: out() is exactly console.log then.
+function out(msg) {
+  if (!JSON_MODE) console.log(msg)
 }
 
 function read(file) {
@@ -469,7 +480,8 @@ function canonicalBlock() {
   return { ok: true, block, docLine: start + 1 }
 }
 
-// §M8 sanctions exactly three omissions: WIDTH, DRY_LIMIT and the plannerAgent helper. Everything
+// §M8 sanctions exactly four omissions: WIDTH, DRY_LIMIT, the plannerAgent helper, and the
+// FABLE_GATE + fableGateAgent pair (§M7b). Everything
 // else is the invariant core. Segment extents are derived from the canonical text, not listed here,
 // so this survives edits to the block.
 function optionalMask(block) {
@@ -479,6 +491,7 @@ function optionalMask(block) {
   }
   markLine((l) => /^const WIDTH\b/.test(l))
   markLine((l) => /^const DRY_LIMIT\b/.test(l))
+  markLine((l) => /^const FABLE_GATE\b/.test(l))
 
   const segments = []
   const fnStart = block.findIndex((l) => /^(?:async\s+)?function plannerAgent\b/.test(l))
@@ -490,6 +503,17 @@ function optionalMask(block) {
     for (let i = s; i <= e && i < block.length; i++) mask[i] = true
     segments.push({ name: 'plannerAgent', start: s, end: Math.min(e, block.length - 1), signature: /^(?:async\s+)?function plannerAgent\b/ })
   }
+  const fgStart = block.findIndex((l) => /^(?:async\s+)?function fableGateAgent\b/.test(l))
+  if (fgStart !== -1) {
+    let s = fgStart
+    while (s > 0 && /^\s*\/\//.test(block[s - 1])) s--
+    let e = fgStart
+    while (e < block.length && block[e] !== '}') e++
+    for (let i = s; i <= e && i < block.length; i++) mask[i] = true
+    segments.push({ name: 'fableGateAgent', start: s, end: Math.min(e, block.length - 1), signature: /^(?:async\s+)?function fableGateAgent\b/ })
+  }
+  const fgIdx = block.findIndex((l) => /^const FABLE_GATE\b/.test(l))
+  if (fgIdx !== -1) segments.push({ name: 'FABLE_GATE', start: fgIdx, end: fgIdx, signature: /^const FABLE_GATE\b/ })
   const widthIdx = block.findIndex((l) => /^const WIDTH\b/.test(l))
   if (widthIdx !== -1) segments.push({ name: 'WIDTH', start: widthIdx, end: widthIdx, signature: /^const WIDTH\b/ })
   const dryIdx = block.findIndex((l) => /^const DRY_LIMIT\b/.test(l))
@@ -579,49 +603,70 @@ async function main() {
     ? walk(SKILLS_DIR, (n) => n.endsWith('.workflow.js')).sort()
     : []
 
-  console.log('TheLoopSkill validation gate')
-  console.log(`  root: ${ROOT}`)
-  console.log(`  skills: ${fs.existsSync(SKILLS_DIR) ? fs.readdirSync(SKILLS_DIR).filter((d) => fs.statSync(path.join(SKILLS_DIR, d)).isDirectory()).length : 0}   workflow templates: ${templates.length}`)
-  console.log('')
+  out('Heimdall validation gate')
+  out(`  root: ${ROOT}`)
+  out(`  skills: ${fs.existsSync(SKILLS_DIR) ? fs.readdirSync(SKILLS_DIR).filter((d) => fs.statSync(path.join(SKILLS_DIR, d)).isDirectory()).length : 0}   workflow templates: ${templates.length}`)
+  out('')
 
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'loopskill-validate-'))
   try {
-    console.log('  [1/8] SKILL.md frontmatter parses and carries name/description/argument-hint')
-    console.log('  [2/8] frontmatter `name` matches its directory')
-    console.log('  [6/8] relative reference paths in SKILL.md resolve on disk')
+    out('  [1/8] SKILL.md frontmatter parses and carries name/description/argument-hint')
+    out('  [2/8] frontmatter `name` matches its directory')
+    out('  [6/8] relative reference paths in SKILL.md resolve on disk')
     checkSkills()
-    console.log('  [3/8] every *.workflow.js parses under node --check (runtime wrapping)')
+    out('  [3/8] every *.workflow.js parses under node --check (runtime wrapping)')
     checkTemplatesParse(templates, tmpDir)
-    console.log('  [4/8] no H10-banned clock/random calls in template code')
+    out('  [4/8] no H10-banned clock/random calls in template code')
     checkH10(templates)
-    console.log('  [5/8] canonical ROUTES block reproduced verbatim; no inline routing literals')
+    out('  [5/8] canonical ROUTES block reproduced verbatim; no inline routing literals')
     checkRoutes(templates)
-    console.log('  [7/8] export const meta is a pure literal; phases match the phase: strings used')
+    out('  [7/8] export const meta is a pure literal; phases match the phase: strings used')
     await checkMeta(templates)
-    console.log('  [8/8] every reference/template file is named in its SKILL.md')
+    out('  [8/8] every reference/template file is named in its SKILL.md')
     checkOrphans()
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true })
   }
 
-  console.log('')
+  out('')
   if (warnings.length) {
-    console.log(`${warnings.length} warning(s) — reported, not fatal:`)
-    for (const w of warnings) console.log(`  warn  ${w.file}:${w.line}  [${w.check}] ${w.message}`)
-    console.log('')
+    out(`${warnings.length} warning(s) — reported, not fatal:`)
+    for (const w of warnings) out(`  warn  ${w.file}:${w.line}  [${w.check}] ${w.message}`)
+    out('')
   }
   if (failures.length) {
-    console.log(`${failures.length} failure(s):`)
-    for (const f of failures) console.log(`  FAIL  ${f.file}:${f.line}  [${f.check}] ${f.message}`)
-    console.log('')
-    console.log(`FAILED — ${failures.length} failure(s) across ${checksRun} assertions.`)
+    out(`${failures.length} failure(s):`)
+    for (const f of failures) out(`  FAIL  ${f.file}:${f.line}  [${f.check}] ${f.message}`)
+    out('')
+    out(`FAILED — ${failures.length} failure(s) across ${checksRun} assertions.`)
+    if (JSON_MODE) console.log(JSON.stringify({ passed: false, checksRun, failures, warnings }))
     process.exit(1)
   }
-  console.log(`PASSED — ${checksRun} assertions, 0 failures, ${warnings.length} warning(s).`)
+  out(`PASSED — ${checksRun} assertions, 0 failures, ${warnings.length} warning(s).`)
+  if (JSON_MODE) console.log(JSON.stringify({ passed: true, checksRun, failures, warnings }))
   process.exit(0)
 }
 
-main().catch((e) => {
-  console.error('validate.mjs crashed:', e && e.stack ? e.stack : e)
-  process.exit(2)
-})
+// Main-guard: run the gate when this file is executed directly (`node scripts/validate.mjs`),
+// but stay side-effect-free when imported as a module — e.g. by
+// scripts/check-modes-extraction-parity.mjs, which reuses canonicalBlock() rather than risking a
+// third, silently-diverging copy of the §M8 locator in mcp/lib/modes.mjs. Behavior of the CLI
+// invocation is unchanged: process.argv[1] equals this file's own path in that case, exactly as
+// before this guard existed.
+function isMainModule() {
+  if (!process.argv[1]) return false
+  try {
+    return fileURLToPath(import.meta.url) === fs.realpathSync(process.argv[1])
+  } catch {
+    return fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
+  }
+}
+
+export { canonicalBlock, MODES_DOC, read, lines }
+
+if (isMainModule()) {
+  main().catch((e) => {
+    console.error('validate.mjs crashed:', e && e.stack ? e.stack : e)
+    process.exit(2)
+  })
+}

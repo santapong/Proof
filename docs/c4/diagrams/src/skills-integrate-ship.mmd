@@ -1,0 +1,26 @@
+---
+title: "Skill group — integrate & ship"
+---
+flowchart TB
+    subgraph g["<b>Integrate &amp; ship</b>"]
+        intg["<b>loop-integrate</b><br/><i>«component» platform integration</i><br/>Obeys someone else's contract and defends against it:<br/>OAuth/OIDC, webhooks, idempotency, retry"]
+        ship["<b>loop-ship</b><br/><i>«component» release</i><br/>Deploy start to bake complete: rollout strategy,<br/>flags, expand-contract migrations, tested rollback"]
+    end
+
+    scout["<b>loop-scout</b><br/><i>«external» prior art</i>"]
+    test["<b>loop-test</b><br/><i>«external» tests</i>"]
+    design["<b>loop-design</b><br/><i>«external» architecture</i>"]
+    aud["<b>loop-audit</b><br/><i>«external» change impact</i>"]
+    ops["<b>loop-operate</b><br/><i>«external» steady state</i>"]
+
+    scout -- "provider already named —<br/>stop re-litigating the choice" --> intg
+    intg -- "specifies the contract;<br/>loop-test authors the files" --> test
+    design -- "publishes an API;<br/>loop-integrate consumes one" --> intg
+    aud -- "backward-looking memo feeds<br/>the forward-looking gate" --> ship
+    ship -- "bake complete —<br/>the service is yours" --> ops
+
+    classDef component fill:#85BBF0,stroke:#5D82A8,color:#000
+    classDef extc fill:#BFBFBF,stroke:#8A8A8A,color:#000
+    class intg,ship component
+    class scout,test,design,aud,ops extc
+    style g fill:none,stroke:#444444,stroke-dasharray:5 5

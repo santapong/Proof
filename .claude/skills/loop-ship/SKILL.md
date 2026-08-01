@@ -87,6 +87,7 @@ For those, run **`templates/release-readiness-gate.workflow.js`** — one checke
 - `references/release-gates.md` — the pre-deploy checklist, the strategy decision tree, the CI/CD gate chain, SLO-gated promotion, sign-off
 - `references/supply-chain-gate.md` — the ship-time artifact gate: provenance, SBOM diff, signature; hard-block vs advisory; escalation
 - `references/rollback-playbook.md` — rollback-vs-roll-forward decision factors, per-strategy drill checklists, recording the outcome
+- `references/integration-train.md` — many task branches → one gated merge candidate → develop: when a train pays, the procedure, and the rules that keep it short-lived
 - `references/dora.md` — the four keys, per-release instrumentation, and what is stable versus piloted
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to gate time
 - `templates/release-readiness-gate.workflow.js` — checker-per-gate-dimension → barrier → adversarial verify → go/no-go decision

@@ -1,6 +1,6 @@
-# Installing TheLoopSkill
+# Installing Heimdall
 
-TheLoopSkill ships twenty Claude Code skills:
+Heimdall ships twenty-one Claude Code skills:
 
 | Skill | What it does |
 |---|---|
@@ -15,6 +15,7 @@ TheLoopSkill ships twenty Claude Code skills:
 | `loop-docs` | Write + maintain docs (README, API, docstrings, ADRs) via the Diátaxis model, verified against code |
 | `loop-scout` | Prior-art / build-vs-buy check before building: search stdlib → registries → services → standards, evaluate, recommend reuse |
 | `loop-harness` | Set up a project's Claude Code harness: permissions, hooks, MCP (`.mcp.json`), and automation loops — from copy-paste scaffolds |
+| `loop-context` | Engineer agent context & state: budgets, placement, compaction with an addressable store, typed shared state, supersession, trace-invariant audits |
 | `loop-autopilot` | Autonomous engineering loop: read feedback (issues/PRs/CI), act as draft PRs with tests, research improvements when idle — propose-only, never merges |
 | `loop-algo` | The mechanism inside a component: algorithm and data-structure choice, complexity analysis, invariants, concurrency, benchmark-driven validation |
 | `loop-pattern` | Apply GoF patterns, Fowler refactorings, SOLID and language/framework idioms; remove the smells that motivate them — emits a diff |
@@ -23,6 +24,7 @@ TheLoopSkill ships twenty Claude Code skills:
 | `loop-operate` | Operate a running service in steady state: SLIs/SLOs/error budgets, burn-rate alerts, self-healing runbooks, SLO-gated auto-rollback |
 | `loop-incident` | Respond to a live, user-impacting failure: severity triage, comms, mitigate before diagnosing, reproduction harness, blameless postmortem |
 | `loop-skill` | Author a new skill for this plugin or bring an existing one up to contract — boundary, standards shelf, router, references, template, gate |
+| `loop-build` | Conduct a project brief to a shipped version one: multi-planner plan, delegated-law build across the fleet, gates with repair rounds, release + ledger |
 | `loop-frontend` | Luxury UI craft: motion choreography, easing and duration budgets, stagger, shared-element continuity, type scale, perceived performance — with the motion accessibility gates enforced |
 
 The **canonical location** is `.claude/skills/<name>/` — a single source of truth that works for all three install paths below. The plugin references these same files via the `skills` field in `.claude-plugin/plugin.json`, so nothing is duplicated.
@@ -32,6 +34,8 @@ The **canonical location** is `.claude/skills/<name>/` — a single source of tr
 ## 1. Local (Claude Code CLI)
 
 **Option A — use this repo directly.** Open a Claude Code session anywhere inside the repo. Project skills under `.claude/skills/` are auto-discovered; type `/loop-engine`, `/loop-review`, etc. No enable step.
+
+The repo root also ships a project-scope `.mcp.json` that wires up `theloopskill-mcp` — the `route_node` / `estimate_phase` / `boundary_lookup` / `standards_shelf` / `run_gate` tools and the read-only skill/doc resources described in `mcp/`. Claude Code shows a one-time workspace-trust prompt the first time a session opens this repo with an unapproved `.mcp.json`; approve it there (or `claude mcp get theloopskill-mcp` / `claude mcp reset-project-choices` to inspect or reset the choice). **Do not** add `"enableAllProjectMcpServers": true` to `.claude/settings.json` to skip that prompt — it is a project-wide, silent auto-trust of every current *and future* project-scoped server for every teammate who opens the repo, which is a materially bigger grant than "trust this one server," and the prompt itself is the harness's own consent gate working as designed. If the prompt is a genuine friction point, the fix is a documented one-time `claude mcp` approval per teammate, not turning the gate off in a committed file.
 
 **Option B — copy into another project.** Copy the skill folders you want into that project's `.claude/skills/`:
 
@@ -58,8 +62,8 @@ Web sessions start from a **fresh clone and see only committed project files** �
 
   ```json
   {
-    "extraKnownMarketplaces": { "theloopskill": { "source": "./" } },
-    "enabledPlugins": { "theloopskill@theloopskill": true }
+    "extraKnownMarketplaces": { "heimdall": { "source": "./" } },
+    "enabledPlugins": { "heimdall@heimdall": true }
   }
   ```
 
@@ -75,28 +79,42 @@ Install the bundle into any project or user scope via the plugin system.
 # add this repo as a marketplace
 /plugin marketplace add santapong/TheLoopSkill
 
-# install the bundled plugin (all twenty skills)
-/plugin install theloopskill@theloopskill
+# install the bundled plugin (all twenty-one skills)
+/plugin install heimdall@heimdall
 ```
 
 To test the marketplace from a local checkout instead of GitHub:
 
 ```
 /plugin marketplace add ./
-/plugin install theloopskill@theloopskill
+/plugin install heimdall@heimdall
 ```
 
 Marketplace manifest lives at `.claude-plugin/marketplace.json`; the plugin manifest at `.claude-plugin/plugin.json` (its `skills` field points at `./.claude/skills`, so the plugin exposes the same files as the project skills — no duplication).
 
+`.claude-plugin/plugin.json` also declares an `mcpServers` entry for `theloopskill-mcp`, using `${CLAUDE_PLUGIN_ROOT}` in place of the repo-root `.mcp.json`'s `${CLAUDE_PROJECT_DIR}`. This is not redundant with the repo-root `.mcp.json` above — the two are read on disjoint paths:
+
+- Opening this repo directly (Option 1) reads the **project-scope** `.mcp.json`, where `${CLAUDE_PROJECT_DIR}` correctly resolves to the repo you have open.
+- Installing the bundled plugin into some *other* project (Option 3) never reads that file — it reads the **plugin manifest's** `mcpServers`, where `${CLAUDE_PLUGIN_ROOT}` correctly resolves to wherever the plugin got installed, which is not the consuming project's directory. `${CLAUDE_PROJECT_DIR}` in a plugin manifest would resolve to the *consumer's* project and silently fail to find `mcp/server.mjs` there.
+
+Without the manifest entry, every marketplace/plugin-install consumer got the 21 skills and no server — the repo-root `.mcp.json` only ever serves a session opened inside this checkout. `mcpServers` is a recognized `plugin.json` field: `claude plugin validate . --strict` passes with it present (verified against this repo, 2026-07-28) and, as a negative control, flags an actually-unknown field added alongside it (`✘ Validation failed (--strict treats warnings as errors)` for a planted `definitelyBogusUnknownField12345`, removed before commit) — so this is not merely "the validator didn't complain," it demonstrably distinguishes a real field from a typo.
+
 ---
+
+## No `.gitignore`, on purpose
+
+This repo ships no `.gitignore`, and `mcp/`'s own law (`docs/design/ADR-0002-dependency-seam-and-boot-contract.md` §D2.2, §5) is explicit that one must not be added for `node_modules`: nothing in this repo is generated, `git status` is currently the *only* signal that a stray `npm install` violated the zero-dependency rule (`claude plugin validate --strict`, `scripts/validate.mjs` and `scripts/smoke.mjs` all measured blind to a planted `mcp/node_modules` — ADR-0002 §2), and an ignore entry would remove that last detector to buy tidiness. Anyone running `npm install` anywhere in this tree will see `?? node_modules/` in `git status` until they remove it — that nuisance is deliberate, not an oversight to "fix" with a `.gitignore`.
 
 ## Layout
 
 ```
-TheLoopSkill/
+Heimdall/
+├── .mcp.json                # project-scope MCP wiring for a direct checkout (Option 1)
 ├── .claude-plugin/
-│   ├── plugin.json          # plugin manifest (skills → ./.claude/skills)
+│   ├── plugin.json          # plugin manifest (skills → ./.claude/skills; mcpServers for plugin installs)
 │   └── marketplace.json     # marketplace manifest (plugin source → ./)
+├── mcp/                      # theloopskill-mcp: stdio MCP server (route_node, estimate_phase,
+│                              # boundary_lookup, standards_shelf, run_gate + read-only resources)
 ├── .claude/
 │   ├── settings.json        # extraKnownMarketplaces + enabledPlugins (web)
 │   └── skills/

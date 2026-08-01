@@ -1,0 +1,45 @@
+---
+title: "Component diagram — loop-engine"
+---
+flowchart TB
+    dev["<b>Developer</b><br/><i>«person»</i><br/>Invokes; answers the pre-flight and the gates"]
+
+    subgraph engine["<b>loop-engine</b> &nbsp;[CONTAINER]"]
+        parser["<b>Flag Parser</b><br/><i>«component» step 1, §M2</i><br/>--mode · --planner · --framework · --budget<br/>· --dry-run; never guesses an unknown value"]
+        mapper["<b>Framework Mapper</b><br/><i>«component» step 3</i><br/>Maps the task onto phases;<br/>locates the human gates"]
+        shaper["<b>Shape Selector</b><br/><i>«component» step 4 — H1, H2, L1</i><br/>Pipeline by default; barriers earned;<br/>loops only for unknown size"]
+        preflight["<b>Pre-flight Estimator</b><br/><i>«component» step 6, §M6</i><br/>All-out only: deterministic arithmetic,<br/>exactly one confirmation"]
+        author["<b>Template Author</b><br/><i>«component» step 5 + templates/</i><br/>Fills EDIT ME slots;<br/>stamps the approved ESTIMATE"]
+        routes["<b>ROUTES Kernel</b><br/><i>«component» ~30 lines JS, §M8</i><br/>taskType + mode + planner →<br/>model, effort, width"]
+        reporter["<b>Reporter</b><br/><i>«component» step 7</i><br/>Diffs approved vs actual;<br/>presents the gate deliverable"]
+    end
+
+    policy["<b>Governance Policies</b><br/><i>«external container»</i><br/>harness · loop · modes"]
+    frameworks["<b>Lifecycle Frameworks</b><br/><i>«external container»</i><br/>AIDLC phases and gates"]
+    wf["<b>Workflow Tool</b><br/><i>«external system» Claude Code</i><br/>Executes the script; spawns and caps agents"]
+    fleet["<b>Claude Model Fleet</b><br/><i>«external system»</i>"]
+
+    dev -- "invokes with flags" --> parser
+    parser -- "resolved mode<br/>+ framework" --> mapper
+    frameworks -. "phases and gates<br/>(read-only)" .-> mapper
+    mapper -- "per-phase fan-out" --> shaper
+    policy -. "shape rules<br/>(read-only)" .-> shaper
+    shaper -- "the authored DAG" --> preflight
+    preflight -- "one question: N agents,<br/>est. X–Y tokens. Proceed?" --> dev
+    preflight -- "approved figures<br/>as pure literals" --> author
+    author -- "pastes verbatim — no<br/>module import possible" --> routes
+    author -- "script + args" --> wf
+    wf -- "evaluates per node<br/>at run time" --> routes
+    routes -- "model, effort, width<br/>via agent() opts" --> fleet
+    wf -- "structured result<br/>+ journal" --> reporter
+    reporter -- "gate deliverable<br/>+ cost ledger" --> dev
+
+    classDef person fill:#08427B,stroke:#052E56,color:#fff
+    classDef component fill:#85BBF0,stroke:#5D82A8,color:#000
+    classDef ext fill:#999999,stroke:#6B6B6B,color:#fff
+    classDef extc fill:#BFBFBF,stroke:#8A8A8A,color:#000
+    class dev person
+    class parser,mapper,shaper,preflight,author,routes,reporter component
+    class wf,fleet ext
+    class policy,frameworks extc
+    style engine fill:none,stroke:#444444,stroke-dasharray:5 5

@@ -1,0 +1,34 @@
+---
+title: "Container diagram — inside any one skill"
+---
+flowchart TB
+    dev["<b>Developer</b><br/><i>«person»</i>"]
+    host["<b>Claude Code</b><br/><i>«external system»</i><br/>Selects the skill, loads context,<br/>runs the Workflow tool"]
+
+    subgraph skill["<b>A skill</b> — .claude/skills/&lt;name&gt;/ &nbsp;[SYSTEM]"]
+        router["<b>SKILL.md</b><br/><i>«container» Markdown + frontmatter, 6–13 KB</i><br/>Thin router; description = the selection API;<br/>loaded on EVERY invocation"]
+        refs["<b>references/*.md</b><br/><i>«container» 5–7 files, ~100 KB</i><br/>Deep knowledge + pinned standards.md;<br/>loaded ON DEMAND"]
+        tmpl["<b>templates/*.workflow.js</b><br/><i>«container» plain JavaScript</i><br/>EXECUTED by the Workflow tool,<br/>never read into context"]
+    end
+
+    law["<b>Governance</b><br/><i>«external system»</i><br/>harness H1–H12 · loop L1–L8 · modes M1–M9"]
+    gate["<b>scripts/validate.mjs</b><br/><i>«external system» CI</i><br/>Fails the build on a contract breach"]
+    fleet["<b>Claude Model Fleet</b><br/><i>«external system»</i><br/>The agents the template spawns"]
+
+    dev -- "types /loop-&lt;name&gt;" --> host
+    host -- "matches on description,<br/>loads body" --> router
+    router -- "reads only what<br/>this task needs" --> refs
+    router -- "authors from" --> tmpl
+    law -. "binds (read-only)" .-> router
+    host -- "executes in a sandbox:<br/>no FS, clock or modules" --> tmpl
+    tmpl -- "spawns agents at the<br/>tier ROUTES selects" --> fleet
+    gate -- "validates frontmatter,<br/>name, paths" --> router
+    gate -- "validates H10 + ROUTES<br/>byte-identity" --> tmpl
+
+    classDef person fill:#08427B,stroke:#052E56,color:#fff
+    classDef container fill:#438DD5,stroke:#2E6295,color:#fff
+    classDef ext fill:#999999,stroke:#6B6B6B,color:#fff
+    class dev person
+    class router,refs,tmpl container
+    class host,law,gate,fleet ext
+    style skill fill:none,stroke:#444444,stroke-dasharray:5 5

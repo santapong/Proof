@@ -1,0 +1,28 @@
+---
+title: "Skill group — build & verify"
+---
+flowchart TB
+    subgraph g["<b>Build &amp; verify</b>"]
+        test["<b>loop-test</b><br/><i>«component» tests</i><br/>Deliverable: test files that run and<br/>fail for the right reason"]
+        rev["<b>loop-review</b><br/><i>«component» security + quality</i><br/>Deliverable: a findings list;<br/>judges, never refactors"]
+        aud["<b>loop-audit</b><br/><i>«component» change impact</i><br/>Deliverable: a backward-looking<br/>risk memo over a diff"]
+        dbg["<b>loop-debug</b><br/><i>«component» root cause</i><br/>Deliverable: minimal fix + regression;<br/>requires a REPRODUCIBLE defect"]
+    end
+
+    pat["<b>loop-pattern</b><br/><i>«external» refactoring</i>"]
+    ship["<b>loop-ship</b><br/><i>«external» release</i>"]
+    inc["<b>loop-incident</b><br/><i>«external» live failure</i>"]
+    algo["<b>loop-algo</b><br/><i>«external» mechanism</i>"]
+
+    aud -- "security dimension" --> rev
+    aud -- "risk memo → go/no-go" --> ship
+    rev -- "each smell class points<br/>at its remediation" --> pat
+    inc -- "service restored —<br/>now find the defect" --> dbg
+    dbg -- "lock the fix<br/>with a regression" --> test
+    dbg -- "never fast enough,<br/>rather than got slower" --> algo
+
+    classDef component fill:#85BBF0,stroke:#5D82A8,color:#000
+    classDef extc fill:#BFBFBF,stroke:#8A8A8A,color:#000
+    class test,rev,aud,dbg component
+    class pat,ship,inc,algo extc
+    style g fill:none,stroke:#444444,stroke-dasharray:5 5

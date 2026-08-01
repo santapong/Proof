@@ -1,0 +1,29 @@
+---
+title: "System Context — TheLoopSkill"
+---
+flowchart TB
+    dev["<b>Developer</b><br/><i>«person»</i><br/>Invokes a skill; answers gate questions"]
+    maint["<b>Plugin Maintainer</b><br/><i>«person»</i><br/>Adds skills and standards shelves;<br/>approves at lifecycle gates"]
+
+    tls["<b>TheLoopSkill</b><br/><i>«system»</i><br/>Turns an engineering task into a<br/>governed multi-agent workflow"]
+
+    cc["<b>Claude Code</b><br/><i>«external system»</i><br/>Host runtime: skills, context,<br/>Workflow tool, permissions"]
+    fleet["<b>Claude Model Fleet</b><br/><i>«external system»</i><br/>Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5"]
+    repo["<b>Target Repository</b><br/><i>«external system»</i><br/>The developer's codebase and git history"]
+    forge["<b>GitHub</b><br/><i>«external system»</i><br/>Issues, PRs and CI signals"]
+    web["<b>Web &amp; Standards Sources</b><br/><i>«external system»</i><br/>Specs and RFCs behind version-pinned citations"]
+
+    dev -- "invokes a skill,<br/>answers gate questions" --> tls
+    maint -- "authors skills and<br/>standards shelves" --> tls
+    cc <-- "loads the plugin; spawns<br/>agents on its behalf" --> tls
+    tls -- "routes each node<br/>to a model tier" --> fleet
+    tls -- "reads code; implement<br/>nodes write patches" --> repo
+    tls -- "reads feedback; draft PRs,<br/>never merges" --> forge
+    tls -- "confirms every version pin<br/>before citing it" --> web
+
+    classDef person fill:#08427B,stroke:#052E56,color:#fff
+    classDef system fill:#1168BD,stroke:#0B4884,color:#fff
+    classDef ext fill:#999999,stroke:#6B6B6B,color:#fff
+    class dev,maint person
+    class tls system
+    class cc,fleet,repo,forge,web ext

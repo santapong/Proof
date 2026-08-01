@@ -1,0 +1,29 @@
+---
+title: "Skill group — design & mechanism"
+---
+flowchart TB
+    subgraph g["<b>Design &amp; mechanism</b>"]
+        design["<b>loop-design</b><br/><i>«component» architecture</i><br/>Deliverable: diagram, API contract,<br/>ADR, NFR and SLO targets"]
+        algo["<b>loop-algo</b><br/><i>«component» mechanism</i><br/>Deliverable: Big-O, invariant,<br/>memory-ordering argument, benchmark"]
+        pat["<b>loop-pattern</b><br/><i>«component» refactoring</i><br/>Deliverable: a behaviour-preserving diff"]
+    end
+
+    ship["<b>loop-ship</b><br/><i>«external» release</i>"]
+    ops["<b>loop-operate</b><br/><i>«external» steady state</i>"]
+    test["<b>loop-test</b><br/><i>«external» tests</i>"]
+    rev["<b>loop-review</b><br/><i>«external» review</i>"]
+    scout["<b>loop-scout</b><br/><i>«external» prior art</i>"]
+
+    design -- "mechanism inside<br/>a component" --> algo
+    design -- "execution machinery<br/>lives there" --> ship
+    design -- "measuring the targets<br/>lives there" --> ops
+    rev -- "findings become<br/>remediation" --> pat
+    pat -- "behaviour preservation<br/>proved by" --> test
+    algo -- "correctness oracle" --> test
+    scout -- "already-adopted dependency:<br/>idiom, not selection" --> pat
+
+    classDef component fill:#85BBF0,stroke:#5D82A8,color:#000
+    classDef extc fill:#BFBFBF,stroke:#8A8A8A,color:#000
+    class design,algo,pat component
+    class ship,ops,test,rev,scout extc
+    style g fill:none,stroke:#444444,stroke-dasharray:5 5

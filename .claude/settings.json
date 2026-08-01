@@ -1,10 +1,10 @@
 {
   "extraKnownMarketplaces": {
-    "theloopskill": {
+    "heimdall": {
       "source": "./"
     }
   },
   "enabledPlugins": {
-    "theloopskill@theloopskill": true
+    "heimdall@heimdall": true
   }
 }
