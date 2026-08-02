@@ -1,9 +1,9 @@
 # Heimdall
 
-> **Run real engineering work as governed, multi-agent workflows** — a Claude Code plugin of 20 composable skills covering the whole lifecycle, from design and review through shipping, operating, and autonomous self-improvement.
+> **Run real engineering work as governed, multi-agent workflows** — a Claude Code plugin of 22 composable skills covering the whole lifecycle, from design and review through shipping, operating, and autonomous self-improvement.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills: 21](https://img.shields.io/badge/skills-21-6f42c1.svg)](#whats-in-the-box)
+[![Skills: 22](https://img.shields.io/badge/skills-22-6f42c1.svg)](#whats-in-the-box)
 [![Plugin: marketplace](https://img.shields.io/badge/plugin-marketplace-2ea44f.svg)](#installation)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](CONTRIBUTING.md)
 
@@ -161,7 +161,7 @@ Eight separately-loadable units, split by **loading regime**, which is the meani
 
 The skills aren't a flat list — they build on `loop-engine` and **delegate rather than duplicate**. Every edge below is a boundary that would otherwise be an overlap:
 
-![Component diagram — how the twenty-one skills compose](docs/c4/diagrams/skill-composition.svg)
+![Component diagram — how the twenty-two skills compose](docs/c4/diagrams/skill-composition.svg)
 
 <sub>Diagram source: [`docs/c4/diagrams/src/skill-composition.mmd`](docs/c4/diagrams/src/skill-composition.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
@@ -173,7 +173,7 @@ Each handoff is a **checkable question**, not a judgment call: *does a runbook e
 
 ## The autonomy ladder
 
-The plugin isn't only twenty-one skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
+The plugin isn’t only twenty-two skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
 
 ![The autonomy ladder — OBSERVE, VERIFY, SUSTAIN, SCALE](docs/c4/diagrams/autonomy-ladder.svg)
 
@@ -262,7 +262,7 @@ Every authored workflow obeys three policy documents:
 
 Lifecycle is governed by a **pluggable framework** — the default **AIDLC** (Inception → Construction → Operation, each ending at a human gate). Drop a new `frameworks/<Name>.md` in and invoke with `--framework <Name>`.
 
-**The boundaries are a committed artifact.** With twenty-one skills, selection happens on the `description` field alone — so the mutually-exclusive scope matrix lives in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json) and outranks any build plan that disagrees with it.
+**The boundaries are a committed artifact.** With twenty-two skills, selection happens on the `description` field alone — so the mutually-exclusive scope matrix lives in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json) and outranks any build plan that disagrees with it.
 
 **The gate can fail.** `node scripts/validate.mjs` runs in CI and rejects unparseable frontmatter, routing-block drift, banned clock/random calls in templates, and dangling reference paths. It was accepted only after a deliberately injected fault made it fail.
 
@@ -305,16 +305,34 @@ Every skill follows the same shape: `SKILL.md` (thin router) + `references/` (de
 | `docs/plans/` | Release build plans |
 | `mcp/` | **`heimdall-mcp`** — the zero-dependency stdio MCP server (five tools + read-only skill resources), its ADR and its tool contracts |
 | `scripts/validate.mjs` | The validation gate, run by `.github/workflows/validate.yml` on every push and PR |
+| `scripts/pack-host.mjs`, `host-targets.json`, `check-host-packs.mjs` | The per-host packaging seam: descriptors in, `dist/<host>/` out, gated ([ADR-0008](docs/design/ADR-0008-host-packaging-seam.md)) |
 | `.claude-plugin/plugin.json`, `marketplace.json` | Plugin + marketplace manifests |
 | `.claude/settings.json` | Enables the plugin for Claude Code on the web |
 | `INSTALL.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `ROADMAP.md` | Install paths, contributor guide, version history, what's proposed next |
 
 ## Roadmap
 
-Two tracks are proposed and neither is decided — each names the ADR that has to be won before it starts. **[ROADMAP.md](ROADMAP.md)** carries both in full.
+Two tracks. **[ROADMAP.md](ROADMAP.md)** carries both in full, with per-host detail and a gate per milestone.
 
-- **Rust runtime for `heimdall-mcp`** — one static binary per platform instead of a Node script, so every host can launch the server identically. Needs an ADR that amends [ADR-0001](mcp/ADR-0001-runtime-and-dependency.md), which pinned Node stdlib and no manifest.
-- **Host portability** — run Heimdall outside Claude Code, starting with **Cursor, OpenAI Codex and Antigravity**, with more to follow. The deliverable is a generated-per-host packaging seam, not four hand-maintained copies of 22 skills, plus an honest support tier per host: skills load (A), MCP tools reachable (B), multi-agent execution (C — Claude Code only until proven otherwise).
+- **Rust runtime for `heimdall-mcp`** *(proposed)* — one static binary per platform instead of a Node script, so every host can launch the server identically. Needs an ADR that amends [ADR-0001](mcp/ADR-0001-runtime-and-dependency.md), which pinned Node stdlib and no manifest.
+- **Host portability** *(in progress — H0 and H1's code side have landed)* — run Heimdall outside Claude Code, starting with **Cursor, OpenAI Codex and Antigravity**, more to follow.
+
+`.claude/skills/` stays the single source of truth; each host's tree is **generated**, never hand-maintained ([ADR-0008](docs/design/ADR-0008-host-packaging-seam.md)):
+
+```sh
+node scripts/pack-host.mjs --all      # → dist/cursor/, dist/codex/, dist/antigravity/
+node scripts/check-host-packs.mjs     # determinism, held-back skills, dangling pointers, banners
+```
+
+What that honestly buys per host — the caveats *are* the point:
+
+| Tier | State |
+|---|---|
+| **A — skills load** | **18 of 22.** `loop-engine`, `loop-harness`, `loop-skill` and `loop-autopilot` are Claude Code-native *by subject* — the `Workflow` tool, `.claude/settings.json`, this repo's own gate, Routines — so they are held back rather than mistranslated. |
+| **B — MCP tools reachable** | Emitted per host in its own dialect (`mcpServers` JSON, Antigravity's `mcp_config.json`, Codex's TOML `[mcp_servers.*]`). The launch path is absolute and resolved at pack time — the wart the Rust track removes. |
+| **C — multi-agent execution** | **Claude Code only.** The 28 `*.workflow.js` templates target a tool no other host has, so they are excluded and every affected skill carries a generated note saying so, instead of quietly degrading to a single-agent answer. |
+
+**No pack has been installed into a real session of any of the three hosts yet** — they build and pass their gate, nothing more. Instructions to try one: [INSTALL §4](INSTALL.md).
 
 ## Contributing
 

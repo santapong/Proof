@@ -1,6 +1,26 @@
 # Design records
 
-Two machine-readable artifacts that govern the plugin. They are **normative**, not historical notes.
+Two machine-readable artifacts that govern the plugin, plus the ADR series. The artifacts are
+**normative**, not historical notes; an ADR states what was decided at the time and is not rewritten.
+
+## Architecture decision records
+
+| ADR | Rules on | Status |
+|---|---|---|
+| [ADR-0002](ADR-0002-dependency-seam-and-boot-contract.md) | `mcp/`'s dependency seam and boot contract | Accepted |
+| [ADR-0003](ADR-0003-tool-contracts-and-call-sites.md) | MCP tool contracts and call sites | Accepted |
+| [ADR-0004](ADR-0004-extraction-strategy-and-failure-semantics.md) | Routing-fact extraction and failure semantics | Accepted |
+| [ADR-0005](ADR-0005-correctness-invariant-no-silent-default.md) | The no-silent-default correctness invariant | Accepted |
+| [ADR-0006](ADR-0006-width-shape-band-coverage-and-flag-selected-rows.md) | Verifier width, shape/band coverage, flagged rows | Accepted |
+| [ADR-0007](ADR-0007-boundary-lookup-matching-and-speech-act.md) | `boundary_lookup` matching and speech act | Accepted |
+| [**ADR-0008**](ADR-0008-host-packaging-seam.md) | **How the skills reach a host that is not Claude Code** — one source of truth, generated packs under `dist/<host>/`, four skills held back by subject, carried reference files, the Tier-B degradation contract | **Proposed** |
+
+[ADR-0001](../../mcp/ADR-0001-runtime-and-dependency.md) predates this directory and lives beside the
+code it governs, in `mcp/`. ADR-0009 (a Rust runtime for `heimdall-mcp`) and ADR-0010 (whether
+Heimdall grows its own orchestrator for hosts that have none) are named in
+[ROADMAP.md](../../ROADMAP.md) and not yet written.
+
+## Normative artifacts
 
 | File | What it is | Authority |
 |---|---|---|

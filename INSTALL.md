@@ -1,6 +1,6 @@
 # Installing Heimdall
 
-Heimdall ships twenty-one Claude Code skills:
+Heimdall ships twenty-two Claude Code skills:
 
 | Skill | What it does |
 |---|---|
@@ -79,7 +79,7 @@ Install the bundle into any project or user scope via the plugin system.
 # add this repo as a marketplace
 /plugin marketplace add santapong/Heimdall
 
-# install the bundled plugin (all twenty-one skills)
+# install the bundled plugin (all twenty-two skills)
 /plugin install heimdall@heimdall
 ```
 
@@ -97,7 +97,7 @@ Marketplace manifest lives at `.claude-plugin/marketplace.json`; the plugin mani
 - Opening this repo directly (Option 1) reads the **project-scope** `.mcp.json`, where `${CLAUDE_PROJECT_DIR}` correctly resolves to the repo you have open.
 - Installing the bundled plugin into some *other* project (Option 3) never reads that file — it reads the **plugin manifest's** `mcpServers`, where `${CLAUDE_PLUGIN_ROOT}` correctly resolves to wherever the plugin got installed, which is not the consuming project's directory. `${CLAUDE_PROJECT_DIR}` in a plugin manifest would resolve to the *consumer's* project and silently fail to find `mcp/server.mjs` there.
 
-Without the manifest entry, every marketplace/plugin-install consumer got the 21 skills and no server — the repo-root `.mcp.json` only ever serves a session opened inside this checkout. `mcpServers` is a recognized `plugin.json` field: `claude plugin validate . --strict` passes with it present (verified against this repo, 2026-07-28) and, as a negative control, flags an actually-unknown field added alongside it (`✘ Validation failed (--strict treats warnings as errors)` for a planted `definitelyBogusUnknownField12345`, removed before commit) — so this is not merely "the validator didn't complain," it demonstrably distinguishes a real field from a typo.
+Without the manifest entry, every marketplace/plugin-install consumer got the skills and no server — the repo-root `.mcp.json` only ever serves a session opened inside this checkout. `mcpServers` is a recognized `plugin.json` field: `claude plugin validate . --strict` passes with it present (verified against this repo, 2026-07-28) and, as a negative control, flags an actually-unknown field added alongside it (`✘ Validation failed (--strict treats warnings as errors)` for a planted `definitelyBogusUnknownField12345`, removed before commit) — so this is not merely "the validator didn't complain," it demonstrably distinguishes a real field from a typo.
 
 ---
 

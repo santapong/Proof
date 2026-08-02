@@ -20,6 +20,12 @@ A C4 container is a *runtime or deploy boundary*, not a Docker container. For a 
 | **Design Records** | Review-time, by humans and reviewers | Normative and machine-readable. Kept because three of its mandates were once dropped from a build plan and, since every review checked the plan instead, nobody noticed. |
 | **Validation Gate** | CI, on push and PR | The only container that *executes in the repo's own CI*. It exists because the host's `plugin validate` reads the marketplace manifest and never opens a `SKILL.md`. |
 | **Plugin Manifests** | By the host, at install | The discovery contract. Skills under `.claude/skills/` are auto-discovered, so this rarely changes. |
+| **MCP Server** (`mcp/`) | A **process**, spawned by the host over stdio | The only container with a lifecycle of its own. Five tools plus read-only resources, parsed live from the same source documents the skills read — so a tool answer and a skill answer cannot drift. Zero dependencies, by [ADR-0001](../../mcp/ADR-0001-runtime-and-dependency.md). |
+| **Host Packs** (`dist/<host>/`) | **Generated**, then installed into a *different* host | Not loaded by Claude Code at all — this is the repo's output for Cursor, Codex and Antigravity. Generated from the Skill Routers and Reference Library, minus the four skills that are Claude Code-native by subject and minus every template, per [ADR-0008](../design/ADR-0008-host-packaging-seam.md). Git-ignored; gated by `scripts/check-host-packs.mjs`. |
+
+> **Diagram lag.** `diagrams/container.svg` predates the last two rows — it draws neither the MCP
+> server (shipped in 2.0.0) nor the host packs. Regenerating needs `npx @mermaid-js/mermaid-cli` and
+> a Chromium; the prose above is current and the diagram is the stale copy, in that order.
 
 ## The three flows worth tracing
 
