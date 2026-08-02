@@ -1,29 +1,35 @@
 ---
-title: "System Context — TheLoopSkill"
+title: "System Context (Level 1) — Heimdall"
 ---
+%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 55, "rankSpacing": 70}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "14px"}}}%%
 flowchart TB
-    dev["<b>Developer</b><br/><i>«person»</i><br/>Invokes a skill; answers gate questions"]
+    dev["<b>Developer</b><br/><i>«person»</i><br/>Invokes a skill; answers the<br/>pre-flight and every phase gate"]
     maint["<b>Plugin Maintainer</b><br/><i>«person»</i><br/>Adds skills and standards shelves;<br/>approves at lifecycle gates"]
 
-    tls["<b>TheLoopSkill</b><br/><i>«system»</i><br/>Turns an engineering task into a<br/>governed multi-agent workflow"]
+    heimdall["<b>Heimdall</b><br/><i>«system»</i><br/>Turns an engineering task into a<br/>governed multi-agent workflow<br/>22 skills · 1 engine · 1 MCP server"]
 
     cc["<b>Claude Code</b><br/><i>«external system»</i><br/>Host runtime: skills, context,<br/>Workflow tool, permissions"]
     fleet["<b>Claude Model Fleet</b><br/><i>«external system»</i><br/>Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5"]
     repo["<b>Target Repository</b><br/><i>«external system»</i><br/>The developer's codebase and git history"]
     forge["<b>GitHub</b><br/><i>«external system»</i><br/>Issues, PRs and CI signals"]
     web["<b>Web &amp; Standards Sources</b><br/><i>«external system»</i><br/>Specs and RFCs behind version-pinned citations"]
+    hosts["<b>Other agent hosts</b><br/><i>«external system» — not yet verified</i><br/>Cursor · OpenAI Codex · Antigravity<br/>Generated packs, Tier A+B only"]
 
-    dev -- "invokes a skill,<br/>answers gate questions" --> tls
-    maint -- "authors skills and<br/>standards shelves" --> tls
-    cc <-- "loads the plugin; spawns<br/>agents on its behalf" --> tls
-    tls -- "routes each node<br/>to a model tier" --> fleet
-    tls -- "reads code; implement<br/>nodes write patches" --> repo
-    tls -- "reads feedback; draft PRs,<br/>never merges" --> forge
-    tls -- "confirms every version pin<br/>before citing it" --> web
+    dev -- "invokes a skill,<br/>answers gate questions" --> heimdall
+    maint -- "authors skills and<br/>standards shelves" --> heimdall
+    cc <-- "loads the plugin; spawns<br/>agents on its behalf" --> heimdall
+    heimdall -- "routes each node<br/>to a model tier" --> fleet
+    heimdall -- "reads code; implement<br/>nodes write patches" --> repo
+    heimdall -- "reads feedback; draft PRs,<br/>never merges" --> forge
+    heimdall -- "confirms every version pin<br/>before citing it" --> web
+    heimdall -. "ships generated skill packs<br/><i>ROADMAP H1/H3/H4</i>" .-> hosts
 
-    classDef person fill:#08427B,stroke:#052E56,color:#fff
-    classDef system fill:#1168BD,stroke:#0B4884,color:#fff
-    classDef ext fill:#999999,stroke:#6B6B6B,color:#fff
+    classDef person fill:#08427B,stroke:#052E56,stroke-width:2px,color:#fff
+    classDef system fill:#1168BD,stroke:#0B4884,stroke-width:2px,color:#fff
+    classDef ext fill:#8C8C8C,stroke:#5F5F5F,stroke-width:2px,color:#fff
+    classDef planned fill:#F2F2F2,stroke:#8C8C8C,stroke-width:2px,stroke-dasharray:6 4,color:#333
     class dev,maint person
-    class tls system
+    class heimdall system
     class cc,fleet,repo,forge,web ext
+    class hosts planned
+    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#333

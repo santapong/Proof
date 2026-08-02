@@ -147,7 +147,7 @@ The system is documented with the **[C4 model](https://c4model.com)** — a hier
 
 ### Level 1 — System Context
 
-**What is this, who uses it, what does it depend on?** Note where the boundary sits: Claude Code is *outside* it. The plugin has no process, port, or lifecycle of its own — everything it "does" is done by the host on its instruction.
+**What is this, who uses it, what does it depend on?** Note where the boundary sits: Claude Code is *outside* it. The plugin owns exactly one process of its own — `heimdall-mcp`, a stdio child the host spawns — and everything else it "does" is done by the host on its instruction.
 
 ![System Context — Heimdall (at a glance)](docs/c4/diagrams/context-glance.svg)
 
@@ -170,6 +170,8 @@ The five relationships running `loop-operate → loop-incident → loop-debug �
 Each handoff is a **checkable question**, not a judgment call: *does a runbook exist and does running it restore the SLI?* · *is the service currently down, or is the defect merely reproducible?* · *is the rollout in flight, or baked?* The full 20-way matrix is in **[`docs/design/boundary-audit.json`](docs/design/boundary-audit.json)**, which is normative — it outranks any plan that disagrees with it.
 
 → **[Component diagram](docs/c4/component.md)** opens `loop-engine` itself · **[the skill fleet](docs/c4/skills.md)** draws each role group and what is inside any one skill · **[skill anatomy](docs/c4/skill-anatomy.md)** explains why that shape · **[the architecture notes](docs/c4/README.md)** trace one invocation end to end with the prior art behind each idea.
+
+**C4 is structural — it says nothing about time, contributors, or machines.** For those, the **[4+1 views](docs/views/4plus1.md)** add a *process* view (what runs concurrently, and where the run blocks on a human), a *development* view (what you edit, and which of the three gates catches you), a *physical* view (what process runs where — almost all of it local, exactly one network hop per agent node), and four *scenarios* that walk all four views end to end, including the paths that fail.
 
 ## The autonomy ladder
 

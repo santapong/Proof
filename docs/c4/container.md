@@ -13,7 +13,7 @@ A C4 container is a *runtime or deploy boundary*, not a Docker container. For a 
 | Container | Loading regime | Why it is separate |
 |---|---|---|
 | **Skill Routers** | Into agent context, on invocation | The `description` field is API: it is the *only* thing the model sees when choosing a skill. Routers stay thin so twenty-two of them can coexist without drowning the context window. |
-| **Reference Library** | On demand, by the router's flow | Progressive disclosure. 93 files of standards-grade depth would never fit in context at once; the router decides which two or three matter for this task. |
+| **Reference Library** | On demand, by the router's flow | Progressive disclosure. 112 files of standards-grade depth would never fit in context at once; the router decides which two or three matter for this task. |
 | **Workflow Templates** | Executed, never read into context | A different execution model entirely — plain JS in a sandbox with no filesystem, no clock, and no module access. That sandbox is what forces the `ROUTES` duplication rule (see [Component](component.md)). |
 | **Governance Policies** | Read-only, before authoring | Consumed by every skill and modified by none. Separating them is what lets twenty-two skills share one orchestration discipline instead of twenty-two dialects. |
 | **Lifecycle Frameworks** | Read-only, selected by flag | Pluggable: `--framework <name>` resolves to a file. AIDLC is the default, not the only option. |
@@ -22,10 +22,6 @@ A C4 container is a *runtime or deploy boundary*, not a Docker container. For a 
 | **Plugin Manifests** | By the host, at install | The discovery contract. Skills under `.claude/skills/` are auto-discovered, so this rarely changes. |
 | **MCP Server** (`mcp/`) | A **process**, spawned by the host over stdio | The only container with a lifecycle of its own. Five tools plus read-only resources, parsed live from the same source documents the skills read — so a tool answer and a skill answer cannot drift. Zero dependencies, by [ADR-0001](../../mcp/ADR-0001-runtime-and-dependency.md). |
 | **Host Packs** (`dist/<host>/`) | **Generated**, then installed into a *different* host | Not loaded by Claude Code at all — this is the repo's output for Cursor, Codex and Antigravity. Generated from the Skill Routers and Reference Library, minus the four skills that are Claude Code-native by subject and minus every template, per [ADR-0008](../design/ADR-0008-host-packaging-seam.md). Git-ignored; gated by `scripts/check-host-packs.mjs`. |
-
-> **Diagram lag.** `diagrams/container.svg` predates the last two rows — it draws neither the MCP
-> server (shipped in 2.0.0) nor the host packs. Regenerating needs `npx @mermaid-js/mermaid-cli` and
-> a Chromium; the prose above is current and the diagram is the stale copy, in that order.
 
 ## The three flows worth tracing
 

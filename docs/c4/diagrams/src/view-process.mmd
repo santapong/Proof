@@ -1,0 +1,38 @@
+---
+title: "4+1 · Process view — what runs concurrently, and where it blocks"
+---
+%%{init: {"themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}, "sequence": {"actorMargin": 45, "boxMargin": 8}}}%%
+sequenceDiagram
+    autonumber
+    actor Dev as Developer
+    participant Sess as Main session<br/>(the conductor)
+    participant MCP as heimdall-mcp<br/>(child process)
+    participant WF as Workflow tool<br/>(sandbox)
+    participant A as Agents<br/>(≤ cap, concurrent)
+
+    Dev->>Sess: /loop-review <target> --mode all-out
+    Sess->>MCP: route_node / estimate_phase (stdio JSON-RPC)
+    MCP-->>Sess: routing + cost facts, cited
+    Note over Sess: Authoring is sequential and in-context —<br/>no agent has spawned yet
+
+    Sess->>Dev: pre-flight: N agents, est. X–Y tokens. Proceed?
+    Dev-->>Sess: approve (exactly one confirmation)
+
+    Sess->>WF: execute script + args
+    par find (fan-out, one per dimension)
+        WF->>A: agent(dimension 1)
+        WF->>A: agent(dimension 2)
+        WF->>A: agent(dimension n)
+    end
+    Note over WF,A: pipeline() — item 1 may reach verify<br/>while item n is still finding
+
+    par verify (adversarial, per finding)
+        WF->>A: refute finding 1
+        WF->>A: refute finding 2
+    end
+    A-->>WF: verdicts
+    WF-->>Sess: structured result + journal
+
+    Sess->>Dev: phase gate — deliverable + cost ledger
+    Note over Dev,Sess: BLOCKING — a human decides.<br/>The loop proposes, never merges
+    Dev-->>Sess: approve / repair / stop

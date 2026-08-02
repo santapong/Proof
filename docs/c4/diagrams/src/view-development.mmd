@@ -1,0 +1,53 @@
+---
+title: "4+1 · Development view — the repo as modules, and the gates over them"
+---
+%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 40, "rankSpacing": 60}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
+flowchart LR
+    subgraph src["<b>Source of truth</b>"]
+        direction TB
+        skills[".claude/skills/<br/><i>22 × {SKILL.md, references/, templates/}</i>"]
+        docs["docs/<br/><i>c4/ · design/ · plans/</i>"]
+        mcpsrc["mcp/<br/><i>server.mjs + 10 lib modules</i>"]
+    end
+
+    subgraph tools["<b>Build &amp; check</b> — scripts/, Node stdlib only"]
+        direction TB
+        validate["validate.mjs<br/><i>frontmatter · ROUTES drift ·<br/>H10 · reference paths</i>"]
+        smoke["smoke.mjs<br/><i>executes all 28 templates<br/>against stubbed globals</i>"]
+        packs["pack-host.mjs<br/>+ check-host-packs.mjs<br/><i>generates and gates dist/</i>"]
+        render["render-diagrams.mjs<br/><i>.mmd → .svg</i>"]
+    end
+
+    subgraph out["<b>Outputs</b>"]
+        direction TB
+        plugin["Plugin<br/><i>.claude-plugin/ + marketplace</i>"]
+        dist["dist/&lt;host&gt;/<br/><i>git-ignored, built per release</i>"]
+        svg["docs/c4/diagrams/*.svg<br/><i>committed beside their source</i>"]
+    end
+
+    ci["<b>GitHub Actions</b><br/><i>validate.yml — push + PR<br/>on main and develop</i>"]
+
+    skills --> validate
+    skills --> smoke
+    skills --> packs
+    docs --> render
+    mcpsrc --> validate
+    skills --> plugin
+    packs --> dist
+    render --> svg
+    ci -- "runs all three gates;<br/>red blocks the merge" --> validate
+    ci --> smoke
+    ci --> packs
+
+    classDef source fill:#438DD5,stroke:#2E6295,stroke-width:2px,color:#fff
+    classDef tool fill:#F5E8C7,stroke:#B08D3F,stroke-width:2px,color:#000
+    classDef output fill:#9FC5E8,stroke:#4A7EA8,stroke-width:2px,color:#000
+    classDef ext fill:#8C8C8C,stroke:#5F5F5F,stroke-width:2px,color:#fff
+    class skills,docs,mcpsrc source
+    class validate,smoke,packs,render tool
+    class plugin,dist,svg output
+    class ci ext
+    style src fill:none,stroke:#2E6295,stroke-width:2px,stroke-dasharray:6 4
+    style tools fill:none,stroke:#B08D3F,stroke-width:2px,stroke-dasharray:6 4
+    style out fill:none,stroke:#4A7EA8,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#333
