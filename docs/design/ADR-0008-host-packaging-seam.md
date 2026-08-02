@@ -4,12 +4,12 @@
 
 **Proposed**
 
-Date: 2026-08-02 · Deciders: Track 2 / H0 · Blocks: all of ROADMAP Track 2 (H1–H5)
+Date: 2026-08-02 · Deciders: H0 (host portability) · Blocks: all of ROADMAP H1–H5
 
 Rules on how the 22 skills reach a host that is not Claude Code. It amends no existing ADR: ADR-0001
 through ADR-0007 all rule on `mcp/`, and none of them says anything about where skills live or who
-may copy them. It does **not** decide the Rust runtime (Track 1 / ADR-0009); it only names the seam
-that runtime will plug into.
+may copy them. It does **not** change how `heimdall-mcp` is built or launched; it only pins the one
+field a future change to that would have to touch.
 
 ---
 
@@ -58,7 +58,7 @@ is shipping four skills that will confidently instruct a Cursor agent to edit
 
 Cursor loads skills from `.cursor/skills/`, `.agents/skills/`, and **for compatibility**
 `.claude/skills/` and `.codex/skills/` (plus the `~/` globals of each). That compatibility loader is
-Track 2's cheapest win and its nastiest trap in the same sentence:
+this track's cheapest win and its nastiest trap in the same sentence:
 
 - **The win:** on Cursor, this repo needs *no* pack for Tier A. Cursor already reads
   `.claude/skills/` as it stands.
@@ -88,9 +88,10 @@ alone, before portability is even considered.
 `.mcp.json` today is `node ${CLAUDE_PROJECT_DIR}/mcp/server.mjs`. No target host expands
 `${CLAUDE_PROJECT_DIR}` or `${CLAUDE_PLUGIN_ROOT}`, and none guarantees a `node` on `PATH` — the
 machine this ADR was drafted on has no `node` installed at all. Emitting a *literal absolute path
-resolved at pack time* is the only thing that works today, and it is exactly the wart Track 1's
-single binary removes. This ADR must therefore emit the launch command through one indirection, so
-ADR-0009 can change what is launched without touching three emitters.
+resolved at pack time* is the only thing that works, and it is a standing cost rather than a
+temporary one: there is no plan to ship the server as a self-contained binary. This ADR therefore
+emits the launch command through one indirection, so that if the runtime ever *does* change, it is a
+one-line descriptor edit rather than a change to three emitters.
 
 ---
 
@@ -114,7 +115,9 @@ never a side effect of cloning this repo.
 `dist/` is git-ignored and CI attaches the packs to the GitHub release. Committing them would add
 ~5 MB of duplicated content and, worse, rewrite three copies of every file in git history on every
 skill edit. The cost, stated plainly: **a user who wants a pack from a checkout needs `node`** (or a
-release download). That cost is temporary and Track 1 is the thing that retires it.
+release download). **That cost is permanent as things stand**, which is precisely why the
+runner-up below — committing the packs — stays live as a reversal path rather than being closed
+out.
 
 ### D8.4 — A pack contains 18 skills; the four in C2 are held back
 
@@ -152,8 +155,9 @@ files is rewritten to the degradation note.
 
 The host descriptor carries the MCP config *format* (`mcpServers` JSON / `mcp_config.json` JSON /
 TOML `[mcp_servers.*]`); the launch command comes from a single field resolved at pack time. Today
-it resolves to `node <abs>/mcp/server.mjs`; when ADR-0009 lands it resolves to `heimdall-mcp`, and
-no emitter changes.
+it resolves to `node <abs>/mcp/server.mjs`. Nothing on the roadmap changes that. The indirection is
+kept anyway, because the alternative is the same string hand-written into a JSON emitter, a second
+JSON emitter and a TOML emitter — three places to get wrong for no benefit.
 
 ### D8.8 — The pack is deterministic, and a sibling script gates it
 
@@ -223,7 +227,7 @@ are H1's opening worklist, and the ruling on this ADR should settle at least cla
 > sentences, and one that is a *source* defect rather than a packing one (`loop-pattern/references/
 > design-patterns.md` §"Drafting notes for the caller" is authoring scaffolding left in a shipped
 > reference file, carrying a stale `/mnt/data/company/TheLoopSkill/…` path. It is wrong in
-> `.claude/skills/` too and should be fixed there, outside Track 2).
+> `.claude/skills/` too and should be fixed there, outside this track).
 
 ## Consequences
 
@@ -231,15 +235,16 @@ are H1's opening worklist, and the ruling on this ADR should settle at least cla
   Cursor". D8.4 and D8.6 are what make the claim checkable.
 - **Cursor at Tier A costs nothing** and therefore proves nothing about the seam. H1's gate must be
   passed with an *installed pack* in a scratch project, not by opening this repo in Cursor.
-- **A `node` prerequisite lands on pack consumers** until Track 1 ships (D8.3). Stated in INSTALL,
-  not hidden.
+- **A `node` prerequisite lands on pack consumers, permanently** (D8.3), along with a launch path
+  that breaks if the checkout moves. Stated in INSTALL, not hidden. This is the single sharpest
+  edge of the whole seam and the most likely reason to revisit D8.3.
 - **The repo grows a build step it did not have.** `pack-host.mjs` and `check-host-packs.mjs` are
   Node stdlib only, matching the `scripts/` law; they add no manifest and no dependency, so
   `CONTRIBUTING.md:69` stays true.
 - **Two prose files become Claude-Code-only** (D8.6). If a per-host model map is ever wanted, it is a
   new descriptor field and a new ADR, not an edit to those files.
 - **Deferred, deliberately:** anything about Tier C. This ADR gets knowledge and tools onto three
-  hosts. Whether Heimdall grows its own orchestrator is ADR-0010, and H2's discovery pass is what
+  hosts. Whether Heimdall grows its own orchestrator is ADR-0009, and H2's discovery pass is what
   should decide it.
 
 ## Alternatives Considered
@@ -249,8 +254,8 @@ are H1's opening worklist, and the ruling on this ADR should settle at least cla
   `cp -r` into a global skills directory.
 - **A branch per host** — named so it is visibly rejected. Merge conflicts on every skill edit, and
   it makes the drift in D8.1 permanent rather than merely likely.
-- **Commit the packs** (runner-up to D8.3). Removes the `node` prerequisite for checkout users and
-  is the reversal path if that prerequisite proves painful before Track 1 lands. Costs ~5 MB and
+- **Commit the packs** (runner-up to D8.3, and a live one). Removes the `node` prerequisite for
+  checkout users — who would otherwise carry it forever, since no binary is coming. Costs ~5 MB and
   triples the diff of every skill change. Reversible in one commit if D8.3 turns out wrong.
 - **Ship all 22 skills and let each host cope** — rejected by C2. Four of them would instruct the
   host's agent to configure a product it is not.

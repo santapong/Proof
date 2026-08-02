@@ -312,10 +312,9 @@ Every skill follows the same shape: `SKILL.md` (thin router) + `references/` (de
 
 ## Roadmap
 
-Two tracks. **[ROADMAP.md](ROADMAP.md)** carries both in full, with per-host detail and a gate per milestone.
+One track, milestones H0–H5. **[ROADMAP.md](ROADMAP.md)** carries it in full, with per-host detail and a gate per milestone.
 
-- **Rust runtime for `heimdall-mcp`** *(proposed)* — one static binary per platform instead of a Node script, so every host can launch the server identically. Needs an ADR that amends [ADR-0001](mcp/ADR-0001-runtime-and-dependency.md), which pinned Node stdlib and no manifest.
-- **Host portability** *(in progress — H0 and H1's code side have landed)* — run Heimdall outside Claude Code, starting with **Cursor, OpenAI Codex and Antigravity**, more to follow.
+**Host portability** *(in progress — H0 and H1's code side have landed)* — run Heimdall outside Claude Code, starting with **Cursor, OpenAI Codex and Antigravity**, more to follow.
 
 `.claude/skills/` stays the single source of truth; each host's tree is **generated**, never hand-maintained ([ADR-0008](docs/design/ADR-0008-host-packaging-seam.md)):
 
@@ -329,7 +328,7 @@ What that honestly buys per host — the caveats *are* the point:
 | Tier | State |
 |---|---|
 | **A — skills load** | **18 of 22.** `loop-engine`, `loop-harness`, `loop-skill` and `loop-autopilot` are Claude Code-native *by subject* — the `Workflow` tool, `.claude/settings.json`, this repo's own gate, Routines — so they are held back rather than mistranslated. |
-| **B — MCP tools reachable** | Emitted per host in its own dialect (`mcpServers` JSON, Antigravity's `mcp_config.json`, Codex's TOML `[mcp_servers.*]`). The launch path is absolute and resolved at pack time — the wart the Rust track removes. |
+| **B — MCP tools reachable** | Emitted per host in its own dialect (`mcpServers` JSON, Antigravity's `mcp_config.json`, Codex's TOML `[mcp_servers.*]`). The launch path is absolute and resolved at pack time, so re-pack if the checkout moves; `node` stays a prerequisite. |
 | **C — multi-agent execution** | **Claude Code only.** The 28 `*.workflow.js` templates target a tool no other host has, so they are excluded and every affected skill carries a generated note saying so, instead of quietly degrading to a single-agent answer. |
 
 **No pack has been installed into a real session of any of the three hosts yet** — they build and pass their gate, nothing more. Instructions to try one: [INSTALL §4](INSTALL.md).

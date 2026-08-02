@@ -8,7 +8,7 @@
 //   D8.4  Four skills are held back by name (loop-engine, loop-harness, loop-skill, loop-autopilot).
 //   D8.5  Rules rewrite HOST NOUNS only. A rule may never soften a claim about engineering.
 //   D8.6  *.workflow.js excluded; every skill that loses one gains a stated degradation banner.
-//   D8.7  One launch contract; three emitters. Track 1 changes `launch`, not this file.
+//   D8.7  One launch contract; three emitters. A runtime change edits `launch`, not this file.
 //   D8.8  Output is byte-deterministic: sorted walk, no timestamps, no randomness.
 //
 // Node stdlib only — CONTRIBUTING.md:69 (no package manifest, no dependency) still holds.
@@ -270,7 +270,7 @@ function pack(hostKey) {
     '',
     `Then wire the MCP server: merge \`${host.mcp.file}\` into \`${host.mcp.installPath}\`.`,
     '',
-    `> The launch command is an **absolute path resolved at pack time** (\`${launch.command} ${launch.args.join(' ')}\`), because no target host expands \`\${CLAUDE_PROJECT_DIR}\` (ADR-0008 §C5). Re-pack if the checkout moves. Requires \`node\` on PATH until Track 1 ships a binary.`,
+    `> The launch command is an **absolute path resolved at pack time** (\`${launch.command} ${launch.args.join(' ')}\`), because no target host expands \`\${CLAUDE_PROJECT_DIR}\` (ADR-0008 §C5). Re-pack if the checkout moves, and keep \`node\` on PATH — the server is a Node script and there is no self-contained binary.`,
     '',
     `**Known friction:** ${host.friction}`,
     host.note ? `\n**Note:** ${host.note}` : '',

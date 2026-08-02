@@ -103,7 +103,7 @@ Without the manifest entry, every marketplace/plugin-install consumer got the sk
 
 ## 4. Other hosts — Cursor, OpenAI Codex, Antigravity (in progress)
 
-**Status: ROADMAP Track 2, H1. The packs build and pass their gate; no pack has yet been installed
+**Status: ROADMAP H1 (host portability). The packs build and pass their gate; no pack has yet been installed
 into a real session of any of the three hosts.** Treat this section as instructions to try, not a
 support claim — the support matrix lands in H5, and a host only gets a row once its gate passes.
 
@@ -130,8 +130,8 @@ Three things to know before you install one:
 - **No multi-agent execution.** The 28 `*.workflow.js` templates are excluded and every affected
   skill says so in a generated host note. The judgment is intact; the fan-out is not.
 - **The MCP launch path is absolute and resolved at pack time**, because no other host expands
-  `${CLAUDE_PROJECT_DIR}`. Re-pack if the checkout moves. `node` must be on `PATH` until Track 1
-  ships a binary.
+  `${CLAUDE_PROJECT_DIR}`. Re-pack if the checkout moves, and keep `node` on `PATH` — the server is
+  a Node script, and no self-contained binary is planned.
 
 **Cursor shortcut:** if you have already cloned this repo, Cursor reads `.claude/skills/` natively —
 point it at the checkout and skip the pack entirely. Do *not* generate a pack into `.agents/skills/`

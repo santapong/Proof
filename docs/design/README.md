@@ -16,9 +16,9 @@ Two machine-readable artifacts that govern the plugin, plus the ADR series. The 
 | [**ADR-0008**](ADR-0008-host-packaging-seam.md) | **How the skills reach a host that is not Claude Code** — one source of truth, generated packs under `dist/<host>/`, four skills held back by subject, carried reference files, the Tier-B degradation contract | **Proposed** |
 
 [ADR-0001](../../mcp/ADR-0001-runtime-and-dependency.md) predates this directory and lives beside the
-code it governs, in `mcp/`. ADR-0009 (a Rust runtime for `heimdall-mcp`) and ADR-0010 (whether
-Heimdall grows its own orchestrator for hosts that have none) are named in
-[ROADMAP.md](../../ROADMAP.md) and not yet written.
+code it governs, in `mcp/`. ADR-0009 — whether Heimdall grows its own orchestrator for hosts that
+have none — is named in [ROADMAP.md](../../ROADMAP.md), conditional on what H2's discovery pass
+finds, and is not yet written.
 
 ## Normative artifacts
 

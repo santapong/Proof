@@ -9,7 +9,7 @@
   "serverId": "heimdall-mcp",
 
   "launch": {
-    "_": "ADR-0008 D8.7 — one launch contract, three emitters. {{REPO}} resolves to the absolute repo path at pack time because no target host expands ${CLAUDE_PROJECT_DIR}. When ADR-0009 (Rust) lands, this becomes command: 'heimdall-mcp', args: [] and no emitter changes.",
+    "_": "ADR-0008 D8.7 — one launch contract, three emitters. {{REPO}} resolves to the absolute repo path at pack time because no target host expands ${CLAUDE_PROJECT_DIR}. Kept as one field so a runtime change stays a one-line edit here instead of a change to two JSON emitters and a TOML one.",
     "command": "node",
     "args": ["{{REPO}}/mcp/server.mjs"]
   },
