@@ -77,7 +77,7 @@ Install the bundle into any project or user scope via the plugin system.
 
 ```
 # add this repo as a marketplace
-/plugin marketplace add santapong/TheLoopSkill
+/plugin marketplace add santapong/Heimdall
 
 # install the bundled plugin (all twenty-one skills)
 /plugin install heimdall@heimdall

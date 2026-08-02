@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_Nothing yet._
+### Changed
+- **GitHub repository renamed: `santapong/TheLoopSkill` → `santapong/Heimdall`** — the last identifier still carrying the old name (deferred at the v1.5.0 plugin rename because only the repo owner can click it). GitHub redirects the old URL and old git remotes indefinitely, so existing clones keep working; `plugin.json` homepage/repository, README, and INSTALL now point at the new URL. The local directory path `/mnt/data/company/TheLoopSkill` is unchanged (a filesystem path, not an identifier the plugin publishes).
 
 ## [2.1.0] — 2026-08-02
 

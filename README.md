@@ -127,7 +127,7 @@ What crosses those branch boundaries is a contract, not prose: `loop-context` ow
 
 ```
 # 1. Add the marketplace and install the plugin
-/plugin marketplace add santapong/TheLoopSkill
+/plugin marketplace add santapong/Heimdall
 /plugin install heimdall@heimdall
 
 # 2. Run your first workflow (dry-run shows the script without executing)
@@ -273,7 +273,7 @@ Three ways to use these skills — see **[INSTALL.md](INSTALL.md)** for full det
 
 - **Local (project skills)** — the skills live in `.claude/skills/` and are auto-discovered in any Claude Code session opened in this repo. Copy an individual skill directory into another project's `.claude/skills/` to reuse it.
 - **Remote (Claude Code on the web)** — web sessions see only committed project files; everything here is committed. Open the repo on [code.claude.com](https://code.claude.com) and the skills are available. `.claude/settings.json` enables the plugin for web sessions.
-- **Plugin (marketplace)** — `/plugin marketplace add santapong/TheLoopSkill` then `/plugin install heimdall@heimdall`.
+- **Plugin (marketplace)** — `/plugin marketplace add santapong/Heimdall` then `/plugin install heimdall@heimdall`.
 
 ## Repository layout
 
