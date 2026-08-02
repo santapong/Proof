@@ -22,6 +22,7 @@ Every node of every workflow is routed to a model tier that matches the job, on 
 - [Engineering policies & discipline](#engineering-policies--discipline)
 - [Installation](#installation)
 - [Repository layout](#repository-layout)
+- [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -302,10 +303,18 @@ Every skill follows the same shape: `SKILL.md` (thin router) + `references/` (de
 | `docs/c4/` | **Architecture**, documented with the C4 model: context, container, component, the skill fleet, skill anatomy, plus the mechanism, ideas and references |
 | `docs/design/` | **Normative design records** — the 18-skill boundary audit and the execution-mode spec |
 | `docs/plans/` | Release build plans |
+| `mcp/` | **`heimdall-mcp`** — the zero-dependency stdio MCP server (five tools + read-only skill resources), its ADR and its tool contracts |
 | `scripts/validate.mjs` | The validation gate, run by `.github/workflows/validate.yml` on every push and PR |
 | `.claude-plugin/plugin.json`, `marketplace.json` | Plugin + marketplace manifests |
 | `.claude/settings.json` | Enables the plugin for Claude Code on the web |
-| `INSTALL.md`, `CONTRIBUTING.md`, `CHANGELOG.md` | Install paths, contributor guide, version history |
+| `INSTALL.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `ROADMAP.md` | Install paths, contributor guide, version history, what's proposed next |
+
+## Roadmap
+
+Two tracks are proposed and neither is decided — each names the ADR that has to be won before it starts. **[ROADMAP.md](ROADMAP.md)** carries both in full.
+
+- **Rust runtime for `heimdall-mcp`** — one static binary per platform instead of a Node script, so every host can launch the server identically. Needs an ADR that amends [ADR-0001](mcp/ADR-0001-runtime-and-dependency.md), which pinned Node stdlib and no manifest.
+- **Host portability** — run Heimdall outside Claude Code, starting with **Cursor, OpenAI Codex and Antigravity**, with more to follow. The deliverable is a generated-per-host packaging seam, not four hand-maintained copies of 22 skills, plus an honest support tier per host: skills load (A), MCP tools reachable (B), multi-agent execution (C — Claude Code only until proven otherwise).
 
 ## Contributing
 

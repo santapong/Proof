@@ -31,3 +31,10 @@ jobs:
       # before this existed.
       - name: Smoke-test workflow templates
         run: node scripts/smoke.mjs
+
+      # ADR-0008 §D8.8. Packs every host twice and asserts the pack is deterministic, holds back
+      # the four Claude Code-native skills, ships no *.workflow.js, leaves no ${CLAUDE_*} expansion
+      # behind, and states its degradation wherever a template was dropped. Residual host-specific
+      # prose is reported, not failed — that report is how the next rewrite rule gets found.
+      - name: Check per-host skill packs
+        run: node scripts/check-host-packs.mjs

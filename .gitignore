@@ -1,0 +1,5 @@
+# Generated per-host skill packs (docs/design/ADR-0008-host-packaging-seam.md §D8.2, §D8.3).
+# Built by `node scripts/pack-host.mjs --all`, published as release assets, never committed:
+# committing them would add ~5 MB of duplicated skills and rewrite three copies of every file
+# in git history on each skill edit. `.claude/skills/` is the only source of truth.
+dist/
