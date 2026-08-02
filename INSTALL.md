@@ -101,9 +101,49 @@ Without the manifest entry, every marketplace/plugin-install consumer got the 21
 
 ---
 
-## No `.gitignore`, on purpose
+## 4. Other hosts — Cursor, OpenAI Codex, Antigravity (in progress)
 
-This repo ships no `.gitignore`, and `mcp/`'s own law (`docs/design/ADR-0002-dependency-seam-and-boot-contract.md` §D2.2, §5) is explicit that one must not be added for `node_modules`: nothing in this repo is generated, `git status` is currently the *only* signal that a stray `npm install` violated the zero-dependency rule (`claude plugin validate --strict`, `scripts/validate.mjs` and `scripts/smoke.mjs` all measured blind to a planted `mcp/node_modules` — ADR-0002 §2), and an ignore entry would remove that last detector to buy tidiness. Anyone running `npm install` anywhere in this tree will see `?? node_modules/` in `git status` until they remove it — that nuisance is deliberate, not an oversight to "fix" with a `.gitignore`.
+**Status: ROADMAP Track 2, H1. The packs build and pass their gate; no pack has yet been installed
+into a real session of any of the three hosts.** Treat this section as instructions to try, not a
+support claim — the support matrix lands in H5, and a host only gets a row once its gate passes.
+
+Skills are generated per host rather than copied by hand ([ADR-0008](docs/design/ADR-0008-host-packaging-seam.md)):
+
+```sh
+node scripts/pack-host.mjs --all       # → dist/cursor/, dist/codex/, dist/antigravity/
+node scripts/check-host-packs.mjs      # the gate: determinism, held-back skills, dangling pointers
+```
+
+Each `dist/<host>/` carries a generated `README.md` with that host's exact install paths and its
+known friction. In short:
+
+| Host | Skills → | MCP config → |
+|---|---|---|
+| **Cursor** | `.cursor/skills/` or `~/.cursor/skills/` | merge `mcp.json` into `.cursor/mcp.json` |
+| **OpenAI Codex CLI** | `.codex/skills/` or `~/.codex/skills/` | append `config.toml.fragment` to `~/.codex/config.toml` (or use `codex mcp add`) |
+| **Antigravity** | `.agents/skills/` or `~/.gemini/config/skills/` | merge `mcp_config.json` into `~/.gemini/config/mcp_config.json` |
+
+Three things to know before you install one:
+
+- **A pack carries 18 of the 22 skills.** `loop-engine`, `loop-harness`, `loop-skill` and
+  `loop-autopilot` are Claude Code-native by subject and are held back ([ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md)).
+- **No multi-agent execution.** The 28 `*.workflow.js` templates are excluded and every affected
+  skill says so in a generated host note. The judgment is intact; the fan-out is not.
+- **The MCP launch path is absolute and resolved at pack time**, because no other host expands
+  `${CLAUDE_PROJECT_DIR}`. Re-pack if the checkout moves. `node` must be on `PATH` until Track 1
+  ships a binary.
+
+**Cursor shortcut:** if you have already cloned this repo, Cursor reads `.claude/skills/` natively —
+point it at the checkout and skip the pack entirely. Do *not* generate a pack into `.agents/skills/`
+or `.codex/skills/` inside this repo: Cursor reads those paths too and would load every skill three
+times.
+
+---
+
+## The `.gitignore` is one line, on purpose
+
+`dist/` is generated (ADR-0008 §D8.2–D8.3) and never committed. **`node_modules` is deliberately
+*not* listed**, and adding it would break a real detector: `mcp/`'s own law (`docs/design/ADR-0002-dependency-seam-and-boot-contract.md` §D2.2, §5) is explicit that one must not be added for `node_modules`: `git status` is the *only* signal that a stray `npm install` violated the zero-dependency rule (`claude plugin validate --strict`, `scripts/validate.mjs` and `scripts/smoke.mjs` all measured blind to a planted `mcp/node_modules` — ADR-0002 §2), and an ignore entry would remove that last detector to buy tidiness. Anyone running `npm install` anywhere in this tree will see `?? node_modules/` in `git status` until they remove it — that nuisance is deliberate, not an oversight to "fix" with a `.gitignore`.
 
 ## Layout
 

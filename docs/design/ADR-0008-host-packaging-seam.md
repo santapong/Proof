@@ -129,6 +129,11 @@ Claude-Code-specific one-liners in C1 — and a rule may only rewrite a **host n
 touch a claim about engineering. If a passage cannot be made true on the target host by renaming
 nouns, the passage is excluded or the skill is held back under D8.4; it is never quietly softened.
 
+One line is treated specially: **`argument-hint`**, because it is the one part of a skill a host
+renders as a promise about its own invocation. Every bracketed flag on it (`--mode`, `--planner`,
+`--fable-gate`, `--budget`, `--dry-run`) is parsed by `loop-engine`, which no pack contains, so the
+packer keeps the positional argument and drops everything from the first `[`.
+
 ### D8.6 — `templates/*.workflow.js` are excluded, and their absence is stated
 
 All 28 templates target the `Workflow` tool. Shipping them to a host that has no such tool is dead
@@ -161,6 +166,26 @@ host-specific tokens** remain from the C1 table. It is a sibling of
 
 ---
 
+### D8.9 — A held-back skill's *reference files* may be carried; its router never is
+
+Added in H1, after the H0 gate run below found 32 dangling cross-skill pointers per host. A skill can
+be held back under D8.4 while a file inside it is still load-bearing for a skill that *is* packed —
+the autonomy ladder's single definitional home is the worked example. So the descriptor gains
+`carryFiles`, and a carried file arrives in the pack at its original path, under a stated notice, in
+one of two modes:
+
+- **`copy`** — the file is carried verbatim behind a generated "carried without its skill" notice.
+- **`stub`** — the pointer resolves to a generated page explaining why the content is absent, for
+  files D8.6 excludes on their merits (`execution-modes.md` routes between Claude model tiers).
+
+**The router is never carried.** A directory with no `SKILL.md` is not a skill to any host — it is an
+appendix, which is exactly what it is. `check-host-packs.mjs` enforces both halves: a held-back
+skill's `SKILL.md` in a pack is a failure, and so is any other file from a held-back skill that
+`carryFiles` does not declare.
+
+With D8.9 applied, a cross-skill pointer that does not resolve inside the pack is a **failure**, not
+a warning. It was a warning for exactly as long as the 32 were open.
+
 ## What the first gate run found — three open questions this ADR does *not* close
 
 `node scripts/check-host-packs.mjs` was run against this tree on 2 Aug 2026 (Node 22): **three packs,
@@ -186,6 +211,19 @@ because each is a decision:
 
 None of the three blocks the seam; all three block *publishing* a pack, which is ROADMAP H5. They
 are H1's opening worklist, and the ruling on this ADR should settle at least class 1.
+
+> **Closed in H1 (2 Aug 2026) by D8.9.** Class 1 took the recommendation — `deployment.md` is carried
+> verbatim, so a packed `loop-operate` keeps its definition. Class 2 is stubbed in place rather than
+> rewritten: 13 pointers resolve to a page that says why the mode dial is absent, which is honest
+> where a rewritten pointer would have been merely tidy. Class 3 did **not** cost `loop-orchestrate`
+> its slot — its planning half is separable (steps 1–8 plan, step 9 executed and is dropped), so the
+> two engine policy files it constrains a plan against are carried and the skill stays. All 32
+> pointers resolve; the check is now a failure. **Residue after H1: five prose lines per host**, all
+> informational — three "Claude Code" mentions inside the carried `deployment.md`, two pointer
+> sentences, and one that is a *source* defect rather than a packing one (`loop-pattern/references/
+> design-patterns.md` §"Drafting notes for the caller" is authoring scaffolding left in a shipped
+> reference file, carrying a stale `/mnt/data/company/TheLoopSkill/…` path. It is wrong in
+> `.claude/skills/` too and should be fixed there, outside Track 2).
 
 ## Consequences
 

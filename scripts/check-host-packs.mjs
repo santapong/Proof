@@ -47,6 +47,7 @@ for (const hostKey of Object.keys(DESC.hosts)) {
 
   const outRoot = join(ROOT, DESC.outDir, hostKey)
   const files = walk(outRoot)
+  const carriedPaths = new Set((first.carriedFromHeldBack ?? []).map((c) => `skills/${c.file}`))
 
   for (const rel of files) {
     const text = readFileSync(join(outRoot, rel), 'utf8')
@@ -54,9 +55,14 @@ for (const hostKey of Object.keys(DESC.hosts)) {
     // strip them before scanning — otherwise every banner reports itself as residue.
     const authored = text.replace(/<!-- heimdall-generated:begin -->[\s\S]*?<!-- heimdall-generated:end -->/g, '')
 
-    // 2. held-back skills
+    // 2. held-back skills. A carried reference file (D8.9) is allowed — it is an appendix, declared
+    // in the manifest. A SKILL.md is never allowed: that is the router, and shipping it is what D8.4
+    // exists to prevent.
     const skill = rel.startsWith('skills/') ? rel.split('/')[1] : null
-    if (skill && held.has(skill)) fail(hostKey, `held-back skill leaked into the pack: ${rel} (D8.4)`)
+    if (skill && held.has(skill)) {
+      if (rel.endsWith('/SKILL.md')) fail(hostKey, `held-back skill's router leaked into the pack: ${rel} (D8.4)`)
+      else if (!carriedPaths.has(rel)) fail(hostKey, `file from held-back skill "${skill}" is in the pack but not declared in carryFiles: ${rel} (D8.4/D8.9)`)
+    }
 
     // 3. templates
     if (rel.endsWith('.workflow.js')) fail(hostKey, `workflow template survived packing: ${rel} (D8.6)`)
@@ -81,13 +87,13 @@ for (const hostKey of Object.keys(DESC.hosts)) {
           fail(hostKey, `${rel} points at ${m[1]}, which is not in the pack — stub it (D8.6) rather than leaving the pointer dangling`)
         }
       }
-      // Cross-skill pointers into a held-back skill. A warning, not a failure: a pack is not
-      // published until ROADMAP H5, and resolving these is H1 work (some are definitional —
-      // loop-operate defines the autonomy ladder by pointing at loop-autopilot — and some are
-      // Tier-C execution clauses that D8.6's banner already covers).
+      // 5b. Cross-skill pointers. Held at warning level through H0, promoted to a failure in H1
+      // once all 32 were closed by the D8.9 carry pass — a packed skill that points at a file the
+      // pack does not contain is a broken skill, and the next one to appear should stop CI.
       for (const m of text.matchAll(/`(\.\.\/loop-[a-z-]+[a-z0-9._/-]*)`/g)) {
-        const target = join(outRoot, skillDir, m[1])
-        if (!existsSync(target)) warnings.push(`[${hostKey}] ${rel}: points outside the pack at ${m[1]}`)
+        if (!existsSync(join(outRoot, skillDir, m[1]))) {
+          fail(hostKey, `${rel} points outside the pack at ${m[1]} (D8.9) — carry the file, stub it, or hold this skill back too`)
+        }
       }
 
       const lostTemplate = first.templatesExcluded.some((p) => p.startsWith(skillDir.replace('skills/', '') + '/'))
