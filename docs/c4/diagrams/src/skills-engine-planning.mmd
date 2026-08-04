@@ -6,13 +6,15 @@ flowchart TB
         eng["<b>loop-engine</b><br/><i>«component» orchestration engine</i><br/>Authors and runs the workflow script —<br/>pipeline, parallel, loop"]
         orch["<b>loop-orchestrate</b><br/><i>«component» planning layer</i><br/>Decomposes a project into a task DAG;<br/>routes a model to each node"]
         mk["<b>loop-skill</b><br/><i>«component» meta</i><br/>Authors a conforming skill directory<br/>and proves it with the gate"]
-        v1["<b>loop-v1</b><br/><i>«component» v1 conductor</i><br/>Brief → shipped version one:<br/>multi-planner plan, delegated-law build, gates"]
+        build["<b>loop-build</b><br/><i>«component» v1 conductor</i><br/>Brief → shipped version one:<br/>multi-planner plan, delegated-law build, gates"]
+        ctx["<b>loop-context</b><br/><i>«component» agent state</i><br/>Budgets, compaction, typed shared state,<br/>supersession, trace invariants"]
+        guide["<b>loop-guide</b><br/><i>«component» front door</i><br/>Interview → routing verdict → dispatch;<br/>does no domain work"]
     end
 
     law["<b>Governance</b><br/><i>«external» read-only law</i><br/>harness · loop · modes · AIDLC"]
-    audit["<b>boundary-audit.json</b><br/><i>«external» normative</i><br/>The 21-skill scope matrix"]
+    audit["<b>boundary-audit.json</b><br/><i>«external» normative</i><br/>The 24-skill scope matrix"]
     gate["<b>validate.mjs</b><br/><i>«external» CI gate</i><br/>Rejects a contract breach"]
-    all["<b>The other seventeen skills</b><br/><i>«external» domain skills</i><br/>Author through the engine"]
+    all["<b>The other eighteen skills</b><br/><i>«external» domain skills</i><br/>Author through the engine"]
 
     law -. "governs shape<br/>and routing" .-> eng
     orch -- "hands over the<br/>DAG to execute" --> eng
@@ -21,11 +23,13 @@ flowchart TB
     mk -- "authors templates<br/>against" --> law
     mk -- "proves conformance with" --> gate
     mk -- "creates and repairs" --> all
-    v1 -- "plans via the same<br/>coverage method as" --> orch
-    v1 -- "conducts each phase through" --> eng
+    build -- "plans via the same<br/>coverage method as" --> orch
+    build -- "conducts each phase through" --> eng
+    ctx -- "typed state between<br/>agents and phases" --> eng
+    guide -- "routes on the matrix,<br/>escalates a project to" --> build
 
     classDef component fill:#85BBF0,stroke:#5D82A8,color:#000
     classDef extc fill:#BFBFBF,stroke:#8A8A8A,color:#000
-    class eng,orch,mk,v1 component
+    class eng,orch,mk,build,ctx,guide component
     class law,audit,gate,all extc
     style g fill:none,stroke:#444444,stroke-dasharray:5 5

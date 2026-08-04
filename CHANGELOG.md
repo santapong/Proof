@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_Nothing yet._
+### Changed
+- **The skill-composition diagram redesigned, and every diagram source de-staled to the 24-skill fleet.** `skill-composition.mmd` was two releases behind (twenty-two in the title, `loop-v1` still on the canvas, `loop-context`/`loop-comprehend`/`loop-guide` missing) and visually flat — one pale blue for every node, dashed outlines for every group. Rebuilt: all 24 skills, role groups carrying family tints over washed backgrounds (engine blue, knowledge violet, design/verify green, ship/run red, automation teal), shape as a second channel — stadium front door, hexagon engine, double-edged law, rounded skills — the operational cycle folded horizontally, and `loop-guide` drawn where it sits: above the groups it routes into. The grammar extension is documented in `docs/c4/README.md` next to the existing fill table. Also de-staled: `skills-engine-planning.mmd` (`loop-v1` → `loop-build`, + `loop-context`/`loop-guide`, the 21-skill matrix label), `skills-knowledge-automation.mmd` (+ `loop-comprehend` with its two handoffs), `view-logical.mmd` (6 + 17 + 1 grouping), `context.mmd`/`container.mmd`/`view-scenarios.mmd` counts (24 skills, 121 references, 29 templates, 20-of-24 packs). All 18 diagrams re-rendered.
 
 ## [2.3.0] — 2026-08-04
 
