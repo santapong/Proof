@@ -24,12 +24,12 @@ flowchart TB
     heimdall -- "confirms every version pin<br/>before citing it" --> web
     heimdall -. "ships generated skill packs<br/><i>ROADMAP H1/H3/H4</i>" .-> hosts
 
-    classDef person fill:#08427B,stroke:#052E56,stroke-width:2px,color:#fff
-    classDef system fill:#1168BD,stroke:#0B4884,stroke-width:2px,color:#fff
-    classDef ext fill:#8C8C8C,stroke:#5F5F5F,stroke-width:2px,color:#fff
-    classDef planned fill:#F2F2F2,stroke:#8C8C8C,stroke-width:2px,stroke-dasharray:6 4,color:#333
+    classDef person fill:#1E3A8A,stroke:#172554,stroke-width:2px,color:#fff
+    classDef system fill:#1D4ED8,stroke:#1E3A8A,stroke-width:2px,color:#fff
+    classDef ext fill:#E7E5E4,stroke:#78716C,stroke-width:2px,color:#1C1917
+    classDef planned fill:#FAFAF9,stroke:#A8A29E,stroke-width:2px,stroke-dasharray:6 4,color:#57534E
     class dev,maint person
     class heimdall system
     class cc,fleet,repo,forge,web ext
     class hosts planned
-    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#333
+    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#57534E

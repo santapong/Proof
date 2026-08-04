@@ -23,14 +23,14 @@ flowchart LR
         d1["pack-host.mjs generates<br/>dist/cursor/<br/><i>development</i>"] --> d2["copied into .cursor/skills/<br/><i>physical</i>"] --> d3["20 of 24 skills route;<br/>MCP tools answer<br/><i>logical</i>"] --> d4["no fan-out — the host note<br/>says so<br/><i>process</i>"]
     end
 
-    classDef step fill:#85BBF0,stroke:#5D82A8,stroke-width:2px,color:#000
-    classDef gatestep fill:#F5E8C7,stroke:#B08D3F,stroke-width:2px,color:#000
-    classDef planned fill:#F2F2F2,stroke:#8C8C8C,stroke-width:2px,stroke-dasharray:6 4,color:#333
+    classDef step fill:#BFDBFE,stroke:#1D4ED8,stroke-width:2px,color:#0C1B33
+    classDef gatestep fill:#FDE68A,stroke:#B45309,stroke-width:2px,color:#000
+    classDef planned fill:#FAFAF9,stroke:#A8A29E,stroke-width:2px,stroke-dasharray:6 4,color:#57534E
     class a1,a2,a3,b1,b2,b3,c1,c2,c3 step
     class a4,b4,c4 gatestep
     class d1,d2,d3,d4 planned
-    style s1 fill:none,stroke:#5D82A8,stroke-width:2px,stroke-dasharray:6 4
-    style s2 fill:none,stroke:#5D82A8,stroke-width:2px,stroke-dasharray:6 4
-    style s3 fill:none,stroke:#5D82A8,stroke-width:2px,stroke-dasharray:6 4
-    style s4 fill:none,stroke:#8C8C8C,stroke-width:2px,stroke-dasharray:6 4
-    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#333
+    style s1 fill:#EFF6FF,stroke:#93C5FD,stroke-width:2px
+    style s2 fill:#EFF6FF,stroke:#93C5FD,stroke-width:2px
+    style s3 fill:#EFF6FF,stroke:#93C5FD,stroke-width:2px
+    style s4 fill:#FAFAF9,stroke:#A8A29E,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#57534E

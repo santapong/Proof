@@ -1,3 +1,4 @@
+%%{init: {"themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
 flowchart TB
     O["<b>OBSERVE</b> — report only<br/>loop: reports · human: reads &amp; acts<br/><code>loop-audit</code>, <code>loop-review</code>"]
     V["<b>VERIFY</b> — propose, human merges<br/>loop: acts on a branch + adversarial verify · human: approves &amp; merges<br/><code>loop-autopilot</code> (default)"]
@@ -5,3 +6,12 @@ flowchart TB
     C["<b>SCALE</b> — autonomous delivery <i>(off by default)</i><br/>loop: merges behind a canary + self-rolls-back · human: handles exceptions<br/><code>deployment.md §Advanced</code> + <code>canary-merge</code>"]
     O --> V --> S --> C
     C -. "any alarm degrades autonomy one rung down — the floor is always safe" .-> V
+
+    classDef r1 fill:#CCFBF1,stroke:#0F766E,color:#042F2E
+    classDef r2 fill:#99F6E4,stroke:#0F766E,color:#042F2E
+    classDef r3 fill:#5EEAD4,stroke:#0F766E,color:#042F2E
+    classDef r4 fill:#F0FDFA,stroke:#0F766E,stroke-dasharray:6 4,color:#042F2E
+    class O r1
+    class V r2
+    class S r3
+    class C r4

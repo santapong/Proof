@@ -34,12 +34,12 @@ flowchart TB
     wf -- "structured result<br/>+ journal" --> reporter
     reporter -- "gate deliverable<br/>+ cost ledger" --> dev
 
-    classDef person fill:#08427B,stroke:#052E56,color:#fff
-    classDef component fill:#85BBF0,stroke:#5D82A8,color:#000
-    classDef ext fill:#999999,stroke:#6B6B6B,color:#fff
-    classDef extc fill:#BFBFBF,stroke:#8A8A8A,color:#000
+    classDef person fill:#1E3A8A,stroke:#172554,color:#fff
+    classDef component fill:#BFDBFE,stroke:#1D4ED8,color:#0C1B33
+    classDef ext fill:#E7E5E4,stroke:#78716C,color:#1C1917
+    classDef extc fill:#E7E5E4,stroke:#78716C,color:#1C1917
     class dev person
     class parser,mapper,shaper,preflight,author,routes,reporter component
     class wf,fleet ext
     class policy,frameworks extc
-    style engine fill:none,stroke:#444444,stroke-dasharray:5 5
+    style engine fill:#EFF6FF,stroke:#93C5FD

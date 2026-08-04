@@ -39,16 +39,16 @@ flowchart TB
     auto -- "composes the fleet<br/>on a schedule" --> domain
     engine -- "runs the loop's<br/>proposed changes" --> auto
 
-    classDef law fill:#F5E8C7,stroke:#B08D3F,stroke-width:2px,color:#000
-    classDef eng fill:#438DD5,stroke:#2E6295,stroke-width:2px,color:#fff
-    classDef dom fill:#85BBF0,stroke:#5D82A8,stroke-width:2px,color:#000
-    classDef aut fill:#7FBF7F,stroke:#4A7A4A,stroke-width:2px,color:#000
+    classDef law fill:#FDE68A,stroke:#B45309,stroke-width:2px,color:#000
+    classDef eng fill:#BFDBFE,stroke:#1D4ED8,stroke-width:2px,color:#0C1B33
+    classDef dom fill:#F1F5F9,stroke:#475569,stroke-width:2px,color:#0F172A
+    classDef aut fill:#99F6E4,stroke:#0F766E,stroke-width:2px,color:#042F2E
     class harness,loop,modes,aidlc law
     class e1,e2,e3,e4,e5 eng
     class d1,d2,d3,d4 dom
     class a1 aut
-    style gov fill:none,stroke:#B08D3F,stroke-width:2px,stroke-dasharray:6 4
-    style engine fill:none,stroke:#2E6295,stroke-width:2px,stroke-dasharray:6 4
-    style domain fill:none,stroke:#5D82A8,stroke-width:2px,stroke-dasharray:6 4
-    style auto fill:none,stroke:#4A7A4A,stroke-width:2px,stroke-dasharray:6 4
-    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#333
+    style gov fill:#FFFBEB,stroke:#D97706,stroke-width:2px,stroke-dasharray:6 4
+    style engine fill:#EFF6FF,stroke:#93C5FD,stroke-width:2px
+    style domain fill:#F8FAFC,stroke:#94A3B8,stroke-width:2px
+    style auto fill:#F0FDFA,stroke:#5EEAD4,stroke-width:2px
+    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#57534E

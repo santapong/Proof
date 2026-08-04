@@ -3,7 +3,7 @@ title: "Skill group — engine & planning"
 ---
 flowchart TB
     subgraph g["<b>Engine &amp; planning</b>"]
-        eng["<b>loop-engine</b><br/><i>«component» orchestration engine</i><br/>Authors and runs the workflow script —<br/>pipeline, parallel, loop"]
+        eng{{"<b>loop-engine</b><br/><i>«component» orchestration engine</i><br/>Authors and runs the workflow script —<br/>pipeline, parallel, loop"}}
         orch["<b>loop-orchestrate</b><br/><i>«component» planning layer</i><br/>Decomposes a project into a task DAG;<br/>routes a model to each node"]
         mk["<b>loop-skill</b><br/><i>«component» meta</i><br/>Authors a conforming skill directory<br/>and proves it with the gate"]
         build["<b>loop-build</b><br/><i>«component» v1 conductor</i><br/>Brief → shipped version one:<br/>multi-planner plan, delegated-law build, gates"]
@@ -28,8 +28,10 @@ flowchart TB
     ctx -- "typed state between<br/>agents and phases" --> eng
     guide -- "routes on the matrix,<br/>escalates a project to" --> build
 
-    classDef component fill:#85BBF0,stroke:#5D82A8,color:#000
-    classDef extc fill:#BFBFBF,stroke:#8A8A8A,color:#000
-    class eng,orch,mk,build,ctx,guide component
+    classDef component fill:#BFDBFE,stroke:#1D4ED8,color:#0C1B33
+    classDef extc fill:#E7E5E4,stroke:#78716C,color:#1C1917
+    classDef engine fill:#1D4ED8,stroke:#1E3A8A,stroke-width:2px,color:#FFFFFF
+    class eng engine
+    class orch,mk,build,ctx,guide component
     class law,audit,gate,all extc
-    style g fill:none,stroke:#444444,stroke-dasharray:5 5
+    style g fill:#EFF6FF,stroke:#93C5FD
