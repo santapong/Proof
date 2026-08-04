@@ -1,0 +1,117 @@
+{
+  "_": "Host descriptors for scripts/pack-host.mjs. Governed by docs/design/ADR-0008-host-packaging-seam.md. Data only: adding a host is a new entry in `hosts`, not a change to the packer. Every `why` is the clause that authorises the rule — a rule without one is a rule nobody reviewed.",
+  "version": 1,
+  "verifiedOn": "2026-08-02",
+  "verificationNote": "Host paths and config formats below were verified against vendor docs and community write-ups on 2 Aug 2026, NOT by installing each host. All three formats moved within the last twelve months. Re-confirm the row before the milestone that consumes it (ROADMAP H1/H3/H4).",
+
+  "source": ".claude/skills",
+  "outDir": "dist",
+  "serverId": "heimdall-mcp",
+
+  "launch": {
+    "_": "ADR-0008 D8.7 — one launch contract, three emitters. {{REPO}} resolves to the absolute repo path at pack time because no target host expands ${CLAUDE_PROJECT_DIR}. When ADR-0009 (Rust) lands, this becomes command: 'heimdall-mcp', args: [] and no emitter changes.",
+    "command": "node",
+    "args": ["{{REPO}}/mcp/server.mjs"]
+  },
+
+  "common": {
+    "heldBackSkills": [
+      { "skill": "loop-engine", "why": "ADR-0008 C2 — its subject is Claude Code's Workflow tool; remove the tool and nothing remains." },
+      { "skill": "loop-harness", "why": "ADR-0008 C2 — its subject is .claude/settings.json, Claude Code hooks and permissions." },
+      { "skill": "loop-skill", "why": "ADR-0008 C2 — its deliverable is a skill that passes this repo's scripts/validate.mjs." },
+      { "skill": "loop-autopilot", "why": "ADR-0008 C2 — deployment is Claude Code Routines / /loop / headless runs." }
+    ],
+
+    "excludeGlobs": [
+      { "glob": "templates/*.workflow.js", "why": "ADR-0008 D8.6 — all 28 target the Workflow tool. Dead weight and an implicit promise the host cannot keep." }
+    ],
+
+    "stubFiles": [
+      { "file": "loop-orchestrate/references/model-routing.md", "why": "ADR-0008 D8.6 — routes between Claude model tiers; wrong advice on a host running Gemini or GPT. Stubbed rather than deleted so the router's pointer does not dangle." }
+    ],
+
+    "dropSections": [
+      { "file": "loop-orchestrate/SKILL.md", "heading": "### 9. Pre-flight (all-out mode only), then execute — hand to the workflow engine", "why": "ADR-0008 D8.5 — an execution clause that cannot be made true by renaming a noun. The planning the skill exists for is untouched." },
+      { "file": "loop-build/SKILL.md", "heading": "## Orchestration", "why": "ADR-0008 D8.5 — same: names the conductor template this pack does not ship." }
+    ],
+
+    "rewrites": [
+      {
+        "find": "the Claude Code built-in **verify** skill",
+        "replace": "your host's built-in verification skill, if it has one",
+        "minHits": 1,
+        "why": "Host noun. loop-test/SKILL.md:56."
+      },
+      {
+        "find": "Claude Code's own browser control",
+        "replace": "your host's own browser control, if it has one",
+        "minHits": 1,
+        "why": "Host noun. loop-frontend/references/verifying-motion.md:29."
+      }
+    ],
+
+    "forbiddenTokens": [
+      "${CLAUDE_PROJECT_DIR}",
+      "${CLAUDE_PLUGIN_ROOT}",
+      ".claude/settings.json"
+    ],
+    "warnTokens": ["Claude Code", "Workflow tool", ".claude/skills"],
+
+    "banner": [
+      "> **Host note — generated pack for {{HOST_NAME}}, do not edit.**",
+      "> This copy is generated from `.claude/skills/` in [Heimdall](https://github.com/santapong/Heimdall);",
+      "> edit it there. {{HOST_NAME}} has no multi-agent workflow tool, so this skill's",
+      "> `templates/*.workflow.js` orchestration script is **not included** and the multi-agent run it",
+      "> describes is unavailable here. Work the phases sequentially in one session, in the order given,",
+      "> keeping every gate — the judgment is unchanged, only the fan-out is gone. The multi-agent",
+      "> version runs on Claude Code."
+    ],
+
+    "stubBody": [
+      "# Not included in this pack",
+      "",
+      "This file exists in the Heimdall source tree but is **excluded from the {{HOST_NAME}} pack** by",
+      "`docs/design/ADR-0008-host-packaging-seam.md` §D8.6: it routes work between Claude model tiers,",
+      "which is a multi-agent (Tier C) concern and would be wrong advice on this host.",
+      "",
+      "The original is at `.claude/skills/{{FILE}}` in <https://github.com/santapong/Heimdall>."
+    ]
+  },
+
+  "hosts": {
+    "cursor": {
+      "displayName": "Cursor",
+      "tier": "A+B",
+      "skillsInstallPaths": {
+        "project": ".cursor/skills/",
+        "global": "~/.cursor/skills/"
+      },
+      "note": "Cursor also loads .claude/skills/, .codex/skills/ and .agents/skills/ for compatibility. A user who has already cloned Heimdall can point Cursor at the checkout instead of installing this pack — but never generate a pack INTO one of those paths inside this repo (ADR-0008 C3: a Cursor session would load all 22 skills three times).",
+      "mcp": { "format": "json-mcpServers", "file": "mcp.json", "installPath": ".cursor/mcp.json" },
+      "friction": "~40 active tools across all servers before tools are silently dropped (Heimdall ships 5). No MCP hot-reload — reload the window after editing mcp.json."
+    },
+
+    "codex": {
+      "displayName": "OpenAI Codex CLI",
+      "tier": "A+B",
+      "skillsInstallPaths": {
+        "project": ".codex/skills/",
+        "global": "~/.codex/skills/"
+      },
+      "mcp": { "format": "toml-mcp-servers", "file": "config.toml.fragment", "installPath": "~/.codex/config.toml" },
+      "friction": "config.toml is TOML, not JSON, and the table is [mcp_servers.<name>] — the one config dialect that genuinely differs. `codex mcp add` is safer than hand-editing; the emitted fragment is for review or append."
+    },
+
+    "antigravity": {
+      "displayName": "Antigravity",
+      "tier": "A+B",
+      "skillsInstallPaths": {
+        "project": ".agents/skills/",
+        "global": "~/.gemini/config/skills/"
+      },
+      "note": "~/.gemini/config/skills/ is the only path all three Antigravity variants (AGY, IDE, CLI) read. Installing to a variant-specific path is the most likely 'it silently did nothing' failure.",
+      "mcp": { "format": "json-mcpServers", "file": "mcp_config.json", "installPath": "~/.gemini/config/mcp_config.json" },
+      "friction": "Also readable at ~/.gemini/antigravity/mcp_config.json or workspace .agents/mcp_config.json. Remote (HTTP) servers use `serverUrl`, not `url` — irrelevant for our stdio server today, and a trap the day HTTP transport un-defers."
+    }
+  }
+}

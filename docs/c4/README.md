@@ -7,7 +7,7 @@ Documented with the **C4 model**: a hierarchy of diagrams at decreasing altitude
 | **[1 — Context](context.md)** | What is this, who uses it, what does it depend on? | Anyone, including non-engineers |
 | **[2 — Container](container.md)** | What are the separately-loadable units, and what is each made of? | Engineers, integrators |
 | **[3 — Component](component.md)** | How does `loop-engine` actually turn an invocation into a running workflow? | Contributors |
-| **[The skill fleet](skills.md)** | What does one skill look like inside, and how do the twenty-two relate? | Contributors |
+| **[The skill fleet](skills.md)** | What does one skill look like inside, and how do the twenty-four relate? | Contributors |
 | **[Skill anatomy](skill-anatomy.md)** | Why does a skill have that shape? | Anyone adding a skill |
 
 C4's Level 4 (Code) is deliberately skipped — Brown's own advice is that it is rarely worth maintaining, and here it would be a class diagram of Markdown files.
@@ -30,13 +30,13 @@ A single trace, from typed command to merged work. This is the whole system in o
 /loop-review the auth changes on this branch --mode full
 ```
 
-**1 · Selection.** Claude Code matches the request against twenty-two `description` fields. Nothing else is loaded and nothing else influences the choice — the descriptions *are* the routing table. This is why they are mutually exclusive by construction and why the [boundary audit](../design/boundary-audit.json) is normative rather than a design note.
+**1 · Selection.** Claude Code matches the request against twenty-four `description` fields. Nothing else is loaded and nothing else influences the choice — the descriptions *are* the routing table. This is why they are mutually exclusive by construction and why the [boundary audit](../design/boundary-audit.json) is normative rather than a design note.
 
 **2 · Router loads.** `loop-review/SKILL.md` enters context: a thin numbered flow that *points at* references rather than containing them. Roughly 7 KB, not the 88-file library.
 
 **3 · Progressive disclosure.** The flow directs the agent to read `owasp-cwe.md` for the tagging taxonomy and `severity-model.md` for the reporting bar — two files, chosen for this task. The other 86 stay on disk.
 
-**4 · Law loads.** `harness-policy.md`, `loop-policy.md`, `execution-modes.md`. Read-only. These govern *shape* and *routing* and are the reason twenty-two skills share one orchestration discipline rather than twenty-two dialects.
+**4 · Law loads.** `harness-policy.md`, `loop-policy.md`, `execution-modes.md`. Read-only. These govern *shape* and *routing* and are the reason twenty-four skills share one orchestration discipline rather than twenty-four dialects.
 
 **5 · Phase mapping.** `AIDLC.md` supplies the phases and, critically, the **human gates** between them. One workflow per gate — never a monolith spanning three.
 

@@ -452,6 +452,48 @@
         }
       ],
       "description": "Engineer what an agent carries at runtime: context budgets and placement, compaction paired with an addressable store, typed shared state with per-field merge rules and checkpoints handed between workflow phases, supersession of stale facts, and property-based invariants over agent traces. Use when the user asks to manage or debug agent context or agent memory, decide what to keep, compact, or evict, design the state passed between agents or phases, fix an agent that forgets, repeats itself, or acts on a stale fact, or verify that compaction lost nothing that mattered. The subject is the information an agent carries while it runs. For Claude's own configuration — permissions, hooks, MCP servers, schedules — use loop-harness. For the orchestration shapes that execute (pipeline, parallel, guarded loops), use loop-engine. For a product's database schema or data model, use loop-design. For prose a human reads, use loop-docs."
+    },
+    {
+      "skill": "loop-comprehend",
+      "scope": "Understands code that already exists: recovers the as-built architecture from evidence, traces feature flows end to end, builds onboarding dossiers, and reverse-engineers ADRs for unrecorded decisions; deliverable is an evidence-anchored, dated dossier/map/trace with a coverage statement — descriptive, never a diff.",
+      "description": "Understand an existing codebase and recover what was never written down: map the as-built architecture from code, trace how a feature actually flows end to end, build an onboarding dossier for an unfamiliar repo, and reverse-engineer ADRs for decisions the record never captured — every claim anchored to a file:line. Use when the user asks how a codebase or subsystem works, to explain or map an unfamiliar repo, to trace a feature or request path, to onboard onto a project, or to recover why the code is the way it is. The subject is code that already exists. For designing a system or making a new architecture decision, use loop-design. For turning findings into maintained documentation that ships in the repo, use loop-docs. For the impact and risk of a specific change set or diff, use loop-audit. For explaining one observed defective behavior, use loop-debug.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-design",
+          "condition": "The architecture or decision is being made now, for code not yet written — not read out of code that already runs."
+        },
+        {
+          "otherSkill": "loop-docs",
+          "condition": "The deliverable is a maintained document that ships in the repo (README, guide, ADR prose kept current) rather than a dated comprehension dossier."
+        },
+        {
+          "otherSkill": "loop-audit",
+          "condition": "The subject is a specific change set, diff, PR, or release — not the codebase as it stands."
+        },
+        {
+          "otherSkill": "loop-debug",
+          "condition": "There is one observed defective behavior to explain, not a system to understand."
+        }
+      ]
+    },
+    {
+      "skill": "loop-guide",
+      "scope": "The front door: converts a situation described in the user’s own words — no skill named, deliverable unclear — into a justified routing verdict (single skill, ordered chain, or escalation), then dispatches and conducts the handoffs; does no domain work; deliverable is the verdict with its because-lines plus the routing note.",
+      "description": "Route a request to the right Heimdall skill when the developer does not know which one fits: a short discriminating interview, classification on the boundary audit's checkable questions, a routing verdict naming the skill or the ordered chain — each pick justified by the one-line answer that selected it — then delegated invocation with managed handoffs. Use when the user asks which skill to use, describes a situation without naming a deliverable, wants Heimdall to decide and drive, or arrives at the plugin's front door with 'help me with this'. This skill does no domain work; its deliverable is the verdict and the dispatch. For planning an already-named multi-phase job into a task DAG with model routing, use loop-orchestrate. For conducting a whole project brief to a shipped v1, use loop-build. For a capability no existing skill covers, use loop-skill.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-orchestrate",
+          "condition": "The job is already named and scoped and what is wanted is a multi-phase plan — a task DAG with model routing and a cost ledger — not a decision about which skill applies."
+        },
+        {
+          "otherSkill": "loop-build",
+          "condition": "The user wants a whole project conducted brief-to-v1 (or the chain has grown to ~5 hops) — conducting needs gates, repair rounds, and a ledger, which guide deliberately does not have."
+        },
+        {
+          "otherSkill": "loop-skill",
+          "condition": "No existing skill’s boundary contains the ask — the deliverable is a new skill, not a route among existing ones."
+        }
+      ]
     }
   ],
   "overlaps": [
@@ -668,6 +710,62 @@
       "skillB": "loop-design",
       "risk": "Bi-temporal/supersession vocabulary is shared with database data-modeling.",
       "resolution": "Checkable question: is the store the PRODUCT's (users query it) or the AGENT's (the model queries it mid-run)? Product → loop-design; agent → loop-context."
+    },
+    {
+      "skillA": "loop-comprehend",
+      "skillB": "loop-design",
+      "severity": "medium",
+      "risk": "Both produce architecture artifacts (C4 diagrams, ADRs). A user saying 'document the architecture' of an existing repo could match either; loop-design also owns ADR practice and the adr-template.",
+      "resolution": "Checkable question: is the architecture being read out of code that already runs, or decided for code not yet written? Recovery of as-built structure and reverse-engineered ADRs (status: recovered, confidence-graded) is loop-comprehend; forward decisions and new ADRs are loop-design. A recovery that concludes 'this should change' ends at the finding and hands the recovered ADR to loop-design as context; the new ADR supersedes the recovered one. Pointers on both sides."
+    },
+    {
+      "skillA": "loop-comprehend",
+      "skillB": "loop-docs",
+      "severity": "medium",
+      "risk": "'Explain this codebase' and 'document this codebase' are adjacent triggers. loop-docs verifies claims against source too, so both skills read code and emit prose.",
+      "resolution": "Checkable question: is the deliverable a maintained document the repo keeps (README, guide, numbered ADR set — loop-docs), or a dated, evidence-anchored answer/dossier stamped with the commit it describes (loop-comprehend)? loop-comprehend produces the understanding and hands anything meant to live longer than a snapshot to loop-docs, whose rot catalogue owns keeping it true. Pointers on both sides."
+    },
+    {
+      "skillA": "loop-comprehend",
+      "skillB": "loop-audit",
+      "severity": "medium",
+      "risk": "Both map code and trace blast radius; 'what does this touch' fires near both.",
+      "resolution": "Checkable question: is the subject a specific change set (diff, PR, commit range, release) or the codebase as it stands? A change set is loop-audit; the standing system is loop-comprehend. A comprehension map is legitimate input to an audit, never its substitute. Pointers on both sides."
+    },
+    {
+      "skillA": "loop-comprehend",
+      "skillB": "loop-debug",
+      "severity": "low",
+      "risk": "Feature tracing and defect localization use the same moves (both-ends anchoring, runtime evidence).",
+      "resolution": "Checkable question: is there one observed defective behavior to explain? Yes is loop-debug (reproduce, localize, fix); no — the behavior is correct and merely opaque — is loop-comprehend. A trace that uncovers a defect hands its reproduction to loop-debug as a head start. Pointer carried on loop-comprehend's side; loop-debug's description already scopes itself to observed failures."
+    },
+    {
+      "skillA": "loop-comprehend",
+      "skillB": "loop-autopilot",
+      "severity": "low",
+      "risk": "loop-autopilot/references/comprehension-rot.md uses the word 'comprehension' for the human's decaying understanding of an autonomous loop's merges.",
+      "resolution": "Different subject entirely: comprehension-rot is a sampling digest inside a standing automation loop (subject: the loop's merge stream); loop-comprehend is on-demand understanding of a codebase (subject: the code). No trigger phrase collision found; no description change needed on either side."
+    },
+    {
+      "skillA": "loop-guide",
+      "skillB": "loop-orchestrate",
+      "severity": "medium",
+      "risk": "Both sit above the domain skills and decide what runs where; 'figure out how to tackle this' plausibly fires either.",
+      "resolution": "Checkable question: can the user name the job and its deliverable? Named and scoped, wanting a phased plan with model routing and a cost ledger → loop-orchestrate. Unnamed — the question is which skill or job this even is → loop-guide, whose deliverable is a routing verdict, not a DAG. Guide escalates named multi-phase jobs to orchestrate; orchestrate assumes the job arrives named. Pointers on both sides."
+    },
+    {
+      "skillA": "loop-guide",
+      "skillB": "loop-build",
+      "severity": "medium",
+      "risk": "A guide chain and a conducted project look alike from outside: multiple skills invoked in order with artifacts crossing between them.",
+      "resolution": "Checkable question: does the execution need gates, repair rounds, and a ledger? A 2–4 hop chain with per-boundary handoff checks is loop-guide conduction; brief-to-v1, or any chain reaching ~5 hops, is loop-build — guide's dispatch.md carries the tripwire and hands over completed hops as the brief. Pointers on both sides."
+    },
+    {
+      "skillA": "loop-guide",
+      "skillB": "loop-skill",
+      "severity": "low",
+      "risk": "'Heimdall can't do X' arrives at the front door and could read as a routing failure.",
+      "resolution": "Checkable question: does any existing skill's boundary contain the ask? Yes → route to it; no → the gap itself is the finding, escalated to loop-skill as a candidate charter. Guide never authors. Pointers on both sides."
     }
   ],
   "descriptionRewrites": [
