@@ -475,6 +475,25 @@
           "condition": "There is one observed defective behavior to explain, not a system to understand."
         }
       ]
+    },
+    {
+      "skill": "loop-guide",
+      "scope": "The front door: converts a situation described in the user’s own words — no skill named, deliverable unclear — into a justified routing verdict (single skill, ordered chain, or escalation), then dispatches and conducts the handoffs; does no domain work; deliverable is the verdict with its because-lines plus the routing note.",
+      "description": "Route a request to the right Heimdall skill when the developer does not know which one fits: a short discriminating interview, classification on the boundary audit's checkable questions, a routing verdict naming the skill or the ordered chain — each pick justified by the one-line answer that selected it — then delegated invocation with managed handoffs. Use when the user asks which skill to use, describes a situation without naming a deliverable, wants Heimdall to decide and drive, or arrives at the plugin's front door with 'help me with this'. This skill does no domain work; its deliverable is the verdict and the dispatch. For planning an already-named multi-phase job into a task DAG with model routing, use loop-orchestrate. For conducting a whole project brief to a shipped v1, use loop-build. For a capability no existing skill covers, use loop-skill.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-orchestrate",
+          "condition": "The job is already named and scoped and what is wanted is a multi-phase plan — a task DAG with model routing and a cost ledger — not a decision about which skill applies."
+        },
+        {
+          "otherSkill": "loop-build",
+          "condition": "The user wants a whole project conducted brief-to-v1 (or the chain has grown to ~5 hops) — conducting needs gates, repair rounds, and a ledger, which guide deliberately does not have."
+        },
+        {
+          "otherSkill": "loop-skill",
+          "condition": "No existing skill’s boundary contains the ask — the deliverable is a new skill, not a route among existing ones."
+        }
+      ]
     }
   ],
   "overlaps": [
@@ -726,6 +745,27 @@
       "severity": "low",
       "risk": "loop-autopilot/references/comprehension-rot.md uses the word 'comprehension' for the human's decaying understanding of an autonomous loop's merges.",
       "resolution": "Different subject entirely: comprehension-rot is a sampling digest inside a standing automation loop (subject: the loop's merge stream); loop-comprehend is on-demand understanding of a codebase (subject: the code). No trigger phrase collision found; no description change needed on either side."
+    },
+    {
+      "skillA": "loop-guide",
+      "skillB": "loop-orchestrate",
+      "severity": "medium",
+      "risk": "Both sit above the domain skills and decide what runs where; 'figure out how to tackle this' plausibly fires either.",
+      "resolution": "Checkable question: can the user name the job and its deliverable? Named and scoped, wanting a phased plan with model routing and a cost ledger → loop-orchestrate. Unnamed — the question is which skill or job this even is → loop-guide, whose deliverable is a routing verdict, not a DAG. Guide escalates named multi-phase jobs to orchestrate; orchestrate assumes the job arrives named. Pointers on both sides."
+    },
+    {
+      "skillA": "loop-guide",
+      "skillB": "loop-build",
+      "severity": "medium",
+      "risk": "A guide chain and a conducted project look alike from outside: multiple skills invoked in order with artifacts crossing between them.",
+      "resolution": "Checkable question: does the execution need gates, repair rounds, and a ledger? A 2–4 hop chain with per-boundary handoff checks is loop-guide conduction; brief-to-v1, or any chain reaching ~5 hops, is loop-build — guide's dispatch.md carries the tripwire and hands over completed hops as the brief. Pointers on both sides."
+    },
+    {
+      "skillA": "loop-guide",
+      "skillB": "loop-skill",
+      "severity": "low",
+      "risk": "'Heimdall can't do X' arrives at the front door and could read as a routing failure.",
+      "resolution": "Checkable question: does any existing skill's boundary contain the ask? Yes → route to it; no → the gap itself is the finding, escalated to loop-skill as a candidate charter. Guide never authors. Pointers on both sides."
     }
   ],
   "descriptionRewrites": [
