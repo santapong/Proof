@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [2.3.0] — 2026-08-04
+
 ### Added
 - **The 4+1 views, and a re-rendered diagram set.** New [`docs/views/4plus1.md`](docs/views/4plus1.md) adds Kruchten's four views plus scenarios, chosen because C4 is structural and says nothing about the three questions this system keeps raising: what runs concurrently and where it blocks (**process** — a sequence diagram showing that authoring is sequential and in-context, fan-out is capped and pipelined, and the gate blocks on a *human*), what a contributor edits and which gate catches them (**development** — the three gates and what each is blind to), and what process executes where (**physical** — almost everything local, `heimdall-mcp` a stdio child that dies with the session, exactly one network hop per agent node, and a dashed box for the unproven other-host case). Plus a **logical** view grouping the 22 skills by role under the governance layer, and four **scenarios** — one of which deliberately ends in a CI failure, because a scenario that only shows the happy path is decoration. The doc states how 4+1 and C4 overlap and which wins where they do.
 - **Diagrams updated to match the code.** `container.mmd` gains the two containers the Level 2 diagram never had — **`heimdall-mcp`** (shipped in 2.0.0) and the generated **Host Packs** — and its stale counts are corrected (21 → 22 skills, 105 → 112 references, 27 → 28 templates); `context.mmd` gains the other-host target and drops the pre-rename "TheLoopSkill" title both diagrams still carried. A **shared visual grammar** now runs across every diagram — stereotype, palette, and the rule that generated and unverified things are dashed — documented in `docs/c4/README.md` alongside a measured note on **why these are styled flowcharts rather than mermaid's `C4Container` syntax**: the native renderer was tried on the Context diagram and produced 1151 × 2056 px for ten elements, one shape per row, with labels overlapping the shapes they described. Notation compliance beats DSL compliance. All 18 diagrams re-rendered; the mermaid-cli version drift also touched SVGs whose sources did not change.
@@ -273,7 +277,8 @@ Initial release: the 12-skill TheLoopSkill plugin, built and merged across PRs #
 - **`automating-improvements`** — a propose-only autonomous engineering loop that composes the other skills, plus the **credit-horizon** self-learning extension (per-kind trust ledger), an anti-patterns checklist, and a comprehension-rot digest.
 - **Plugin packaging** — `.claude-plugin/plugin.json` + `marketplace.json`, web enablement via `.claude/settings.json`, the MIT `LICENSE`, and `INSTALL.md` covering local, web, and marketplace install paths.
 
-[Unreleased]: https://github.com/santapong/Heimdall/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/santapong/Heimdall/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/santapong/Heimdall/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/santapong/Heimdall/compare/v2.1.0...v2.2.0
 [1.3.0]: https://github.com/santapong/TheLoopSkill/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/santapong/TheLoopSkill/compare/v1.2.0...v1.2.1
