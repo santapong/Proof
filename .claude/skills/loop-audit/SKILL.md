@@ -1,6 +1,6 @@
 ---
 name: loop-audit
-description: "Audit a set of code changes and produce an impact and risk report: classify each change, trace blast radius, rate risk, and check test coverage. Use when the user asks to audit a diff, PR, release, or commit range, summarize what changed, assess impact or blast radius, check whether changes are covered by tests, or produce a change report or release risk memo. Reports on a change set that already exists; it neither hunts defects nor plans the rollout. For finding security or quality defects to fix, use loop-review instead. For planning how the release reaches production and how it rolls back, use loop-ship."
+description: "Audit a set of code changes and produce an impact and risk report: classify each change, trace blast radius, rate risk, and check test coverage. Use when the user asks to audit a diff, PR, release, or commit range, summarize what changed, assess impact or blast radius, check whether changes are covered by tests, or produce a change report or release risk memo. Reports on a change set that already exists; it neither hunts defects nor plans the rollout. For finding security or quality defects to fix, use loop-review instead. For planning how the release reaches production and how it rolls back, use loop-ship. For mapping the codebase as it stands rather than assessing a change to it, use loop-comprehend."
 argument-hint: <diff|PR|range> [--mode <lite|balanced|all-out>]
 ---
 

@@ -2,11 +2,11 @@
 
 Nineteen skills, drawn at two altitudes.
 
-**One diagram per skill would be twenty-two copies of the same picture.** Every skill has an identical internal structure — router, references, template — which is drawn once below as the *skill container view* and explained in [`skill-anatomy.md`](skill-anatomy.md). What actually differs between skills is their **relationships**: who delegates to whom, and where each one stops. So the per-skill views are grouped by role, and each shows the edges that make its members distinct.
+**One diagram per skill would be twenty-three copies of the same picture.** Every skill has an identical internal structure — router, references, template — which is drawn once below as the *skill container view* and explained in [`skill-anatomy.md`](skill-anatomy.md). What actually differs between skills is their **relationships**: who delegates to whom, and where each one stops. So the per-skill views are grouped by role, and each shows the edges that make its members distinct.
 
 ---
 
-## The skill container view — true for all twenty-two
+## The skill container view — true for all twenty-three
 
 Zoom into any single skill and this is what you find. The three parts are separate **because they load differently**, which is the constraint the whole design turns on.
 

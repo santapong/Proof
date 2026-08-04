@@ -38,7 +38,7 @@ It's for developers who want Claude Code to do *engineering*, not just answer qu
 
 ## What's in the box
 
-Twenty-two skills, grouped by the engineering role they play. Every skill takes `[--mode <lite|balanced|all-out>]` unless noted.
+Twenty-three skills, grouped by the engineering role they play. Every skill takes `[--mode <lite|balanced|all-out>]` unless noted.
 
 **Start here — say what is in front of you, and one row applies:**
 
@@ -53,6 +53,7 @@ Twenty-two skills, grouped by the engineering role they play. Every skill takes 
 | A third-party API to wire up | `loop-integrate` (`loop-scout` first if the provider isn't chosen) |
 | A change ready to reach production | `loop-ship` — including many task branches to land as one (see the integration train below) |
 | A live service to keep healthy / a live outage | `loop-operate` / `loop-incident` |
+| An unfamiliar codebase to understand — or decisions nobody recorded | `loop-comprehend` |
 | A question needing cited evidence | `loop-research` |
 | Docs to write or fix | `loop-docs` |
 | An agent that forgets, repeats itself, or acts on stale facts | `loop-context` |
@@ -108,11 +109,12 @@ Twenty-two skills, grouped by the engineering role they play. Every skill takes 
 |---|---|---|
 | **loop-research** | `/loop-research <question>` | Multi-source research with adversarial fact-checking: search fan-out → deep-read → refute-first verify → cited synthesis. Every claim carries a source. |
 | **loop-scout** | `/loop-scout <need>` | Prior-art / build-vs-buy check *before* building: stdlib → registries → services → standards. Guards against over-engineering. |
+| **loop-comprehend** | `/loop-comprehend <repo-or-subsystem>` | Understands code that already exists: recovers the as-built architecture, traces feature flows end to end, builds onboarding dossiers, and reverse-engineers confidence-graded ADRs for decisions the record never captured — every claim anchored to a file:line. |
 | **loop-docs** | `/loop-docs <target>` | Writes/maintains docs (README, API, docstrings, ADRs) via the Diátaxis model, verifying every claim against the code. |
 | **loop-harness** | `/loop-harness <project>` | Sets up a project's Claude Code harness from copy-paste scaffolds: permissions, hooks, MCP (`.mcp.json`), automation loops. No `--mode` — it ships no workflow template. |
 | **loop-autopilot** | `/loop-autopilot <repo>` | Autonomous engineering loop — reads feedback (issues/PRs/CI), acts as **draft** PRs with tests, researches improvements when idle. Propose-only, never merges. |
 
-**Which one when?** The four operational skills are the easiest to confuse, so they split on one checkable question each: is there a runbook that restores the SLI (`loop-operate`) or not (`loop-incident`)? Is the service currently down (`loop-incident`) or is the defect merely reproducible (`loop-debug`)? Is the rollout still in flight (`loop-ship`) or baked (`loop-operate`)? The full 20-way matrix is in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json).
+**Which one when?** The four operational skills are the easiest to confuse, so they split on one checkable question each: is there a runbook that restores the SLI (`loop-operate`) or not (`loop-incident`)? Is the service currently down (`loop-incident`) or is the defect merely reproducible (`loop-debug`)? Is the rollout still in flight (`loop-ship`) or baked (`loop-operate`)? The full 23-way matrix is in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json).
 
 ## Branch-per-task and the integration train
 
@@ -161,19 +163,19 @@ Eight separately-loadable units, split by **loading regime**, which is the meani
 
 The skills aren't a flat list — they build on `loop-engine` and **delegate rather than duplicate**. Every edge below is a boundary that would otherwise be an overlap:
 
-![Component diagram — how the twenty-one skills compose](docs/c4/diagrams/skill-composition.svg)
+![Component diagram — how the twenty-three skills compose](docs/c4/diagrams/skill-composition.svg)
 
 <sub>Diagram source: [`docs/c4/diagrams/src/skill-composition.mmd`](docs/c4/diagrams/src/skill-composition.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
 The five relationships running `loop-operate → loop-incident → loop-debug → loop-test → loop-ship → loop-operate` form a **closed cycle**, and that cycle is the reason those five are separate skills rather than one: `loop-operate` detects and auto-mitigates *known* conditions → `loop-incident` takes *novel* ones, mitigating before diagnosing → `loop-debug` finds the defect once the service is back → `loop-test` locks it with a regression → `loop-ship` redeploys → `loop-operate` owns it again once the rollout bakes.
 
-Each handoff is a **checkable question**, not a judgment call: *does a runbook exist and does running it restore the SLI?* · *is the service currently down, or is the defect merely reproducible?* · *is the rollout in flight, or baked?* The full 20-way matrix is in **[`docs/design/boundary-audit.json`](docs/design/boundary-audit.json)**, which is normative — it outranks any plan that disagrees with it.
+Each handoff is a **checkable question**, not a judgment call: *does a runbook exist and does running it restore the SLI?* · *is the service currently down, or is the defect merely reproducible?* · *is the rollout in flight, or baked?* The full 23-way matrix is in **[`docs/design/boundary-audit.json`](docs/design/boundary-audit.json)**, which is normative — it outranks any plan that disagrees with it.
 
 → **[Component diagram](docs/c4/component.md)** opens `loop-engine` itself · **[the skill fleet](docs/c4/skills.md)** draws each role group and what is inside any one skill · **[skill anatomy](docs/c4/skill-anatomy.md)** explains why that shape · **[the architecture notes](docs/c4/README.md)** trace one invocation end to end with the prior art behind each idea.
 
 ## The autonomy ladder
 
-The plugin isn't only twenty-one skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
+The plugin isn't only twenty-three skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
 
 ![The autonomy ladder — OBSERVE, VERIFY, SUSTAIN, SCALE](docs/c4/diagrams/autonomy-ladder.svg)
 
@@ -262,7 +264,7 @@ Every authored workflow obeys three policy documents:
 
 Lifecycle is governed by a **pluggable framework** — the default **AIDLC** (Inception → Construction → Operation, each ending at a human gate). Drop a new `frameworks/<Name>.md` in and invoke with `--framework <Name>`.
 
-**The boundaries are a committed artifact.** With twenty-one skills, selection happens on the `description` field alone — so the mutually-exclusive scope matrix lives in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json) and outranks any build plan that disagrees with it.
+**The boundaries are a committed artifact.** With twenty-three skills, selection happens on the `description` field alone — so the mutually-exclusive scope matrix lives in [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json) and outranks any build plan that disagrees with it.
 
 **The gate can fail.** `node scripts/validate.mjs` runs in CI and rejects unparseable frontmatter, routing-block drift, banned clock/random calls in templates, and dangling reference paths. It was accepted only after a deliberately injected fault made it fail.
 
@@ -291,6 +293,7 @@ Every skill follows the same shape: `SKILL.md` (thin router) + `references/` (de
 | `.claude/skills/loop-test/` | Test design, framework conventions, standards; `test-generation.workflow.js` |
 | `.claude/skills/loop-debug/` | Methodology, hypothesis testing, standards; `bug-diagnosis.workflow.js` |
 | `.claude/skills/loop-docs/` | Doc types, style, standards; `doc-generation.workflow.js` |
+| `.claude/skills/loop-comprehend/` | Architecture recovery, feature tracing, decision recovery, comprehension traps, standards; `comprehend.workflow.js` |
 | `.claude/skills/loop-scout/` | Where to look, evaluation criteria, build-vs-buy, standards; `prior-art-search.workflow.js` |
 | `.claude/skills/loop-harness/` | Permissions, hooks, mcp, automation-loops, standards; settings/mcp/hook scaffolds |
 | `.claude/skills/loop-autopilot/` | Loop-design, feedback-intake, deployment (incl. SCALE), anti-patterns, comprehension-rot, credit-horizon, verifier-integrity + held-out-eval (the SUSTAIN rung), standards; loop + ledger + routine + held-out-eval + verifier-canary + canary-merge templates |

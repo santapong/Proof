@@ -1,6 +1,6 @@
 # Installing Heimdall
 
-Heimdall ships twenty-one Claude Code skills:
+Heimdall ships twenty-three Claude Code skills:
 
 | Skill | What it does |
 |---|---|
@@ -13,6 +13,7 @@ Heimdall ships twenty-one Claude Code skills:
 | `loop-test` | Design + write tests matching the repo's stack; verify each runs and fails for the right reason |
 | `loop-debug` | Hypothesis-driven debugging: reproduce → localize → root-cause → fix → regression test |
 | `loop-docs` | Write + maintain docs (README, API, docstrings, ADRs) via the Diátaxis model, verified against code |
+| `loop-comprehend` | Understand an existing codebase: recover the as-built architecture, trace feature flows, build onboarding dossiers, reverse-engineer confidence-graded ADRs — every claim evidence-anchored |
 | `loop-scout` | Prior-art / build-vs-buy check before building: search stdlib → registries → services → standards, evaluate, recommend reuse |
 | `loop-harness` | Set up a project's Claude Code harness: permissions, hooks, MCP (`.mcp.json`), and automation loops — from copy-paste scaffolds |
 | `loop-context` | Engineer agent context & state: budgets, placement, compaction with an addressable store, typed shared state, supersession, trace-invariant audits |
@@ -79,7 +80,7 @@ Install the bundle into any project or user scope via the plugin system.
 # add this repo as a marketplace
 /plugin marketplace add santapong/Heimdall
 
-# install the bundled plugin (all twenty-one skills)
+# install the bundled plugin (all twenty-three skills)
 /plugin install heimdall@heimdall
 ```
 
@@ -123,7 +124,7 @@ Heimdall/
 │       ├── loop-test/        loop-review/       loop-audit/       loop-debug/
 │       ├── loop-integrate/   loop-ship/
 │       ├── loop-operate/     loop-incident/
-│       └── loop-research/    loop-scout/        loop-docs/        loop-harness/   loop-autopilot/
+│       └── loop-research/    loop-scout/        loop-docs/       loop-comprehend/        loop-harness/   loop-autopilot/
 ├── docs/
 │   ├── c4/                  # architecture: context, container, component, skill anatomy
 │   └── design/              # normative: the boundary audit

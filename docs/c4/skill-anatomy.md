@@ -1,6 +1,6 @@
 # Anatomy of a skill
 
-Every one of the twenty-two skills has the same shape. This document explains **why** that shape, because the constraints are not obvious and several of them were learned by shipping the wrong thing first. `CONTRIBUTING.md` tells you the mechanics — what to write and how to validate it. This tells you what each part is *for*, which is what you need before adding the next one.
+Every one of the twenty-three skills has the same shape. This document explains **why** that shape, because the constraints are not obvious and several of them were learned by shipping the wrong thing first. `CONTRIBUTING.md` tells you the mechanics — what to write and how to validate it. This tells you what each part is *for*, which is what you need before adding the next one.
 
 The `loop-skill` skill scaffolds all of this for you. Read this to understand what it emits and why, or to review a skill someone else wrote.
 
@@ -30,13 +30,13 @@ A skill that inlines its references into `SKILL.md` still *works* — and quietl
 
 ## The `description` field is the product's API
 
-Skill selection happens on `description` **alone**, before any body is read. With twenty-two skills the field is doing real discriminative work, and it is the single highest-leverage text in a skill.
+Skill selection happens on `description` **alone**, before any body is read. With twenty-three skills the field is doing real discriminative work, and it is the single highest-leverage text in a skill.
 
 Three rules, each earned:
 
 **Quote any value containing a colon.** `description: Integrate a platform: OAuth 2.0 flows…` is not valid YAML — a colon-plus-space opens a nested mapping and the parser rejects the whole block. Two skills shipped this way in 1.0.0 and passed every gate the project had, because `claude plugin validate` never opens a `SKILL.md`. Wrap the value in double quotes and it is safe by construction.
 
-**Say what it does, when to use it, and which sibling to use instead.** The third clause is what makes twenty-two descriptions mutually exclusive rather than merely different. Every rated overlap in [`boundary-audit.json`](../design/boundary-audit.json) is resolved by a "use X instead when Y" pointer on *both* sides — a one-way pointer leaves the boundary decidable from only one direction, which is a defect the audit checks for.
+**Say what it does, when to use it, and which sibling to use instead.** The third clause is what makes twenty-three descriptions mutually exclusive rather than merely different. Every rated overlap in [`boundary-audit.json`](../design/boundary-audit.json) is resolved by a "use X instead when Y" pointer on *both* sides — a one-way pointer leaves the boundary decidable from only one direction, which is a defect the audit checks for.
 
 **Resolve overlaps on a checkable question, never a vibe.** The four operational skills are separated by facts anyone can verify in one step: *does a runbook exist and does running it restore the SLI?* · *is the service down, or is the defect merely reproducible?* · *does answering this add a line to the dependency manifest?* · *is the deliverable a findings list or a diff?* If you cannot state the discriminator as a question with a checkable answer, the two skills are not genuinely separable and should be merged.
 

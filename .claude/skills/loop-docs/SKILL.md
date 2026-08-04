@@ -1,6 +1,6 @@
 ---
 name: loop-docs
-description: "Write and maintain technical documentation: READMEs, API references, docstrings, guides, and ADR prose, verifying every claim against the source. Use when the user asks to write, generate, update, or improve documentation, a README, API docs, docstrings, or a how-to guide, or to keep docs in sync with code. Follows the Diataxis doc-type model and matches repo conventions. For deciding the architecture an ADR records, use loop-design. For writing a runbook an operator or automated loop executes, use loop-operate. For an incident postmortem or correction-of-error, use loop-incident."
+description: "Write and maintain technical documentation: READMEs, API references, docstrings, guides, and ADR prose, verifying every claim against the source. Use when the user asks to write, generate, update, or improve documentation, a README, API docs, docstrings, or a how-to guide, or to keep docs in sync with code. Follows the Diataxis doc-type model and matches repo conventions. For deciding the architecture an ADR records, use loop-design. For writing a runbook an operator or automated loop executes, use loop-operate. For an incident postmortem or correction-of-error, use loop-incident. For first understanding an unfamiliar codebase or recovering its unrecorded decisions before writing them up, use loop-comprehend."
 argument-hint: <target> [--mode <lite|balanced|all-out>]
 ---
 
