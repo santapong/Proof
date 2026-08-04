@@ -2,9 +2,9 @@
 
 ## Status
 
-**Proposed**
+**Accepted** — 2026-08-04. Ruling: the seam held through H1 — all 32 dangling pointers closed under §D8.9's carry/stub mechanism, the pack check promoted to a failing gate, and the seam absorbed two new skills (`loop-comprehend`, `loop-guide`; packs now 20 of 24 skills) with no change to the mechanism. §D8.9 (added in H1) is part of the accepted decision.
 
-Date: 2026-08-02 · Deciders: H0 (host portability) · Blocks: all of ROADMAP H1–H5
+Date proposed: 2026-08-02 · Deciders: H0 (host portability) · Blocks: all of ROADMAP H1–H5
 
 Rules on how the 22 skills reach a host that is not Claude Code. It amends no existing ADR: ADR-0001
 through ADR-0007 all rule on `mcp/`, and none of them says anything about where skills live or who

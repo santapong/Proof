@@ -13,7 +13,7 @@ Two machine-readable artifacts that govern the plugin, plus the ADR series. The 
 | [ADR-0005](ADR-0005-correctness-invariant-no-silent-default.md) | The no-silent-default correctness invariant | Accepted |
 | [ADR-0006](ADR-0006-width-shape-band-coverage-and-flag-selected-rows.md) | Verifier width, shape/band coverage, flagged rows | Accepted |
 | [ADR-0007](ADR-0007-boundary-lookup-matching-and-speech-act.md) | `boundary_lookup` matching and speech act | Accepted |
-| [**ADR-0008**](ADR-0008-host-packaging-seam.md) | **How the skills reach a host that is not Claude Code** — one source of truth, generated packs under `dist/<host>/`, four skills held back by subject, carried reference files, the Tier-B degradation contract | **Proposed** |
+| [**ADR-0008**](ADR-0008-host-packaging-seam.md) | **How the skills reach a host that is not Claude Code** — one source of truth, generated packs under `dist/<host>/`, four skills held back by subject, carried reference files, the Tier-B degradation contract | **Accepted** (2026-08-04) |
 
 [ADR-0001](../../mcp/ADR-0001-runtime-and-dependency.md) predates this directory and lives beside the
 code it governs, in `mcp/`. ADR-0009 — whether Heimdall grows its own orchestrator for hosts that
@@ -31,6 +31,7 @@ finds, and is not yet written.
 
 | File | What it is | Authority |
 |---|---|---|
+| [`host-tier-c-discovery.md`](host-tier-c-discovery.md) | ROADMAP H2: the three target hosts' programmable multi-agent surfaces as of Aug 2026 — per host, what exists and what Tier C would take. All claims secondary-source, re-confirm-before-implementing. Feeds the ADR-0010 decision (answer: not now, never per-host). | **Informative.** A discovery note, not a promise; the ROADMAP's milestone table is what commits to anything. |
 | `agent-engineering-terms.md` | The 2026 agent-engineering vocabulary — prompt, context, intent, specification, harness, loop, graph, meta-harness and memory engineering — each graded by source quality, with what we adopt, adapt or reject, and where it lands in the plugin. | **Informative.** Records *why* a policy or shelf entry is shaped as it is. Where it and a normative artifact disagree, the normative artifact wins — but fix one of them. |
 
 Unlike the two files above, this one governs nothing. It exists so a citation in a
@@ -40,7 +41,7 @@ circulating figures that must never be reproduced.
 
 ## Why these are in the repo
 
-Skill selection happens on the `description:` field alone, before any skill body is read. With twenty-two skills, the descriptions have to be mutually exclusive by construction, and the reasoning for *why* a boundary sits where it does has to be as durable as the boundary itself.
+Skill selection happens on the `description:` field alone, before any skill body is read. With twenty-four skills, the descriptions have to be mutually exclusive by construction, and the reasoning for *why* a boundary sits where it does has to be as durable as the boundary itself.
 
 During the 1.0.0 build these files lived in a scratch directory. Three of the audit's mandated cross-links were dropped from the build manifest and then verified by nobody — every review checked the work against the manifest, so anything the manifest omitted was structurally invisible. Committing the audit is the fix: the contract is now readable by whoever reviews the next change.
 

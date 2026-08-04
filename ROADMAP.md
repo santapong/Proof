@@ -56,7 +56,7 @@ Tier A + B is a genuinely useful product on every host: the routing, the boundar
 standards shelf, the estimator, the gate. Tier C is where Claude Code stays ahead until proven
 otherwise, and pretending otherwise in a README would be the dishonest move.
 
-**A pack carries 18 of the 22 skills, not 22.** [ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md)
+**A pack carries 20 of the 24 skills, not 24.** [ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md)
 found four that are host-native *by subject* rather than by accident — `loop-engine` (its subject is
 the `Workflow` tool), `loop-harness` (its subject is `.claude/settings.json`, Claude Code hooks and
 permissions), `loop-skill` (its deliverable is defined by this repo's `validate.mjs`), and
@@ -122,7 +122,7 @@ and the gate fails any pack that lost a template without saying so. That is the 
 |---|---|---|---|
 | **H0** ✅ | Seam decided | [ADR-0008](docs/design/ADR-0008-host-packaging-seam.md) (*Proposed*), `scripts/host-targets.json` (descriptors for all three hosts), `scripts/pack-host.mjs`, `scripts/check-host-packs.mjs`, `dist/` git-ignored, CI step added | ✅ `node scripts/check-host-packs.mjs` green for all three hosts (18 skills, 111 files each, deterministic); `validate.mjs` (46723 assertions, 0 failures) and `smoke.mjs` (28/28) still green |
 | **H1** ◑ | Cursor at Tier A+B | Close the three dangling-pointer classes the H0 gate found ([ADR-0008 §"What the first gate run found"](docs/design/ADR-0008-host-packaging-seam.md)) — the autonomy ladder's definitional home, 13 mode-dial pointers, and `loop-orchestrate`'s 16 references into the engine — then install docs | An **installed** pack (not this checkout) in a scratch project: a Cursor session routes a task to the right skill and calls `route_node`. **Code side done — all 32 pointers closed by D8.9, the check promoted from warning to failure, INSTALL §4 written. The session test is the open half and needs a human at a Cursor window.** |
-| **H2** | Tier C discovery | Research pass on all three hosts' programmable multi-agent surfaces; write it up as a design note, not a promise | A note in `docs/design/` that says, per host, what Tier C would take — including "not possible today" where that is the answer |
+| **H2** ✅ | Tier C discovery | Research pass on all three hosts' programmable multi-agent surfaces; write it up as a design note, not a promise | ✅ [`docs/design/host-tier-c-discovery.md`](docs/design/host-tier-c-discovery.md) (2026-08-04): all three hosts now have multi-agent surfaces; Cursor is the only plausible adapter target; Codex expresses static fan-out only; Antigravity is a redesign, not a port. Tier C stays Claude-Code-only; ADR-0010's answer is "not now, and never per-host" |
 | **H3** | Codex at Tier A+B | TOML emitter, `.codex/skills/`, `AGENTS.md` fragment | Same gate as H1, on Codex CLI |
 | **H4** | Antigravity at Tier A+B | `mcp_config.json` emitter (mind `serverUrl`), all three variant paths documented | Same gate as H1, on the Antigravity IDE **and** CLI |
 | **H5** | Support matrix published | README + INSTALL carry the per-host tier table; CI packs every host tree | No host claims a tier its gate has not passed |

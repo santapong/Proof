@@ -127,7 +127,7 @@ known friction. In short:
 
 Three things to know before you install one:
 
-- **A pack carries 18 of the 22 skills.** `loop-engine`, `loop-harness`, `loop-skill` and
+- **A pack carries 20 of the 24 skills.** `loop-engine`, `loop-harness`, `loop-skill` and
   `loop-autopilot` are Claude Code-native by subject and are held back ([ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md)).
 - **No multi-agent execution.** The 28 `*.workflow.js` templates are excluded and every affected
   skill says so in a generated host note. The judgment is intact; the fan-out is not.

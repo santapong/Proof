@@ -217,10 +217,3 @@ A large share of the GoF catalog compensates for what its 1994 implementation la
 | State | Sum types + match; sometimes a coroutine that *is* the machine | Nothing at small scale; a State class earns its keep only when transitions carry behavior |
 
 The replacements are not automatically better — a lambda with three captured locals is a Strategy with worse discoverability. The rule stays §2's: diagnose the problem shape first, then reach for the *cheapest* construct that answers it, which in a modern language is usually not a class.
-
-Drafting notes for the caller
-- Target file (unmodified, per brief): /mnt/data/company/TheLoopSkill/.claude/skills/loop-pattern/references/design-patterns.md — existing numbering ends at §5, so the draft continues at §6/§7.
-- Additivity: the file already flags Singleton (§1), one-product factories and once-only Strategy conditionals (§2 watch-outs, §4 tells), Builder-vs-named-args (§2), and Visitor inversion (§2). The new §6 cites those anchors and adds only the *cost accounting* of the misuse once shipped — it does not restate the diagnosis.
-- Diagrams: exactly three mermaid class sketches (Adapter, Decorator, Proxy), per the brief's 3–4 limit, plus a 4-way discriminator table including Facade. No loop-pattern sibling uses diagrams — these are the first in this directory; the inline-mermaid precedent within the plugin is `loop-design/references/architecture-patterns.md` (a different skill's reference, not a sibling). The C4-to-SVG rule in project memory applies to product docs, not these skill references.
-- Attribution discipline: GoF's example languages were C++ and Smalltalk (certain); the closure gap is attributed to C++ only — Smalltalk blocks are first-class closures — and the sum-type gap to both. The functions-replace-patterns idea is stated without attribution or counts, per the rules.
-- Length: the two sections total roughly 95 lines, under the ~120 budget.
