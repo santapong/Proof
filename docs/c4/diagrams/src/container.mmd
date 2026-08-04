@@ -1,27 +1,33 @@
 ---
-title: "Container diagram — TheLoopSkill"
+title: "Container diagram (Level 2) — Heimdall"
 ---
+%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 45, "rankSpacing": 65}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
 flowchart TB
     dev["<b>Developer</b><br/><i>«person»</i>"]
     cc["<b>Claude Code</b><br/><i>«external system»</i><br/>Skill discovery, agent loop, Workflow tool"]
 
-    subgraph tls["<b>TheLoopSkill</b> &nbsp;[SYSTEM]"]
+    subgraph hd["<b>Heimdall</b> &nbsp;[SYSTEM]"]
+        direction TB
         manifest["<b>Plugin Manifests</b><br/><i>«container» JSON — .claude-plugin/</i><br/>How the host discovers and installs the plugin"]
-        routers["<b>Skill Routers</b><br/><i>«container» 21 × SKILL.md</i><br/>Thin routers; the description is the selection API"]
-        refs["<b>Reference Library</b><br/><i>«container» 105 × Markdown</i><br/>Deep knowledge, loaded on demand;<br/>every skill has a pinned standards.md"]
-        templates["<b>Workflow Templates</b><br/><i>«container» 27 × plain JS</i><br/>Executed in a sandbox,<br/>never read into context"]
+        routers["<b>Skill Routers</b><br/><i>«container» 22 × SKILL.md</i><br/>Thin routers; the description is the selection API"]
+        refs["<b>Reference Library</b><br/><i>«container» 112 × Markdown</i><br/>Deep knowledge, loaded on demand;<br/>every skill has a pinned standards.md"]
+        templates["<b>Workflow Templates</b><br/><i>«container» 28 × plain JS</i><br/>Executed in a sandbox,<br/>never read into context"]
         policy["<b>Governance Policies</b><br/><i>«container» Markdown</i><br/>Read-only law: harness H1–H12 ·<br/>loop L1–L8 · modes M1–M9"]
         frameworks["<b>Lifecycle Frameworks</b><br/><i>«container» Markdown — AIDLC</i><br/>Phases and the human gates between them"]
-        design["<b>Design Records</b><br/><i>«container» docs/design/</i><br/>The boundary audit — normative"]
-        gate["<b>Validation Gate</b><br/><i>«container» Node.js + CI</i><br/>Fails the build on any contract breach"]
+        design["<b>Design Records</b><br/><i>«container» docs/design/</i><br/>Boundary audit + 7 ADRs — normative"]
+        mcp["<b>heimdall-mcp</b><br/><i>«container» Node process — stdio JSON-RPC</i><br/>5 tools + read-only heimdall:// resources,<br/>parsed live from the same source docs"]
+        gate["<b>Validation Gate</b><br/><i>«container» Node.js + CI</i><br/>3 scripts; fails the build on any contract breach"]
+        packs["<b>Host Packs</b><br/><i>«container» generated — dist/&lt;host&gt;/</i><br/>18 of 22 skills, no templates,<br/>for Cursor · Codex · Antigravity"]
     end
 
     fleet["<b>Claude Model Fleet</b><br/><i>«external system»</i><br/>Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5"]
     repo["<b>Target Repository</b><br/><i>«external system»</i>"]
+    hosts["<b>Other agent hosts</b><br/><i>«external system» — not yet verified</i>"]
 
     dev -- "invokes /loop-*" --> cc
     cc -- "discovers the<br/>plugin from" --> manifest
     cc -- "loads on invocation" --> routers
+    cc -- "spawns over stdio;<br/>calls 5 tools" --> mcp
     routers -- "reads on demand" --> refs
     routers -- "consumes read-only" --> policy
     routers -- "maps task onto phases" --> frameworks
@@ -29,14 +35,26 @@ flowchart TB
     cc -- "executes via the<br/>Workflow tool" --> templates
     templates -- "spawns agents at the<br/>tier ROUTES selects" --> fleet
     fleet -- "reads code;<br/>implement nodes patch" --> repo
+    mcp -. "parses the same files<br/>the skills read" .-> policy
+    mcp -. "serves as read-only<br/>resources" .-> routers
     gate -- "validates frontmatter,<br/>names, paths" --> routers
     gate -- "validates H10 + ROUTES<br/>byte-identity" --> templates
+    gate -- "packs twice; asserts determinism<br/>+ no dangling pointer" --> packs
     design -- "governs every description<br/>and boundary" --> routers
+    routers -. "generated from,<br/>never hand-edited" .-> packs
+    packs -. "installed by hand" .-> hosts
 
-    classDef person fill:#08427B,stroke:#052E56,color:#fff
-    classDef container fill:#438DD5,stroke:#2E6295,color:#fff
-    classDef ext fill:#999999,stroke:#6B6B6B,color:#fff
+    classDef person fill:#08427B,stroke:#052E56,stroke-width:2px,color:#fff
+    classDef container fill:#438DD5,stroke:#2E6295,stroke-width:2px,color:#fff
+    classDef process fill:#2E6295,stroke:#1B3C5C,stroke-width:2px,color:#fff
+    classDef generated fill:#9FC5E8,stroke:#4A7EA8,stroke-width:2px,stroke-dasharray:6 4,color:#000
+    classDef ext fill:#8C8C8C,stroke:#5F5F5F,stroke-width:2px,color:#fff
+    classDef planned fill:#F2F2F2,stroke:#8C8C8C,stroke-width:2px,stroke-dasharray:6 4,color:#333
     class dev person
     class manifest,routers,refs,templates,policy,frameworks,design,gate container
+    class mcp process
+    class packs generated
     class cc,fleet,repo ext
-    style tls fill:none,stroke:#444444,stroke-dasharray:5 5
+    class hosts planned
+    style hd fill:none,stroke:#444444,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#333

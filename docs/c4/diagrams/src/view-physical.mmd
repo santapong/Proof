@@ -1,0 +1,49 @@
+---
+title: "4+1 · Physical view — where each piece actually executes"
+---
+%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 40, "rankSpacing": 60}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
+flowchart TB
+    subgraph machine["<b>Developer's machine</b> &nbsp;<i>«deployment node»</i>"]
+        direction TB
+        ccproc["<b>Claude Code</b><br/><i>«process»</i><br/>Loads skills into context;<br/>runs the Workflow sandbox in-process"]
+        mcpproc["<b>heimdall-mcp</b><br/><i>«child process» node server.mjs</i><br/>stdio JSON-RPC, spawned by the host,<br/>dies with the session"]
+        files["<b>Repo checkout</b><br/><i>«filesystem»</i><br/>.claude/skills/ · mcp/ · docs/ · dist/"]
+    end
+
+    subgraph cloud["<b>Anthropic API</b> &nbsp;<i>«deployment node»</i>"]
+        models["<b>Model fleet</b><br/><i>«managed service»</i><br/>Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5"]
+    end
+
+    subgraph gh["<b>GitHub</b> &nbsp;<i>«deployment node»</i>"]
+        direction TB
+        runner["<b>Actions runner</b><br/><i>«ephemeral container» ubuntu-latest + Node 22</i><br/>validate · smoke · check-host-packs"]
+        origin["<b>Origin repo</b><br/><i>«service»</i><br/>Branches, PRs, releases"]
+    end
+
+    subgraph other["<b>Another developer's machine</b> &nbsp;<i>«deployment node» — ROADMAP H1/H3/H4</i>"]
+        host["<b>Cursor / Codex / Antigravity</b><br/><i>«process»</i><br/>Reads an installed pack;<br/>spawns its own heimdall-mcp"]
+    end
+
+    ccproc -- "stdio" --> mcpproc
+    ccproc -- "HTTPS — one call per agent node" --> models
+    mcpproc -- "reads at boot<br/>and per call" --> files
+    ccproc -- "reads and patches" --> files
+    files -- "push / PR" --> origin
+    origin -- "triggers" --> runner
+    runner -- "checks out and gates" --> files
+    files -. "pack-host.mjs → copied by hand" .-> host
+    host -. "spawns its own<br/>node server.mjs" .-> mcpproc
+
+    classDef proc fill:#2E6295,stroke:#1B3C5C,stroke-width:2px,color:#fff
+    classDef store fill:#438DD5,stroke:#2E6295,stroke-width:2px,color:#fff
+    classDef svc fill:#8C8C8C,stroke:#5F5F5F,stroke-width:2px,color:#fff
+    classDef planned fill:#F2F2F2,stroke:#8C8C8C,stroke-width:2px,stroke-dasharray:6 4,color:#333
+    class ccproc,mcpproc proc
+    class files store
+    class models,runner,origin svc
+    class host planned
+    style machine fill:none,stroke:#1B3C5C,stroke-width:2px
+    style cloud fill:none,stroke:#5F5F5F,stroke-width:2px
+    style gh fill:none,stroke:#5F5F5F,stroke-width:2px
+    style other fill:none,stroke:#8C8C8C,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#333

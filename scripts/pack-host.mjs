@@ -8,7 +8,7 @@
 //   D8.4  Four skills are held back by name (loop-engine, loop-harness, loop-skill, loop-autopilot).
 //   D8.5  Rules rewrite HOST NOUNS only. A rule may never soften a claim about engineering.
 //   D8.6  *.workflow.js excluded; every skill that loses one gains a stated degradation banner.
-//   D8.7  One launch contract; three emitters. Track 1 changes `launch`, not this file.
+//   D8.7  One launch contract; three emitters. A runtime change edits `launch`, not this file.
 //   D8.8  Output is byte-deterministic: sorted walk, no timestamps, no randomness.
 //
 // Node stdlib only — CONTRIBUTING.md:69 (no package manifest, no dependency) still holds.
@@ -16,7 +16,7 @@
 // Usage: node scripts/pack-host.mjs <cursor|codex|antigravity|--all>
 // Exit:  0 = packed; 1 = a rule went stale, a descriptor is malformed, or a source path is missing.
 
-import { readFileSync, writeFileSync, readdirSync, mkdirSync, rmSync, statSync } from 'node:fs'
+import { readFileSync, writeFileSync, readdirSync, mkdirSync, rmSync, statSync, existsSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { join, dirname, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -72,6 +72,25 @@ function dropSection(text, heading, why) {
   }
   const note = [heading, '', fenced(`> **Removed from this pack.** ${why}`), '']
   return { ok: true, text: [...lines.slice(0, start), ...note, ...lines.slice(end)].join('\n') }
+}
+
+/** A stubbed file: the pointer resolves, and the reader is told why the content is absent. */
+function renderStub(key, why, hostName) {
+  const body = DESC.common.stubBody
+    .join('\n')
+    .replaceAll('{{HOST_NAME}}', hostName)
+    .replaceAll('{{FILE}}', key)
+    .replaceAll('{{WHY}}', why)
+  return fenced(body) + '\n'
+}
+
+/**
+ * Drop every bracketed flag from a packed skill's `argument-hint`. The flags are parsed by
+ * loop-engine, which no pack contains, so advertising them promises an invocation the host cannot
+ * honour. The positional argument survives.
+ */
+function stripHintFlags(text) {
+  return text.replace(/^(argument-hint: [^\n[]*?)\s*\[.*$/m, '$1')
 }
 
 /** Insert the degradation banner directly after the YAML frontmatter block. */
@@ -148,7 +167,7 @@ function pack(hostKey) {
       let text
       const stub = stubs.get(key)
       if (stub) {
-        text = fenced(c.stubBody.join('\n').replaceAll('{{HOST_NAME}}', host.displayName).replaceAll('{{FILE}}', key)) + '\n'
+        text = renderStub(key, stub.why, host.displayName)
       } else {
         text = readFileSync(join(srcRoot, skill, rel), 'utf8')
 
@@ -168,7 +187,10 @@ function pack(hostKey) {
           }
         }
 
-        if (rel === 'SKILL.md' && lostTemplate) text = insertBanner(text, banner)
+        if (rel === 'SKILL.md') {
+          if (c.stripArgumentHintFlags?.enabled) text = stripHintFlags(text)
+          if (lostTemplate) text = insertBanner(text, banner)
+        }
       }
 
       const dest = join(outRoot, 'skills', skill, rel)
@@ -176,6 +198,36 @@ function pack(hostKey) {
       writeFileSync(dest, text)
       written.push({ path: `skills/${skill}/${rel}`, sha256: createHash('sha256').update(text).digest('hex') })
     }
+  }
+
+  // Carried files (D8.9): reference files pulled out of held-back skills, WITHOUT their SKILL.md, so
+  // the pointers that define a term still resolve. A directory with no SKILL.md is not a skill to any
+  // host — it is an appendix, which is exactly what it is.
+  const carried = []
+  for (const cf of c.carryFiles ?? []) {
+    const [skill, ...restParts] = cf.file.split('/')
+    const rest = restParts.join('/')
+    const srcAbs = join(srcRoot, skill, rest)
+    if (!existsSync(srcAbs)) fail(`carryFiles points at a file that does not exist: ${cf.file}\n  fix: update scripts/host-targets.json — ${cf.why}`)
+    if (!held.has(skill)) fail(`carryFiles is only for files inside a held-back skill; "${skill}" is packed normally, so ${cf.file} is already there.`)
+
+    let text
+    if (cf.mode === 'stub') {
+      text = renderStub(cf.file, cf.why, host.displayName)
+    } else {
+      const notice = c.carriedNotice
+        .join('\n')
+        .replaceAll('{{SKILL}}', skill)
+        .replaceAll('{{HOST_NAME}}', host.displayName)
+        .replaceAll('{{WHY}}', cf.why)
+      text = fenced(notice) + '\n\n' + readFileSync(srcAbs, 'utf8')
+    }
+
+    const dest = join(outRoot, 'skills', cf.file)
+    mkdirSync(dirname(dest), { recursive: true })
+    writeFileSync(dest, text)
+    written.push({ path: `skills/${cf.file}`, sha256: createHash('sha256').update(text).digest('hex') })
+    carried.push({ file: cf.file, mode: cf.mode })
   }
 
   // A rule that stopped matching is a rule pointing at prose that moved — D8.5's closed list has rotted.
@@ -218,7 +270,7 @@ function pack(hostKey) {
     '',
     `Then wire the MCP server: merge \`${host.mcp.file}\` into \`${host.mcp.installPath}\`.`,
     '',
-    `> The launch command is an **absolute path resolved at pack time** (\`${launch.command} ${launch.args.join(' ')}\`), because no target host expands \`\${CLAUDE_PROJECT_DIR}\` (ADR-0008 §C5). Re-pack if the checkout moves. Requires \`node\` on PATH until Track 1 ships a binary.`,
+    `> The launch command is an **absolute path resolved at pack time** (\`${launch.command} ${launch.args.join(' ')}\`), because no target host expands \`\${CLAUDE_PROJECT_DIR}\` (ADR-0008 §C5). Re-pack if the checkout moves, and keep \`node\` on PATH — the server is a Node script and there is no self-contained binary.`,
     '',
     `**Known friction:** ${host.friction}`,
     host.note ? `\n**Note:** ${host.note}` : '',
@@ -238,6 +290,7 @@ function pack(hostKey) {
     skillsPacked: totalSkills - skippedSkills.length,
     skillsInSource: totalSkills,
     heldBack: skippedSkills,
+    carriedFromHeldBack: carried.sort((a, b) => (a.file < b.file ? -1 : 1)),
     templatesExcluded: droppedFiles.sort(),
     files: written.sort((a, b) => (a.path < b.path ? -1 : 1)),
   }

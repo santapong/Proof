@@ -1,9 +1,9 @@
 # Heimdall
 
-> **Run real engineering work as governed, multi-agent workflows** — a Claude Code plugin of 20 composable skills covering the whole lifecycle, from design and review through shipping, operating, and autonomous self-improvement.
+> **Run real engineering work as governed, multi-agent workflows** — a Claude Code plugin of 22 composable skills covering the whole lifecycle, from design and review through shipping, operating, and autonomous self-improvement.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills: 21](https://img.shields.io/badge/skills-21-6f42c1.svg)](#whats-in-the-box)
+[![Skills: 22](https://img.shields.io/badge/skills-22-6f42c1.svg)](#whats-in-the-box)
 [![Plugin: marketplace](https://img.shields.io/badge/plugin-marketplace-2ea44f.svg)](#installation)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](CONTRIBUTING.md)
 
@@ -151,7 +151,7 @@ The system is documented with the **[C4 model](https://c4model.com)** — a hier
 
 ### Level 1 — System Context
 
-**What is this, who uses it, what does it depend on?** Note where the boundary sits: Claude Code is *outside* it. The plugin has no process, port, or lifecycle of its own — everything it "does" is done by the host on its instruction.
+**What is this, who uses it, what does it depend on?** Note where the boundary sits: Claude Code is *outside* it. The plugin owns exactly one process of its own — `heimdall-mcp`, a stdio child the host spawns — and everything else it "does" is done by the host on its instruction.
 
 ![System Context — Heimdall (at a glance)](docs/c4/diagrams/context-glance.svg)
 
@@ -174,6 +174,8 @@ The five relationships running `loop-operate → loop-incident → loop-debug �
 Each handoff is a **checkable question**, not a judgment call: *does a runbook exist and does running it restore the SLI?* · *is the service currently down, or is the defect merely reproducible?* · *is the rollout in flight, or baked?* The full 24-way matrix is in **[`docs/design/boundary-audit.json`](docs/design/boundary-audit.json)**, which is normative — it outranks any plan that disagrees with it.
 
 → **[Component diagram](docs/c4/component.md)** opens `loop-engine` itself · **[the skill fleet](docs/c4/skills.md)** draws each role group and what is inside any one skill · **[skill anatomy](docs/c4/skill-anatomy.md)** explains why that shape · **[the architecture notes](docs/c4/README.md)** trace one invocation end to end with the prior art behind each idea.
+
+**C4 is structural — it says nothing about time, contributors, or machines.** For those, the **[4+1 views](docs/views/4plus1.md)** add a *process* view (what runs concurrently, and where the run blocks on a human), a *development* view (what you edit, and which of the three gates catches you), a *physical* view (what process runs where — almost all of it local, exactly one network hop per agent node), and four *scenarios* that walk all four views end to end, including the paths that fail.
 
 ## The autonomy ladder
 
@@ -311,16 +313,33 @@ Every skill follows the same shape: `SKILL.md` (thin router) + `references/` (de
 | `docs/plans/` | Release build plans |
 | `mcp/` | **`heimdall-mcp`** — the zero-dependency stdio MCP server (five tools + read-only skill resources), its ADR and its tool contracts |
 | `scripts/validate.mjs` | The validation gate, run by `.github/workflows/validate.yml` on every push and PR |
+| `scripts/pack-host.mjs`, `host-targets.json`, `check-host-packs.mjs` | The per-host packaging seam: descriptors in, `dist/<host>/` out, gated ([ADR-0008](docs/design/ADR-0008-host-packaging-seam.md)) |
 | `.claude-plugin/plugin.json`, `marketplace.json` | Plugin + marketplace manifests |
 | `.claude/settings.json` | Enables the plugin for Claude Code on the web |
 | `INSTALL.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `ROADMAP.md` | Install paths, contributor guide, version history, what's proposed next |
 
 ## Roadmap
 
-Two tracks are proposed and neither is decided — each names the ADR that has to be won before it starts. **[ROADMAP.md](ROADMAP.md)** carries both in full.
+One track, milestones H0–H5. **[ROADMAP.md](ROADMAP.md)** carries it in full, with per-host detail and a gate per milestone.
 
-- **Rust runtime for `heimdall-mcp`** — one static binary per platform instead of a Node script, so every host can launch the server identically. Needs an ADR that amends [ADR-0001](mcp/ADR-0001-runtime-and-dependency.md), which pinned Node stdlib and no manifest.
-- **Host portability** — run Heimdall outside Claude Code, starting with **Cursor, OpenAI Codex and Antigravity**, with more to follow. The deliverable is a generated-per-host packaging seam, not four hand-maintained copies of 22 skills, plus an honest support tier per host: skills load (A), MCP tools reachable (B), multi-agent execution (C — Claude Code only until proven otherwise).
+**Host portability** *(in progress — H0 and H1's code side have landed)* — run Heimdall outside Claude Code, starting with **Cursor, OpenAI Codex and Antigravity**, more to follow.
+
+`.claude/skills/` stays the single source of truth; each host's tree is **generated**, never hand-maintained ([ADR-0008](docs/design/ADR-0008-host-packaging-seam.md)):
+
+```sh
+node scripts/pack-host.mjs --all      # → dist/cursor/, dist/codex/, dist/antigravity/
+node scripts/check-host-packs.mjs     # determinism, held-back skills, dangling pointers, banners
+```
+
+What that honestly buys per host — the caveats *are* the point:
+
+| Tier | State |
+|---|---|
+| **A — skills load** | **18 of 22.** `loop-engine`, `loop-harness`, `loop-skill` and `loop-autopilot` are Claude Code-native *by subject* — the `Workflow` tool, `.claude/settings.json`, this repo's own gate, Routines — so they are held back rather than mistranslated. |
+| **B — MCP tools reachable** | Emitted per host in its own dialect (`mcpServers` JSON, Antigravity's `mcp_config.json`, Codex's TOML `[mcp_servers.*]`). The launch path is absolute and resolved at pack time, so re-pack if the checkout moves; `node` stays a prerequisite. |
+| **C — multi-agent execution** | **Claude Code only.** The 28 `*.workflow.js` templates target a tool no other host has, so they are excluded and every affected skill carries a generated note saying so, instead of quietly degrading to a single-agent answer. |
+
+**No pack has been installed into a real session of any of the three hosts yet** — they build and pass their gate, nothing more. Instructions to try one: [INSTALL §4](INSTALL.md).
 
 ## Contributing
 

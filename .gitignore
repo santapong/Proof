@@ -3,3 +3,8 @@
 # committing them would add ~5 MB of duplicated skills and rewrite three copies of every file
 # in git history on each skill edit. `.claude/skills/` is the only source of truth.
 dist/
+
+# NOTHING ELSE BELONGS HERE. In particular, node_modules is deliberately NOT ignored:
+# docs/design/ADR-0002-dependency-seam-and-boot-contract.md §D2.2 keeps `git status` as the only
+# detector of a stray `npm install` breaking the zero-dependency rule, since the three gates are
+# measurably blind to it. Ignoring it would buy tidiness by deleting the detector.
