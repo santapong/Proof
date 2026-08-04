@@ -9,7 +9,7 @@
   "serverId": "heimdall-mcp",
 
   "launch": {
-    "_": "ADR-0008 D8.7 — one launch contract, three emitters. {{REPO}} resolves to the absolute repo path at pack time because no target host expands ${CLAUDE_PROJECT_DIR}. When ADR-0009 (Rust) lands, this becomes command: 'heimdall-mcp', args: [] and no emitter changes.",
+    "_": "ADR-0008 D8.7 — one launch contract, three emitters. {{REPO}} resolves to the absolute repo path at pack time because no target host expands ${CLAUDE_PROJECT_DIR}. Kept as one field so a runtime change stays a one-line edit here instead of a change to two JSON emitters and a TOML one.",
     "command": "node",
     "args": ["{{REPO}}/mcp/server.mjs"]
   },
@@ -28,6 +28,29 @@
 
     "stubFiles": [
       { "file": "loop-orchestrate/references/model-routing.md", "why": "ADR-0008 D8.6 — routes between Claude model tiers; wrong advice on a host running Gemini or GPT. Stubbed rather than deleted so the router's pointer does not dangle." }
+    ],
+
+    "carryFiles": [
+      {
+        "file": "loop-autopilot/references/deployment.md",
+        "mode": "copy",
+        "why": "ADR-0008 D8.9 class 1 — the autonomy ladder has exactly one definitional home and it lives inside a held-back skill. loop-operate points at it four times and defines its central concept by that pointer. Carried without loop-autopilot's SKILL.md, so the host sees an appendix, not a skill."
+      },
+      {
+        "file": "loop-engine/references/harness-policy.md",
+        "mode": "copy",
+        "why": "ADR-0008 D8.9 class 3 — loop-orchestrate's planning layer constrains a plan against this policy. The constraint survives without the executor."
+      },
+      {
+        "file": "loop-engine/references/loop-policy.md",
+        "mode": "copy",
+        "why": "ADR-0008 D8.9 class 3 — same: loop shape and barrier discipline are planning doctrine, readable without the tool that runs them."
+      },
+      {
+        "file": "loop-engine/references/execution-modes.md",
+        "mode": "stub",
+        "why": "ADR-0008 D8.9 class 2 — 13 packed skills point here for the --mode dial. The file itself routes between Claude model tiers (D8.6), so it is stubbed in place: the pointer resolves and the reader is told why the contract is absent, instead of being handed routing advice for models this host does not run."
+      }
     ],
 
     "dropSections": [
@@ -50,6 +73,12 @@
       }
     ],
 
+    "stripArgumentHintFlags": {
+      "enabled": true,
+      "why": "ADR-0008 D8.5 — `argument-hint` is the one line of a skill a host renders as a promise about its own invocation. Every bracketed flag (`--mode`, `--planner`, `--fable-gate`, `--budget`, `--dry-run`) is parsed by loop-engine, which is not in the pack, so advertising them is a false promise. The positional argument is kept; everything from the first ` [` is dropped.",
+      "appliesTo": "the argument-hint line of a packed SKILL.md, nowhere else"
+    },
+
     "forbiddenTokens": [
       "${CLAUDE_PROJECT_DIR}",
       "${CLAUDE_PLUGIN_ROOT}",
@@ -70,11 +99,19 @@
     "stubBody": [
       "# Not included in this pack",
       "",
-      "This file exists in the Heimdall source tree but is **excluded from the {{HOST_NAME}} pack** by",
-      "`docs/design/ADR-0008-host-packaging-seam.md` §D8.6: it routes work between Claude model tiers,",
-      "which is a multi-agent (Tier C) concern and would be wrong advice on this host.",
+      "This file exists in the Heimdall source tree but is **excluded from the {{HOST_NAME}} pack**.",
+      "It is stubbed rather than deleted so that pointers to it resolve and you are told why, instead",
+      "of following a dead link or reading advice that does not hold on this host.",
+      "",
+      "**Why it is out:** {{WHY}}",
       "",
       "The original is at `.claude/skills/{{FILE}}` in <https://github.com/santapong/Heimdall>."
+    ],
+
+    "carriedNotice": [
+      "> **Carried into this pack without its skill.** The `{{SKILL}}` router is held back on",
+      "> {{HOST_NAME}} (ADR-0008 §C2), but this reference file is carried because packed skills define",
+      "> terms by pointing at it. Read it as an appendix: {{WHY}}"
     ]
   },
 

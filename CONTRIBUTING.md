@@ -99,7 +99,12 @@ bash -n .claude/skills/loop-harness/templates/hooks/*.sh
 
 # Templates actually RUN, and route as intended in both modes (should print 0 failed)
 node scripts/smoke.mjs
+
+# The per-host packs still build, are deterministic, and dangle no pointer
+node scripts/check-host-packs.mjs
 ```
+
+**On the third gate.** `check-host-packs.mjs` builds the Cursor / Codex / Antigravity packs twice and asserts they are byte-identical, that no held-back skill's router leaked in, that no `*.workflow.js` survived, that no `${CLAUDE_*}` expansion remains, that every skill which lost a template says so, and that **every `../<sibling-skill>/…` pointer resolves inside the pack**. That last one is the check most likely to catch you: four skills are held back from packs by [ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md), so a new cross-reference into `loop-engine`, `loop-harness`, `loop-skill` or `loop-autopilot` is green in `.claude/skills/` and red here. The fix is a `carryFiles` entry in `scripts/host-targets.json` (§D8.9), a stub, or a rethink of the pointer — not an edit to `dist/`, which is generated and git-ignored and will be overwritten on the next pack.
 
 To parse a single template by hand without the script — note the temp file. `node --check` stats the path it is given rather than reading the stream, so piping into `node --check /dev/stdin` fails with `ENOENT … /proc/<pid>/fd/pipe:[…]` on every input, including valid ones:
 

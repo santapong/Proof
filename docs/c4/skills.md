@@ -1,6 +1,6 @@
 # C4 — the skill fleet
 
-Nineteen skills, drawn at two altitudes.
+Twenty-two skills, drawn at two altitudes.
 
 **One diagram per skill would be twenty-four copies of the same picture.** Every skill has an identical internal structure — router, references, template — which is drawn once below as the *skill container view* and explained in [`skill-anatomy.md`](skill-anatomy.md). What actually differs between skills is their **relationships**: who delegates to whom, and where each one stops. So the per-skill views are grouped by role, and each shows the edges that make its members distinct.
 

@@ -1,23 +1,19 @@
 # Heimdall Roadmap
 
-**Status: proposals, not commitments.** Nothing in this file is decided. Each track names the ADR
+**Status: a proposal, not a commitment.** Nothing in this file is decided. The work names the ADR
 that has to be opened and won before its first line of code is written, and the gate that says it
 worked. Shipped work lives in [`CHANGELOG.md`](CHANGELOG.md); build plans for a cut release live in
 [`docs/plans/`](docs/plans/). This file is the layer above both: what we intend, why, and in what
 order.
 
-Two tracks are open:
+One track is open:
 
 | Track | One line | State | Blocking decision |
 |---|---|---|---|
-| **1 — Rust runtime** | Ship `heimdall-mcp` as a single static binary instead of a Node script | Proposed; carried on its own branch | ADR-0009 (must amend or supersede [ADR-0001](mcp/ADR-0001-runtime-and-dependency.md)) |
-| **2 — Host portability** | Run Heimdall on hosts other than Claude Code — **Cursor, OpenAI Codex, Antigravity** first, more after | **In progress — H0 landed** | [ADR-0008](docs/design/ADR-0008-host-packaging-seam.md) — *Proposed*, needs a ruling |
+| **Host portability** | Run Heimdall on hosts other than Claude Code — **Cursor, OpenAI Codex, Antigravity** first, more after | **In progress — H0 and H1's code side landed** | [ADR-0008](docs/design/ADR-0008-host-packaging-seam.md) — *Proposed*, needs a ruling |
 
-They are one story read backwards: **portability is what makes the Rust rewrite worth doing.** A
-Node script is a fine MCP server for a plugin that only ever runs inside Claude Code. The moment
-three more hosts have to launch the same server, "assume `node` is on `PATH`, from a repo checkout,
-via `${CLAUDE_PROJECT_DIR}`" stops being a free assumption — and ADR-0001 §"What distribution
-actually does" already records the evidence that plugin install does not install anything for you.
+The milestones are numbered **H0–H5** and that numbering is what the commits, the ADR and the gate
+refer to.
 
 ---
 
@@ -29,56 +25,17 @@ What exists today, and what would survive being pointed at a different host:
 |---|---|---|
 | **Skills** — 22 dirs under `.claude/skills/`, `SKILL.md` + `references/` + `templates/` | Markdown with YAML frontmatter (`name`, `description`, `argument-hint`) | **Mostly.** All three targets read `SKILL.md` directories; Cursor reads `.claude/skills/` directly for compatibility. Frontmatter dialects and command-invocation syntax differ. |
 | **MCP server** — `heimdall-mcp` 0.2.0, `mcp/server.mjs` + 10 lib modules, ~7.8k lines | Five tools (`route_node`, `boundary_lookup`, `estimate_phase`, `run_gate`, `standards_shelf`) + read-only `heimdall://` resources, hand-rolled JSON-RPC 2.0 over stdio, Node stdlib only | **By protocol, yes.** All three targets speak MCP stdio. What does not port is the *launch contract*: a `node` interpreter, a repo checkout, and a `${CLAUDE_PROJECT_DIR}` / `${CLAUDE_PLUGIN_ROOT}` expansion no other host performs. |
-| **Workflow templates** — 28 `*.workflow.js` | Scripts targeting Claude Code's `Workflow` tool: `agent()`, `pipeline()`, `parallel()`, `phase()`, `budget` | **No.** No target host exposes an equivalent callable surface. This is the real gap, and Track 2 must answer it rather than route around it. |
+| **Workflow templates** — 28 `*.workflow.js` | Scripts targeting Claude Code's `Workflow` tool: `agent()`, `pipeline()`, `parallel()`, `phase()`, `budget` | **No.** No target host exposes an equivalent callable surface. This is the real gap, and this track must answer it rather than route around it. |
 | **Harness** — `.claude/settings.json`, `hooks/harness-guard.py`, `hooks/stop-gate.sh`, `/gate`, `/release`, plugin + marketplace manifests | Claude Code configuration | **No.** Per-host analogues exist in pieces; none map one-to-one. |
 
 So the fleet splits cleanly into a portable half (knowledge: skills, standards, boundaries, the MCP
 tools that serve them) and a non-portable half (execution: the multi-agent engine and the harness
-that governs it). Track 2 is mostly the work of admitting that split in the layout instead of
+that governs it). This track is mostly the work of admitting that split in the layout instead of
 discovering it per host.
 
 ---
 
-## Track 1 — Rust runtime for `heimdall-mcp`
-
-**Why now.** Not performance — the server parses a handful of markdown files and answers in
-milliseconds. The case is distribution. A single static binary per platform is the only artifact
-all four hosts can launch identically, with no interpreter assumption, no checkout path, and no
-per-host install step. ADR-0001 chose Node stdlib for a server that only ever booted from this
-repo inside Claude Code; Track 2 invalidates that premise, and ADR-0001 §Consequences already names
-"a *required* capability we would have to hand-implement" as its revisit trigger. Portability is a
-second trigger it did not anticipate, which is exactly why this needs a new ADR rather than a
-quiet edit.
-
-**What ADR-0009 has to rule on**, with the runner-up ADR-0001 already identified (a scoped
-`mcp/package.json` taking the official TypeScript SDK) as the honest comparison:
-
-1. Rust + a maintained MCP crate, vs. Rust + hand-rolled JSON-RPC (matching what `server.mjs`
-   already does), vs. staying on Node and solving distribution another way.
-2. What happens to `CONTRIBUTING.md:69` and `scripts/validate.mjs:12` — both of which state as
-   *law* that this plugin has no package manifest and no third-party dependency. A `Cargo.toml`
-   with a dependency tree is that law's second violation, and it deserves the same worked argument
-   ADR-0001 gave the first.
-3. Who builds the binaries, where they are published, and what a user does when no build exists for
-   their platform.
-
-**Phases, each with its own gate:**
-
-| # | Phase | Gate |
-|---|---|---|
-| R0 | **Parity oracle first.** Record golden request/response pairs against today's `.mjs` server for every tool, every error path, and every resource read. | The recording harness runs green against `server.mjs` before any Rust exists. This is the acceptance test for the whole track; without it the rewrite has no definition of "done". |
-| R1 | Port the Phase-2 spine (`modes`, `estimate`, `boundary`, `standards` — the doc parsers) | Byte-identical parse output vs. the `.mjs` spine on the same source docs |
-| R2 | Port the six tool/resource handlers + the stdio shell | R0's golden pairs replay green against the Rust binary, including the `isError:true` vs. JSON-RPC-error seam ADR-0003 pinned |
-| R3 | Release engineering — static binaries, checksums, a documented no-binary fallback | A fresh machine with no Node installed runs all five tools |
-| R4 | Flip `.mcp.json` and the plugin manifest to the binary; keep `server.mjs` as the documented fallback for one minor version | `scripts/validate.mjs` and `scripts/smoke.mjs` stay green; CHANGELOG carries the deprecation notice |
-
-**Non-goals.** Rewriting skills, references, or workflow templates in anything but markdown and JS.
-Un-deferring HTTP transport — still deferred, and if it un-defers, ADR-0001's reversal path (a) is
-re-opened on its own merits, not smuggled in under this track.
-
----
-
-## Track 2 — Host portability
+## Host portability
 
 **Scope for the first cut: three hosts.** Cursor, Antigravity, OpenAI Codex. The point of stopping
 at three is that the fourth host must cost a checklist, not a redesign — so the deliverable is a
@@ -92,14 +49,14 @@ negotiating:
 | Tier | Means | Depends on |
 |---|---|---|
 | **A — Knowledge** | The 22 skills load, route correctly, and their references resolve | Skill discovery + `SKILL.md` frontmatter dialect |
-| **B — Tools** | `heimdall-mcp`'s five tools and `heimdall://` resources are reachable from the host's agent | MCP stdio config + a launchable binary (Track 1) |
+| **B — Tools** | `heimdall-mcp`'s five tools and `heimdall://` resources are reachable from the host's agent | MCP stdio config, plus `node` on the user's `PATH` and an absolute launch path resolved at pack time |
 | **C — Execution** | A multi-agent run — fan-out, phases, gates, budget — actually executes under the host's own orchestration | The host having *any* programmable multi-agent surface. **Unknown for all three. Discovery task, see H2.** |
 
 Tier A + B is a genuinely useful product on every host: the routing, the boundary matrix, the
 standards shelf, the estimator, the gate. Tier C is where Claude Code stays ahead until proven
 otherwise, and pretending otherwise in a README would be the dishonest move.
 
-**A pack carries 18 of the 22 skills, not 22.** [ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md)
+**A pack carries 20 of the 24 skills, not 24.** [ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md)
 found four that are host-native *by subject* rather than by accident — `loop-engine` (its subject is
 the `Workflow` tool), `loop-harness` (its subject is `.claude/settings.json`, Claude Code hooks and
 permissions), `loop-skill` (its deliverable is defined by this repo's `validate.mjs`), and
@@ -164,8 +121,8 @@ and the gate fails any pack that lost a template without saying so. That is the 
 | # | Milestone | Contains | Gate |
 |---|---|---|---|
 | **H0** ✅ | Seam decided | [ADR-0008](docs/design/ADR-0008-host-packaging-seam.md) (*Proposed*), `scripts/host-targets.json` (descriptors for all three hosts), `scripts/pack-host.mjs`, `scripts/check-host-packs.mjs`, `dist/` git-ignored, CI step added | ✅ `node scripts/check-host-packs.mjs` green for all three hosts (18 skills, 111 files each, deterministic); `validate.mjs` (46723 assertions, 0 failures) and `smoke.mjs` (28/28) still green |
-| **H1** | Cursor at Tier A+B | Close the three dangling-pointer classes the H0 gate found ([ADR-0008 §"What the first gate run found"](docs/design/ADR-0008-host-packaging-seam.md)) — the autonomy ladder's definitional home, 13 mode-dial pointers, and `loop-orchestrate`'s 16 references into the engine — then install docs | An **installed** pack (not this checkout) in a scratch project: a Cursor session routes a task to the right skill and calls `route_node` |
-| **H2** | Tier C discovery | Research pass on all three hosts' programmable multi-agent surfaces; write it up as a design note, not a promise | A note in `docs/design/` that says, per host, what Tier C would take — including "not possible today" where that is the answer |
+| **H1** ◑ | Cursor at Tier A+B | Close the three dangling-pointer classes the H0 gate found ([ADR-0008 §"What the first gate run found"](docs/design/ADR-0008-host-packaging-seam.md)) — the autonomy ladder's definitional home, 13 mode-dial pointers, and `loop-orchestrate`'s 16 references into the engine — then install docs | An **installed** pack (not this checkout) in a scratch project: a Cursor session routes a task to the right skill and calls `route_node`. **Code side done — all 32 pointers closed by D8.9, the check promoted from warning to failure, INSTALL §4 written. The session test is the open half and needs a human at a Cursor window.** |
+| **H2** ✅ | Tier C discovery | Research pass on all three hosts' programmable multi-agent surfaces; write it up as a design note, not a promise | ✅ [`docs/design/host-tier-c-discovery.md`](docs/design/host-tier-c-discovery.md) (2026-08-04): all three hosts now have multi-agent surfaces; Cursor is the only plausible adapter target; Codex expresses static fan-out only; Antigravity is a redesign, not a port. Tier C stays Claude-Code-only; ADR-0010's answer is "not now, and never per-host" |
 | **H3** | Codex at Tier A+B | TOML emitter, `.codex/skills/`, `AGENTS.md` fragment | Same gate as H1, on Codex CLI |
 | **H4** | Antigravity at Tier A+B | `mcp_config.json` emitter (mind `serverUrl`), all three variant paths documented | Same gate as H1, on the Antigravity IDE **and** CLI |
 | **H5** | Support matrix published | README + INSTALL carry the per-host tier table; CI packs every host tree | No host claims a tier its gate has not passed |
@@ -189,15 +146,18 @@ Gemini CLI. None are scoped; they are listed so step 5 has something to be teste
 
 | ADR | Question | Blocks |
 |---|---|---|
-| **ADR-0008** | The packaging seam: generated per-host trees, and the Tier-B degradation contract | All of Track 2 |
-| **ADR-0009** | Rust runtime for `heimdall-mcp` — amends or supersedes ADR-0001, and re-argues the no-manifest law | All of Track 1 |
-| **ADR-0010** | *(conditional on H2)* Whether Heimdall grows its own orchestrator for Tier C hosts, or Tier C stays Claude-Code-only | H2's outcome decides whether this exists at all |
+| **ADR-0008** | The packaging seam: generated per-host trees, the held-back list, carried files, and the Tier-B degradation contract | Everything below H0 |
+| **ADR-0009** | *(conditional on H2)* Whether Heimdall grows its own orchestrator for Tier C hosts, or Tier C stays Claude-Code-only | H2's outcome decides whether this exists at all |
 
 ## Explicit non-goals
 
 - **Re-implementing the `Workflow` tool** for hosts that lack one — until H2 says what each host
   can actually do, that is a rewrite justified by a guess.
 - **A hosted service, an HTTP transport, or an account.** Still deferred, still out of scope.
+- **Rewriting `heimdall-mcp` in another language to make it easier to launch.** The absolute-path,
+  `node`-on-`PATH` launch contract is a standing cost, not a temporary one; D8.7 keeps it behind a
+  single descriptor field so a future runtime change stays a one-line edit, and that is as far as
+  this roadmap goes.
 - **Forking the skills per host.** If the seam cannot keep one source of truth, the answer is to fix
   the seam or drop the host, not to keep two copies.
 - **Claiming support on a host nobody has run.** A matrix row requires a passed gate.

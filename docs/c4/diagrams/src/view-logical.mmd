@@ -1,0 +1,53 @@
+---
+title: "4+1 · Logical view — what the system is made of, functionally"
+---
+%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 35, "rankSpacing": 55}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
+flowchart TB
+    subgraph gov["<b>Governance</b> — read by every skill, modified by none"]
+        direction LR
+        harness["harness policy<br/><i>H1–H12</i>"]
+        loop["loop policy<br/><i>L1–L8</i>"]
+        modes["execution modes<br/><i>M1–M9</i>"]
+        aidlc["AIDLC + 2 frameworks<br/><i>phases and gates</i>"]
+    end
+
+    subgraph engine["<b>Engine &amp; planning</b> — 5 skills"]
+        direction LR
+        e1["loop-engine"]
+        e2["loop-orchestrate"]
+        e3["loop-context"]
+        e4["loop-build"]
+        e5["loop-skill"]
+    end
+
+    subgraph domain["<b>Domain skills</b> — 16, one lifecycle role each"]
+        direction TB
+        d1["design · algo · pattern · frontend<br/><i>decide the shape</i>"]
+        d2["test · review · audit · debug<br/><i>judge and repair</i>"]
+        d3["integrate · ship · operate · incident<br/><i>reach and keep production</i>"]
+        d4["research · scout · docs · harness<br/><i>know, choose, explain, configure</i>"]
+    end
+
+    subgraph auto["<b>Autonomy</b> — 1 skill"]
+        a1["loop-autopilot<br/><i>propose-only loop over a repo</i>"]
+    end
+
+    gov -- "constrains the shape of<br/>every workflow" --> engine
+    engine -- "executes the phases<br/>a domain skill defines" --> domain
+    domain -- "hands work back at<br/>each phase gate" --> engine
+    auto -- "composes the fleet<br/>on a schedule" --> domain
+    engine -- "runs the loop's<br/>proposed changes" --> auto
+
+    classDef law fill:#F5E8C7,stroke:#B08D3F,stroke-width:2px,color:#000
+    classDef eng fill:#438DD5,stroke:#2E6295,stroke-width:2px,color:#fff
+    classDef dom fill:#85BBF0,stroke:#5D82A8,stroke-width:2px,color:#000
+    classDef aut fill:#7FBF7F,stroke:#4A7A4A,stroke-width:2px,color:#000
+    class harness,loop,modes,aidlc law
+    class e1,e2,e3,e4,e5 eng
+    class d1,d2,d3,d4 dom
+    class a1 aut
+    style gov fill:none,stroke:#B08D3F,stroke-width:2px,stroke-dasharray:6 4
+    style engine fill:none,stroke:#2E6295,stroke-width:2px,stroke-dasharray:6 4
+    style domain fill:none,stroke:#5D82A8,stroke-width:2px,stroke-dasharray:6 4
+    style auto fill:none,stroke:#4A7A4A,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#333

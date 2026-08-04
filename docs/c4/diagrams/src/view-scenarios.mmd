@@ -1,0 +1,36 @@
+---
+title: "4+1 · Scenarios — the +1 view that ties the other four together"
+---
+%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 35, "rankSpacing": 50}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
+flowchart LR
+    subgraph s1["<b>S1 · Review a diff</b> — the everyday path"]
+        direction TB
+        a1["invoke /loop-review"] --> a2["router + 2 references load<br/><i>logical</i>"] --> a3["finders fan out,<br/>verifiers refute<br/><i>process</i>"] --> a4["gate: findings + ledger<br/><i>process</i>"]
+    end
+
+    subgraph s2["<b>S2 · Add a skill</b> — the contributor path"]
+        direction TB
+        b1["/loop-skill authors it"] --> b2["boundary audit updated<br/><i>logical</i>"] --> b3["3 gates run in CI<br/><i>development</i>"] --> b4["red on a dangling pointer<br/>into a held-back skill<br/><i>development</i>"]
+    end
+
+    subgraph s3["<b>S3 · Run unattended</b> — the autonomy path"]
+        direction TB
+        c1["Routine fires on a schedule<br/><i>physical</i>"] --> c2["reads issues, PRs, CI<br/><i>logical</i>"] --> c3["opens a draft PR<br/>with tests"] --> c4["a human merges — or does not<br/><i>process</i>"]
+    end
+
+    subgraph s4["<b>S4 · Install on another host</b> — the portability path"]
+        direction TB
+        d1["pack-host.mjs generates<br/>dist/cursor/<br/><i>development</i>"] --> d2["copied into .cursor/skills/<br/><i>physical</i>"] --> d3["18 of 22 skills route;<br/>MCP tools answer<br/><i>logical</i>"] --> d4["no fan-out — the host note<br/>says so<br/><i>process</i>"]
+    end
+
+    classDef step fill:#85BBF0,stroke:#5D82A8,stroke-width:2px,color:#000
+    classDef gatestep fill:#F5E8C7,stroke:#B08D3F,stroke-width:2px,color:#000
+    classDef planned fill:#F2F2F2,stroke:#8C8C8C,stroke-width:2px,stroke-dasharray:6 4,color:#333
+    class a1,a2,a3,b1,b2,b3,c1,c2,c3 step
+    class a4,b4,c4 gatestep
+    class d1,d2,d3,d4 planned
+    style s1 fill:none,stroke:#5D82A8,stroke-width:2px,stroke-dasharray:6 4
+    style s2 fill:none,stroke:#5D82A8,stroke-width:2px,stroke-dasharray:6 4
+    style s3 fill:none,stroke:#5D82A8,stroke-width:2px,stroke-dasharray:6 4
+    style s4 fill:none,stroke:#8C8C8C,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#333
