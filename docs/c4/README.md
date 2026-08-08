@@ -35,6 +35,8 @@ To change a diagram: edit its `.mmd`, run `node scripts/render-diagrams.mjs` (us
 | `«external»` | grey | Someone else's, and shipped. |
 | planned | pale grey, **dashed** | Not verified yet. Every pale dashed box is a claim nobody has tested. |
 
+On the skill-fleet diagrams, **shape carries meaning alongside fill**: stadium = the front door (`loop-guide`), hexagon = the engine, double-edged subroutine = read-only law, rounded rectangle = a skill. Role groups carry a family tint — engine blue, knowledge violet, design/verify green, integrate/ship/run red, automation teal, front door amber — with the group's background a lighter wash of the same hue, so membership is readable at a glance and the strongest saturation is reserved for the one node every path goes through (`loop-engine`).
+
 Solid arrow = a call or a write. Dotted arrow = read-only, or generated-from. Both always carry a label; an unlabelled arrow in a C4 diagram is decoration.
 
 The autonomy ladder is a flowchart on purpose — see the note below on why a state transition is not C4.

@@ -112,5 +112,6 @@ Frameworks are pluggable: drop a new `<Name>.md` into `frameworks/` following `f
 - `templates/loop-until-dry.workflow.js` — unknown-size discovery, guarded by the dry counter
 - `templates/loop-until-budget.workflow.js` — depth scaled against a user-supplied token target
 - `frameworks/AIDLC.md` — the default lifecycle framework (Inception → Construction → Operation, with human gates)
+- `frameworks/VENTURE.md` — the venture lifecycle (Discovery → Vision & Roadmap → GTM/Build/Deploy band → Operate & Improve), installed and conducted by `loop-venture`
 - `frameworks/README.md` — how framework files are structured, selected, and contributed
 - `frameworks/_TEMPLATE.md` — the skeleton for a new framework file

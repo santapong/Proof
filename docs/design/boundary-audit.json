@@ -494,6 +494,32 @@
           "condition": "No existing skill’s boundary contains the ask — the deliverable is a new skill, not a route among existing ones."
         }
       ]
+    },
+    {
+      "skill": "loop-venture",
+      "scope": "Conducts a venture idea through the whole product lifecycle — discovery, vision/roadmap with a kill-pivot-proceed gate, go-to-market, build plan, deploy plan, operate plan — as verified decision documents with human gates; produces the brief loop-build starts from, never code.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-build",
+          "condition": "The brief already exists (or the product decisions are made) and the ask is to conduct engineering to a shipped v1."
+        },
+        {
+          "otherSkill": "loop-orchestrate",
+          "condition": "The decomposition wanted is of agent work into a task DAG with routing, not of a venture into lifecycle decisions."
+        },
+        {
+          "otherSkill": "loop-research",
+          "condition": "The ask is one cited question with no lifecycle attached — loop-venture's nodes delegate their evidence gathering there."
+        },
+        {
+          "otherSkill": "loop-scout",
+          "condition": "The ask is a reuse/adapt/build verdict on one named capability rather than the whole venture's shape."
+        },
+        {
+          "otherSkill": "loop-guide",
+          "condition": "The user cannot yet name the deliverable at all — route first; venture conduct starts once the ask is a product/service idea."
+        }
+      ]
     }
   ],
   "overlaps": [
