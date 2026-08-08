@@ -1,6 +1,6 @@
 # Heimdall
 
-> Run real engineering work as governed, multi-agent workflows — a Claude Code plugin of **24 composable skills** covering the whole lifecycle, from understanding and design through shipping, operating, and autonomous self-improvement.
+> Run real engineering work as governed, multi-agent workflows — a Claude Code plugin of **25 composable skills** covering the whole lifecycle, from understanding and design through shipping, operating, and autonomous self-improvement.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Skills: 24](https://img.shields.io/badge/skills-24-6f42c1.svg)](#the-skills)
@@ -32,7 +32,7 @@ Other install paths (project-local, Claude Code on the web, other hosts) are in 
 
 | You have… | Reach for |
 |---|---|
-| An idea and nothing else | `loop-build` (whole project) · `loop-design` (just the architecture) |
+| An idea and nothing else | `loop-venture` (validate + decide the whole venture) · `loop-build` (build it) · `loop-design` (just the architecture) |
 | An unfamiliar codebase, or decisions nobody recorded | `loop-comprehend` |
 | Code that is wrong, and you can run it | `loop-debug` |
 | Code that works but is slow, messy, or unidiomatic | `loop-algo` (mechanism) · `loop-pattern` (shape) |
@@ -48,7 +48,7 @@ Every skill is invoked as `/loop-<name> <target>` and accepts `--mode <lite|bala
 | Group | Skills |
 |---|---|
 | **Front door** | `loop-guide` — interview → routing verdict → managed dispatch |
-| **Engine & planning** | `loop-engine` · `loop-orchestrate` · `loop-build` · `loop-context` · `loop-skill` |
+| **Engine & planning** | `loop-engine` · `loop-orchestrate` · `loop-build` · `loop-venture` · `loop-context` · `loop-skill` |
 | **Design & mechanism** | `loop-design` · `loop-algo` · `loop-pattern` · `loop-frontend` |
 | **Build & verify** | `loop-test` · `loop-review` · `loop-audit` · `loop-debug` |
 | **Integrate & ship** | `loop-integrate` · `loop-ship` |
@@ -56,20 +56,20 @@ Every skill is invoked as `/loop-<name> <target>` and accepts `--mode <lite|bala
 | **Knowledge** | `loop-comprehend` · `loop-research` · `loop-scout` · `loop-docs` |
 | **Automation** | `loop-harness` · `loop-autopilot` (propose-only — drafts PRs, never merges) |
 
-![Component diagram — how the twenty-four skills compose](docs/c4/diagrams/skill-composition.svg)
+![Component diagram — how the twenty-five skills compose](docs/c4/diagrams/skill-composition.svg)
 
 ## How it works
 
 - **One engine, governed.** Skills author workflow scripts against `loop-engine`, under two policy documents — [harness](.claude/skills/loop-engine/references/harness-policy.md) (orchestration shape, earned barriers, verification width) and [loop](.claude/skills/loop-engine/references/loop-policy.md) (convergence, runaway prevention) — and a pluggable lifecycle framework (default AIDLC, human gates between phases).
 - **One cost dial.** `--mode lite | balanced | all-out` routes every node to a matching model and effort tier; gating and planning nodes stay pinned to the strongest model in every mode. `all-out` prices the run and asks once before spending. Full contract: [execution-modes.md](.claude/skills/loop-engine/references/execution-modes.md).
 - **Standards, not vibes.** Every skill carries a version-pinned `references/standards.md` (OWASP/CWE/ASVS for review, C4/ISO for design, Google SRE for operations, …) with each authority's provenance graded.
-- **Enforced contracts.** CI runs the validation gate, a behavioral smoke of every template, and the routing-block parity check on every push. The 24-skill boundary matrix is a committed, normative artifact.
+- **Enforced contracts.** CI runs the validation gate, a behavioral smoke of every template, and the routing-block parity check on every push. The 25-skill boundary matrix is a committed, normative artifact.
 
 The full architecture is documented with the [C4 model](docs/c4/README.md) and the [4+1 views](docs/views/4plus1.md); the deep tour — the autonomy ladder, the engine walkthrough, the mode table, branch-per-task discipline, repository layout — is in **[docs/overview.md](docs/overview.md)**.
 
 ## Beyond Claude Code
 
-`.claude/skills/` is the single source of truth; generated packs for **Cursor, OpenAI Codex, and Antigravity** build under `dist/<host>/` and pass their own gate (20 of 24 skills; multi-agent execution stays Claude Code-only). Status and per-host detail: **[ROADMAP.md](ROADMAP.md)**, install steps: [INSTALL §4](INSTALL.md).
+`.claude/skills/` is the single source of truth; generated packs for **Cursor, OpenAI Codex, and Antigravity** build under `dist/<host>/` and pass their own gate (21 of 25 skills; multi-agent execution stays Claude Code-only). Status and per-host detail: **[ROADMAP.md](ROADMAP.md)**, install steps: [INSTALL §4](INSTALL.md).
 
 ## Contributing
 

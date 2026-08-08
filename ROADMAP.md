@@ -48,7 +48,7 @@ negotiating:
 
 | Tier | Means | Depends on |
 |---|---|---|
-| **A — Knowledge** | The 22 skills load, route correctly, and their references resolve | Skill discovery + `SKILL.md` frontmatter dialect |
+| **A — Knowledge** | The 25 skills load, route correctly, and their references resolve | Skill discovery + `SKILL.md` frontmatter dialect |
 | **B — Tools** | `heimdall-mcp`'s five tools and `heimdall://` resources are reachable from the host's agent | MCP stdio config, plus `node` on the user's `PATH` and an absolute launch path resolved at pack time |
 | **C — Execution** | A multi-agent run — fan-out, phases, gates, budget — actually executes under the host's own orchestration | The host having *any* programmable multi-agent surface. **Unknown for all three. Discovery task, see H2.** |
 
@@ -56,7 +56,7 @@ Tier A + B is a genuinely useful product on every host: the routing, the boundar
 standards shelf, the estimator, the gate. Tier C is where Claude Code stays ahead until proven
 otherwise, and pretending otherwise in a README would be the dishonest move.
 
-**A pack carries 20 of the 24 skills, not 24.** [ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md)
+**A pack carries 21 of the 25 skills, not 25.** [ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md)
 found four that are host-native *by subject* rather than by accident — `loop-engine` (its subject is
 the `Workflow` tool), `loop-harness` (its subject is `.claude/settings.json`, Claude Code hooks and
 permissions), `loop-skill` (its deliverable is defined by this repo's `validate.mjs`), and
@@ -96,7 +96,7 @@ What the ADR rules: `.claude/skills/` is the **sole source of truth**; every hos
 by `scripts/pack-host.mjs` from `scripts/host-targets.json` and never hand-edited (D8.1). Packs land
 in **`dist/<host>/`**, git-ignored and built rather than committed (D8.2–D8.3) — and pointedly *not*
 at `.agents/skills/` or `.codex/skills/` inside this repo, because Cursor's compatibility loader
-reads those paths too and a Cursor session opened in this checkout would load all 22 skills three
+reads those paths too and a Cursor session opened in this checkout would load all 25 skills three
 times (C3). Four skills are held back as Claude Code-native (D8.4, above). Rewrite rules may rename
 host nouns and nothing else — a passage that cannot be made true by renaming is dropped or its skill
 is held back, never quietly softened (D8.5). `scripts/check-host-packs.mjs` gates all of it, as a

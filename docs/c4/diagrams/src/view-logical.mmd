@@ -8,10 +8,10 @@ flowchart TB
         harness["harness policy<br/><i>H1–H12</i>"]
         loop["loop policy<br/><i>L1–L8</i>"]
         modes["execution modes<br/><i>M1–M9</i>"]
-        aidlc["AIDLC + 2 frameworks<br/><i>phases and gates</i>"]
+        aidlc["AIDLC · VENTURE frameworks<br/><i>phases and gates</i>"]
     end
 
-    subgraph engine["<b>Engine &amp; planning</b> — 6 skills"]
+    subgraph engine["<b>Engine &amp; planning</b> — 7 skills"]
         direction LR
         e1["loop-engine"]
         e2["loop-orchestrate"]
@@ -19,6 +19,7 @@ flowchart TB
         e4["loop-build"]
         e5["loop-skill"]
         e6["loop-guide"]
+        e7["loop-venture"]
     end
 
     subgraph domain["<b>Domain skills</b> — 17, one lifecycle role each"]
@@ -44,7 +45,7 @@ flowchart TB
     classDef dom fill:#F1F5F9,stroke:#475569,stroke-width:2px,color:#0F172A
     classDef aut fill:#99F6E4,stroke:#0F766E,stroke-width:2px,color:#042F2E
     class harness,loop,modes,aidlc law
-    class e1,e2,e3,e4,e5 eng
+    class e1,e2,e3,e4,e5,e6,e7 eng
     class d1,d2,d3,d4 dom
     class a1 aut
     style gov fill:#FFFBEB,stroke:#D97706,stroke-width:2px,stroke-dasharray:6 4

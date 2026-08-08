@@ -1,6 +1,6 @@
 # Installing Heimdall
 
-Heimdall ships twenty-four Claude Code skills:
+Heimdall ships twenty-five Claude Code skills:
 
 | Skill | What it does |
 |---|---|
@@ -27,6 +27,7 @@ Heimdall ships twenty-four Claude Code skills:
 | `loop-incident` | Respond to a live, user-impacting failure: severity triage, comms, mitigate before diagnosing, reproduction harness, blameless postmortem |
 | `loop-skill` | Author a new skill for this plugin or bring an existing one up to contract — boundary, standards shelf, router, references, template, gate |
 | `loop-build` | Conduct a project brief to a shipped version one: multi-planner plan, delegated-law build across the fleet, gates with repair rounds, release + ledger |
+| `loop-venture` | Conduct a venture idea through the whole product lifecycle — discovery, vision/roadmap with a kill/pivot/proceed gate, GTM ∥ build-plan ∥ deploy-plan band, operate plan — as verified decision documents; ends with a loop-build-ready brief, never code |
 | `loop-frontend` | Luxury UI craft: motion choreography, easing and duration budgets, stagger, shared-element continuity, type scale, perceived performance — with the motion accessibility gates enforced |
 
 The **canonical location** is `.claude/skills/<name>/` — a single source of truth that works for all three install paths below. The plugin references these same files via the `skills` field in `.claude-plugin/plugin.json`, so nothing is duplicated.
@@ -81,7 +82,7 @@ Install the bundle into any project or user scope via the plugin system.
 # add this repo as a marketplace
 /plugin marketplace add santapong/Heimdall
 
-# install the bundled plugin (all twenty-four skills)
+# install the bundled plugin (all twenty-five skills)
 /plugin install heimdall@heimdall
 ```
 
@@ -127,7 +128,7 @@ known friction. In short:
 
 Three things to know before you install one:
 
-- **A pack carries 20 of the 24 skills.** `loop-engine`, `loop-harness`, `loop-skill` and
+- **A pack carries 21 of the 25 skills.** `loop-engine`, `loop-harness`, `loop-skill` and
   `loop-autopilot` are Claude Code-native by subject and are held back ([ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md)).
 - **No multi-agent execution.** The 28 `*.workflow.js` templates are excluded and every affected
   skill says so in a generated host note. The judgment is intact; the fan-out is not.
