@@ -23,7 +23,7 @@ drift between them. Where both describe the same thing, C4 is the more detailed 
 
 | 4+1 view | Nearest C4 artifact | What 4+1 adds |
 |---|---|---|
-| Logical | [Container](../c4/container.md), [the skill fleet](../c4/skills.md) | Groups the 22 skills by *role* rather than by loading regime |
+| Logical | [Container](../c4/container.md), [the skill fleet](../c4/skills.md) | Groups the 25 skills by *role* rather than by loading regime |
 | Process | [Component](../c4/component.md) — partly | Concurrency, barriers, and the blocking human gate |
 | Development | — *(no C4 level)* | The repo's module structure and the three gates |
 | Physical | [Context](../c4/context.md) — partly | Processes, machine boundaries, what is a network hop |
@@ -45,7 +45,7 @@ constrains the engine, the engine executes the domain skills, the domain skills 
 gate, and autonomy composes the lot on a schedule.**
 
 - **Governance** — `harness-policy` (H1–H12), `loop-policy` (L1–L8), `execution-modes` (M1–M9) and
-  three lifecycle frameworks. Read by every skill, modified by none. This layer is why 22 skills
+  three lifecycle frameworks. Read by every skill, modified by none. This layer is why 25 skills
   share one orchestration discipline instead of inventing 22 dialects.
 - **Engine & planning (5)** — `loop-engine` runs one workflow; `loop-orchestrate` plans a project
   into a DAG before it; `loop-context` decides what agents carry between phases; `loop-build`
@@ -145,7 +145,7 @@ edit to generated output.
 - **S3 · Run unattended** — the autonomy path. The only one that starts without a human, and it
   still ends at one.
 - **S4 · Install on another host** — the portability path, drawn dashed because it is unproven:
-  18 of 22 skills route, the MCP tools answer, and there is no fan-out, which the generated host
+  21 of 25 skills route, the MCP tools answer, and there is no fan-out, which the generated host
   note states rather than hides.
 
 ---

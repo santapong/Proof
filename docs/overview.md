@@ -25,6 +25,7 @@ Every skill takes `[--mode <lite|balanced|all-out>]` unless noted.
 | **loop-context** | `/loop-context <target>` | What an agent **carries** at runtime: context budgets and placement, compaction with an addressable store, typed shared state (per-field merge rules, phase checkpoints) handed between agents, supersession of stale facts, and evidence-confirmed audits via four trace invariants. |
 | **loop-skill** | `/loop-skill <skill-purpose>` | Authors a new skill for this plugin, or brings an existing one up to contract: discriminating description, graded standards shelf, thin router, references, ROUTES-carrying template — then proves it with the validation gate. |
 | **loop-build** | `/loop-build <project-brief>` | Conducts a brief to a shipped version one: scopes the v1 contract, plans with three reconciled planners plus a roster sweep, drives every phase through the owning domain skills with sequential gates and repair rounds, releases, and ships the full cast-and-cost ledger. |
+| **loop-venture** | `/loop-venture <venture-idea>` | Conducts a venture idea through the whole pre-engineering lifecycle as verified decision documents, never code: evidenced discovery, a falsifiable vision with a **kill/pivot/proceed** gate, then GTM ∥ build-plan ∥ deploy-plan in a parallel band synchronized only at typed checkpoint folds, then an operate-and-improve plan seeding the next horizon. Defaults to `--mode all-out` by design; its build-plan phase emits the brief `loop-build` starts from. |
 
 **Design & mechanism**
 
@@ -74,7 +75,7 @@ Every skill takes `[--mode <lite|balanced|all-out>]` unless noted.
 
 ## The autonomy ladder
 
-The plugin isn't only twenty-four skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
+The plugin isn't only twenty-five skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
 
 ![The autonomy ladder — OBSERVE, VERIFY, SUSTAIN, SCALE](c4/diagrams/autonomy-ladder.svg)
 

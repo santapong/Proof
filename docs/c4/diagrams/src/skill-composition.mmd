@@ -1,5 +1,5 @@
 ---
-title: "Component diagram — how the twenty-four skills compose"
+title: "Component diagram — how the twenty-five skills compose"
 ---
 %%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 48}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
 flowchart TB
@@ -9,6 +9,7 @@ flowchart TB
         direction TB
         orch("<b>loop-orchestrate</b><br/><i>planning layer</i>")
         build("<b>loop-build</b><br/><i>v1 conductor</i>")
+        vent("<b>loop-venture</b><br/><i>venture conductor</i>")
         ctx("<b>loop-context</b><br/><i>agent state</i>")
         mk("<b>loop-skill</b><br/><i>meta</i>")
         eng{{"<b>loop-engine</b><br/><i>orchestration engine</i><br/>pipeline · parallel · loop"}}
@@ -17,7 +18,7 @@ flowchart TB
     subgraph gov["<b>Governance</b> — read-only law"]
         direction TB
         pol[["<b>Engineering policies</b><br/><i>harness H1–H12 · loop L1–L8 · modes M1–M9</i>"]]
-        fw[["<b>Lifecycle frameworks</b><br/><i>AIDLC — phases and human gates</i>"]]
+        fw[["<b>Lifecycle frameworks</b><br/><i>AIDLC · VENTURE — phases and human gates</i>"]]
     end
 
     subgraph know["<b>Knowledge</b>"]
@@ -59,12 +60,15 @@ flowchart TB
     guide -- "routes" --> make
     guide -- "routes" --> run
     guide -. "escalates a project" .-> build
+    guide -. "escalates a product idea" .-> vent
 
     %% engine & governance
     pol -. "governs" .-> eng
     fw -. "phases + gates" .-> eng
     orch -- "plans the DAG,<br/>routes models" --> eng
     build -- "conducts phases through" --> eng
+    vent -- "conducts phases through" --> eng
+    vent -- "its build-plan phase<br/>emits the v1 brief" --> build
     ctx -- "typed state between<br/>agents and phases" --> eng
     mk -. "authors against" .-> pol
     mk -- "emits templates for" --> eng
@@ -108,7 +112,7 @@ flowchart TB
     class guide frontdoor
     class pol,fw law
     class eng engine
-    class orch,build,ctx,mk coreSkill
+    class orch,build,vent,ctx,mk coreSkill
     class comp,res,scout,docs knowSkill
     class design,algo,fe,pat,rev,aud makeSkill
     class intg,test,ship,ops,inc,dbg runSkill

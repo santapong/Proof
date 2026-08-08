@@ -41,7 +41,7 @@ circulating figures that must never be reproduced.
 
 ## Why these are in the repo
 
-Skill selection happens on the `description:` field alone, before any skill body is read. With twenty-four skills, the descriptions have to be mutually exclusive by construction, and the reasoning for *why* a boundary sits where it does has to be as durable as the boundary itself.
+Skill selection happens on the `description:` field alone, before any skill body is read. With twenty-five skills, the descriptions have to be mutually exclusive by construction, and the reasoning for *why* a boundary sits where it does has to be as durable as the boundary itself.
 
 During the 1.0.0 build these files lived in a scratch directory. Three of the audit's mandated cross-links were dropped from the build manifest and then verified by nobody — every review checked the work against the manifest, so anything the manifest omitted was structurally invisible. Committing the audit is the fix: the contract is now readable by whoever reviews the next change.
 

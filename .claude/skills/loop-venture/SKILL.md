@@ -53,7 +53,7 @@ Single-node phases are one `templates/venture-node.workflow.js` invocation each;
 | File | What it holds |
 |---|---|
 | `references/lifecycle.md` | The phase graph, the four gates and what the human decides at each, the five-step node loop, the delegation map, the legal lens and cite-or-own rule; plus the venture-conduct failure catalogue (§6) — the unkillable venture, research theater, the consensus panel, assumption laundering, the band that would not fold, horizon creep |
-| `references/state-contract.md` | The typed venture state schema with per-field merge rules, the checkpoint-fold rule (the only cross-node channel), and the bounded re-plan — instantiating `loop-context`'s shared-state law (see its `references/shared-state.md`) |
+| `references/state-contract.md` | The typed venture state schema with per-field merge rules, the checkpoint-fold rule (the only cross-node channel), and the bounded re-plan — instantiating the shared-state law of `../loop-context/references/shared-state.md` |
 | `references/discovery.md` | P1 playbook: personas as context-plus-job, disjoint research mandates, the severity argument; plus the discovery-failure catalogue |
 | `references/vision-roadmap.md` | P2 playbook: the falsifiable vision, now/next/later horizons, the riskiest assumption and written kill/pivot criteria; plus the vision-failure catalogue |
 | `references/go-to-market.md` | P3 playbook: positioning before pricing before channels, the legal lens, support as a cost of the pricing model; plus the GTM-failure catalogue |
