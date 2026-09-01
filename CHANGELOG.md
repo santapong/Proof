@@ -5,6 +5,18 @@ All notable changes to Heimdall (formerly TheLoopSkill; renamed 1 Aug 2026) are 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.2] — 2026-09-01
+
+### Changed
+- **`loop-review`'s description rewritten trigger-first — and it ships on judgment, NOT on evidence.** It now leads with the concrete situations a user actually types (an authentication or login endpoint, a session or token flow, user input, secrets or credential config, a payment feature, a diff or PR) before the OWASP/CWE/ASVS method clause. All four reciprocal pointers preserved verbatim; no skill `name` touched. Measured at **33% → 67% correct selection against ECC's competing `security-review`, but n=6 per arm and Fisher exact p = 0.567 — not significant.** Detecting a shift that size needs ~35–40 runs per arm. The direction is favourable and the change is one line, so it ships, labelled unproven.
+- **The planned fleet-wide rewrite of all 26 descriptions was ABANDONED**, and that is the more important outcome. Against a contested picker of 46 skills (Heimdall's 26 plus 20 ECC competitors), the current descriptions already routed **11 of 12** requests correctly — including two pairs the ECC audit rated HIGH and predicted Heimdall would lose. A large routing-affecting change justified by one contested request is exactly the unproven work `loop-experiment` exists to prevent.
+
+### Fixed
+- **Two phantom phase declarations**, shipping since 2.4.0: `credit-ledger.workflow.js` declared a `Classify` phase and `verifier-canary.workflow.js` an `Integrity` phase that no node carries. In both cases the work happens as **pure code** — `classify()` is a plain function over PR state, and Guard 2 is deterministic path matching its own comment marks "no agent, no clock". `meta.phases` must list only phases nodes actually carry (H10), so the declarations were dropped rather than nodes invented for them. Validate warnings **5 → 3**; the remaining three are known false positives (the pattern matches inside a comment).
+
+### Added
+- **`docs/examples/routing-study-2026-09-01.md` — `loop-experiment`'s first live run**, recorded in full including two negative results. Study 1 was **refuted by its own baseline** (12/12 among Heimdall's skills alone — a ceiling effect that made improvement undetectable, caught only because the baseline arm ran first). Its original oracle, a spontaneous `Skill` tool call, **never fired at all**; a pilot caught that before 24 runs were spent on it, and the amendment to directed selection is recorded with the original oracle preserved unedited, because no arm data existed when it changed. Study 2 returned inconclusive. The write-up also records that **the ECC audit substantially over-predicted its own conclusion** — it forecast ECC winning all 15 HIGH collisions; the real picker gave Heimdall 11 of 12. Description-reading audits generate hypotheses, they do not produce results.
+
 ## [2.5.1] — 2026-09-01
 
 ### Added
