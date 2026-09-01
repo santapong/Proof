@@ -103,6 +103,28 @@ for (const f of files) {
     // 1. It ran and asked for at least one agent.
     if (!opt.calls.length) errs.push('made no agent() calls in balanced mode')
 
+    // 1b. It did not COLLAPSE. A zero-call template is caught above; a template that degrades to
+    // one or two calls is not, and that is the shape both 2.4.0 defects actually took:
+    // venture-node threw on the first `.key` read, and venture-band-conductor ran an empty band,
+    // leaving only its opus-pinned gating nodes. Both PASSED this file's emptiness check. A third
+    // instance (loop-experiment's related-work stop-guard, written truthy instead of `=== true`,
+    // aborting after one call under the Proxy stub) also passed. Three for three: "made at least
+    // one call" does not mean "ran".
+    //
+    // The floor is deliberately low and absolute rather than per-template: this harness cannot know
+    // how many nodes a script SHOULD have, and a tuned per-template expectation would rot on every
+    // edit. Two calls is the weakest claim that still distinguishes "executed" from "collapsed" —
+    // a genuinely single-node template should say so with the opt-out below rather than raise it.
+    const MIN_CALLS = 2
+    const optsOut = /@smoke-allow-single-call/.test(readFileSync(f, 'utf8'))
+    if (opt.calls.length && opt.calls.length < MIN_CALLS && !optsOut) {
+      errs.push(
+        `collapsed to ${opt.calls.length} agent() call(s) in balanced mode — a work-list defaulting to [] or ` +
+        `a truthy guard aborting early both look like this. If this template really is single-node, ` +
+        `add the comment @smoke-allow-single-call and say why.`,
+      )
+    }
+
     // 2. Every consumed call carries a schema (H3).
     const noSchema = opt.calls.filter((c) => !c.schema)
     if (noSchema.length) errs.push(`${noSchema.length} agent() call(s) with no schema`)
