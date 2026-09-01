@@ -1,4 +1,4 @@
-# Architecture — Heimdall
+# Architecture — Proof
 
 Documented with the **C4 model**: a hierarchy of diagrams at decreasing altitude, where each level answers one question for one audience and refuses to answer the next level's. The value of C4 is the discipline of *stopping* — a Context diagram that leaks container names, or a Container diagram with no technology in it, has failed at its own level while pretending to cover another.
 
@@ -30,7 +30,7 @@ To change a diagram: edit its `.mmd`, run `node scripts/render-diagrams.mjs` (us
 |---|---|---|
 | `«person»` | dark navy | A human. Only humans answer gates. |
 | `«system»` / `«container»` | C4 blue | Ours, and shipped. |
-| `«process»` | deep blue | Has a lifecycle of its own — currently only `heimdall-mcp`. |
+| `«process»` | deep blue | Has a lifecycle of its own — currently only `proof-mcp`. |
 | generated | light blue, **dashed** | Built by a script, never hand-edited (`dist/<host>/`). |
 | `«external»` | grey | Someone else's, and shipped. |
 | planned | pale grey, **dashed** | Not verified yet. Every pale dashed box is a claim nobody has tested. |

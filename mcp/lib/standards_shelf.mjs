@@ -108,7 +108,7 @@ function sha256OfLines(lines, startLine, endLine) {
 }
 
 function resourceUri(file) {
-  return `heimdall://${file}`
+  return `proof://${file}`
 }
 
 function citeSpanLocal(relFile, lines, section, startLine, endLine) {

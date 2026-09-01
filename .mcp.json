@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "heimdall-mcp": {
+    "proof-mcp": {
       "command": "node",
       "args": ["${CLAUDE_PROJECT_DIR}/mcp/server.mjs"]
     }

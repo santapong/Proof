@@ -105,7 +105,7 @@ function sha256OfLines(lines, startLine, endLine) {
 }
 
 function resourceUri(file) {
-  return `heimdall://${file}`
+  return `proof://${file}`
 }
 
 function dedupeCitations(list) {
@@ -209,7 +209,7 @@ function resolveGateScript(root) {
       ok: false,
       code: 'gate_unavailable',
       message: `cannot resolve the repo root ${sourceRoot}: ${e.code === 'ENOENT' ? 'no such directory' : e.message}`,
-      fix: 'Verify HEIMDALL_ROOT (or the default two-levels-up-from-mcp/lib resolution) points at a real Heimdall checkout.',
+      fix: 'Verify PROOF_ROOT (or the default two-levels-up-from-mcp/lib resolution) points at a real Proof checkout.',
     }
   }
 
@@ -221,7 +221,7 @@ function resolveGateScript(root) {
       ok: false,
       code: 'gate_unavailable',
       message: `gate script not found at ${relPosix(sourceRoot, candidate)}: ${e.code === 'ENOENT' ? 'no such file' : e.message}`,
-      fix: 'Verify this checkout has scripts/validate.mjs; a packaged/relocated install may need HEIMDALL_ROOT set.',
+      fix: 'Verify this checkout has scripts/validate.mjs; a packaged/relocated install may need PROOF_ROOT set.',
     }
   }
 
@@ -231,7 +231,7 @@ function resolveGateScript(root) {
       ok: false,
       code: 'internal',
       message: `refusing to spawn ${candidate} — its resolved real path ${realCandidate} escapes the repo root ${realRoot} (symlink or misconfigured checkout)`,
-      fix: 'This indicates the server itself is misconfigured, not a caller error — verify .mcp.json / HEIMDALL_ROOT point at a genuine, unmodified TheLoopSkill checkout.',
+      fix: 'This indicates the server itself is misconfigured, not a caller error — verify .mcp.json / PROOF_ROOT point at a genuine, unmodified TheLoopSkill checkout.',
     }
   }
 

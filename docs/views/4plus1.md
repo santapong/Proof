@@ -1,4 +1,4 @@
-# The 4+1 views — Heimdall
+# The 4+1 views — Proof
 
 C4 answers *what is this made of*, one altitude at a time. It is a **structural** model, and it is
 deliberately bad at three questions this system keeps raising: what runs at the same time and where
@@ -79,7 +79,7 @@ The important part of this diagram is what is *not* parallel:
   workers behind the slowest one.
 - **The gate blocks, and it blocks on a person.** The arrow that matters most in this system is the
   one where a human answers. Everything upstream is a proposal.
-- **`heimdall-mcp` is a separate process** with its own lifecycle — spawned by the host over stdio,
+- **`proof-mcp` is a separate process** with its own lifecycle — spawned by the host over stdio,
   answering with facts parsed live from the same documents the skills read. That shared source is
   why a tool answer and a skill answer cannot drift.
 
@@ -116,7 +116,7 @@ edit to generated output.
 
 ![Physical view](../c4/diagrams/view-physical.svg)
 
-- **Almost everything is local.** Claude Code runs the Workflow sandbox in-process; `heimdall-mcp`
+- **Almost everything is local.** Claude Code runs the Workflow sandbox in-process; `proof-mcp`
   is a child process on the same machine, speaking stdio, dying with the session. There is no
   server, no port, no daemon.
 - **Exactly one hop leaves the machine at run time** — the model calls. Per agent node. That is

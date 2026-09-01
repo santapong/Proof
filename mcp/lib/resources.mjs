@@ -11,11 +11,11 @@
 // THE URI SCHEME AND WHY IT IS NOT DECODED INTO A PATH
 // ============================================================================================
 //
-// heimdall://<repo-relative-posix-path> — chosen over file:// per D3.7 ("A file:// URI hardcodes
+// proof://<repo-relative-posix-path> — chosen over file:// per D3.7 ("A file:// URI hardcodes
 // an absolute machine-specific path into every citation ... two checkouts disagree about the
 // identity of the same file"). Every citation the four parsing tools already emit
 // (mcp/lib/boundary.mjs:212, mcp/lib/route_node.mjs's resourceUri(), etc.) already builds this exact
-// string — `heimdall://${relPosix}` — so this module's URIs are byte-identical to what a caller
+// string — `proof://${relPosix}` — so this module's URIs are byte-identical to what a caller
 // already holds from a tool answer; there is no separate encoding to reconcile.
 //
 // This task's brief is explicit about the security shape: "Build the served set by walking the tree
@@ -56,7 +56,7 @@ import { fileURLToPath } from 'node:url'
 const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/lib
 const DEFAULT_ROOT = path.resolve(HERE, '..', '..') // repo root, two levels up from mcp/lib
 
-const RESOURCE_URI_SCHEME = 'heimdall://'
+const RESOURCE_URI_SCHEME = 'proof://'
 
 function resolveRoot(root) {
   return root ? path.resolve(root) : DEFAULT_ROOT
@@ -212,7 +212,7 @@ function buildResourceIndex(root) {
       ok: false,
       code: 'source_missing',
       error: `cannot resolve repo root ${sourceRoot}`,
-      fix: 'Verify the server was started against a real Heimdall checkout.',
+      fix: 'Verify the server was started against a real Proof checkout.',
     }
   }
 
@@ -377,7 +377,7 @@ function readResource(root, uri) {
       ok: false,
       code: 'not_found',
       message: `${uri} is not in the served resource surface (${idx.entries.length} resources at this call)`,
-      fix: 'Call resources/list to see the current surface, or check the URI against heimdall://<repo-relative-posix-path>.',
+      fix: 'Call resources/list to see the current surface, or check the URI against proof://<repo-relative-posix-path>.',
     }
   }
 
@@ -436,7 +436,7 @@ function readResource(root, uri) {
 
 // ---------------------------------------------------------------------------
 // node -e 'import("./mcp/lib/resources.mjs").then(m => console.log(JSON.stringify(m.listResources().resources.length)))'
-// node -e 'import("./mcp/lib/resources.mjs").then(m => console.log(JSON.stringify(m.readResource(undefined, "heimdall://.claude/skills/loop-design/SKILL.md").mimeType)))'
+// node -e 'import("./mcp/lib/resources.mjs").then(m => console.log(JSON.stringify(m.readResource(undefined, "proof://.claude/skills/loop-design/SKILL.md").mimeType)))'
 // (double-quoted specifiers above deliberately, so this doc comment does not itself match
 // ADR-0002 §D2.3.6's assertNoDependencies() grep for a single-quoted import(...) specifier)
 // ---------------------------------------------------------------------------

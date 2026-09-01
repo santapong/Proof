@@ -1,10 +1,10 @@
-# C4 Container (Level 2) — Heimdall
+# C4 Container (Level 2) — Proof
 
 **What are the separately-loadable units inside the plugin, what is each one made of, and how do they talk?**
 
 A C4 container is a *runtime or deploy boundary*, not a Docker container. For a plugin with no server, the meaningful boundary is **what gets loaded, when, and by whom** — and that is genuinely different per unit. A `SKILL.md` enters the agent's context the moment a skill is invoked; a `references/*.md` file is read only if that skill's router decides it is needed; a `*.workflow.js` is never read by the agent at all — it is *executed* by the Workflow tool in a sandbox with no filesystem. Those are three different loading regimes, so they are three containers.
 
-![C4 Container diagram — Heimdall](diagrams/container.svg)
+![C4 Container diagram — Proof](diagrams/container.svg)
 
 <sub>Diagram source: [`diagrams/src/container.mmd`](diagrams/src/container.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 

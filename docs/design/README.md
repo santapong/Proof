@@ -16,7 +16,7 @@ Two machine-readable artifacts that govern the plugin, plus the ADR series. The 
 | [**ADR-0008**](ADR-0008-host-packaging-seam.md) | **How the skills reach a host that is not Claude Code** — one source of truth, generated packs under `dist/<host>/`, four skills held back by subject, carried reference files, the Tier-B degradation contract | **Accepted** (2026-08-04) |
 
 [ADR-0001](../../mcp/ADR-0001-runtime-and-dependency.md) predates this directory and lives beside the
-code it governs, in `mcp/`. ADR-0009 — whether Heimdall grows its own orchestrator for hosts that
+code it governs, in `mcp/`. ADR-0009 — whether Proof grows its own orchestrator for hosts that
 have none — is named in [ROADMAP.md](../../ROADMAP.md), conditional on what H2's discovery pass
 finds, and is not yet written.
 
@@ -55,4 +55,4 @@ During the 1.0.0 build these files lived in a scratch directory. Three of the au
 
 `scripts/validate.mjs` enforces what is mechanically checkable (frontmatter validity, `name`/directory agreement, reference paths). The boundary semantics are not mechanically checkable and are reviewed against this file by hand.
 
-> **Note (1 Aug 2026):** the plugin described in ADRs and historical records as *TheLoopSkill* was renamed to **Heimdall**. ADRs are not rewritten; they state what was decided at the time.
+> **Note (1 Aug 2026):** the plugin described in ADRs and historical records as *TheLoopSkill* was renamed to **Proof**. ADRs are not rewritten; they state what was decided at the time.

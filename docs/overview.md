@@ -1,10 +1,10 @@
-# Heimdall — the full tour
+# Proof — the full tour
 
 Everything the [README](../README.md) summarizes, at full depth: why the plugin is shaped the way it is, the autonomy ladder, the engine, the execution-mode dial, the branch-per-task discipline, and the complete repository layout. The architecture itself is documented in [`docs/c4/`](c4/README.md) and the [4+1 views](views/4plus1.md).
 
 ## Why
 
-A single agent handed a big task drifts: it skips verification, forgets what it already did, and hides how confident it is. Heimdall answers that with **structure** — the same three moves the best engineers make, encoded as reusable skills:
+A single agent handed a big task drifts: it skips verification, forgets what it already did, and hides how confident it is. Proof answers that with **structure** — the same three moves the best engineers make, encoded as reusable skills:
 
 - **Decompose and fan out** so breadth is covered in parallel, not serially.
 - **Verify adversarially** — findings must survive a refutation attempt before they're reported.
@@ -193,7 +193,7 @@ Every skill follows the same shape: `SKILL.md` (thin router) + `references/` (de
 | `docs/c4/` | **Architecture**, documented with the C4 model: context, container, component, the skill fleet, skill anatomy, plus the mechanism, ideas and references |
 | `docs/design/` | **Normative design records** — the 18-skill boundary audit and the execution-mode spec |
 | `docs/plans/` | Release build plans |
-| `mcp/` | **`heimdall-mcp`** — the zero-dependency stdio MCP server (five tools + read-only skill resources), its ADR and its tool contracts |
+| `mcp/` | **`proof-mcp`** — the zero-dependency stdio MCP server (five tools + read-only skill resources), its ADR and its tool contracts |
 | `scripts/validate.mjs` | The validation gate, run by `.github/workflows/validate.yml` on every push and PR |
 | `scripts/pack-host.mjs`, `host-targets.json`, `check-host-packs.mjs` | The per-host packaging seam: descriptors in, `dist/<host>/` out, gated ([ADR-0008](design/ADR-0008-host-packaging-seam.md)) |
 | `.claude-plugin/plugin.json`, `marketplace.json` | Plugin + marketplace manifests |

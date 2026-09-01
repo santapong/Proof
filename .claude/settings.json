@@ -1,11 +1,11 @@
 {
   "extraKnownMarketplaces": {
-    "heimdall": {
+    "proof": {
       "source": "./"
     }
   },
   "enabledPlugins": {
-    "heimdall@heimdall": true
+    "proof@proof": true
   },
   "hooks": {
     "PreToolUse": [

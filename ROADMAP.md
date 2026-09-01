@@ -1,4 +1,4 @@
-# Heimdall Roadmap
+# Proof Roadmap
 
 **Status: a proposal, not a commitment.** Nothing in this file is decided. The work names the ADR
 that has to be opened and won before its first line of code is written, and the gate that says it
@@ -10,7 +10,7 @@ One track is open:
 
 | Track | One line | State | Blocking decision |
 |---|---|---|---|
-| **Host portability** | Run Heimdall on hosts other than Claude Code — **Cursor, OpenAI Codex, Antigravity** first, more after | **In progress — H0 and H1's code side landed** | [ADR-0008](docs/design/ADR-0008-host-packaging-seam.md) — *Proposed*, needs a ruling |
+| **Host portability** | Run Proof on hosts other than Claude Code — **Cursor, OpenAI Codex, Antigravity** first, more after | **In progress — H0 and H1's code side landed** | [ADR-0008](docs/design/ADR-0008-host-packaging-seam.md) — *Proposed*, needs a ruling |
 
 The milestones are numbered **H0–H5** and that numbering is what the commits, the ADR and the gate
 refer to.
@@ -24,7 +24,7 @@ What exists today, and what would survive being pointed at a different host:
 | Layer | What it is | Ports? |
 |---|---|---|
 | **Skills** — 22 dirs under `.claude/skills/`, `SKILL.md` + `references/` + `templates/` | Markdown with YAML frontmatter (`name`, `description`, `argument-hint`) | **Mostly.** All three targets read `SKILL.md` directories; Cursor reads `.claude/skills/` directly for compatibility. Frontmatter dialects and command-invocation syntax differ. |
-| **MCP server** — `heimdall-mcp` 0.2.0, `mcp/server.mjs` + 10 lib modules, ~7.8k lines | Five tools (`route_node`, `boundary_lookup`, `estimate_phase`, `run_gate`, `standards_shelf`) + read-only `heimdall://` resources, hand-rolled JSON-RPC 2.0 over stdio, Node stdlib only | **By protocol, yes.** All three targets speak MCP stdio. What does not port is the *launch contract*: a `node` interpreter, a repo checkout, and a `${CLAUDE_PROJECT_DIR}` / `${CLAUDE_PLUGIN_ROOT}` expansion no other host performs. |
+| **MCP server** — `proof-mcp` 0.2.0, `mcp/server.mjs` + 10 lib modules, ~7.8k lines | Five tools (`route_node`, `boundary_lookup`, `estimate_phase`, `run_gate`, `standards_shelf`) + read-only `proof://` resources, hand-rolled JSON-RPC 2.0 over stdio, Node stdlib only | **By protocol, yes.** All three targets speak MCP stdio. What does not port is the *launch contract*: a `node` interpreter, a repo checkout, and a `${CLAUDE_PROJECT_DIR}` / `${CLAUDE_PLUGIN_ROOT}` expansion no other host performs. |
 | **Workflow templates** — 28 `*.workflow.js` | Scripts targeting Claude Code's `Workflow` tool: `agent()`, `pipeline()`, `parallel()`, `phase()`, `budget` | **No.** No target host exposes an equivalent callable surface. This is the real gap, and this track must answer it rather than route around it. |
 | **Harness** — `.claude/settings.json`, `hooks/harness-guard.py`, `hooks/stop-gate.sh`, `/gate`, `/release`, plugin + marketplace manifests | Claude Code configuration | **No.** Per-host analogues exist in pieces; none map one-to-one. |
 
@@ -49,7 +49,7 @@ negotiating:
 | Tier | Means | Depends on |
 |---|---|---|
 | **A — Knowledge** | The 25 skills load, route correctly, and their references resolve | Skill discovery + `SKILL.md` frontmatter dialect |
-| **B — Tools** | `heimdall-mcp`'s five tools and `heimdall://` resources are reachable from the host's agent | MCP stdio config, plus `node` on the user's `PATH` and an absolute launch path resolved at pack time |
+| **B — Tools** | `proof-mcp`'s five tools and `proof://` resources are reachable from the host's agent | MCP stdio config, plus `node` on the user's `PATH` and an absolute launch path resolved at pack time |
 | **C — Execution** | A multi-agent run — fan-out, phases, gates, budget — actually executes under the host's own orchestration | The host having *any* programmable multi-agent surface. **Unknown for all three. Discovery task, see H2.** |
 
 Tier A + B is a genuinely useful product on every host: the routing, the boundary matrix, the
@@ -147,14 +147,14 @@ Gemini CLI. None are scoped; they are listed so step 5 has something to be teste
 | ADR | Question | Blocks |
 |---|---|---|
 | **ADR-0008** | The packaging seam: generated per-host trees, the held-back list, carried files, and the Tier-B degradation contract | Everything below H0 |
-| **ADR-0009** | *(conditional on H2)* Whether Heimdall grows its own orchestrator for Tier C hosts, or Tier C stays Claude-Code-only | H2's outcome decides whether this exists at all |
+| **ADR-0009** | *(conditional on H2)* Whether Proof grows its own orchestrator for Tier C hosts, or Tier C stays Claude-Code-only | H2's outcome decides whether this exists at all |
 
 ## Explicit non-goals
 
 - **Re-implementing the `Workflow` tool** for hosts that lack one — until H2 says what each host
   can actually do, that is a rewrite justified by a guess.
 - **A hosted service, an HTTP transport, or an account.** Still deferred, still out of scope.
-- **Rewriting `heimdall-mcp` in another language to make it easier to launch.** The absolute-path,
+- **Rewriting `proof-mcp` in another language to make it easier to launch.** The absolute-path,
   `node`-on-`PATH` launch contract is a standing cost, not a temporary one; D8.7 keeps it behind a
   single descriptor field so a future runtime change stays a one-line edit, and that is as far as
   this roadmap goes.

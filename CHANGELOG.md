@@ -5,6 +5,17 @@ All notable changes to Heimdall (formerly TheLoopSkill; renamed 1 Aug 2026) are 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] — 2026-09-01
+
+### Changed
+- **Renamed: Heimdall → Proof.** Major bump, because the plugin name is API — the install slug, marketplace entry and homepage all move. `.claude-plugin/plugin.json` and `marketplace.json` now declare `proof`; the repository is `github.com/santapong/Proof`. **Every skill name (`loop-*`) is unchanged**, which is why a rename of this size costs a version bump and not a migration: skill names are the API users actually depend on, and none of them moved.
+- **Why the name.** "Heimdall" is among the most collided names in open source — an API orchestrator, a Samsung firmware flasher, a Kerberos implementation, and, in this plugin's own domain, an **MCP/AI observability platform**. "Proof" is one syllable, plain English, and states the product's whole point: nothing ships unproven. That is the thread through this plugin's whole design — the evidence gate, the boundary audit, the mutation checks, the smoke floor.
+- **Entries above this line are not rewritten.** Releases 0.x–2.5.2 shipped under the names TheLoopSkill and Heimdall, and the changelog records what happened rather than what it would be convenient to have happened. The README carries a one-line "formerly Heimdall, and TheLoopSkill before that" for readers arriving from the old name.
+- **The local checkout path stays `/mnt/data/company/ai/Heimdall` by choice.** Agent definitions are symlinked from it into `~/.claude`, and moving the directory would re-point them for no gain. One visible consequence: generated host packs embed an absolute MCP launch path, so `dist/*/README.md` still names the old directory — correct, not stale. `dist/` is gitignored.
+
+### Fixed
+- **Three stale counts in the shipped manifests and docs**, two of them introduced by 2.5.0's own skill addition: `plugin.json` and `marketplace.json` both advertised **"Twenty-four composable engineering skills"** (and `plugin.json` was still pinned at `version: 2.4.0`); `README.md` and `INSTALL.md` claimed a host pack carries **21 of 26** skills when four are held back from twenty-six, making it **22**; and `INSTALL.md` claimed **28** `*.workflow.js` templates against an actual **32**. Counts in prose rot silently — every one of these passed the validation gate, which reads frontmatter and templates, not marketing numbers.
+
 ## [2.5.2] — 2026-09-01
 
 ### Changed

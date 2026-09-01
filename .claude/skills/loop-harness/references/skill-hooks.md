@@ -1,6 +1,6 @@
 # The skill-hook catalogue — mechanizing the fleet's rules, per project
 
-Every Heimdall skill states rules; a rule Claude *follows* is persuasion, a rule the
+Every Proof skill states rules; a rule Claude *follows* is persuasion, a rule the
 harness *executes* is physics. This catalogue walks all twenty-two skills and names, for
 each, the hook that would turn its sharpest rule into enforcement — or states honestly
 that no hook applies and where that skill's enforcement actually lives.
