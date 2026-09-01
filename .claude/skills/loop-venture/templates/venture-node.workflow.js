@@ -122,7 +122,19 @@ async function fableGateAgent(prompt, node, lensIndex, label) {
 // This template's verify loop is bounded by round count (≤2), not discovery dryness, so DRY_LIMIT is omitted (§M8).
 // ---------------------------------------------------------------------------
 
-const NODE = input.node
+// EDIT ME: this template runs ONE single-node phase (P1, P2 or P6 — SKILL §2). A caller normally
+// passes input.node; this default is the P1 Discovery shell so the template is runnable standalone,
+// as every other work-list template in the fleet is. Without a default, `input.node` is undefined
+// and every NODE.key read below throws before a single agent() call is made — which is how this
+// shipped in 2.4.0.
+const DEFAULT_NODE = {
+  key: 'discovery', name: 'P1 Discovery', playbook: 'references/discovery.md',
+  questions: ['Whose problem is this, stated as a persona with a context and a job?', 'What is the severity argument — what does this cost them today?', 'What evidence would show this problem is NOT worth solving?'],
+  mandates: ['Persona evidence: context-plus-job, not demographics', 'Severity: what the problem costs today, with sources', 'Disconfirming evidence: who does not have this problem, and why'],
+  cast: ['Practitioner — what the day actually looks like', 'Skeptic — why this problem is tolerable as-is', 'Analyst — what the severity is worth in numbers'],
+  deliverable: 'The discovery slice: personas as context-plus-job, the severity argument with citations, and the disconfirming evidence found',
+}
+const NODE = input.node || DEFAULT_NODE
 const CHECKPOINT = input.checkpoint || {}
 const CONFLICTS = input.conflicts || []
 
