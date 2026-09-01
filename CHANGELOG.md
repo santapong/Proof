@@ -5,6 +5,14 @@ All notable changes to Heimdall (formerly TheLoopSkill; renamed 1 Aug 2026) are 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.1] — 2026-09-01
+
+### Fixed
+- **Both `loop-venture` templates were unrunnable standalone, and `smoke.mjs` had been failing on them since 2.4.0.** `venture-node.workflow.js` read `const NODE = input.node` with no default, so every `NODE.key` reference threw before a single `agent()` call was made. `venture-band-conductor.workflow.js` read `const NODES = input.nodes || []`, and an empty band does not fail loudly — `runRound1` never executes, so the planner and every `analyze`/`synthesize`/`verify` node disappear and only the opus-pinned gating nodes survive. That is why it reported as **"balanced pinned opus-5 on every call — mode dial is inert"** and **"declares a planner node but --planner fable never routed to claude-fable-5"**: both symptoms were the collapsed work-list, not a routing defect in the ROUTES block, which was byte-correct throughout.
+- Both now ship a default work-list, as every other work-list template in the fleet already did: `DEFAULT_BAND` is the canonical P3 GTM ∥ P4 Build Plan ∥ P5 Deploy Plan trio, and `DEFAULT_NODE` is the P1 Discovery shell, each carrying the node contract's real fields (`key`, `name`, `playbook`, `questions`, `mandates`, `cast`, `deliverable`) drawn from the skill's own playbooks rather than invented. `input.nodes` / `input.node` still win when a caller supplies them; the defaults only make the template runnable on its own.
+- Verified as a behaviour change rather than a passing test: `smoke --verbose` now reports **balanced tiers `claude-opus-5/inherit`** for both templates — the pinned gating nodes *and* unpinned nodes inheriting the session model — where previously only `claude-opus-5` appeared. `smoke.mjs` 31/31 pass, `validate.mjs` 52,880 assertions, 0 failures.
+- The general lesson, worth carrying: **a work-list defaulting to `[]` degrades silently into "only the pinned nodes ran", which reads as a routing bug and is not one.** Prefer a default list over an empty one, or fail loudly on an empty work-list.
+
 ## [2.4.0] — 2026-08-08
 
 ### Added
