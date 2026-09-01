@@ -22,7 +22,9 @@ export const meta = {
   description: 'Reconcile closed/stale automated PRs into the credit ledger; recompute trust weights in batches',
   phases: [
     { title: 'Fetch', detail: 'automated PRs, open or closed, since last look' },
-    { title: 'Classify', detail: 'merged / merged-with-changes / rejected / stale / still pending' },
+    // Classification is NOT a declared phase: classify() at the bottom of this file is a pure
+    // function over PR state — no agent, so no `phase:` string exists for it. meta.phases must
+    // list only phases nodes actually carry (H10), and declaring one for pure code is a defect.
     { title: 'Update', detail: 'ledger counts + batched trust-weight recalc' },
   ],
 }
