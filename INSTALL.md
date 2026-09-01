@@ -1,6 +1,6 @@
 # Installing Heimdall
 
-Heimdall ships twenty-five Claude Code skills:
+Heimdall ships twenty-six Claude Code skills:
 
 | Skill | What it does |
 |---|---|
@@ -9,6 +9,7 @@ Heimdall ships twenty-five Claude Code skills:
 | `loop-design` | System/architecture design: patterns, API, backend, frontend perf, deployment, NFRs, ADRs + C4 |
 | `loop-orchestrate` | Project-manager planning layer: decompose into a task DAG and assign the right model+effort per task |
 | `loop-research` | Multi-source research with adversarial fact-checking: search fan-out → deep-read → refute-first verify → cited synthesis |
+| `loop-experiment` | Empirical study whose evidence is generated, not gathered: falsifiable hypothesis → harness with independent ground truth → run → re-derivation, mutation and confound gate → adversarial review against the raw artifacts |
 | `loop-audit` | Change/impact audit → report: classify changes, trace blast radius, rate risk, check coverage (delegates security to loop-review) |
 | `loop-test` | Design + write tests matching the repo's stack; verify each runs and fails for the right reason |
 | `loop-debug` | Hypothesis-driven debugging: reproduce → localize → root-cause → fix → regression test |
@@ -82,7 +83,7 @@ Install the bundle into any project or user scope via the plugin system.
 # add this repo as a marketplace
 /plugin marketplace add santapong/Heimdall
 
-# install the bundled plugin (all twenty-five skills)
+# install the bundled plugin (all twenty-six skills)
 /plugin install heimdall@heimdall
 ```
 
@@ -128,7 +129,7 @@ known friction. In short:
 
 Three things to know before you install one:
 
-- **A pack carries 21 of the 25 skills.** `loop-engine`, `loop-harness`, `loop-skill` and
+- **A pack carries 21 of the 26 skills.** `loop-engine`, `loop-harness`, `loop-skill` and
   `loop-autopilot` are Claude Code-native by subject and are held back ([ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md)).
 - **No multi-agent execution.** The 28 `*.workflow.js` templates are excluded and every affected
   skill says so in a generated host note. The judgment is intact; the fan-out is not.
