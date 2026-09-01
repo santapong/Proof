@@ -29,7 +29,9 @@ export const meta = {
   name: 'verifier-canary-template', // EDIT ME
   description: 'Pre-propose integrity gate: impossible-test canary + diff-integrity (hard) and sampled cross-judge self-preference check (advisory)',
   phases: [
-    { title: 'Integrity', detail: 'Guard 2 — diff-integrity vs protected paths (pure)' },
+    // Guard 2 (diff-integrity) is NOT a declared phase: it is pure deterministic path matching
+    // with no agent and no clock, so no node carries `phase: 'Integrity'`. meta.phases lists only
+    // phases nodes actually carry (H10); the guard still runs, it simply is not an agent phase.
     { title: 'Canary', detail: 'Guard 1 — must-fail test injected into each survivor' },
     { title: 'CrossCheck', detail: 'Guard 3 — sampled different-family re-judge + trend' },
   ],
