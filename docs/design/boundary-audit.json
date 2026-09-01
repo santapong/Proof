@@ -523,7 +523,7 @@
     },
     {
       "skill": "loop-experiment",
-      "scope": "Runs an empirical study whose evidence the agent GENERATES rather than gathers: falsifiable hypothesis, harness with independently captured ground truth, executed run, then a re-derivation/mutation/confound gate before any number is reported. Deliverable is a reproducible finding, not a cited answer and not shipped code.",
+      "scope": "Runs an empirical study whose evidence the agent GENERATES rather than gathers: falsifiable hypothesis, resolved prior work, harness with independently captured ground truth, executed run, then a re-derivation/mutation/confound gate before any number is reported, then a cited study document. Deliverable is a reproducible finding written up, not a cited answer to an existing question and not shipped code.",
       "useInsteadWhen": [
         {
           "otherSkill": "loop-research",
@@ -544,6 +544,10 @@
         {
           "otherSkill": "loop-audit",
           "condition": "The subject is a change set whose risk and blast radius need assessing, rather than a hypothesis needing measurement."
+        },
+        {
+          "otherSkill": "loop-docs",
+          "condition": "The deliverable is documentation ABOUT code — README, API reference, guide, docstrings — rather than a document reporting a study's result. loop-experiment's writeup phase runs under loop-docs' law rather than duplicating it."
         }
       ]
     }

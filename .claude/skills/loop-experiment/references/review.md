@@ -39,11 +39,18 @@ A review step that has never returned "this does not hold" is not a gate, and it
 
 ```
 VERDICT             holds / holds with stated limits / does not hold
+PROOFREAD           inconsistencies found in the assembled document, or "clean"
 UNSUPPORTED         numbers with no artifact backing, named
 ALTERNATIVE READING the contradicting interpretation, or why none exists
 MISSED CONFOUND     specific to this design
 SCOPE               whether the conclusion exceeds the sample
 OVER-READING        what a reader will wrongly take from this
 ```
+
+The proofread field is the phase-8 pass from `reporting.md` §Proofreading, reported here
+rather than in its own step: it runs against the assembled document and looks for a number
+that appears twice with two values, a claim no section supports, a citation with no entry,
+and hedging that contradicts the verdict. **It never changes a number** — a figure that looks
+wrong is a phase 5 failure and goes back to re-derivation, not to the copy-editor.
 
 "Holds with stated limits" is the common and respectable outcome. It means the result survived attack at the sample size it had — which is what an honest study usually earns, and considerably more than most published numbers can claim.

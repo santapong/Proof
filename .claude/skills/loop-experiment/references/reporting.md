@@ -56,6 +56,66 @@ WHAT IT DOES NOT        the reading someone will otherwise take from it
 
 The final section is not modesty. It pre-empts the specific over-reading the result invites — and if you cannot name that over-reading, phase 7's reviewer will.
 
+## The study document
+
+The report is a **document on disk**, not a return value — someone else has to read it,
+disagree with it, and re-run it. It is written under `loop-docs`' law (Diataxis doc-type
+discipline, every claim verified against its source); this skill adds only the provenance
+rule below.
+
+**Format: Markdown by default.** The framework this vocabulary came from compiles LaTeX to a
+PDF. That buys typesetting and costs a toolchain — and it is also what made its review step
+fail, because a rendered PDF is exactly the artifact a reviewer cannot check against raw logs.
+A Markdown study report sits next to the artifacts it cites and diffs in review. Emit LaTeX
+only when the caller asks for it, and if you do, the reviewer still reads the source and the
+artifacts, never the compiled output.
+
+### The provenance rule
+
+**Every figure in the document carries two things: its value and where it came from.** Not a
+footnote — inline, at the claim. A reader must be able to go from any number to the file that
+produced it without asking you.
+
+The same rule applies to citations, in the other direction: a claim attributed to prior work
+carries a resolved identifier, and a claim from this study carries an artifact path. A
+sentence that mixes both without distinguishing them is the most common way a study's own
+result gets confused with something it read.
+
+### Figures
+
+A plot is a claim. It inherits every rule above:
+
+- The data behind it is in `runs/` or `truth/`, and the document says which file.
+- Axes carry units, and the axis range is stated when it is not zero-based — a truncated axis
+  is a rhetorical device, not a neutral choice.
+- `n` appears on or beside the figure, not only in the prose.
+- A figure that cannot be re-derived from the artifacts is struck alongside the number it
+  illustrates. Phase 5 does not exempt pictures.
+
+### Structure of the document
+
+The section order from above, plus a header block carrying the pre-registration verbatim and
+a `Prior work` section holding the graded citations from phase 3. The pre-registration goes
+at the top rather than the end: a reader who sees the refutation condition before the result
+can judge whether the result answers it.
+
+## Proofreading
+
+A last pass over the assembled document, under `loop-docs`' law. It is a **consistency check,
+not a polish**, and it is looking for four specific things:
+
+1. **A number that appears twice with two values.** Usually a figure updated in one place after
+   a re-run. This is the single most common defect in a study document.
+2. **A claim in the prose that no section supports** — often a summary sentence written before
+   the result came in and never revised.
+3. **A citation in the text with no entry in `Prior work`**, or an entry cited nowhere.
+4. **Hedging that contradicts the verdict** — "suggests a substantial improvement" sitting above
+   a table whose verdict field says `inconclusive`.
+
+Proofreading never changes a number. If it finds one that looks wrong, that is a phase 5
+failure and goes back to re-derivation — a document is not the place to fix an arithmetic
+error.
+
 ## Voice
 
 - Numbers over adjectives. "3.0% and 2.9% across two workloads" beats "minimal savings".

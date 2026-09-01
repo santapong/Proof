@@ -69,6 +69,36 @@ Decide in phase 2 what the study will be *able* to conclude, and say so up front
 
 A single run per arm is a legitimate design — it is cheap and it rules out large, obvious failures. It becomes dishonest only when its output is written as though it were a measurement. Deciding this now prevents the phase-6 temptation to quote a precise figure the design never earned.
 
+## Related work — what is already known
+
+**Phase 3. Delegated wholesale to `loop-research`'s law** (`../loop-research/references/source-evaluation.md`
+for grading, `methodology.md` for the refutation discipline). This skill adds no new law here;
+it adds one requirement and one hazard.
+
+**The requirement: resolve citations against a real index, never from memory.** A reference
+the model recalled is the same defect class as a figure it recited — plausible, correctly
+formatted, and unverifiable. Query a live source (arXiv, Semantic Scholar, alphaXiv, or the
+project's own record) and carry the resolved identifier, not just a title and year.
+
+**The hazard, and it is specific to this phase: related work can quietly become the answer.**
+If prior work already settles the question, there is no experiment to run — the honest move is
+to stop and hand the question to `loop-research`, which gathers evidence rather than generating
+it. A study that re-derives a known result and reports it as a finding has wasted a run and
+mislabelled a literature review.
+
+So this phase produces a decision, not just a bibliography:
+
+| Finding | What to do |
+|---|---|
+| The question is already answered by credible prior work | **Stop.** Hand to `loop-research`. Record why |
+| Prior work answers it under *different* conditions | Continue, and state the delta in the prediction — that delta is now the contribution |
+| Prior work makes a claim you intend to test | Continue. Its stated result becomes a **baseline you can be wrong about**, which sharpens the refutation condition |
+| Nothing relevant found | Continue, and say so plainly. "No prior art found" is a claim about your search, not about the world — record what you searched |
+
+Carry each source with the grade `loop-research` assigns it. A vendor's own benchmark is
+evidence about the vendor; it is not an independent result, and the report must not launder it
+into one.
+
 ## Output of this phase
 
 A short pre-registration, written to the study directory before the harness exists:
@@ -82,6 +112,7 @@ ORACLE:      <how success is decided, with threshold>
 ARMS:        <n arms, what differs, run order and its bias>
 RUNS:        <count per arm, committed in advance>
 CAN SUPPORT: <what this design can honestly conclude>
+PRIOR WORK:  <resolved citations with grades, and the delta this study adds>
 ```
 
 It is short on purpose. Its value is that it exists **before** the data, and that phase 6 quotes the refutation condition back verbatim rather than paraphrasing it into something the result happens to satisfy.

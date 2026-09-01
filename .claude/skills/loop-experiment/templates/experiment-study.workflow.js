@@ -22,9 +22,11 @@ export const meta = {
   name: 'experiment-study', // EDIT ME
   description: 'Run each experimental arm through prepare, execute and re-derive, merge at an earned barrier for the cross-arm comparison, then attack the result against its raw artifacts', // EDIT ME
   phases: [
+    { title: 'Related work', detail: 'resolve what prior work already settles — citations against a live index, never from memory' },
     { title: 'Execute', detail: 'per arm: pin the environment, capture ground truth by a path independent of the run, then execute and capture raw artifacts' },
     { title: 'Re-derive', detail: 'recompute every reported figure from the artifacts, by a step that did not produce them' },
     { title: 'Synthesize', detail: 'the cross-arm comparison and the confound sweep — the barrier earns itself here' },
+    { title: 'Document', detail: 'assemble the study document: every figure carries its source artifact, citations carry resolved identifiers' },
     { title: 'Review', detail: 'adversarial read of report against raw artifacts; find the contradicting reading' },
   ],
 }
@@ -155,6 +157,55 @@ const SYNTHESIS_SCHEMA = {
   required: ['refutationCondition', 'refuted', 'comparison', 'shapeDivergence', 'confoundsRuledOut', 'confoundsLive', 'struckFigures', 'verdict'],
 }
 
+// Prior work. `resolvedId` is REQUIRED and is the enforcement of SKILL §3: a citation the model
+// recalled is the same defect class as a figure it recited. `settlesQuestion` is the stop signal —
+// if prior work already answers this, the study should not run at all (hand to loop-research).
+const PRIOR_WORK_SCHEMA = {
+  type: 'object',
+  properties: {
+    sources: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          claim: { type: 'string' }, // what this source establishes, in one sentence
+          resolvedId: { type: 'string' }, // arXiv id, DOI, URL actually retrieved — never "none"
+          grade: { type: 'string' }, // loop-research's source grade; a vendor's own benchmark is not independent
+          independent: { type: 'boolean' }, // false for a vendor benchmarking its own product
+        },
+        required: ['claim', 'resolvedId', 'grade', 'independent'],
+      },
+    },
+    settlesQuestion: { type: 'boolean' }, // true ⇒ STOP: this is a literature review, not an experiment
+    delta: { type: 'string' }, // what this study adds that prior work does not — the contribution
+    searchedButNotFound: { type: 'string' }, // what was searched; "no prior art" is a claim about the search
+  },
+  required: ['sources', 'settlesQuestion', 'delta', 'searchedButNotFound'],
+}
+
+// The study document. Provenance is structural: every figure carries its source artifact inline.
+const DOC_SCHEMA = {
+  type: 'object',
+  properties: {
+    markdown: { type: 'string' }, // the assembled document, Markdown by default (references/reporting.md)
+    figureProvenance: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          figure: { type: 'string' },
+          sourceArtifact: { type: 'string' }, // the file it was derived from
+          n: { type: 'integer' },
+        },
+        required: ['figure', 'sourceArtifact', 'n'],
+      },
+    },
+    citationsUsed: { type: 'array', items: { type: 'string' } }, // resolvedIds actually cited in the text
+    omittedForNoProvenance: { type: 'array', items: { type: 'string' } }, // struck rather than softened
+  },
+  required: ['markdown', 'figureProvenance', 'citationsUsed', 'omittedForNoProvenance'],
+}
+
 // Adversarial review, defaulting to NOT upheld (H4). The reviewer reads runs/ and truth/, never the
 // report alone — a reviewer without artifact access is doing copy-editing (references/review.md).
 const REVIEW_SCHEMA = {
@@ -165,10 +216,13 @@ const REVIEW_SCHEMA = {
     missedConfound: { type: 'string' }, // specific to THIS design, not from the catalogue; or "none found"
     scopeExceedsSample: { type: 'boolean' }, // does the prose imply more than n supports?
     overReading: { type: 'string' }, // what a reader will wrongly take from this
+    proofread: { type: 'string' }, // document inconsistencies — a number appearing twice with two values,
+    // a claim no section supports, a citation with no entry, hedging contradicting the verdict; or "clean".
+    // NEVER changes a number: a wrong figure is a re-derivation failure, not a copy-edit (references/review.md).
     upheld: { type: 'boolean' }, // false when any figure is unsupported or the scope exceeds the sample
     confidence: { type: 'number' }, // 0..1
   },
-  required: ['unsupportedFigures', 'alternativeReading', 'missedConfound', 'scopeExceedsSample', 'overReading', 'upheld', 'confidence'],
+  required: ['unsupportedFigures', 'alternativeReading', 'missedConfound', 'scopeExceedsSample', 'overReading', 'proofread', 'upheld', 'confidence'],
 }
 
 // The provenance clause, pasted into every prompt that could otherwise assert a number it never read.
@@ -180,6 +234,34 @@ const PROVENANCE = HAS_ARTIFACTS
     `Do NOT report a number as observed. Describe the check that WOULD settle it instead. A recited ` +
     `figure is worse than a missing one: it is indistinguishable from a measurement ` +
     `(references/evidence-gate.md §The recitation failure).`
+
+// ─── Stage 0 (Related work) ─────────────────────────────────────────────────────────────────
+// Runs BEFORE the arms: if prior work already settles the question there is no experiment to run,
+// and the cheapest possible outcome is discovering that before spending a single run. Delegated to
+// loop-research's law (SKILL §3) — this template adds only the resolved-identifier requirement.
+log(`related work: resolving prior art for "${input.hypothesis}"`)
+const priorWork = await agent(
+  `Resolve what prior work already establishes about this hypothesis.\n\n` +
+    `HYPOTHESIS: ${input.hypothesis}\n\n` +
+    `Work under loop-research's law: grade every source, and report disconfirming evidence with the ` +
+    `same care as supporting evidence. Every source MUST carry a resolvedId you actually retrieved — ` +
+    `an arXiv id, DOI or URL you fetched. A citation you recalled from memory is the same defect class ` +
+    `as a fabricated measurement: do not emit one.\n\n` +
+    `Mark independent=false for any source benchmarking its own product — a vendor's own numbers are ` +
+    `evidence about the vendor, not an independent result.\n\n` +
+    `Set settlesQuestion=true ONLY if credible prior work already answers this question under the same ` +
+    `conditions. If it does, say so plainly — this is then a literature review, not an experiment, and ` +
+    `running it would re-derive a known result and mislabel it as a finding.`,
+  optsFor({ taskType: 'scout', phase: 'Related work', schema: PRIOR_WORK_SCHEMA }, 'related-work'),
+)
+// STRICT === true, deliberately. This branch ends the entire study, so it must require an
+// explicit boolean — any truthy value (an empty array from a malformed response, a string) would
+// silently abort a run that should have executed. A work-list or a guard that collapses quietly
+// reads as a routing bug and is not one; that defect shipped in loop-venture 2.4.0 and cost a release.
+if (priorWork && priorWork.settlesQuestion === true) {
+  log('STOP: prior work already settles this question under the same conditions — hand to loop-research (SKILL §3)')
+  return { hypothesis: input.hypothesis, verdict: 'not-run', reason: 'settled by prior work', priorWork: priorWork }
+}
 
 // ─── Stages 1-3 (Prepare → Execute → Re-derive) ─────────────────────────────────────────────
 // A pipeline, NOT a barrier: each arm flows through all three stages independently, so arm B can be
@@ -236,6 +318,28 @@ const synthesis = await agent(
   optsFor({ taskType: 'synthesize', phase: 'Synthesize', schema: SYNTHESIS_SCHEMA }, 'synthesize:cross-arm'),
 )
 
+// ─── Stage 4b (Document) ────────────────────────────────────────────────────────────────────
+// The deliverable is a document someone else must be able to read, disagree with, and re-run.
+// Written under loop-docs' law (SKILL §7); the provenance rule is this skill's addition.
+log('document: assembling the study report with per-figure provenance')
+const doc = await agent(
+  `Assemble the study document.\n\n` +
+    `HYPOTHESIS: ${input.hypothesis}\n` +
+    `PRIOR WORK: ${JSON.stringify(priorWork)}\n` +
+    `SYNTHESIS: ${JSON.stringify(synthesis)}\n` +
+    `RE-DERIVED ARMS: ${JSON.stringify(armResults)}\n\n` +
+    `Markdown, under loop-docs' law. Open with the pre-registration and the refutation condition ` +
+    `quoted VERBATIM, so a reader sees what would have refuted this BEFORE seeing the result.\n\n` +
+    `Every figure carries its value AND its source artifact, inline at the claim — not in a footnote. ` +
+    `n sits beside every number. Citations from prior work carry their resolvedId; results from this ` +
+    `study carry an artifact path; never blur the two in one sentence.\n\n` +
+    `Any figure with reDerived=false, or in the synthesis's struckFigures, goes into ` +
+    `omittedForNoProvenance and appears NOWHERE in the markdown — struck, never softened with a hedge. ` +
+    `Report a null result plainly. Declare every live confound with its direction of bias and what ` +
+    `would resolve it.`,
+  optsFor({ taskType: 'doc', phase: 'Document', schema: DOC_SCHEMA }, 'document'),
+)
+
 // ─── Stage 5 (Review) ───────────────────────────────────────────────────────────────────────
 // Perspective-diverse, not redundant (H4): each reviewer attacks a different surface. Width comes
 // from WIDTH so the dial the user set actually changes the cost of this stage.
@@ -252,7 +356,8 @@ const reviews = await parallel(
       `Attack this study. You are judged on whether you FOUND a problem, not on whether you approved.\n\n` +
         `YOUR ANGLE: ${angle}\n\n` +
         `SYNTHESIS: ${JSON.stringify(synthesis)}\n` +
-        `ARMS: ${JSON.stringify(armResults)}\n\n` +
+        `ARMS: ${JSON.stringify(armResults)}\n` +
+        `DOCUMENT: ${JSON.stringify(doc)}\n\n` +
         `Read the RAW ARTIFACTS alongside the report — never the report alone. It is internally consistent by ` +
         `construction, so consistency proves nothing. Set upheld=false if any figure is unsupported or the ` +
         `conclusion's scope exceeds the sample.\n\n${PROVENANCE}`,
@@ -272,6 +377,8 @@ return {
   refuted: synthesis.refuted,
   reviewOutcome: held ? 'holds with stated limits' : 'does not hold',
   synthesis,
+  priorWork,
+  document: doc,
   arms: armResults,
   reviews,
   // Surfaced deliberately: these are the two lists a reader skips and a reviewer needs.
