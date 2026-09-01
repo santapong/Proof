@@ -103,7 +103,7 @@ function sha256OfLines(lines, startLine, endLine) {
 }
 
 function resourceUri(file) {
-  return `heimdall://${file}`
+  return `proof://${file}`
 }
 
 function dedupeCitations(list) {

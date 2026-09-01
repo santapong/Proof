@@ -6,7 +6,7 @@
 
   "source": ".claude/skills",
   "outDir": "dist",
-  "serverId": "heimdall-mcp",
+  "serverId": "proof-mcp",
 
   "launch": {
     "_": "ADR-0008 D8.7 — one launch contract, three emitters. {{REPO}} resolves to the absolute repo path at pack time because no target host expands ${CLAUDE_PROJECT_DIR}. Kept as one field so a runtime change stays a one-line edit here instead of a change to two JSON emitters and a TOML one.",
@@ -88,7 +88,7 @@
 
     "banner": [
       "> **Host note — generated pack for {{HOST_NAME}}, do not edit.**",
-      "> This copy is generated from `.claude/skills/` in [Heimdall](https://github.com/santapong/Heimdall);",
+      "> This copy is generated from `.claude/skills/` in [Proof](https://github.com/santapong/Proof);",
       "> edit it there. {{HOST_NAME}} has no multi-agent workflow tool, so this skill's",
       "> `templates/*.workflow.js` orchestration script is **not included** and the multi-agent run it",
       "> describes is unavailable here. Work the phases sequentially in one session, in the order given,",
@@ -99,13 +99,13 @@
     "stubBody": [
       "# Not included in this pack",
       "",
-      "This file exists in the Heimdall source tree but is **excluded from the {{HOST_NAME}} pack**.",
+      "This file exists in the Proof source tree but is **excluded from the {{HOST_NAME}} pack**.",
       "It is stubbed rather than deleted so that pointers to it resolve and you are told why, instead",
       "of following a dead link or reading advice that does not hold on this host.",
       "",
       "**Why it is out:** {{WHY}}",
       "",
-      "The original is at `.claude/skills/{{FILE}}` in <https://github.com/santapong/Heimdall>."
+      "The original is at `.claude/skills/{{FILE}}` in <https://github.com/santapong/Proof>."
     ],
 
     "carriedNotice": [
@@ -123,9 +123,9 @@
         "project": ".cursor/skills/",
         "global": "~/.cursor/skills/"
       },
-      "note": "Cursor also loads .claude/skills/, .codex/skills/ and .agents/skills/ for compatibility. A user who has already cloned Heimdall can point Cursor at the checkout instead of installing this pack — but never generate a pack INTO one of those paths inside this repo (ADR-0008 C3: a Cursor session would load all 22 skills three times).",
+      "note": "Cursor also loads .claude/skills/, .codex/skills/ and .agents/skills/ for compatibility. A user who has already cloned Proof can point Cursor at the checkout instead of installing this pack — but never generate a pack INTO one of those paths inside this repo (ADR-0008 C3: a Cursor session would load all 22 skills three times).",
       "mcp": { "format": "json-mcpServers", "file": "mcp.json", "installPath": ".cursor/mcp.json" },
-      "friction": "~40 active tools across all servers before tools are silently dropped (Heimdall ships 5). No MCP hot-reload — reload the window after editing mcp.json."
+      "friction": "~40 active tools across all servers before tools are silently dropped (Proof ships 5). No MCP hot-reload — reload the window after editing mcp.json."
     },
 
     "codex": {

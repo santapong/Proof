@@ -8,7 +8,7 @@ Date proposed: 2026-08-02 · Deciders: H0 (host portability) · Blocks: all of R
 
 Rules on how the 22 skills reach a host that is not Claude Code. It amends no existing ADR: ADR-0001
 through ADR-0007 all rule on `mcp/`, and none of them says anything about where skills live or who
-may copy them. It does **not** change how `heimdall-mcp` is built or launched; it only pins the one
+may copy them. It does **not** change how `proof-mcp` is built or launched; it only pins the one
 field a future change to that would have to touch.
 
 ---
@@ -244,7 +244,7 @@ are H1's opening worklist, and the ruling on this ADR should settle at least cla
 - **Two prose files become Claude-Code-only** (D8.6). If a per-host model map is ever wanted, it is a
   new descriptor field and a new ADR, not an edit to those files.
 - **Deferred, deliberately:** anything about Tier C. This ADR gets knowledge and tools onto three
-  hosts. Whether Heimdall grows its own orchestrator is ADR-0009, and H2's discovery pass is what
+  hosts. Whether Proof grows its own orchestrator is ADR-0009, and H2's discovery pass is what
   should decide it.
 
 ## Alternatives Considered

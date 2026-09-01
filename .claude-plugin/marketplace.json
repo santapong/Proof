@@ -1,15 +1,15 @@
 {
-  "name": "heimdall",
-  "description": "Heimdall marketplace — workflow orchestration and engineering skills for Claude Code.",
+  "name": "proof",
+  "description": "Proof marketplace — workflow orchestration and engineering skills for Claude Code.",
   "owner": {
     "name": "santapong",
     "email": "santapongsondhi@gmail.com"
   },
   "plugins": [
     {
-      "name": "heimdall",
+      "name": "proof",
       "source": "./",
-      "description": "Twenty-four composable engineering skills for Claude Code on a governed multi-agent workflow engine: a front-door guide that routes any situation to the right skill, codebase comprehension with recovered ADRs, pipeline/parallel/loop orchestration under explicit harness and loop policies, per-node model routing with lite/balanced/all-out execution modes, and lifecycle coverage from design, algorithms, patterns and UI craft through review, testing, integration, release, operations and incident response, to an autonomous propose-only improvement loop.",
+      "description": "Twenty-six composable engineering skills for Claude Code on a governed multi-agent workflow engine: a front-door guide that routes any situation to the right skill, codebase comprehension with recovered ADRs, pipeline/parallel/loop orchestration under explicit harness and loop policies, per-node model routing with lite/balanced/all-out execution modes, and lifecycle coverage from design, algorithms, patterns and UI craft through review, testing, integration, release, operations and incident response, to an autonomous propose-only improvement loop.",
       "version": "2.4.0",
       "author": {
         "name": "santapong"

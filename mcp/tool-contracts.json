@@ -4,9 +4,9 @@
   "decidedOn": "2026-07-27",
   "repoState": { "branch": "develop", "head": "4dd461a" },
   "server": {
-    "name": "heimdall-mcp",
+    "name": "proof-mcp",
     "version": "0.2.0",
-    "toolNamePrefix": "mcp__heimdall-mcp__",
+    "toolNamePrefix": "mcp__proof-mcp__",
     "toolNamePrefixSource": ".claude/skills/loop-harness/references/permissions.md:51 — `mcp__<server>__<tool>`; wildcards are for deny/ask only, so an allow-list must enumerate all five",
     "capabilities": { "tools": {}, "resources": {} },
     "capabilitiesNote": "resources declares neither `subscribe` nor `listChanged` — the surface is read-only and static for the process lifetime. No prompts, no sampling, no elicitation, no completions (deferred by D1)."
@@ -70,7 +70,7 @@
         "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "SHA-256 of the LF-normalized bytes of lines startLine..endLine inclusive, each line terminated by a single \\n. node:crypto only — no dependency." },
         "excerpt": { "type": "string", "description": "The cited text itself, capped at 2000 characters." },
         "excerptTruncated": { "type": "boolean", "default": false },
-        "resourceUri": { "type": "string", "description": "heimdall:// URI of the same file. resources/read on it is the caller's verification channel." }
+        "resourceUri": { "type": "string", "description": "proof:// URI of the same file. resources/read on it is the caller's verification channel." }
       }
     },
     "roundTripRule": "GATE-ASSERTED. For every citation on every golden query, the gate re-reads file[startLine..endLine], recomputes the sha256, and asserts it equals the returned value; and where `excerpt` is present, asserts it is a prefix of those lines (modulo the truncation marker). This is what converts 'cites its source' from a claim into a check.",
@@ -505,7 +505,7 @@
 
   "D3.7_resources": {
     "rule": "Skill and design files are exposed as READ-ONLY resources over the same connection, so a caller can fetch the file a citation names and recompute its sha256.",
-    "uriScheme": "heimdall://<repo-relative-posix-path>",
+    "uriScheme": "proof://<repo-relative-posix-path>",
     "whyNotFileUri": "A file:// URI hardcodes an absolute machine-specific path into every citation and every resources/list entry, which makes two checkouts disagree about the identity of the same file. The custom scheme keeps the identifier repo-relative and stable; sourceRoot on the envelope carries the absolute path once.",
     "surface": {
       "included": [
@@ -533,7 +533,7 @@
     "rule": "NON-NEGOTIABLE (task requirement 3). Every call site states its fallback, because NOT CONNECTED is the default state, not the edge case.",
     "why": "A project .mcp.json requires a workspace-trust approval the first time a repo is opened (.claude/skills/loop-harness/references/mcp.md:55). A fresh checkout therefore has the server present in the file and absent from the session until a human approves it. There is also no .mcp.json in the repo at head 4dd461a, so today the answer is always 'absent'.",
     "bindingConstraints": [
-      "Every router edit is ADDITIVE and CONDITIONAL: 'if heimdall-mcp is connected, X; otherwise Y'. Y must be the instruction that is there today, unchanged.",
+      "Every router edit is ADDITIVE and CONDITIONAL: 'if proof-mcp is connected, X; otherwise Y'. Y must be the instruction that is there today, unchanged.",
       "No router may make a tool call mandatory, and no step may be reachable only through a tool.",
       "A router sentence must never phrase the server as the authority. Not 'ask route_node what the routing is' but 'route_node answers this from §M3/§M8 and cites the lines; execution-modes.md remains the source of truth'. The server is a reader of the law, never a second copy of it.",
       "The fallback text is duplicated into the error envelope's `fallback` field, so a caller that reaches the server and gets a failure is told the same thing a caller that never reached it was told."
@@ -593,12 +593,12 @@
       "Degrade-not-die: with execution-modes.md temporarily absent from a scratch copy of the tree, initialize and tools/list still succeed and route_node returns ok:false with code 'source_missing' and a populated `fallback`.",
       "templateRule constant present and exact on every route_node answer.",
       "Determinism: estimate_phase called twice with identical input returns byte-identical structuredContent.",
-      "Resource containment: a resources/read on 'heimdall://../../etc/passwd' and on 'heimdall://scripts/validate.mjs' are both refused."
+      "Resource containment: a resources/read on 'proof://../../etc/passwd' and on 'proof://scripts/validate.mjs' are both refused."
     ]
   },
 
   "D3.10_notRuledHere": [
-    "The .mcp.json content itself and its permission entries (mcp__heimdall-mcp__* allow-list) — harness wiring, not API shape.",
+    "The .mcp.json content itself and its permission entries (mcp__proof-mcp__* allow-list) — harness wiring, not API shape.",
     "The exact router sentences to paste into the four SKILL.md files. D3 fixes the constraints they must satisfy; the edits are law-file edits this ruling is not authorized to make.",
     "Caching, journal tools, HTTP transport, packaging — deferred by the approved v1 line and unchanged here."
   ]

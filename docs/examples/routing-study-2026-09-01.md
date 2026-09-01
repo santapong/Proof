@@ -1,6 +1,6 @@
 # Routing study — `loop-experiment`'s first live run
 
-**1 Sep 2026.** The first real execution of `loop-experiment`, run against Heimdall itself.
+**1 Sep 2026.** The first real execution of `loop-experiment`, run against Proof itself.
 Two studies, both pre-registered before any data existed. **Study 1 was refuted by its own
 baseline. Study 2 returned an inconclusive result.** Both are recorded here in full, because a
 study that only gets written up when it wins is not a method.
@@ -8,8 +8,8 @@ study that only gets written up when it wins is not a method.
 ## What prompted it
 
 An audit of `affaan-m/ECC` (286 skills) found 15 HIGH routing collisions across 12 of
-Heimdall's 26 skills, and every one resolved the same way: the competitor was predicted to win
-the picker because it names concrete nouns and leads with trigger conditions, while Heimdall's
+Proof's 26 skills, and every one resolved the same way: the competitor was predicted to win
+the picker because it names concrete nouns and leads with trigger conditions, while Proof's
 descriptions lead with methodology. The proposed fix was to rewrite all 26 descriptions
 trigger-first. **That claim was never measured** — it was inferred by reading descriptions.
 
@@ -17,7 +17,7 @@ trigger-first. **That claim was never measured** — it was inferred by reading 
 
 **Hypothesis:** trigger-first descriptions route requests to the intended skill more often.
 **Design:** 12 realistic requests, each with a pre-registered intended skill authored by hand
-before any run; directed selection among Heimdall's 26 skills.
+before any run; directed selection among Proof's 26 skills.
 
 **Arm A (current descriptions): 12/12.**
 
@@ -26,7 +26,7 @@ impossible, so the hypothesis was refuted by construction. **The design could no
 improvement**, which is a flaw in the harness, not in the descriptions — and it is exactly what
 running the baseline arm first exists to catch.
 
-The substantive finding: **among themselves, Heimdall's descriptions already route perfectly.**
+The substantive finding: **among themselves, Proof's descriptions already route perfectly.**
 That is what the boundary audit bought. The audit's claim was never about internal separation;
 it was about losing to *another plugin's* skills, and study 1 contained no competitors.
 
@@ -46,7 +46,7 @@ makes a skill **selectable when a choice is forced**, not whether it is chosen i
 
 ## Study 2 — contested picker, inconclusive
 
-**Design:** the same 12 requests against a field of **46 skills** — Heimdall's 26 plus 20 ECC
+**Design:** the same 12 requests against a field of **46 skills** — Proof's 26 plus 20 ECC
 skills (every HIGH-collision competitor from the audit, plus MEDIUMs touching these requests),
 in an isolated scratch project. Nothing was installed into `~/.claude`.
 
@@ -60,7 +60,7 @@ routed correctly, so the field was not simply confusing the picker.
 
 ### The audit substantially over-predicted
 
-Its scorers predicted ECC would win all 15 HIGH collisions. **In a real picker Heimdall held 11
+Its scorers predicted ECC would win all 15 HIGH collisions. **In a real picker Proof held 11
 of 12**, including `loop-scout` vs `search-first` and `loop-comprehend` vs `codebase-onboarding`
 — both rated HIGH. Reading two descriptions and predicting which one a picker selects is a poor
 substitute for measuring it. Treat description-reading audits as hypothesis generators, not as

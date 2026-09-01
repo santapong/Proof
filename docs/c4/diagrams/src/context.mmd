@@ -1,12 +1,12 @@
 ---
-title: "System Context (Level 1) — Heimdall"
+title: "System Context (Level 1) — Proof"
 ---
 %%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 55, "rankSpacing": 70}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "14px"}}}%%
 flowchart TB
     dev["<b>Developer</b><br/><i>«person»</i><br/>Invokes a skill; answers the<br/>pre-flight and every phase gate"]
     maint["<b>Plugin Maintainer</b><br/><i>«person»</i><br/>Adds skills and standards shelves;<br/>approves at lifecycle gates"]
 
-    heimdall["<b>Heimdall</b><br/><i>«system»</i><br/>Turns an engineering task into a<br/>governed multi-agent workflow<br/>25 skills · 1 engine · 1 MCP server"]
+    proof["<b>Proof</b><br/><i>«system»</i><br/>Turns an engineering task into a<br/>governed multi-agent workflow<br/>25 skills · 1 engine · 1 MCP server"]
 
     cc["<b>Claude Code</b><br/><i>«external system»</i><br/>Host runtime: skills, context,<br/>Workflow tool, permissions"]
     fleet["<b>Claude Model Fleet</b><br/><i>«external system»</i><br/>Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5"]
@@ -15,21 +15,21 @@ flowchart TB
     web["<b>Web &amp; Standards Sources</b><br/><i>«external system»</i><br/>Specs and RFCs behind version-pinned citations"]
     hosts["<b>Other agent hosts</b><br/><i>«external system» — not yet verified</i><br/>Cursor · OpenAI Codex · Antigravity<br/>Generated packs, Tier A+B only"]
 
-    dev -- "invokes a skill,<br/>answers gate questions" --> heimdall
-    maint -- "authors skills and<br/>standards shelves" --> heimdall
-    cc <-- "loads the plugin; spawns<br/>agents on its behalf" --> heimdall
-    heimdall -- "routes each node<br/>to a model tier" --> fleet
-    heimdall -- "reads code; implement<br/>nodes write patches" --> repo
-    heimdall -- "reads feedback; draft PRs,<br/>never merges" --> forge
-    heimdall -- "confirms every version pin<br/>before citing it" --> web
-    heimdall -. "ships generated skill packs<br/><i>ROADMAP H1/H3/H4</i>" .-> hosts
+    dev -- "invokes a skill,<br/>answers gate questions" --> proof
+    maint -- "authors skills and<br/>standards shelves" --> proof
+    cc <-- "loads the plugin; spawns<br/>agents on its behalf" --> proof
+    proof -- "routes each node<br/>to a model tier" --> fleet
+    proof -- "reads code; implement<br/>nodes write patches" --> repo
+    proof -- "reads feedback; draft PRs,<br/>never merges" --> forge
+    proof -- "confirms every version pin<br/>before citing it" --> web
+    proof -. "ships generated skill packs<br/><i>ROADMAP H1/H3/H4</i>" .-> hosts
 
     classDef person fill:#1E3A8A,stroke:#172554,stroke-width:2px,color:#fff
     classDef system fill:#1D4ED8,stroke:#1E3A8A,stroke-width:2px,color:#fff
     classDef ext fill:#E7E5E4,stroke:#78716C,stroke-width:2px,color:#1C1917
     classDef planned fill:#FAFAF9,stroke:#A8A29E,stroke-width:2px,stroke-dasharray:6 4,color:#57534E
     class dev,maint person
-    class heimdall system
+    class proof system
     class cc,fleet,repo,forge,web ext
     class hosts planned
     linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#57534E

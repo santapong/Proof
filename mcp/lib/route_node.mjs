@@ -21,7 +21,7 @@
 // gate on it" ADR-0004 §C1 rejects, and precisely what ADR-0005 I1 exists to prevent: a value the
 // server invented because it declined to reuse the one place the value is correctly derived.
 //
-// This file's task brief (heimdall-mcp Phase 3, S1) is explicit and specific: "the Phase-2
+// This file's task brief (proof-mcp Phase 3, S1) is explicit and specific: "the Phase-2
 // spine you are building on: mcp/lib/{modes,estimate,boundary,standards}.mjs — call the spine,
 // never reimplement it." Read together with mcp/lib/estimate.mjs's own comment that
 // `readModesM6`/`computeWidthM6` are "exported for testing/reuse", the more defensible reading is
@@ -107,7 +107,7 @@ function sha256OfLines(lines, startLine, endLine) {
 }
 
 function resourceUri(file) {
-  return `heimdall://${file}`
+  return `proof://${file}`
 }
 
 function withResourceUri(citation) {
@@ -439,7 +439,7 @@ function routeNode(rawInput, options = {}) {
       // would be a silent default in the exact sense ADR-0005 I1 forbids. Left empty and disclosed
       // rather than faked; ADR-0002's degrade-not-die C4/C6 message is what actually reaches the
       // user in this case, at the server layer (S7), not here.
-      fixText: 'set HEIMDALL_ROOT to a Heimdall checkout, or correct the server path in .mcp.json',
+      fixText: 'set PROOF_ROOT to a Proof checkout, or correct the server path in .mcp.json',
     })
   }
 
@@ -529,7 +529,7 @@ function routeNode(rawInput, options = {}) {
   // --- §M4, §M5, §M7 — this file's own locators (neither spine module reads these sections). ---
   const doc = readWholeDoc(root)
   if (!doc.ok) {
-    return structuralError({ sourceRoot, internalResult: doc, citations, fixText: 'set HEIMDALL_ROOT to a Heimdall checkout, or correct the server path in .mcp.json' })
+    return structuralError({ sourceRoot, internalResult: doc, citations, fixText: 'set PROOF_ROOT to a Proof checkout, or correct the server path in .mcp.json' })
   }
   const m4sec = locateM4Section(doc)
   const m5sec = locateM5Section(doc)

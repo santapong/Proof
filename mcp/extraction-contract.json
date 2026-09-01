@@ -1,8 +1,8 @@
 {
-  "$comment": "D4 — normative extraction contract for heimdall-mcp. Machine-readable companion to docs/design/ADR-0004-extraction-strategy-and-failure-semantics.md, beside mcp/runtime-pin.json (D1) and mcp/tool-contracts.json (D3). Every value here was measured against the repo on 2026-07-27, not asserted. A later gate checks this file mechanically.",
+  "$comment": "D4 — normative extraction contract for proof-mcp. Machine-readable companion to docs/design/ADR-0004-extraction-strategy-and-failure-semantics.md, beside mcp/runtime-pin.json (D1) and mcp/tool-contracts.json (D3). Every value here was measured against the repo on 2026-07-27, not asserted. A later gate checks this file mechanically.",
   "adr": "docs/design/ADR-0004-extraction-strategy-and-failure-semantics.md",
   "decidedOn": "2026-07-27",
-  "appliesTo": "heimdall-mcp extraction layer",
+  "appliesTo": "proof-mcp extraction layer",
 
   "D4_1_authority": {
     "rule": "Authority is per SYMBOL, not per section. A tool answering about a symbol reads that symbol's authority and cites it. No symbol has two authorities.",
