@@ -1,6 +1,6 @@
 # Heimdall
 
-> Run real engineering work as governed, multi-agent workflows — a Claude Code plugin of **25 composable skills** covering the whole lifecycle, from understanding and design through shipping, operating, and autonomous self-improvement.
+> Run real engineering work as governed, multi-agent workflows — a Claude Code plugin of **26 composable skills** covering the whole lifecycle, from understanding and design through shipping, operating, and autonomous self-improvement.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Skills: 24](https://img.shields.io/badge/skills-24-6f42c1.svg)](#the-skills)
@@ -50,13 +50,13 @@ Every skill is invoked as `/loop-<name> <target>` and accepts `--mode <lite|bala
 | **Front door** | `loop-guide` — interview → routing verdict → managed dispatch |
 | **Engine & planning** | `loop-engine` · `loop-orchestrate` · `loop-build` · `loop-venture` · `loop-context` · `loop-skill` |
 | **Design & mechanism** | `loop-design` · `loop-algo` · `loop-pattern` · `loop-frontend` |
-| **Build & verify** | `loop-test` · `loop-review` · `loop-audit` · `loop-debug` |
+| **Build & verify** | `loop-test` · `loop-review` · `loop-audit` · `loop-debug` · `loop-experiment` |
 | **Integrate & ship** | `loop-integrate` · `loop-ship` |
 | **Run & respond** | `loop-operate` · `loop-incident` |
 | **Knowledge** | `loop-comprehend` · `loop-research` · `loop-scout` · `loop-docs` |
 | **Automation** | `loop-harness` · `loop-autopilot` (propose-only — drafts PRs, never merges) |
 
-![Component diagram — how the twenty-five skills compose](docs/c4/diagrams/skill-composition.svg)
+![Component diagram — how the twenty-six skills compose](docs/c4/diagrams/skill-composition.svg)
 
 ## How it works
 
@@ -69,7 +69,7 @@ The full architecture is documented with the [C4 model](docs/c4/README.md) and t
 
 ## Beyond Claude Code
 
-`.claude/skills/` is the single source of truth; generated packs for **Cursor, OpenAI Codex, and Antigravity** build under `dist/<host>/` and pass their own gate (21 of 25 skills; multi-agent execution stays Claude Code-only). Status and per-host detail: **[ROADMAP.md](ROADMAP.md)**, install steps: [INSTALL §4](INSTALL.md).
+`.claude/skills/` is the single source of truth; generated packs for **Cursor, OpenAI Codex, and Antigravity** build under `dist/<host>/` and pass their own gate (21 of 26 skills; multi-agent execution stays Claude Code-only). Status and per-host detail: **[ROADMAP.md](ROADMAP.md)**, install steps: [INSTALL §4](INSTALL.md).
 
 ## Contributing
 

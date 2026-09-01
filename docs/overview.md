@@ -75,7 +75,7 @@ Every skill takes `[--mode <lite|balanced|all-out>]` unless noted.
 
 ## The autonomy ladder
 
-The plugin isn't only twenty-five skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
+The plugin isn't only twenty-six skills — it's a **progression of autonomy**. Four rungs, each removing one unit of human involvement from the engineering loop. The rule is the whole discipline: **you climb only when the rung below is solid.** The human never disappears; they move from *doing the work*, to *approving it*, to *reading the alarms*, to *handling the exceptions*.
 
 ![The autonomy ladder — OBSERVE, VERIFY, SUSTAIN, SCALE](c4/diagrams/autonomy-ladder.svg)
 

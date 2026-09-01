@@ -520,6 +520,36 @@
           "condition": "The user cannot yet name the deliverable at all — route first; venture conduct starts once the ask is a product/service idea."
         }
       ]
+    },
+    {
+      "skill": "loop-experiment",
+      "scope": "Runs an empirical study whose evidence the agent GENERATES rather than gathers: falsifiable hypothesis, resolved prior work, harness with independently captured ground truth, executed run, then a re-derivation/mutation/confound gate before any number is reported, then a cited study document. Deliverable is a reproducible finding written up, not a cited answer to an existing question and not shipped code.",
+      "useInsteadWhen": [
+        {
+          "otherSkill": "loop-research",
+          "condition": "The answer already exists in sources and the work is finding and verifying it. Checkable: does answering require executing something that does not exist yet, or reading something that does?"
+        },
+        {
+          "otherSkill": "loop-algo",
+          "condition": "There is a named component whose mechanism is being chosen from a known answer space. loop-algo benchmarks candidates; loop-experiment tests a hypothesis that could simply be false."
+        },
+        {
+          "otherSkill": "loop-debug",
+          "condition": "A failure was already observed and the question is why. loop-experiment's subject has not failed — it is being measured."
+        },
+        {
+          "otherSkill": "loop-test",
+          "condition": "The deliverable is an automated correctness test that lives in the repo, not a one-off study producing a finding."
+        },
+        {
+          "otherSkill": "loop-audit",
+          "condition": "The subject is a change set whose risk and blast radius need assessing, rather than a hypothesis needing measurement."
+        },
+        {
+          "otherSkill": "loop-docs",
+          "condition": "The deliverable is documentation ABOUT code — README, API reference, guide, docstrings — rather than a document reporting a study's result. loop-experiment's writeup phase runs under loop-docs' law rather than duplicating it."
+        }
+      ]
     }
   ],
   "overlaps": [
