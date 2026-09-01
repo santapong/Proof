@@ -123,7 +123,35 @@ async function fableGateAgent(prompt, node, lensIndex, label) {
 // ---------------------------------------------------------------------------
 
 const CHECKPOINT = input.checkpoint || {}
-const NODES = input.nodes || []
+// EDIT ME: the band is P3 GTM ∥ P4 Build Plan ∥ P5 Deploy Plan (SKILL §2). A caller normally
+// passes input.nodes from the GATE-2 fold; this default is the canonical trio so the template is
+// runnable standalone, as every other work-list template in the fleet is. A band that collapses to
+// an empty list does not fail loudly — it silently runs only its pinned gating nodes, which is how
+// this shipped mode-inert in 2.4.0.
+const DEFAULT_BAND = [
+  {
+    key: 'gtm', name: 'P3 Go-To-Market', playbook: 'references/go-to-market.md',
+    questions: ['Who is this for, stated as a segment that can be reached?', 'What is the positioning, before any pricing is chosen?', 'What does the pricing model imply about the cost of support?'],
+    mandates: ['Segment and reachable-channel evidence', 'Comparable positioning and pricing in the category', 'The legal lens: what regulation or licensing constrains this offer'],
+    cast: ['Positioning lead — what the offer IS, against alternatives', 'Pricing analyst — what the model implies at volume', 'Counsel — what constrains the offer legally'],
+    deliverable: 'The GTM slice: positioning statement, pricing model with its support-cost implication, ranked channels, and the legal constraints found',
+  },
+  {
+    key: 'build', name: 'P4 Build Plan', playbook: "loop-design's references and loop-build §1 (delegated law, SKILL §2.7)",
+    questions: ['What is the ≤10-bullet gate-checkable v1 line?', 'What is deferred, and for what stated reason?', 'What are the NFR targets, as numbers?'],
+    mandates: ['Architecture sketch and its load-bearing constraints', 'NFR targets with the numbers behind them', 'Prior art for the risky component'],
+    cast: ['Architect — the shape and its constraints', 'Skeptic — what in this v1 line is not gate-checkable', 'Estimator — what the deferrals actually buy'],
+    deliverable: 'A valid loop-build brief: the ≤10-bullet v1 line, reasoned deferrals, NFR targets as numbers, and the architecture sketch (SKILL §2.6)',
+  },
+  {
+    key: 'deploy', name: 'P5 Deploy Plan', playbook: "loop-ship's references (delegated law, SKILL §2.7)",
+    questions: ['What is the deploy target, and what does it cost at v1 volume?', 'What is the rollback mechanism, and has it been exercised?', 'What gates the release?'],
+    mandates: ['Deploy-target options with their cost at stated volume', 'Rollback mechanics for each candidate target', 'The release-gate conditions this venture needs'],
+    cast: ['Operator — what this costs to run and page on', 'Release engineer — how it rolls forward and back', 'Skeptic — which failure mode has no rollback'],
+    deliverable: 'The deploy slice: target with costed rationale, a tested rollback path, and the release-gate conditions',
+  },
+]
+const NODES = input.nodes || DEFAULT_BAND
 
 const EVIDENCE_SCHEMA = {
   type: 'object',
