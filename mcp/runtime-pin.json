@@ -45,7 +45,7 @@
     "domainFailureShape": "successful tools/call result with isError: true, never a JSON-RPC error"
   },
 
-  "serverInfo": { "name": "heimdall-mcp", "version": "0.2.0" },
+  "serverInfo": { "name": "proof-mcp", "version": "0.2.0" },
 
   "goldenQueryGate": {
     "requirement": "MUST drive the server through the real SDK client (Client + StdioClientTransport) — this is what makes the zero-dependency choice safe",

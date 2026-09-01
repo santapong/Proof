@@ -53,7 +53,7 @@ for (const hostKey of Object.keys(DESC.hosts)) {
     const text = readFileSync(join(outRoot, rel), 'utf8')
     // The packer fences everything it inserts. Its own notes name "Claude Code" deliberately, so
     // strip them before scanning — otherwise every banner reports itself as residue.
-    const authored = text.replace(/<!-- heimdall-generated:begin -->[\s\S]*?<!-- heimdall-generated:end -->/g, '')
+    const authored = text.replace(/<!-- proof-generated:begin -->[\s\S]*?<!-- proof-generated:end -->/g, '')
 
     // 2. held-back skills. A carried reference file (D8.9) is allowed — it is an appendix, declared
     // in the manifest. A SKILL.md is never allowed: that is the router, and shipping it is what D8.4

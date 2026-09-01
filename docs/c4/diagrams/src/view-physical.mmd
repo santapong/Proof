@@ -6,7 +6,7 @@ flowchart TB
     subgraph machine["<b>Developer's machine</b> &nbsp;<i>«deployment node»</i>"]
         direction TB
         ccproc["<b>Claude Code</b><br/><i>«process»</i><br/>Loads skills into context;<br/>runs the Workflow sandbox in-process"]
-        mcpproc["<b>heimdall-mcp</b><br/><i>«child process» node server.mjs</i><br/>stdio JSON-RPC, spawned by the host,<br/>dies with the session"]
+        mcpproc["<b>proof-mcp</b><br/><i>«child process» node server.mjs</i><br/>stdio JSON-RPC, spawned by the host,<br/>dies with the session"]
         files["<b>Repo checkout</b><br/><i>«filesystem»</i><br/>.claude/skills/ · mcp/ · docs/ · dist/"]
     end
 
@@ -21,7 +21,7 @@ flowchart TB
     end
 
     subgraph other["<b>Another developer's machine</b> &nbsp;<i>«deployment node» — ROADMAP H1/H3/H4</i>"]
-        host["<b>Cursor / Codex / Antigravity</b><br/><i>«process»</i><br/>Reads an installed pack;<br/>spawns its own heimdall-mcp"]
+        host["<b>Cursor / Codex / Antigravity</b><br/><i>«process»</i><br/>Reads an installed pack;<br/>spawns its own proof-mcp"]
     end
 
     ccproc -- "stdio" --> mcpproc

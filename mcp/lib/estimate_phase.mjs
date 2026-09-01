@@ -76,7 +76,7 @@ function sha256OfLines(lines, startLine, endLine) {
 }
 
 function resourceUri(file) {
-  return `heimdall://${file}`
+  return `proof://${file}`
 }
 
 function withResourceUri(citation) {
@@ -663,7 +663,7 @@ function estimatePhase(rawInput, options = {}) {
   // lite refusal below, since its citation points into this same section. ---
   const m6loc = locateM6Section(root)
   if (!m6loc.ok) {
-    return structuralError({ sourceRoot, internalResult: m6loc, citations: [], fixText: 'set HEIMDALL_ROOT to a Heimdall checkout, or correct the server path in .mcp.json' })
+    return structuralError({ sourceRoot, internalResult: m6loc, citations: [], fixText: 'set PROOF_ROOT to a Proof checkout, or correct the server path in .mcp.json' })
   }
 
   // --- D6.2: lite is an explicit unpriced refusal, never a silent balanced fallback. ---

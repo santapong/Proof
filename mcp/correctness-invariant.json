@@ -1,9 +1,9 @@
 {
-  "$comment": "NORMATIVE. The correctness invariant every heimdall-mcp tool rests on, plus the arithmetic rules that make estimate_phase reproducible. Companion to docs/design/ADR-0005-correctness-invariant-no-silent-default.md. Composes with mcp/runtime-pin.json (D1), mcp/tool-contracts.json (D3) and mcp/extraction-contract.json (D4); amends none of them.",
+  "$comment": "NORMATIVE. The correctness invariant every proof-mcp tool rests on, plus the arithmetic rules that make estimate_phase reproducible. Companion to docs/design/ADR-0005-correctness-invariant-no-silent-default.md. Composes with mcp/runtime-pin.json (D1), mcp/tool-contracts.json (D3) and mcp/extraction-contract.json (D4); amends none of them.",
   "adr": "docs/design/ADR-0005-correctness-invariant-no-silent-default.md",
   "decidedOn": "2026-07-27",
   "decidedBy": "loop-algo (D5, phase 1 DECIDE)",
-  "appliesTo": "every tool and every resource read of heimdall-mcp",
+  "appliesTo": "every tool and every resource read of proof-mcp",
   "measurementBaseline": {
     "branch": "develop",
     "commit": "4dd461a",
