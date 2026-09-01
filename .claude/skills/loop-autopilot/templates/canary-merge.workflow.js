@@ -158,6 +158,10 @@ const NOW_ISO = (input && input.nowIso) || null
 // expand-contract work (loop-ship/references/migrations.md), 'release' is a go/no-go gate
 // (loop-ship/references/release-gates.md), and both are human-gated by design.
 const NEVER_KINDS = ['migration', 'infra', 'secret', 'api-break', 'release']
+// @smoke-allow-single-call — under smoke there is no readable autonomy state (the stub returns []
+// for enabledKinds), so this template falls back to propose-only after one call. That is the
+// SAFETY path working as designed: no autonomy state must never mean auto-merge. Failing closed
+// is the correct outcome here and must not be read as a collapse.
 const propose = (reason) => { log(`FALL BACK to propose-only: ${reason}`); return { action: 'propose', reason } }
 
 if (!C) return propose('no candidate supplied')

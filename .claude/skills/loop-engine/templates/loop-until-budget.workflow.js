@@ -1,4 +1,8 @@
 // Template: LOOP-UNTIL-BUDGET — scale depth to the user's token target ("+500k").
+// @smoke-allow-single-call — with no budget target set (which is what the smoke stub provides:
+// budget.total = null), the L2 guard at the bottom of this file deliberately runs exactly ONE
+// round. That guard is mandatory, not incidental: without it budget.remaining() is Infinity and
+// the loop never terminates. A single call here is correct behaviour, not a collapse.
 // Runs rounds while headroom remains. The budget.total && guard is MANDATORY:
 // without a target, budget.remaining() is Infinity and an unguarded loop runs
 // straight into the 1000-agent backstop (loop policy L2).

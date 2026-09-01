@@ -152,6 +152,11 @@ const RECONCILE_SCHEMA = {
 
 log('Motion audit on ' + SURFACE + ' in --mode ' + MODE + '.')
 
+// @smoke-allow-single-call — a HARNESS limitation, not a property of this template. smoke.mjs's
+// agent() stub returns `interactions: []` from its base object, so the inventory below always
+// comes back empty under smoke and the (correct) "nothing to audit" early return fires after one
+// call. Real runs reach the per-interaction fan-out and the reconcile step. If the stub is ever
+// enriched to return a non-empty inventory, DELETE this opt-out rather than keeping it.
 const inv = await agent(
   HOUSE + '\n\nEnumerate EVERY animated interaction on this surface: CSS transitions and keyframes, ' +
   'WAAPI calls, view transitions, scroll-driven animations, and any library-driven motion. Include ambient ' +

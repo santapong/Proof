@@ -38,7 +38,55 @@ Nesting: `hooks` → event name → array of matcher objects → each has a `mat
 | `PreCompact` | before context compaction | persist state |
 | `SessionEnd` | session terminates | cleanup |
 
-(More events exist; these cover almost all harness needs.)
+## The full event surface — 33 events, and the nine above are not most of them
+
+The table above is the working set, not the catalogue. Claude Code exposes **33 hook events**;
+this reference documented **9** until the list below was confirmed against the primary source
+(`code.claude.com/docs/en/hooks`, 1 Sep 2026). Several of the missing 24 are squarely harness
+business, which is why the omission mattered rather than being a completeness quibble.
+
+**Permission and failure — the ones most often wanted and not found:**
+
+| Event | Fires | Why a harness cares |
+|---|---|---|
+| `PermissionRequest` | a permission is about to be asked for | shape or pre-answer prompts instead of interrupting a run |
+| `PermissionDenied` | a permission was refused | record what the harness could not do, rather than losing it in scrollback |
+| `PostToolUseFailure` | **after a tool call fails** | the counterpart to `PostToolUse`, which fires only on success — a formatter hung off `PostToolUse` silently never runs on the failure path |
+| `StopFailure` | a response ends in failure | distinguish a failed turn from a completed one |
+
+**Session and configuration lifecycle:**
+
+| Event | Fires |
+|---|---|
+| `Setup` | initial setup |
+| `InstructionsLoaded` | CLAUDE.md / instructions have loaded |
+| `ConfigChange` | configuration changed mid-session |
+| `CwdChanged` · `DirectoryAdded` | working directory moved or a directory was added |
+| `FileChanged` | a file changed on disk |
+| `WorktreeCreate` · `WorktreeRemove` | git worktree lifecycle |
+| `PostCompact` | after compaction — the partner to `PreCompact`, for restoring what was persisted |
+| `PreModelSwitch` · `PostModelSwitch` | around a model change |
+
+**Agents, tasks and interaction:**
+
+| Event | Fires |
+|---|---|
+| `SubagentStart` | a subagent begins — the partner to `SubagentStop` |
+| `TaskCreated` · `TaskCompleted` | task lifecycle |
+| `TeammateIdle` | a teammate goes idle |
+| `UserPromptExpansion` | a prompt is expanded |
+| `MessageDisplay` | a message is displayed |
+| `PostToolBatch` | after a batch of tool calls |
+| `Elicitation` · `ElicitationResult` | around an elicitation request |
+
+**Two asymmetries worth internalising**, because both produce hooks that appear to work and
+silently do not: `PostToolUse` fires on **success only** — the failure path is
+`PostToolUseFailure`, a separate event — and `PreCompact` has a partner, `PostCompact`, so a
+hook that persists state before compaction has somewhere to restore it afterwards.
+
+**Confirmation log:** the 33-event list was read from `code.claude.com/docs/en/hooks` on
+1 Sep 2026. This surface moves; re-confirm before relying on a specific event, and treat a
+missing event as "check the docs", never as "does not exist".
 
 ## Input: JSON on stdin
 
