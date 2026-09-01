@@ -145,6 +145,9 @@ const FIX_SCHEMA = {
   required: ['rootCause', 'fix', 'regressionTest'],
 }
 
+// @smoke-allow-single-call — the stub's agent() returns [] for `hypotheses`, so the generated
+// list is empty under smoke and the (correct) "no hypotheses to test" exit fires after one call.
+// A real run gets hypotheses and fans out to test each. Harness limitation, not a collapse.
 // Phase Hypothesize: use the caller's list if given, else generate a diverse set.
 // Diversity matters (harness policy H4) — hypotheses that all blame the same layer test nothing.
 let hypotheses = input && Array.isArray(input.hypotheses) ? input.hypotheses : null

@@ -5,6 +5,15 @@ All notable changes to Heimdall (formerly TheLoopSkill; renamed 1 Aug 2026) are 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.1] — 2026-09-01
+
+### Added
+- **`smoke.mjs` now fails a template that COLLAPSES, not only one that is silent.** Its emptiness check fired only at zero `agent()` calls, so a template degrading to one call passed — and that is the shape all three recent defects actually took: `venture-node` threw on its first `.key` read, `venture-band-conductor` ran an empty band leaving only opus-pinned gating nodes, and `loop-experiment`'s related-work stop-guard (written truthy instead of `=== true`) aborted after one call under the Proxy stub. **Three for three, "made at least one call" did not mean "ran".** The floor is a flat `MIN_CALLS = 2`, deliberately low and not per-template: the harness cannot know how many nodes a script *should* have, and a tuned expectation would rot on every edit. Mutation-checked — reverting the `=== true` guard makes smoke fail, restoring it returns green.
+- **An opt-out, `@smoke-allow-single-call`, with each use required to state why.** Four templates legitimately make one call under the stub and now carry a documented reason: `loop-until-budget` (no budget target ⇒ the mandatory L2 guard runs exactly one round, without which the loop never terminates), `motion-audit`, `bug-diagnosis` (both hit a **harness limitation** — the stub returns `[]` for `interactions` / `hypotheses`, so a correct "nothing to work on" exit fires; enrich the stub and these opt-outs should be deleted), and `canary-merge` (falls back to **propose-only** with no readable autonomy state — failing closed is the designed safety path and must not be read as a collapse). This is a known false-positive class: under a stub that returns nothing, every discovery-shaped template exits early by design.
+
+### Changed
+- **`loop-harness/references/hooks.md` documented 9 of Claude Code's 33 hook events; it now documents all 33.** The file's "(More events exist; these cover almost all harness needs.)" was true when written and had quietly stopped being true. The 24 additions were confirmed against the primary source (`code.claude.com/docs/en/hooks`, 1 Sep 2026) and include several squarely in harness scope: `PermissionRequest`, `PermissionDenied`, `PostToolUseFailure`, `StopFailure`, `PostCompact`, `SubagentStart`, `ConfigChange`, `FileChanged`, `WorktreeCreate`/`Remove`, `PreModelSwitch`/`PostModelSwitch`. Two asymmetries are called out because both produce hooks that appear to work and silently do not: **`PostToolUse` fires on success only** — the failure path is the separate `PostToolUseFailure` — and **`PreCompact` has a partner, `PostCompact`**, so a hook that persists state before compaction has somewhere to restore it. Found while evaluating `affaan-m/ECC`, whose `hooks.json` uses `PostToolUseFailure`; the event surface was then confirmed from the docs rather than from that repo. Carries a confirmation log with its re-check instruction.
+
 ## [2.5.0] — 2026-09-01
 
 ### Added
