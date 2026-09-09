@@ -1,5 +1,7 @@
 # Proof
 
+![Proof — governed multi-agent workflows, illustrated as connected engineering modules passing through a verification gate](docs/assets/proof-banner.png)
+
 > Run real engineering work as governed, multi-agent workflows — a Claude Code plugin of **26 composable skills** covering the whole lifecycle, from understanding and design through shipping, operating, and autonomous self-improvement.
 
 > _Formerly **Heimdall**, and **TheLoopSkill** before that. Skill names (`loop-*`) are unchanged._
@@ -70,6 +72,19 @@ Every skill is invoked as `/loop-<name> <target>` and accepts `--mode <lite|bala
 - **Enforced contracts.** CI runs the validation gate, a behavioral smoke of every template, and the routing-block parity check on every push. The skill boundary matrix is a committed, normative artifact.
 
 The full architecture is documented with the [C4 model](docs/c4/README.md) and the [4+1 views](docs/views/4plus1.md); the deep tour — the autonomy ladder, the engine walkthrough, the mode table, branch-per-task discipline, repository layout — is in **[docs/overview.md](docs/overview.md)**.
+
+## Optional local ML
+
+Proof includes a small **Naive Bayes classifier** that suggests relevant skills from reviewed task examples. It trains locally with Node's standard library and makes no provider calls. From a source checkout:
+
+```sh
+node scripts/software-context.mjs train --data docs/examples/software-routing-train.jsonl --out /tmp/proof-routing.json
+node scripts/software-context.mjs rank --task "Review this branch for defects" --model /tmp/proof-routing.json
+```
+
+Choose a new model output path for each training run. Omit `--model` for the default lexical matcher. Both routes provide advice; the classifier cannot change verification gates, permissions, or execution-model choices.
+
+**Experimental:** on 40 synthetic requests with a known skill owner, ML's first candidate was correct on **23**, versus **29** for lexical matching. The supplied training examples are synthetic; better generalization and billed-token savings remain unproven. See the [software-team guide](docs/software-team.md) for the training schema and the [independent evaluation](docs/examples/software-efficiency-evaluation-final.md) for results and limitations.
 
 ## Beyond Claude Code
 
