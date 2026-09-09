@@ -14,6 +14,7 @@ Two machine-readable artifacts that govern the plugin, plus the ADR series. The 
 | [ADR-0006](ADR-0006-width-shape-band-coverage-and-flag-selected-rows.md) | Verifier width, shape/band coverage, flagged rows | Accepted |
 | [ADR-0007](ADR-0007-boundary-lookup-matching-and-speech-act.md) | `boundary_lookup` matching and speech act | Accepted |
 | [**ADR-0008**](ADR-0008-host-packaging-seam.md) | **How the skills reach a host that is not Claude Code** — one source of truth, generated packs under `dist/<host>/`, four skills held back by subject, carried reference files, the Tier-B degradation contract | **Accepted** (2026-08-04) |
+| [ADR-0011](ADR-0011-software-context-advisor.md) | Local software-team context advice, optional learned candidates, and independent evaluation | Accepted for local trial; ML remains opt-in (2026-09-09) |
 
 [ADR-0001](../../mcp/ADR-0001-runtime-and-dependency.md) predates this directory and lives beside the
 code it governs, in `mcp/`. ADR-0009 — whether Proof grows its own orchestrator for hosts that

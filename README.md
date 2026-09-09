@@ -5,7 +5,7 @@
 > _Formerly **Heimdall**, and **TheLoopSkill** before that. Skill names (`loop-*`) are unchanged._
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills: 24](https://img.shields.io/badge/skills-24-6f42c1.svg)](#the-skills)
+[![Skills: 26](https://img.shields.io/badge/skills-26-6f42c1.svg)](#the-skills)
 [![Plugin: marketplace](https://img.shields.io/badge/plugin-marketplace-2ea44f.svg)](#installation)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](CONTRIBUTING.md)
 
@@ -27,6 +27,8 @@ Then start anywhere:
 ```
 
 Other install paths (project-local, Claude Code on the web, other hosts) are in **[INSTALL.md](INSTALL.md)**.
+
+**Software teams:** start with the [software-team guide](docs/software-team.md) for concise intake and handoffs, a local context reading plan, and an optional small ML routing experiment. The helper uses no provider calls; measured delivery and billed-token improvements remain to be established.
 
 ## Where to start
 
@@ -65,7 +67,7 @@ Every skill is invoked as `/loop-<name> <target>` and accepts `--mode <lite|bala
 - **One engine, governed.** Skills author workflow scripts against `loop-engine`, under two policy documents — [harness](.claude/skills/loop-engine/references/harness-policy.md) (orchestration shape, earned barriers, verification width) and [loop](.claude/skills/loop-engine/references/loop-policy.md) (convergence, runaway prevention) — and a pluggable lifecycle framework (default AIDLC, human gates between phases).
 - **One cost dial.** `--mode lite | balanced | all-out` routes every node to a matching model and effort tier; gating and planning nodes stay pinned to the strongest model in every mode. `all-out` prices the run and asks once before spending. Full contract: [execution-modes.md](.claude/skills/loop-engine/references/execution-modes.md).
 - **Standards, not vibes.** Every skill carries a version-pinned `references/standards.md` (OWASP/CWE/ASVS for review, C4/ISO for design, Google SRE for operations, …) with each authority's provenance graded.
-- **Enforced contracts.** CI runs the validation gate, a behavioral smoke of every template, and the routing-block parity check on every push. The 25-skill boundary matrix is a committed, normative artifact.
+- **Enforced contracts.** CI runs the validation gate, a behavioral smoke of every template, and the routing-block parity check on every push. The skill boundary matrix is a committed, normative artifact.
 
 The full architecture is documented with the [C4 model](docs/c4/README.md) and the [4+1 views](docs/views/4plus1.md); the deep tour — the autonomy ladder, the engine walkthrough, the mode table, branch-per-task discipline, repository layout — is in **[docs/overview.md](docs/overview.md)**.
 
