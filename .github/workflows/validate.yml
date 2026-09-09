@@ -32,6 +32,12 @@ jobs:
       - name: Smoke-test workflow templates
         run: node scripts/smoke.mjs
 
+      - name: Check routing-block extraction parity
+        run: node scripts/check-modes-extraction-parity.mjs
+
+      - name: Test local context advisor
+        run: node scripts/test-software-context.mjs
+
       # ADR-0008 §D8.8. Packs every host twice and asserts the pack is deterministic, holds back
       # the four Claude Code-native skills, ships no *.workflow.js, leaves no ${CLAUDE_*} expansion
       # behind, and states its degradation wherever a template was dropped. Residual host-specific

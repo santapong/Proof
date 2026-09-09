@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "frozenAtUtc": "2026-09-09T04:03:03Z",
+  "fixture": "docs/examples/software-routing-eval.jsonl",
+  "fixtureSha256": "edfcc0de2d4572a112ccacfb075736887125a2fc994b16955e35e41b95b46d19",
+  "normativeSource": "docs/design/boundary-audit.json",
+  "normativeSourceSha256": "cca7b45cee003f6c1f25144b36f7a8dbdb5803e4bb85e8e355013cd51e15a7c5",
+  "baseCommit": "20214370a94722a1c62ca636f4b52f61a72ce618",
+  "author": "Independent evaluation agent; training fixture and router implementation unread during case construction",
+  "fixtureKind": "Synthetic paraphrases, independently authored from normative scope boundaries; not production task history",
+  "rows": 48,
+  "groups": { "core": 32, "neighbor": 8, "ambiguous": 4, "out-of-domain": 4 },
+  "protocol": [
+    "Verify fixture hash and labels before execution; do not modify labels or router thresholds after viewing outcomes.",
+    "Run the model-disabled lexical baseline across every case before fitting or running the learned arm.",
+    "Keep top-1 accuracy, top-3 candidate recall, abstention correctness, non-abstained coverage, and selected-context character counts separate.",
+    "Train only on the separate reviewed training fixture. Automated leakage checks may compare train/eval IDs and normalized text after this freeze without exposing training text to the evaluator.",
+    "Run the optional learned model on the unchanged cases, then compare lexical results to the model-disabled negative control; the learned hint must not silently mutate the baseline or dispatch work.",
+    "Report core and neighboring skills separately; abstention is mandatory only for the eight rows marked mustAbstain.",
+    "Do not claim real token, provider-cost, task-quality, or latency savings from static character counts or chars/4 proxies.",
+    "This fixed synthetic study can expose failures but cannot justify production activation; no minimum passing score is imposed or tuned to results.",
+    "Any rerun after repairs retains the original result record and identifies changed implementation hashes; this fixture then becomes regression evidence, not a fresh holdout."
+  ]
+}

@@ -102,7 +102,16 @@ node scripts/smoke.mjs
 
 # The per-host packs still build, are deterministic, and dangle no pointer
 node scripts/check-host-packs.mjs
+
+# Local advisory retrieval, opt-in model validation, and abstention behavior
+node scripts/test-software-context.mjs
 ```
+
+The context advisor's synthetic routing evaluation is documented in
+[the software-team guide](docs/software-team.md). Keep its training data separate
+from the frozen evaluation requests; passing a published fixture does not establish
+live selection quality or billed-token savings. Do not adjust the evaluator to make
+an optimization pass.
 
 **On the third gate.** `check-host-packs.mjs` builds the Cursor / Codex / Antigravity packs twice and asserts they are byte-identical, that no held-back skill's router leaked in, that no `*.workflow.js` survived, that no `${CLAUDE_*}` expansion remains, that every skill which lost a template says so, and that **every `../<sibling-skill>/…` pointer resolves inside the pack**. That last one is the check most likely to catch you: four skills are held back from packs by [ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md), so a new cross-reference into `loop-engine`, `loop-harness`, `loop-skill` or `loop-autopilot` is green in `.claude/skills/` and red here. The fix is a `carryFiles` entry in `scripts/host-targets.json` (§D8.9), a stub, or a rethink of the pointer — not an edit to `dist/`, which is generated and git-ignored and will be overwritten on the next pack.
 

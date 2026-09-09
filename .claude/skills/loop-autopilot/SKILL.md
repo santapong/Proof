@@ -8,6 +8,8 @@ argument-hint: <repo> [--mode <lite|balanced|all-out>]
 
 You are about to run a project's **autonomous engineering loop**: read what needs doing, do it on a branch, and propose it — on repeat, unattended if configured. The loop is **propose-only**. It opens draft pull requests with a test and a risk memo and comments the result; **it never merges, and never pushes to `main`.** A human always approves.
 
+The default supervised pass is dry: it returns local proposals and opens nothing. Remote proposals, notifications, paid calls, and unattended schedules require authorization for those actions; a request to improve a skill does not enable them. For a software-team skill-maintenance candidate, read `references/skill-improvement.md` before a bounded pass. One-off skill authoring still belongs to `loop-skill`.
+
 This is a **composition layer over the `loop-engine` skill, not a new engine** (same pattern as `loop-orchestrate`). Every stage below is an existing skill invoked inside a budget-guarded loop.
 
 **Execution flags.** `--mode <lite|balanced|all-out>` is advertised in this skill's `argument-hint` but **parsed by `loop-engine`, never here** — pass the raw argument string straight through when you invoke it for `templates/improvement-loop.workflow.js` (or any companion template) and carry no mode logic of your own. See `../loop-engine/references/execution-modes.md`.
@@ -85,6 +87,7 @@ Work on a `claude/`-prefixed branch only.
 
 ## Reference files
 
+- `references/skill-improvement.md` — evidence-backed skill candidates, bounded local trials, frozen independent evaluation, usage records, and promotion or rollback
 - `references/loop-design.md` — the intake→act→verify→propose loop, guards, and convergence
 - `references/feedback-intake.md` — the four sources and the exact GitHub tools; dedup
 - `references/deployment.md` — running it unattended (Cloud Routine / Action), safety scopes, notification, and the two companion Routines

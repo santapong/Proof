@@ -5,6 +5,17 @@ All notable changes to Heimdall (formerly TheLoopSkill; renamed 1 Aug 2026) are 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Software-team intake and handoff guidance, selective context reading, and evidence-backed skill improvement trials.
+- A source-checkout context advisor using the existing lexical matcher, with an optional local Naive Bayes classifier, provenance checks, compact reading plans, and 62 behavioral checks.
+- Independent synthetic routing evaluation and review/handoff walkthroughs. ML remains opt-in after underperforming the lexical baseline across the full fixture; actual billed-token savings are unmeasured.
+
+### Fixed
+- Overstated context-budget guidance, a checkpoint rule that obscured freshness checks, and unsafe string-prefix path-containment examples.
+- Marketplace version drift; CI and the local gate now check routing extraction parity and the context advisor.
+
 ## [3.0.0] — 2026-09-01
 
 ### Changed

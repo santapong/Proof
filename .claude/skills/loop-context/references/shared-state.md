@@ -38,9 +38,13 @@ fold produces one serializable object before the next phase reads it; in a resum
 `resumeFromRunId` replays cached agent results, and a clean per-phase state object is
 what makes the *meaning* of those results replayable rather than re-derived. Two rules:
 
-- The checkpoint is the **only** thing the next phase reads. If phase N+1 needs something
-  phase N knew but didn't checkpoint, that is a contract defect in phase N, not a reason
-  for N+1 to go re-read raw material.
+- The checkpoint is the authority for prior decisions and evidence. Carry the source
+  pointers, observed revision/hash and freshness checks the next phase needs. It may
+  dereference those pointers and run the declared checks; record the new observation
+  as a delta when a source changed. If phase N omitted a required input or check,
+  repair that handoff contract explicitly rather than silently re-deriving prior work
+  or treating cached evidence as current. This is the pointer-based read rule in
+  `trace-invariants.md`, not a ban on checking live state.
 - Checkpoints are **append-only across phases** (phase 2's object extends phase 1's, it
   does not rewrite it) — the delta discipline of `supersession.md`, applied to state.
 

@@ -12,6 +12,8 @@ argument-hint: <describe your situation in your own words>
 
 **No `--mode` and no workflow template.** Interviewing needs a human in the loop, and the workflow sandbox has none — the same reason `loop-harness` ships no template. Execution scale belongs to the *routed* skill; pass any `--mode` the user gave through to it untouched.
 
+**For software-team work**, read `references/software-team.md` when routing an issue or handing an implementation to review. Start with the smallest justified skill chain; a lifecycle stage does not automatically need a separate skill or agent. An optional local classifier may shortlist candidates, but the boundary audit and the request determine the verdict.
+
 ## 1. Listen before asking
 
 Read what the user actually provided. Most requests already contain the discriminating facts, and an interview that asks for what was already said is trap #2. Extract, if present: what artifact exists (an idea, code, a diff, an outage, docs, a question), what they want at the end, and whether the thing runs.
@@ -36,12 +38,15 @@ Match the interview's facts against the audit's matrix and overlap resolutions. 
 
 State the verdict and the because-lines to the user in plain words. On a chain or an escalation, get one confirmation; on an unambiguous single skill, dispatch directly. Then invoke the skill(s) per `references/dispatch.md`: arguments filled from the interview so the routed skill does not re-ask, flags passed through verbatim.
 
+An existing request to carry out that chain satisfies this confirmation. Ask again only when the proposed route adds a material deliverable or action beyond the authorized work, or a missing answer changes the route.
+
 ## 5. Manage the handoffs
 
 On a chain, guide stays the conductor between hops, not during them: when a hop completes, check its output against what the next hop expects, re-validate that the next hop still applies (a comprehension pass that uncovered an outage re-routes to `loop-incident` — the route is a hypothesis, not a contract), and carry the artifact across. Close with a one-paragraph routing note: what was asked, what was routed where, and each because-line — the record that makes a misroute diagnosable afterward.
 
 ## Reference files
 
+- `references/software-team.md` — issue-to-handoff routing, a compact team contract, proportional verification, and advisory local classification
 - `references/interview.md` — extracting facts from the request, the minimum-questions discipline, phrasing checkable questions in user terms
 - `references/dispatch.md` — verdict shapes, filling the routed skill's arguments, chain conduction, re-validation between hops, the routing note
 - `references/guide-traps.md` — the failure catalogue: how routing work goes wrong while looking helpful

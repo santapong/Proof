@@ -3,20 +3,24 @@
 The three rules of §2–§3, with their mechanics and the traps that ship most often.
 Citations and grades live in `standards.md`; this file is the how.
 
-## Budget: plan for 10–20% of the advertised window
+## Budget: calibrate for the task and model
 
 The advertised context length is the number of tokens the model *accepts*, not the number
-it *uses well*. Under genuine multi-fact reasoning, effective use measures at roughly a
-tenth to a fifth of the claim (BABILong), and about half of tested models degrade before
-their claimed 32K on tracing/aggregation tasks (RULER).
+it *uses well*. The BABILong result summarized in `standards.md` measured roughly a
+tenth to a fifth of claimed context on its multi-fact reasoning benchmark; RULER
+reported degradation before claimed 32K for about half of its tested models. These
+are benchmark- and model-specific observations. The standards shelf notes differing
+definitions of effective context and limited figure verification; they do not prove
+a universal 10–20% budget for current software-team work.
 
 Practical consequences:
 
-- **Set an explicit token budget per assembled context**, derived from the 10–20% band,
-  and treat exceeding it as a design smell, not a scaling opportunity.
-- When a task genuinely needs more material than the budget allows, the answer is
-  **retrieval or phase-splitting**, not a bigger stuffing. A second phase with a fresh,
-  purpose-assembled context beats one overloaded window.
+- **Set an explicit token budget per assembled context**, using representative tasks
+  and the actual model. The 10–20% band can be a conservative starting hypothesis;
+  adjust it using answer-preservation checks, observed usage, and latency.
+- When a task needs more material than that budget, compare **selective retrieval,
+  phase-splitting, and a larger context** against the same acceptance evidence. Extra
+  phases and retrieval can also cost tokens or lose constraints; measure the tradeoff.
 - Reasoning substitutes for window: on LongBench v2, a reasoning-augmented model beat
   direct-answer models and the human baseline. If quality at length is the problem, more
   inference-time reasoning is a lever before more context is.

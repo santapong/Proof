@@ -1,0 +1,26 @@
+{
+  "baseCommit": "20214370a94722a1c62ca636f4b52f61a72ce618",
+  "files": {
+    ".claude-plugin/marketplace.json": "8f001162b61ba144f5818f353dfdd36af2491791b3e8ee9e71e7df0f85f3da86",
+    ".claude/commands/gate.md": "dcf09e9859dc48a7979b3c95f101d21f9d87c24513fcf2c6e0131f8b931861b6",
+    ".claude/skills/loop-autopilot/SKILL.md": "2a054c4ef1ca90d9cad14dbc7c6348c18fa891468aac16dc23156588ddf75411",
+    ".claude/skills/loop-autopilot/references/skill-improvement.md": "c9f0fc96f38587d484510aaf385e5b24a145cbb0ef209e68c440a5e5c88addb9",
+    ".claude/skills/loop-context/SKILL.md": "8533b11332003a174954d0e1bcbeb757a48b5cde3e319cdb29887c9ea9ddf5be",
+    ".claude/skills/loop-context/references/context-rules.md": "2497e05f45091c8c41d4eedc8fe2e909f6132ae215a7ffa21bcd7544757f07c2",
+    ".claude/skills/loop-context/references/shared-state.md": "f84eb34c2eb167f8dc752ed6820b894fafb435c69228f1c1f239b65835d7162f",
+    ".claude/skills/loop-context/references/software-efficiency.md": "9f86c09ad945fab1042a3fab88e932012f603fae533b8a12a6414fd1f62dde31",
+    ".claude/skills/loop-guide/SKILL.md": "ae49d6e276437c7855c824dd993b1352beeaee3ab3eb516ed0eedd17241ae9e9",
+    ".claude/skills/loop-guide/references/software-team.md": "de6f699c17609bebd55b0077da9d3a053287f80f802bdc3a29f0178cdda077e8",
+    ".claude/skills/loop-review/references/vulnerability-playbooks.md": "f94cbc8df83bf9ba7c806d7b1e337e2f3a44e3cf08a82ac11548533689591244",
+    ".github/workflows/validate.yml": "96489245bb8200b103961621bdec457daa12b1776adf45ef26eeda6904f0c423",
+    "CONTRIBUTING.md": "cb43f93791f91819e8a16fd74e44835464517537e257d02fca515cd3e1d65b91",
+    "README.md": "c8a73c90e09dbb289e76bd6eeaeff2480c91a83ec58b8923454f4e21308b1325",
+    "docs/design/ADR-0011-software-context-advisor.md": "9710719596fb5e0b4644206c762bbde9cf837727715e225d1f76401d7e530b9a",
+    "docs/design/README.md": "9bc25066d77fbba4256bb459a94a3e5a4e2d0c752fe00aded172ffbdd47458e5",
+    "docs/software-team.md": "96b73f28e3007e86eea5371cf74d8b6cd9fdaf20d532abe769b91432c8b6a215",
+    "scripts/evaluate-software-context.mjs": "9b417f84a5c038f5f25b942f2bdcbdd5f1be775fed7b04bd58c17e58412c43b1",
+    "scripts/lib/software-context.mjs": "17fcc2dc0ff55cb67e1160f1cd5112c6486f9ffec26baa5057c5b146b26652b6",
+    "scripts/software-context.mjs": "467890551ae4f693e0f3155df757b8a896d291860ce35183dd28a13ee2d40b92",
+    "scripts/test-software-context.mjs": "4188a7abf40cd5b8911c9d04bf55235d3ab39fd1afe261be68f9956ad6e6d072"
+  }
+}
