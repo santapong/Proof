@@ -152,9 +152,16 @@ New reservations are fleet-wide contract changes: they belong in `execution-mode
 
 ## Pull requests
 
-- Branch from `main`; keep PRs focused (one skill or one coherent change).
+- Follow [the branch policy](docs/branch-policy.md): ordinary work branches from
+  `develop` and targets `develop`; `main` is for authorized releases and hotfixes.
+  Use `feat/`, `fix/`, `docs/`, `chore/`, or another documented prefix and keep PRs focused.
+- Run `node scripts/test-branch-policy.mjs` and
+  `node scripts/check-branch-policy.mjs --head <source-branch> --base <target-branch>`.
 - Open as a **draft** until `node scripts/validate.mjs` exits 0.
 - Describe what changed and how you verified it. Paste the gate's final line. "Validation green" on its own is not evidence — say *which* command produced it, because `claude plugin validate` and `node scripts/validate.mjs` cover disjoint surfaces.
 - If you added a workflow template, note that it passes the gate and, ideally, a bounded live run.
+- Delete merged temporary branches after verifying remote integration; retain
+  `main` and `develop`. The policy includes GitHub auto-deletion/protection setup
+  and safe cleanup for local Git merges.
 
 By contributing, you agree your contributions are licensed under the [MIT License](LICENSE).
