@@ -2,7 +2,7 @@
 
 **What are the separately-loadable units inside the plugin, what is each one made of, and how do they talk?**
 
-A C4 container is a *runtime or deploy boundary*, not a Docker container. For a plugin with no server, the meaningful boundary is **what gets loaded, when, and by whom** — and that is genuinely different per unit. A `SKILL.md` enters the agent's context the moment a skill is invoked; a `references/*.md` file is read only if that skill's router decides it is needed; a `*.workflow.js` is never read by the agent at all — it is *executed* by the Workflow tool in a sandbox with no filesystem. Those are three different loading regimes, so they are three containers.
+A C4 container is a *runtime or deploy boundary*, not a Docker container. For the instruction library, the meaningful boundary is **what gets loaded, when, and by whom** — and that is genuinely different per unit. A `SKILL.md` enters the agent's context the moment a skill is invoked; a `references/*.md` file is read only if that skill's router decides it is needed; a `*.workflow.js` is read and adapted during authoring, then *executed* by the Workflow tool in a sandbox with no filesystem. Those are three different loading regimes, so they are three containers.
 
 ![C4 Container diagram — Proof](diagrams/container.svg)
 
@@ -12,20 +12,20 @@ A C4 container is a *runtime or deploy boundary*, not a Docker container. For a 
 
 | Container | Loading regime | Why it is separate |
 |---|---|---|
-| **Skill Routers** | Into agent context, on invocation | The `description` field is API: it is the *only* thing the model sees when choosing a skill. Routers stay thin so twenty-five of them can coexist without drowning the context window. |
-| **Reference Library** | On demand, by the router's flow | Progressive disclosure. 121 files of standards-grade depth would never fit in context at once; the router decides which two or three matter for this task. |
-| **Workflow Templates** | Executed, never read into context | A different execution model entirely — plain JS in a sandbox with no filesystem, no clock, and no module access. That sandbox is what forces the `ROUTES` duplication rule (see [Component](component.md)). |
-| **Governance Policies** | Read-only, before authoring | Consumed by every skill and modified by none. Separating them is what lets twenty-five skills share one orchestration discipline instead of twenty-five dialects. |
+| **Skill Routers** | Into agent context, on invocation | The `description` field is API: it is the discovery metadata used to describe when a skill applies. Routers stay thin so twenty-six of them can coexist without drowning the context window. |
+| **Reference Library** | On demand, by the router's flow | Progressive disclosure. The complete reference library need not enter context at once; the router decides which two or three matter for this task. |
+| **Workflow Templates** | Authored in the session, executed in the sandbox | A different execution model entirely — plain JS in a sandbox with no filesystem, no clock, and no module access. That sandbox is what forces the `ROUTES` duplication rule (see [Component](component.md)). |
+| **Governance Policies** | Read-only, before authoring | Consumed by every skill and modified by none. Separating them is what lets twenty-six skills share one orchestration discipline instead of twenty-six dialects. |
 | **Lifecycle Frameworks** | Read-only, selected by flag | Pluggable: `--framework <name>` resolves to a file. AIDLC is the default, not the only option. |
 | **Design Records** | Review-time, by humans and reviewers | Normative and machine-readable. Kept because three of its mandates were once dropped from a build plan and, since every review checked the plan instead, nobody noticed. |
 | **Validation Gate** | CI, on push and PR | The only container that *executes in the repo's own CI*. It exists because the host's `plugin validate` reads the marketplace manifest and never opens a `SKILL.md`. |
 | **Plugin Manifests** | By the host, at install | The discovery contract. Skills under `.claude/skills/` are auto-discovered, so this rarely changes. |
-| **MCP Server** (`mcp/`) | A **process**, spawned by the host over stdio | The only container with a lifecycle of its own. Five tools plus read-only resources, parsed live from the same source documents the skills read — so a tool answer and a skill answer cannot drift. Zero dependencies, by [ADR-0001](../../mcp/ADR-0001-runtime-and-dependency.md). |
+| **MCP Server** (`mcp/`) | A **process**, spawned by the host over stdio | The only container with a lifecycle of its own. Five tools plus read-only resources, parsed live from the same source documents the skills read — with source citations so a reviewer can check the answer. Zero dependencies, by [ADR-0001](../../mcp/ADR-0001-runtime-and-dependency.md). |
 | **Host Packs** (`dist/<host>/`) | **Generated**, then installed into a *different* host | Not loaded by Claude Code at all — this is the repo's output for Cursor, Codex and Antigravity. Generated from the Skill Routers and Reference Library, minus the four skills that are Claude Code-native by subject and minus every template, per [ADR-0008](../design/ADR-0008-host-packaging-seam.md). Git-ignored; gated by `scripts/check-host-packs.mjs`. |
 
 ## The three flows worth tracing
 
-**Selection.** `Developer → Claude Code → Skill Routers`. The host matches the request against twenty-five `description` fields. Nothing else is loaded yet, and nothing else influences the choice — which is why the [boundary audit](../design/boundary-audit.json) treats those fields as the product's real API surface.
+**Selection.** `Developer → Claude Code → Skill Routers`. The host matches the request against twenty-six `description` fields. The session may also consider the explicit invocation, task context, and boundary evidence — which is why the [boundary audit](../design/boundary-audit.json) treats those fields as the product's real API surface.
 
 **Authoring.** `Router → Policies + Framework + References → Template`. The skill reads its law, maps the task onto phases, and fills a template's `EDIT ME` slots. This all happens *in the agent's context*, at authoring time, which is what makes it possible for an interactive pre-flight to exist at all — a script cannot prompt a human, but the session can.
 
@@ -34,7 +34,7 @@ A C4 container is a *runtime or deploy boundary*, not a Docker container. For a 
 ## Boundaries this diagram asserts
 
 - **Templates never call the fleet directly on their own authority** — every `agent()` call takes its `model` and `effort` from `ROUTES`, so routing policy cannot be quietly overridden per template. The gate enforces this by rejecting a bare `model:` literal outside the block.
-- **Only the fleet touches the repository.** No container here writes code; agents do, inside a phase a human approved.
+- **Repository writes follow authorization.** Workflow agents may read or patch the target repository in an approved phase. The authoring session and local developer tools can also access files; this diagram is not a filesystem access-control boundary.
 - **The gate points at routers and templates, not at references.** Reference *content* is not mechanically checkable — a stale version pin looks exactly like a fresh one to a parser. That gap is real, and it is why standards accuracy is a review discipline with a confirmation log rather than a CI check.
 
 ---

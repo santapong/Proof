@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="370" viewBox="0 0 1120 370" role="img" aria-labelledby="title description">
+  <title id="title">From task to reviewed evidence</title>
+  <desc id="description">Scope the task, run one bounded phase, verify evidence, then stop at a human gate. The next phase starts after approval; findings can be redirected or stopped.</desc>
+  <style>
+    :root { color-scheme: light dark; --bg:#f7fafc; --card:#fff; --ink:#102838; --muted:#4c6373; --border:#d4e1e9; --accent:#007c83; --soft:#e4f5f3; --arrow:#558a93; }
+    @media (prefers-color-scheme:dark) { :root { --bg:#101c28; --card:#172b3b; --ink:#edf7fa; --muted:#aec4d0; --border:#314b5d; --accent:#65e2d2; --soft:#193d42; --arrow:#7eb9c1; } }
+    text { font-family:Inter,Arial,sans-serif; fill:var(--ink); }
+    .title { font-size:27px; font-weight:700; }
+    .label { font-size:21px; font-weight:700; }
+    .body { font-size:17px; fill:var(--muted); }
+    .step { font-size:14px; font-weight:700; fill:var(--accent); letter-spacing:1.8px; }
+    .card { fill:var(--card); stroke:var(--border); }
+    .arrow { fill:none; stroke:var(--arrow); stroke-width:2; marker-end:url(#arrow); }
+  </style>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="var(--arrow)"/></marker></defs>
+  <rect width="1120" height="370" rx="20" fill="var(--bg)"/>
+  <text class="title" x="32" y="49">From task to reviewed evidence</text>
+  <text class="body" x="32" y="79">One bounded phase. A clear handoff. A deliberate next step.</text>
+  <g transform="translate(32 110)">
+    <rect class="card" width="240" height="176" rx="14"/>
+    <text class="step" x="20" y="32">01 / SCOPE</text>
+    <text class="label" x="20" y="67">Agree on the task</text>
+    <text class="body" x="20" y="103"><tspan x="20">Repo state + constraints</tspan><tspan x="20" dy="25">Acceptance evidence</tspan><tspan x="20" dy="25">Relevant skill</tspan></text>
+  </g>
+  <path class="arrow" d="M274 198H298"/>
+  <g transform="translate(304 110)">
+    <rect class="card" width="240" height="176" rx="14"/>
+    <text class="step" x="20" y="32">02 / WORK</text>
+    <text class="label" x="20" y="67">Run one phase</text>
+    <text class="body" x="20" y="103"><tspan x="20">Load needed references</tspan><tspan x="20" dy="25">Apply shared policies</tspan><tspan x="20" dy="25">Keep execution bounded</tspan></text>
+  </g>
+  <path class="arrow" d="M546 198H570"/>
+  <g transform="translate(576 110)">
+    <rect class="card" width="240" height="176" rx="14"/>
+    <text class="step" x="20" y="32">03 / VERIFY</text>
+    <text class="label" x="20" y="67">Check the evidence</text>
+    <text class="body" x="20" y="103"><tspan x="20">Run relevant checks</tspan><tspan x="20" dy="25">Challenge the findings</tspan><tspan x="20" dy="25">Report unresolved gaps</tspan></text>
+  </g>
+  <path class="arrow" d="M818 198H842"/>
+  <g transform="translate(848 110)">
+    <rect width="240" height="176" rx="14" fill="var(--soft)" stroke="var(--accent)"/>
+    <text class="step" x="20" y="32">04 / HUMAN GATE</text>
+    <text class="label" x="20" y="67">Choose next step</text>
+    <text class="body" x="20" y="103"><tspan x="20">Review the deliverable</tspan><tspan x="20" dy="25">Approve, redirect, or stop</tspan><tspan x="20" dy="25">Record the handoff</tspan></text>
+  </g>
+  <text class="body" x="32" y="331">A workflow result is evidence for review. Release and merge actions follow the user's authorization.</text>
+</svg>

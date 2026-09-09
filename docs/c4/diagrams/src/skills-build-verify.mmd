@@ -7,13 +7,16 @@ flowchart TB
         rev["<b>loop-review</b><br/><i>«component» security + quality</i><br/>Deliverable: a findings list;<br/>judges, never refactors"]
         aud["<b>loop-audit</b><br/><i>«component» change impact</i><br/>Deliverable: a backward-looking<br/>risk memo over a diff"]
         dbg["<b>loop-debug</b><br/><i>«component» root cause</i><br/>Deliverable: minimal fix + regression;<br/>requires a REPRODUCIBLE defect"]
+        exp["<b>loop-experiment</b><br/><i>«component» evaluation</i><br/>Deliverable: controlled comparison<br/>with a reproducible evidence record"]
     end
 
+    eng["<b>loop-engine</b><br/><i>«external» workflow execution</i>"]
     pat["<b>loop-pattern</b><br/><i>«external» refactoring</i>"]
     ship["<b>loop-ship</b><br/><i>«external» release</i>"]
     inc["<b>loop-incident</b><br/><i>«external» live failure</i>"]
     algo["<b>loop-algo</b><br/><i>«external» mechanism</i>"]
 
+    exp -- "executes the study workflow" --> eng
     aud -- "security dimension" --> rev
     aud -- "risk memo → go/no-go" --> ship
     rev -- "each smell class points<br/>at its remediation" --> pat
@@ -23,6 +26,6 @@ flowchart TB
 
     classDef component fill:#BBF7D0,stroke:#15803D,color:#052E16
     classDef extc fill:#E7E5E4,stroke:#78716C,color:#1C1917
-    class test,rev,aud,dbg component
-    class pat,ship,inc,algo extc
+    class test,rev,aud,dbg,exp component
+    class pat,ship,inc,algo,eng extc
     style g fill:#F0FDF4,stroke:#86EFAC
