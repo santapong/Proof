@@ -5,8 +5,28 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+
+permissions:
+  contents: read
 
 jobs:
+  branch-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test branch policy
+        run: node scripts/test-branch-policy.mjs
+      - name: Check pull request source and target
+        if: github.event_name == 'pull_request'
+        env:
+          PROOF_HEAD_REF: ${{ github.head_ref }}
+          PROOF_BASE_REF: ${{ github.base_ref }}
+        run: node scripts/check-branch-policy.mjs --head "$PROOF_HEAD_REF" --base "$PROOF_BASE_REF"
+
   validate:
     runs-on: ubuntu-latest
     steps:
