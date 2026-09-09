@@ -1,12 +1,12 @@
 # C4 — the skill fleet
 
-Twenty-two skills, drawn at two altitudes.
+Twenty-six skills, drawn at two altitudes.
 
-**One diagram per skill would be twenty-five copies of the same picture.** Every skill has an identical internal structure — router, references, template — which is drawn once below as the *skill container view* and explained in [`skill-anatomy.md`](skill-anatomy.md). What actually differs between skills is their **relationships**: who delegates to whom, and where each one stops. So the per-skill views are grouped by role, and each shows the edges that make its members distinct.
+**One diagram per skill would be twenty-six copies of the same picture.** Skills share a router-and-reference structure, with templates where the task needs them — which is drawn once below as the *skill container view* and explained in [`skill-anatomy.md`](skill-anatomy.md). What actually differs between skills is their **relationships**: who delegates to whom, and where each one stops. So the per-skill views are grouped by role, and each shows the edges that make its members distinct.
 
 ---
 
-## The skill container view — true for all twenty-five
+## The skill container view — shared structure
 
 Zoom into any single skill and this is what you find. The three parts are separate **because they load differently**, which is the constraint the whole design turns on.
 
@@ -14,7 +14,7 @@ Zoom into any single skill and this is what you find. The three parts are separa
 
 <sub>Diagram source: [`diagrams/src/skill-container-view.mmd`](diagrams/src/skill-container-view.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
-The asymmetry is the point: **the router is charged on every invocation, the references are charged only when read, and the template is never charged at all** — it runs somewhere the agent's context does not reach.
+The router enters context on invocation. References and templates enter context when read during authoring; the host then executes the authored script in a separate sandbox. Progressive disclosure limits what is loaded, but does not make template authoring free.
 
 ---
 

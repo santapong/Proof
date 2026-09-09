@@ -8,7 +8,7 @@ flowchart TB
     subgraph skill["<b>A skill</b> — .claude/skills/&lt;name&gt;/ &nbsp;[SYSTEM]"]
         router["<b>SKILL.md</b><br/><i>«container» Markdown + frontmatter, 6–13 KB</i><br/>Thin router; description = the selection API;<br/>loaded on EVERY invocation"]
         refs["<b>references/*.md</b><br/><i>«container» 5–7 files, ~100 KB</i><br/>Deep knowledge + pinned standards.md;<br/>loaded ON DEMAND"]
-        tmpl["<b>templates/*.workflow.js</b><br/><i>«container» plain JavaScript</i><br/>EXECUTED by the Workflow tool,<br/>never read into context"]
+        tmpl["<b>templates/*.workflow.js</b><br/><i>«container» plain JavaScript</i><br/>Read/adapted during authoring;<br/>EXECUTED by the Workflow tool"]
     end
 
     law["<b>Governance</b><br/><i>«external system»</i><br/>harness H1–H12 · loop L1–L8 · modes M1–M9"]

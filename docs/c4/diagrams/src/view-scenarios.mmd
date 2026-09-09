@@ -10,7 +10,7 @@ flowchart LR
 
     subgraph s2["<b>S2 · Add a skill</b> — the contributor path"]
         direction TB
-        b1["/loop-skill authors it"] --> b2["boundary audit updated<br/><i>logical</i>"] --> b3["3 gates run in CI<br/><i>development</i>"] --> b4["red on a dangling pointer<br/>into a held-back skill<br/><i>development</i>"]
+        b1["/loop-skill authors it"] --> b2["boundary audit updated<br/><i>logical</i>"] --> b3["repository checks run in CI<br/><i>development</i>"] --> b4["red on a dangling pointer<br/>into a held-back skill<br/><i>development</i>"]
     end
 
     subgraph s3["<b>S3 · Run unattended</b> — the autonomy path"]
@@ -20,7 +20,7 @@ flowchart LR
 
     subgraph s4["<b>S4 · Install on another host</b> — the portability path"]
         direction TB
-        d1["pack-host.mjs generates<br/>dist/cursor/<br/><i>development</i>"] --> d2["copied into .cursor/skills/<br/><i>physical</i>"] --> d3["21 of 25 skills route;<br/>MCP tools answer<br/><i>logical</i>"] --> d4["no fan-out — the host note<br/>says so<br/><i>process</i>"]
+        d1["pack-host.mjs generates<br/>dist/cursor/<br/><i>development</i>"] --> d2["copied into .cursor/skills/<br/><i>physical</i>"] --> d3["22 of 26 skills packaged;<br/>MCP tools answer<br/><i>logical</i>"] --> d4["no fan-out — the host note<br/>says so<br/><i>process</i>"]
     end
 
     classDef step fill:#BFDBFE,stroke:#1D4ED8,stroke-width:2px,color:#0C1B33

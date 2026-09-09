@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- A visual README, source-backed architecture overview, native SVG team workflow, and corrected architecture counts and execution-boundary documentation.
 - A branch policy, CI checks for PR source names and targets, a permanent-branch ruleset for GitHub import, and merged-branch cleanup guidance.
 - A project banner and a README entry point for the existing optional local ML classifier.
 - Software-team intake and handoff guidance, selective context reading, and evidence-backed skill improvement trials.

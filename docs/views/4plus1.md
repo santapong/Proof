@@ -23,11 +23,11 @@ drift between them. Where both describe the same thing, C4 is the more detailed 
 
 | 4+1 view | Nearest C4 artifact | What 4+1 adds |
 |---|---|---|
-| Logical | [Container](../c4/container.md), [the skill fleet](../c4/skills.md) | Groups the 25 skills by *role* rather than by loading regime |
+| Logical | [Container](../c4/container.md), [the skill fleet](../c4/skills.md) | Groups the 26 skills by *role* rather than by loading regime |
 | Process | [Component](../c4/component.md) — partly | Concurrency, barriers, and the blocking human gate |
-| Development | — *(no C4 level)* | The repo's module structure and the three gates |
+| Development | — *(no C4 level)* | The repo's module structure and the repository gates |
 | Physical | [Context](../c4/context.md) — partly | Processes, machine boundaries, what is a network hop |
-| Scenarios | The [mechanism trace](../c4/README.md#the-mechanism-end-to-end) | Four paths, not one, including the failure ones |
+| Scenarios | The [task walkthrough](../c4/README.md#follow-a-task) | Four paths, not one, including the failure ones |
 
 Diagram sources live with the C4 ones in [`../c4/diagrams/src/`](../c4/diagrams/src/) — one render
 pipeline for the whole repo (`node scripts/render-diagrams.mjs`). Edit the `.mmd`, never the `.svg`.
@@ -45,14 +45,15 @@ constrains the engine, the engine executes the domain skills, the domain skills 
 gate, and autonomy composes the lot on a schedule.**
 
 - **Governance** — `harness-policy` (H1–H12), `loop-policy` (L1–L8), `execution-modes` (M1–M9) and
-  three lifecycle frameworks. Read by every skill, modified by none. This layer is why 25 skills
-  share one orchestration discipline instead of inventing 22 dialects.
-- **Engine & planning (5)** — `loop-engine` runs one workflow; `loop-orchestrate` plans a project
+  three lifecycle frameworks. Read by every skill, modified by none. This layer is why 26 skills
+  share one orchestration discipline.
+- **Engine & planning (7)** — `loop-engine` runs one workflow; `loop-orchestrate` plans a project
   into a DAG before it; `loop-context` decides what agents carry between phases; `loop-build`
-  conducts a whole v1; `loop-skill` authors new members of the fleet.
-- **Domain skills (16)** — grouped by lifecycle role, not by technology. Each owns one
+  conducts a whole v1; `loop-skill` authors new members of the fleet; `loop-guide`
+  routes intake; `loop-venture` assesses a product idea.
+- **Domain skills (18)** — grouped by lifecycle role, not by technology. Each owns one
   mutually-exclusive scope line in the [boundary audit](../design/boundary-audit.json), which is
-  normative precisely because selection happens on `description` alone.
+  normative for resolving scope. The group includes `loop-experiment` for controlled evaluations.
 - **Autonomy (1)** — `loop-autopilot` is the only skill that composes others unattended, and it is
   propose-only by construction.
 
@@ -80,8 +81,8 @@ The important part of this diagram is what is *not* parallel:
 - **The gate blocks, and it blocks on a person.** The arrow that matters most in this system is the
   one where a human answers. Everything upstream is a proposal.
 - **`proof-mcp` is a separate process** with its own lifecycle — spawned by the host over stdio,
-  answering with facts parsed live from the same documents the skills read. That shared source is
-  why a tool answer and a skill answer cannot drift.
+  answering from the same source documents the skills read. Source citations let a reviewer
+  check each answer against the current contract.
 
 ---
 
@@ -93,9 +94,9 @@ The important part of this diagram is what is *not* parallel:
 
 One rule dominates: **`.claude/skills/` is the only place a skill is edited.** Everything else in
 the output column is generated — the plugin manifest points at the source, `dist/<host>/` is packed
-from it, the `.svg`s are rendered from `.mmd`.
+from it, the detailed C4 `.svg`s are rendered from `.mmd`. The new overview and native workflow SVG have their own [documented asset sources](../assets/README.md).
 
-Three gates, each catching a class the others cannot see:
+Core gates catch different classes of failure:
 
 | Gate | Catches | Blind to |
 |---|---|---|
@@ -103,7 +104,9 @@ Three gates, each catching a class the others cannot see:
 | `smoke.mjs` | A template that parses but routes wrong — mode-inert nodes, a planner flag that reaches nothing | Anything outside `*.workflow.js` |
 | `check-host-packs.mjs` | Non-deterministic packing, a held-back skill leaking, a pointer that dangles once four skills are removed | Anything Claude Code-only |
 
-The third one is the newest and the least obvious: a cross-reference that is perfectly valid in
+The full suite also checks routing-block extraction parity, the local context advisor, and branch policy; see [CONTRIBUTING.md](../../CONTRIBUTING.md).
+
+The host-pack gate catches an additional boundary: a cross-reference that is perfectly valid in
 `.claude/skills/` can be **broken in a pack**, because [ADR-0008](../design/ADR-0008-host-packaging-seam.md)
 holds four skills back. Green locally, red in CI, and the fix is a `carryFiles` entry rather than an
 edit to generated output.
@@ -117,11 +120,11 @@ edit to generated output.
 ![Physical view](../c4/diagrams/view-physical.svg)
 
 - **Almost everything is local.** Claude Code runs the Workflow sandbox in-process; `proof-mcp`
-  is a child process on the same machine, speaking stdio, dying with the session. There is no
-  server, no port, no daemon.
-- **Exactly one hop leaves the machine at run time** — the model calls. Per agent node. That is
-  what the cost ledger is counting.
-- **CI is the second machine**: an ephemeral ubuntu runner with Node 22 that re-runs all three
+  is a child process on the same machine, speaking stdio, dying with the session. The MCP server
+  uses stdio and requires no listening port.
+- **Model requests leave the machine.** Repository hosting, research tools, and target-system
+  integrations can add network traffic according to the task; the diagram is not a network allowlist.
+- **CI is the second machine**: an ephemeral ubuntu runner with Node 22 that re-runs the repository
   gates on every push and PR to `main`/`develop`.
 - **The dashed box is honest.** Another developer's machine running Cursor, Codex or Antigravity is
   a *target*, not a deployment: packs are generated here, copied by hand, and no pack has yet been
@@ -145,8 +148,8 @@ edit to generated output.
 - **S3 · Run unattended** — the autonomy path. The only one that starts without a human, and it
   still ends at one.
 - **S4 · Install on another host** — the portability path, drawn dashed because it is unproven:
-  21 of 25 skills route, the MCP tools answer, and there is no fan-out, which the generated host
-  note states rather than hides.
+  22 of 26 skills are packaged. Installed skill routing and MCP behavior need verification in
+  each target host; the generated notes describe the missing workflow runtime.
 
 ---
 

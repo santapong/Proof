@@ -1,6 +1,6 @@
 # Anatomy of a skill
 
-Every one of the twenty-five skills has the same shape. This document explains **why** that shape, because the constraints are not obvious and several of them were learned by shipping the wrong thing first. `CONTRIBUTING.md` tells you the mechanics — what to write and how to validate it. This tells you what each part is *for*, which is what you need before adding the next one.
+The twenty-six skills share a router-and-reference structure, with templates where needed. This document explains **why** that shape, because the constraints are not obvious and several of them were learned by shipping the wrong thing first. `CONTRIBUTING.md` tells you the mechanics — what to write and how to validate it. This tells you what each part is *for*, which is what you need before adding the next one.
 
 The `loop-skill` skill scaffolds all of this for you. Read this to understand what it emits and why, or to review a skill someone else wrote.
 
@@ -11,10 +11,10 @@ The `loop-skill` skill scaffolds all of this for you. Read this to understand wh
 │   ├── standards.md             ~8–12 KB   version-pinned authorities, three-grade honesty
 │   └── <topic>.md          ~10–26 KB ea.   deep knowledge, loaded ON DEMAND
 └── templates/
-    └── <name>.workflow.js       ~6–10 KB   executed by the Workflow tool, never read into context
+    └── <name>.workflow.js       ~6–10 KB   read during authoring, executed by the Workflow tool
 ```
 
-Typical totals: a mature skill is **one router, five to seven references (~100 KB), one template**.
+The tree is illustrative: reference sizes and counts vary, and some skills have no workflow template.
 
 ## The three parts have three different loading regimes
 
@@ -24,19 +24,19 @@ This is the load-bearing insight, and it is why the parts cannot be merged.
 |---|---|---|---|
 | `SKILL.md` | On invocation, into agent context | The model | Must stay small — every byte competes with the user's actual task |
 | `references/*.md` | On demand, if the router asks | The model | Can be deep; costs nothing until needed |
-| `*.workflow.js` | Never loaded into context — **executed** | The Workflow sandbox | Cannot import, cannot read files, cannot read a clock |
+| `*.workflow.js` | Read/adapted during authoring, then **executed** | The model, then the Workflow sandbox | The running script cannot import, read files, or read a clock |
 
 A skill that inlines its references into `SKILL.md` still *works* — and quietly taxes every invocation of every other skill by crowding the window. A template that assumes it can `import` a shared module does not work at all.
 
 ## The `description` field is the product's API
 
-Skill selection happens on `description` **alone**, before any body is read. With twenty-five skills the field is doing real discriminative work, and it is the single highest-leverage text in a skill.
+The `description` is discovery metadata shown before the full entrypoint; explicit invocation and the session context also influence selection. With twenty-six skills the field is doing real discriminative work, and it is the single highest-leverage text in a skill.
 
 Three rules, each earned:
 
 **Quote any value containing a colon.** `description: Integrate a platform: OAuth 2.0 flows…` is not valid YAML — a colon-plus-space opens a nested mapping and the parser rejects the whole block. Two skills shipped this way in 1.0.0 and passed every gate the project had, because `claude plugin validate` never opens a `SKILL.md`. Wrap the value in double quotes and it is safe by construction.
 
-**Say what it does, when to use it, and which sibling to use instead.** The third clause is what makes twenty-five descriptions mutually exclusive rather than merely different. Every rated overlap in [`boundary-audit.json`](../design/boundary-audit.json) is resolved by a "use X instead when Y" pointer on *both* sides — a one-way pointer leaves the boundary decidable from only one direction, which is a defect the audit checks for.
+**Say what it does, when to use it, and which sibling to use instead.** The third clause is what makes twenty-six descriptions mutually exclusive rather than merely different. Every rated overlap in [`boundary-audit.json`](../design/boundary-audit.json) is resolved by a "use X instead when Y" pointer on *both* sides — a one-way pointer leaves the boundary decidable from only one direction, which is a defect the audit checks for.
 
 **Resolve overlaps on a checkable question, never a vibe.** The four operational skills are separated by facts anyone can verify in one step: *does a runbook exist and does running it restore the SLI?* · *is the service down, or is the defect merely reproducible?* · *does answering this add a line to the dependency manifest?* · *is the deliverable a findings list or a diff?* If you cannot state the discriminator as a question with a checkable answer, the two skills are not genuinely separable and should be merged.
 

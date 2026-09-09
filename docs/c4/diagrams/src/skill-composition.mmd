@@ -1,5 +1,5 @@
 ---
-title: "Component diagram — how the twenty-five skills compose"
+title: "Component diagram — how the twenty-six skills compose"
 ---
 %%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 48}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
 flowchart TB
@@ -36,6 +36,7 @@ flowchart TB
         fe("<b>loop-frontend</b><br/><i>UI craft</i>")
         pat("<b>loop-pattern</b><br/><i>refactoring</i>")
         rev("<b>loop-review</b><br/><i>security + quality</i>")
+        exp("<b>loop-experiment</b><br/><i>controlled evaluation</i>")
         aud("<b>loop-audit</b><br/><i>change impact</i>")
     end
 
@@ -84,6 +85,8 @@ flowchart TB
     scout -- "hands over a<br/>named provider" --> intg
     fe -- "which library<br/>to adopt at all" --> scout
 
+    exp -- "runs a controlled study on" --> eng
+
     %% design & verify flows
     design -- "mechanism inside<br/>a component" --> algo
     design -- "renderer budget vs<br/>curve + duration" --> fe
@@ -114,7 +117,7 @@ flowchart TB
     class eng engine
     class orch,build,vent,ctx,mk coreSkill
     class comp,res,scout,docs knowSkill
-    class design,algo,fe,pat,rev,aud makeSkill
+    class design,algo,fe,pat,rev,aud,exp makeSkill
     class intg,test,ship,ops,inc,dbg runSkill
     class harn,auto autoSkill
 

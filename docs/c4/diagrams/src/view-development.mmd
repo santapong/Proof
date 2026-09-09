@@ -5,15 +5,15 @@ title: "4+1 · Development view — the repo as modules, and the gates over them
 flowchart LR
     subgraph src["<b>Source of truth</b>"]
         direction TB
-        skills[".claude/skills/<br/><i>22 × {SKILL.md, references/, templates/}</i>"]
+        skills[".claude/skills/<br/><i>26 routers + references<br/>templates where needed</i>"]
         docs["docs/<br/><i>c4/ · design/ · plans/</i>"]
         mcpsrc["mcp/<br/><i>server.mjs + 10 lib modules</i>"]
     end
 
-    subgraph tools["<b>Build &amp; check</b> — scripts/, Node stdlib only"]
+    subgraph tools["<b>Build &amp; check</b> — repository scripts"]
         direction TB
         validate["validate.mjs<br/><i>frontmatter · ROUTES drift ·<br/>H10 · reference paths</i>"]
-        smoke["smoke.mjs<br/><i>executes all 28 templates<br/>against stubbed globals</i>"]
+        smoke["smoke.mjs<br/><i>executes all 32 templates<br/>against stubbed globals</i>"]
         packs["pack-host.mjs<br/>+ check-host-packs.mjs<br/><i>generates and gates dist/</i>"]
         render["render-diagrams.mjs<br/><i>.mmd → .svg</i>"]
     end
@@ -35,7 +35,7 @@ flowchart LR
     skills --> plugin
     packs --> dist
     render --> svg
-    ci -- "runs all three gates;<br/>red blocks the merge" --> validate
+    ci -- "runs repository checks;<br/>required statuses gate PRs" --> validate
     ci --> smoke
     ci --> packs
 

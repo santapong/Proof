@@ -16,7 +16,7 @@ flowchart TB
 
     subgraph gh["<b>GitHub</b> &nbsp;<i>«deployment node»</i>"]
         direction TB
-        runner["<b>Actions runner</b><br/><i>«ephemeral container» ubuntu-latest + Node 22</i><br/>validate · smoke · check-host-packs"]
+        runner["<b>Actions runner</b><br/><i>«ephemeral container» ubuntu-latest + Node 22</i><br/>Repository validation and branch-policy checks"]
         origin["<b>Origin repo</b><br/><i>«service»</i><br/>Branches, PRs, releases"]
     end
 
@@ -25,7 +25,7 @@ flowchart TB
     end
 
     ccproc -- "stdio" --> mcpproc
-    ccproc -- "HTTPS — one call per agent node" --> models
+    ccproc -- "HTTPS — model requests" --> models
     mcpproc -- "reads at boot<br/>and per call" --> files
     ccproc -- "reads and patches" --> files
     files -- "push / PR" --> origin

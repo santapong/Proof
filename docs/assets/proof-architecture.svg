@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="614" viewBox="0 0 1160 614" role="img" aria-labelledby="title description">
+<title id="title">Proof architecture</title>
+<desc id="description">Skills load into an authoring session governed by shared policies and assisted by MCP tools. The host executes the workflow and returns evidence to a human gate. Portable packs are generated separately.</desc>
+<style>
+:root{color-scheme:light dark;--bg:#f7fafc;--card:#fff;--ink:#102838;--muted:#4c6373;--stroke:#bfd3df;--accent:#007c83;--support:#61748d;--policy:#a6491c;--policy-bg:#fff2e8}
+@media(prefers-color-scheme:dark){:root{--bg:#101c28;--card:#172b3b;--ink:#edf7fa;--muted:#aec4d0;--stroke:#466479;--accent:#65e2d2;--support:#9aaed0;--policy:#ffbe8c;--policy-bg:#3a2d29}}
+text{font-family:Arial,sans-serif;fill:var(--ink)}
+.node-title{font-size:20px;font-weight:700}.node-detail{font-size:13px;fill:var(--muted)}
+.edge-label{font-size:14px;fill:var(--muted)}.note{font-size:14px;fill:var(--muted)}
+.card{fill:var(--card);stroke:var(--stroke);stroke-width:1.5}.governance{fill:var(--policy-bg);stroke:var(--policy);stroke-width:1.5}
+.edge{fill:none;stroke:var(--accent);stroke-width:2;marker-end:url(#arrow)}.support{stroke:var(--support);stroke-dasharray:6 5;marker-end:url(#support-arrow)}
+</style>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="var(--accent)"/></marker><marker id="support-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="var(--support)"/></marker></defs>
+<rect width="1160" height="614" rx="18" fill="var(--bg)"/>
+<g data-edge-id="load-skill"><path class="edge" d="M220,300L340,300"/><rect x="256" y="266" width="48" height="22" rx="4" fill="var(--bg)"/><text class="edge-label" x="280" y="282" text-anchor="middle">load</text></g>
+<g data-edge-id="execute-script"><path class="edge" d="M520,300L640,300"/><rect x="544" y="266" width="72" height="22" rx="4" fill="var(--bg)"/><text class="edge-label" x="580" y="282" text-anchor="middle">execute</text></g>
+<g data-edge-id="return-evidence"><path class="edge" d="M820,300L940,300"/><rect x="848" y="266" width="64" height="22" rx="4" fill="var(--bg)"/><text class="edge-label" x="880" y="282" text-anchor="middle">return</text></g>
+<g data-edge-id="read-policy"><path class="edge support" d="M430,130L430,260"/><rect x="398" y="179" width="64" height="22" rx="4" fill="var(--bg)"/><text class="edge-label" x="430" y="195" text-anchor="middle">govern</text></g>
+<g data-edge-id="authoring-advice"><path class="edge support" d="M430,470L430,340"/><rect x="398" y="389" width="64" height="22" rx="4" fill="var(--bg)"/><text class="edge-label" x="430" y="405" text-anchor="middle">advise</text></g>
+<g data-edge-id="build-packs"><path class="edge support" d="M130,340L130,470"/><rect x="102" y="389" width="56" height="22" rx="4" fill="var(--bg)"/><text class="edge-label" x="130" y="405" text-anchor="middle">build</text></g>
+<g data-node-id="skill-library"><rect class="card" x="40" y="260" width="180" height="80" rx="12"/><text class="node-title" x="130" y="295" text-anchor="middle">Skill library</text><text class="node-detail" x="130" y="319" text-anchor="middle">26 routers + references</text></g>
+<g data-node-id="authoring-session"><rect class="card" x="340" y="260" width="180" height="80" rx="12"/><text class="node-title" x="430" y="295" text-anchor="middle">Claude Code</text><text class="node-detail" x="430" y="319" text-anchor="middle">Authoring session</text></g>
+<g data-node-id="workflow-runtime"><rect class="card" x="640" y="260" width="180" height="80" rx="12"/><text class="node-title" x="730" y="295" text-anchor="middle">Workflow tool</text><text class="node-detail" x="730" y="319" text-anchor="middle">Host execution runtime</text></g>
+<g data-node-id="phase-result"><rect class="governance" x="940" y="260" width="180" height="80" rx="12"/><text class="node-title" x="1030" y="295" text-anchor="middle">Evidence + gate</text><text class="node-detail" x="1030" y="319" text-anchor="middle">Human reviews next step</text></g>
+<g data-node-id="shared-policy"><rect class="governance" x="340" y="50" width="180" height="80" rx="12"/><text class="node-title" x="430" y="85" text-anchor="middle">Shared policies</text><text class="node-detail" x="430" y="109" text-anchor="middle">ROUTES + lifecycle</text></g>
+<g data-node-id="authoring-tools"><rect class="card" x="340" y="470" width="180" height="80" rx="12"/><text class="node-title" x="430" y="505" text-anchor="middle">proof-mcp</text><text class="node-detail" x="430" y="529" text-anchor="middle">Authoring-time tools</text></g>
+<g data-node-id="portable-skills"><rect class="card" x="40" y="470" width="180" height="80" rx="12"/><text class="node-title" x="130" y="505" text-anchor="middle">Portable packs</text><text class="node-detail" x="130" y="529" text-anchor="middle">22 skills / 3 hosts</text></g>
+<text class="note" x="40" y="590">Solid arrows: task path. Dashed arrows: supporting inputs and pack generation.</text></svg>

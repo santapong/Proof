@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "checked_date": "2026-09-09",
+  "diagram_type": "architecture",
+  "output_type": "standalone HTML with README SVG companion",
+  "source": {
+    "verified": true,
+    "repository": "https://github.com/santapong/Proof",
+    "revision": "2b24538454c72618a3d7ef077c21170ddde17694",
+    "references": 11
+  },
+  "specification": {
+    "file": "proof-architecture.architecture.json",
+    "sha256": "b39884c8cb8255c86c46922a2169b568771fcdd93cdf2e64896bb6a6a48fd998",
+    "bytes": 3420
+  },
+  "html_artifact": {
+    "file": "proof-architecture.html",
+    "sha256": "8c6548b83b54b4e8e9ed59d488e366849730e0fb3bc6c986662e2fe7fc1c9b20",
+    "bytes": 710896
+  },
+  "structural_validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  },
+  "correction_rounds": 2,
+  "browser_evidence": {
+    "status": "pass",
+    "kind": "automated-browser",
+    "tool": "Archify 2.17 visual-check",
+    "process_exit_code": 0,
+    "containment": "pass",
+    "readability": "pass",
+    "viewer_chrome": "pass",
+    "viewports": [
+      [
+        1440,
+        900
+      ],
+      [
+        1600,
+        1000
+      ],
+      [
+        1920,
+        1080
+      ],
+      [
+        2048,
+        1320
+      ]
+    ],
+    "endpoint_captures": [
+      {
+        "width": 1440,
+        "height": 900,
+        "theme": "light"
+      },
+      {
+        "width": 1440,
+        "height": 900,
+        "theme": "dark"
+      },
+      {
+        "width": 2048,
+        "height": 1320,
+        "theme": "light"
+      },
+      {
+        "width": 2048,
+        "height": 1320,
+        "theme": "dark"
+      }
+    ]
+  },
+  "visual_review": {
+    "status": "pass",
+    "method": "Codex inspected rendered screenshots separately from automated browser checks",
+    "html_scope": "Light and dark captures at 1440x900 and 2048x1320; labels, connectors, cards, contrast and viewer chrome",
+    "svg_scope": "Both themes at full size and README embedding; narrow-width containment inspected",
+    "limitations": [
+      "Small labels require opening the full-size SVG on narrow phones; adjacent prose and alt text carry the explanation.",
+      "Browser checks cover the recorded desktop sizes, not every browser or viewport."
+    ]
+  },
+  "readme_svg_checks": {
+    "status": "pass",
+    "assets": [
+      {
+        "file": "proof-architecture.svg",
+        "sha256": "7320958f9b7001dd0844fc9fb4c54850171ed1ed41957260ceea040ff34978ad",
+        "bytes": 5118
+      },
+      {
+        "file": "proof-workflow.svg",
+        "sha256": "a1b970df3c57b90ddf6eb4fa8fb186f3c890d812d7cc2f25f86cb7018389925a",
+        "bytes": 3538
+      }
+    ],
+    "embeddedViews": [
+      {
+        "theme": "light",
+        "viewportWidth": 840,
+        "overflowX": false,
+        "images": [
+          {
+            "loaded": true,
+            "width": 808
+          },
+          {
+            "loaded": true,
+            "width": 808
+          }
+        ]
+      },
+      {
+        "theme": "light",
+        "viewportWidth": 390,
+        "overflowX": false,
+        "images": [
+          {
+            "loaded": true,
+            "width": 358
+          },
+          {
+            "loaded": true,
+            "width": 358
+          }
+        ]
+      },
+      {
+        "theme": "dark",
+        "viewportWidth": 840,
+        "overflowX": false,
+        "images": [
+          {
+            "loaded": true,
+            "width": 808
+          },
+          {
+            "loaded": true,
+            "width": 808
+          }
+        ]
+      },
+      {
+        "theme": "dark",
+        "viewportWidth": 390,
+        "overflowX": false,
+        "images": [
+          {
+            "loaded": true,
+            "width": 358
+          },
+          {
+            "loaded": true,
+            "width": 358
+          }
+        ]
+      }
+    ],
+    "textFit": [
+      {
+        "node": "skill-library",
+        "fits": true
+      },
+      {
+        "node": "authoring-session",
+        "fits": true
+      },
+      {
+        "node": "workflow-runtime",
+        "fits": true
+      },
+      {
+        "node": "phase-result",
+        "fits": true
+      },
+      {
+        "node": "shared-policy",
+        "fits": true
+      },
+      {
+        "node": "authoring-tools",
+        "fits": true
+      },
+      {
+        "node": "portable-skills",
+        "fits": true
+      }
+    ]
+  },
+  "architecture_svg_renderer": {
+    "file": "../../scripts/render-readme-architecture.mjs",
+    "dependencies": "Node standard library only",
+    "deterministic_regeneration": "pass; byte-identical SHA-256 before and after regeneration"
+  },
+  "detailed_diagrams": {
+    "renderer": "Mermaid CLI 11.17.0",
+    "status": "rendered and screenshot-reviewed",
+    "files": [
+      "context",
+      "container",
+      "skill-composition",
+      "skills-build-verify",
+      "skills-engine-planning",
+      "view-development",
+      "view-scenarios",
+      "view-logical",
+      "view-physical",
+      "skill-container-view"
+    ]
+  },
+  "repository_checks": {
+    "validate": "55326 assertions passed; 3 existing warnings",
+    "smoke": "32 templates passed",
+    "routing_parity": "passed",
+    "host_packs": "3 hosts passed; 15 existing prose warnings",
+    "software_context": "62 checks passed",
+    "branch_policy": "58 checks passed; docs/visual-architecture to develop accepted",
+    "plugin_manifest": "strict validation passed"
+  },
+  "scope": "Documentation and artwork; no provider execution, ML activation, release or runtime change. Raw browser receipts and screenshots were retained in local verification storage."
+}
