@@ -1,5 +1,11 @@
 # Documentation artwork
 
+The Proof 4 candidate updates namespace labels/source pointers only. The original
+September verification record remains historical for its pinned v3 bytes; it is
+not a fresh render or comprehension check of every changed diagram. Current
+namespace/XML checks and their visual limits are recorded in the
+[launch review](../reviews/developer-launch-2026-10-23.md).
+
 These assets serve different reading levels. The overview is a small map for
 the README; the detailed C4 and skill diagrams remain in `../c4/diagrams/`.
 
@@ -8,9 +14,9 @@ the README; the detailed C4 and skill diagrams remain in `../c4/diagrams/`.
 | `proof-banner.png` | Original project banner; [generation prompt](proof-banner-prompt.md) |
 | `proof-architecture.svg` | Dual-theme README SVG generated from the same architecture specification with larger type |
 | `proof-architecture.html` | Explorable architecture, generated with Archify 2.17 |
-| `proof-architecture.architecture.json` | Editable architecture specification and pinned source references |
+| `proof-architecture.architecture.json` | Editable architecture specification and locally pinned candidate references |
 | `proof-workflow.svg` | Native, hand-authored SVG explaining one software-team phase |
-| `proof-architecture-verification.json` | Artifact hashes and bounded validation/visual-review evidence |
+| `proof-architecture-verification.json` | Historical v3 artifact hashes and bounded validation/visual-review evidence |
 
 The new SVGs contain vector text and shapes, with light/dark palettes and no
 scripts, external images, or `foreignObject`. Markdown alt text and adjacent
@@ -20,10 +26,14 @@ architecture SVG is generated and should be rerendered after a spec change.
 
 ## Architecture evidence
 
-The overview was checked against commit
-`2b24538454c72618a3d7ef077c21170ddde17694` of Proof. It links 11 source references
-covering manifests, the guide/engine entrypoints, harness and routing policies,
-lifecycle gates, the MCP server/contracts, and host packaging.
+The current specification pins local candidate commit
+`c5e9198ce191605ee16e4da3d6d5ff71cba9a163`. Its 11 source references resolve to matching local Git blobs:
+manifests, guide/engine entrypoints, harness and routing policies, lifecycle
+gates, MCP server/contracts and host packaging. The candidate is not published;
+the HTML viewer withholds GitHub source links until publication and regeneration.
+This local source check is recorded in the launch review and is not a new visual
+acceptance test. `proof-architecture-verification.json` retains the original
+September record at `2b24538454c72618a3d7ef077c21170ddde17694` unchanged.
 
 The arrows show loading, execution, return, governance, authoring advice, and
 pack generation. They do not imply that MCP is callable inside the workflow

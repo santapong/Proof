@@ -7,34 +7,34 @@
     "quality_profile": "showcase",
     "repository": {
       "url": "https://github.com/santapong/Proof",
-      "revision": "2b24538454c72618a3d7ef077c21170ddde17694"
+      "revision": "c5e9198ce191605ee16e4da3d6d5ff71cba9a163"
     }
   },
   "components": [
     {
       "id": "skill-library", "type": "backend", "label": "Skill library",
       "sublabel": "26 routers + references", "pos": [40, 260], "size": [180, 80],
-      "sources": [{ "path": ".claude-plugin/plugin.json" }, { "path": ".claude/skills/loop-guide/SKILL.md" }]
+      "sources": [{ "path": ".claude-plugin/plugin.json" }, { "path": ".claude/skills/proof-guide/SKILL.md" }]
     },
     {
       "id": "authoring-session", "type": "frontend", "label": "Claude Code",
       "sublabel": "Authoring session", "pos": [340, 260], "size": [180, 80],
-      "sources": [{ "path": ".claude/skills/loop-engine/SKILL.md" }]
+      "sources": [{ "path": ".claude/skills/proof-engine/SKILL.md" }]
     },
     {
       "id": "workflow-runtime", "type": "external", "label": "Workflow tool",
       "sublabel": "Host execution runtime", "pos": [640, 260], "size": [180, 80],
-      "sources": [{ "path": ".claude/skills/loop-engine/references/harness-policy.md" }]
+      "sources": [{ "path": ".claude/skills/proof-engine/references/harness-policy.md" }]
     },
     {
       "id": "phase-result", "type": "security", "label": "Evidence + gate",
       "sublabel": "Human reviews next step", "pos": [940, 260], "size": [180, 80],
-      "sources": [{ "path": ".claude/skills/loop-engine/frameworks/AIDLC.md" }]
+      "sources": [{ "path": ".claude/skills/proof-engine/frameworks/AIDLC.md" }]
     },
     {
       "id": "shared-policy", "type": "security", "label": "Shared policies",
       "sublabel": "ROUTES + lifecycle", "pos": [340, 50], "size": [180, 80],
-      "sources": [{ "path": ".claude/skills/loop-engine/references/execution-modes.md" }, { "path": ".claude/skills/loop-engine/references/loop-policy.md" }]
+      "sources": [{ "path": ".claude/skills/proof-engine/references/execution-modes.md" }, { "path": ".claude/skills/proof-engine/references/loop-policy.md" }]
     },
     {
       "id": "authoring-tools", "type": "backend", "label": "proof-mcp",

@@ -22,11 +22,11 @@ A skill's `references/` file may cross-reference a **sibling skill's** `referenc
 ## Authoring a `SKILL.md`
 
 - **Frontmatter is required**: a YAML block with `name`, `description` and `argument-hint`.
-  - `name` — lowercase letters, numbers, hyphens; gerund style **matching the directory exactly** (`proof-review`, `proof-test`). A mismatch does not error, it just fails to resolve.
+  - `name` — lowercase letters, numbers, hyphens, **matching the directory exactly** (`proof-review`, `proof-test`). The repository gate rejects a mismatch.
   - `description` — third person, **≤1024 characters**, stating *what it does* AND *when to use it* (the trigger phrases Claude matches on). No first/second person.
   - `argument-hint` — the invocation shape, including every flag the skill accepts (`<target> [--mode <lite|balanced|all-out>]`).
   - **Quote any value containing a colon.** `description: Integrate a platform: OAuth 2.0 flows…` is not valid YAML — a colon followed by whitespace opens a nested mapping, and the parser reports `mapping values are not allowed here`. Two skills shipped this way in 1.0.0. Wrap the whole value in double quotes and it is safe by construction; `node scripts/validate.mjs` rejects the unquoted form.
-- **Keep the body a thin router** (aim under ~400 lines). Push depth into `references/` files and load them on demand — this keeps token cost low, since only `SKILL.md` stays in context.
+- **Keep the body a thin router** (aim under ~400 lines). Push depth into `references/` files and load them on demand. This keeps the entrypoint small; actual context retention and token cost depend on the host and task.
 - **Be prescriptive**: sane defaults with named escape hatches, not a neutral glossary. No leftover TODO/placeholder text.
 - End with a **Reference files** list that names every file under `references/` and `templates/`, so nothing is a dangling link. The gate checks this in both directions: every path you name must exist, and every file that ships must be named.
 
@@ -38,7 +38,7 @@ Each skill carries a `references/standards.md` that grounds it in authoritative 
 2. **Pin** the current version/edition (with an "edition discipline" note — standards get revised).
 3. **Map** it to *this skill's* workflow — how a practitioner applies it here, not a generic description.
 
-`proof-review/references/owasp-cwe.md` is the exemplar (OWASP Top 10 2021, CWE Top 25, ASVS 5.0, CVSS v4). Match that rigor.
+`proof-review/references/owasp-cwe.md` is the exemplar (OWASP Top 10:2025, CWE Top 25, ASVS 5.0, CVSS v4). Match that rigor.
 
 ## Authoring a workflow template (`*.workflow.js`)
 
