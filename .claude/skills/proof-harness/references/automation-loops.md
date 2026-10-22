@@ -19,7 +19,7 @@ Runs a prompt on a schedule during the current session.
 
 - Fixed interval: `/loop 5m check if the deploy finished` (units: `s`/`m`/`h`/`d`, min ~1 minute).
 - Dynamic interval: `/loop check CI status` — Claude picks the cadence (≈1m–1h) from what it observes; usually more efficient than fixed polling.
-- Bare `/loop` uses a built-in maintenance prompt, or `.claude/loop.md` if present (see `templates/loop.md`).
+- Bare `/loop` uses a built-in maintenance prompt, or `.claude/loop.md` if present (see `../templates/loop.md`).
 - Session-scoped: persists on `--resume`/`--continue`, expires after ~7 days, cancel with Esc while waiting.
 
 ### Scheduled tasks (Cron) — periodic checks while a session is open

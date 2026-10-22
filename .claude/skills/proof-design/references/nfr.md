@@ -2,7 +2,7 @@
 
 The features say what the system does; the NFRs say whether anyone can rely on it. The engine here is a single discipline: **make the requirements state themselves as numbers before you draw a box, then walk the finished design back against each number and name where it breaks first.** "Fast," "reliable," and "scalable" are not requirements — they are wishes until someone writes down *p99 under 200ms*, *99.9% over 28 days*, *10k rps at launch*. A design you cannot validate against its NFRs is not done; it's a hope with a diagram.
 
-Read this on **step 1** of the workflow (turn the brief into numbers) and again on **step 7** (validate the design against them), or when the user asks "what should my SLOs be?", "how many nines do I need?", "will this scale?", "should we build or buy this?", or "how much will it cost to run?". Three things have deeper homes: security threat-modeling in the **proof-review** skill; caching and resilience in `references/backend.md`, with `references/deployment.md` now a stub naming **proof-ship** for rollout and rollback machinery; and **anything whose answer requires reading a live metric** — measuring an SLI, burn-rate alerting, the error-budget policy, instrumentation — in the **proof-operate** skill. This file owns the *targets*.
+Read this on **step 1** of the workflow (turn the brief into numbers) and again on **step 7** (validate the design against them), or when the user asks "what should my SLOs be?", "how many nines do I need?", "will this scale?", "should we build or buy this?", or "how much will it cost to run?". Three things have deeper homes: security threat-modeling in the **proof-review** skill; caching and resilience in `backend.md`, with `deployment.md` now a stub naming **proof-ship** for rollout and rollback machinery; and **anything whose answer requires reading a live metric** — measuring an SLI, burn-rate alerting, the error-budget policy, instrumentation — in the **proof-operate** skill. This file owns the *targets*.
 
 ## Requirements intake: the numbers that decide the architecture
 
@@ -15,7 +15,7 @@ Before any box is drawn, pin down the constraints that actually move the design.
 | **Latency** | p50 / p99 / p99.9 per critical path | Sync vs. async, caching tier, colocation, read replicas |
 | **Availability** | uptime SLO as a nines target + window | Redundancy, multi-AZ/region, hard-dependency count |
 | **Durability** | acceptable data loss (RPO) and recovery time (RTO) | Backup cadence, replication mode, DR strategy |
-| **Consistency** | which ops must be strong vs. tolerate staleness | Per-domain consistency policy (see `references/backend.md`) |
+| **Consistency** | which ops must be strong vs. tolerate staleness | Per-domain consistency policy (see `backend.md`) |
 | **Throughput bursts** | peak:average ratio, spike shape | Autoscaling headroom, queue buffering, rate limits |
 | **Compliance** | PII/PCI/HIPAA/GDPR, data residency | Encryption, audit logging, regional pinning, retention |
 | **Team & ops** | team size, on-call maturity, incumbent stack | How much operational surface you can afford to run |
@@ -60,7 +60,7 @@ Availability is a probability, and probabilities in series multiply. That single
 
 **Vertical scaling** (a bigger machine) is the right *first* move — it's a config change, no distribution tax, and modern hardware is enormous. It has a hard ceiling and a single failure domain. **Horizontal scaling** (more machines) has effectively no ceiling and gives redundancy for free, but only works if the workload is shardable and the processes are stateless.
 
-**Statelessness is the enabler, not a nicety.** A process that keeps request-affecting state in local memory or on local disk can't be load-balanced freely, killed and rescheduled, or cloned behind an autoscaler — any of those loses the state. Push state to a backing service (DB, cache, object store) and the platform can add, remove, and replace instances at will. This is factors 6/9 of the 12-factor app in `references/backend.md`, and it is the precondition for every horizontal-scaling and zero-downtime-deploy move you'll want later.
+**Statelessness is the enabler, not a nicety.** A process that keeps request-affecting state in local memory or on local disk can't be load-balanced freely, killed and rescheduled, or cloned behind an autoscaler — any of those loses the state. Push state to a backing service (DB, cache, object store) and the platform can add, remove, and replace instances at will. This is factors 6/9 of the 12-factor app in `backend.md`, and it is the precondition for every horizontal-scaling and zero-downtime-deploy move you'll want later.
 
 - **Default**: stateless services behind a load balancer, state in backing services, autoscale on a demand signal (rps, queue depth, CPU). Scale *up* first for simplicity; design *out* from the start so the option exists.
 - **Escape hatch**: genuinely stateful workloads (stream processors, in-memory caches, leader-elected coordinators) exist — partition them by key, replicate deliberately, and accept they scale differently from your stateless tier.
@@ -120,6 +120,6 @@ Walk the finished design against this before you call it done. Each unchecked bo
 - [ ] **Security pillar was actually threat-modeled** (via **proof-review**), not just asserted: authn/z, least privilege, encryption in transit and at rest, secrets externalized, audit trail.
 - [ ] **Cost has a budget and a per-unit target**, with spend attributable to an owner.
 - [ ] **Build-vs-buy was decided deliberately** for each major capability, with accepted lock-in written down.
-- [ ] **The irreversible decisions are captured as ADRs** (`templates/adr-template.md`) — each naming the alternative rejected and why.
+- [ ] **The irreversible decisions are captured as ADRs** (`../templates/adr-template.md`) — each naming the alternative rejected and why.
 
 If any box can't be checked, the design isn't rejected — it's **unfinished**, and the missing box is the next thing to work on.

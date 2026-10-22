@@ -572,7 +572,7 @@
       "skillB": "proof-operate",
       "risk": "Both are triggered by 'production is unhealthy'. An alert firing is genuinely ambiguous between them, and both plausibly claim auto-rollback (proof-operate has 'SLO-gated auto-rollback', proof-incident has 'mitigate-before-diagnose'). This is the thinnest boundary in the 18 and the most likely mis-selection at runtime.",
       "severity": "high",
-      "resolution": "Separate on a checkable predicate, not a vibe, and state it as the first sentence of BOTH SKILL.md bodies: 'Does a runbook exist for this condition AND does executing it restore the SLI?' Yes → proof-operate (steady state, no declaration). No, or impact exceeds the runbook's scope, or a human must be paged/coordinated → proof-incident. Corollary: proof-operate owns AUTOMATED mitigation of KNOWN conditions; proof-incident owns HUMAN-COORDINATED mitigation of NOVEL ones, and only proof-incident writes postmortems. Merge tripwire for the verify-sweep in Phase 2: if either SKILL.md ends up spending more than ~30% of its body restating the other's phase, they are not separable and should be merged into proof-operate with an explicit 'incident mode' section — better one honest skill than two that fight for the same trigger."
+      "resolution": "A declared incident or organizational declaration criteria take precedence. Otherwise a known, authorized runbook that restores the SLI below incident thresholds may remain proof-operate work. Unknown/exceeded conditions or human coordination route to proof-incident; only incident owns its postmortem. A working runbook can mitigate an incident without cancelling the declaration."
     },
     {
       "skillA": "proof-ship",
@@ -607,7 +607,7 @@
       "skillB": "proof-pattern",
       "risk": "'What's the best way to do X in React?' is genuinely ambiguous — it could mean 'which library' (scout) or 'which idiom' (pattern).",
       "severity": "medium",
-      "resolution": "Disambiguate on the dependency manifest, a fact both skills can check in one command: if answering the question adds a line to package.json/requirements.txt/go.mod, it is proof-scout; if the dependency is already there, it is proof-pattern. State this test in both descriptions ('already in the project' vs 'not yet adopted') and in proof-pattern's SKILL.md §1."
+      "resolution": "Choose on whether a reuse/adopt/build decision is still open. Scout can select the standard library, existing platform or internal code without a manifest change. Applying an already-selected framework idiom to existing code is pattern. A manifest is evidence, not the discriminator."
     },
     {
       "skillA": "proof-design",
@@ -677,7 +677,7 @@
       "skillB": "proof-engine",
       "risk": "Pre-existing. 'Orchestrate' appears verbatim in both current descriptions; proof-engine's opens with 'Orchestrate a task…' and proof-orchestrate's with 'Plan and orchestrate…'.",
       "severity": "medium",
-      "resolution": "Remove 'orchestrate' as proof-engine's leading verb — it authors and EXECUTES a script (done in the rewrite). proof-orchestrate PLANS and produces a DAG it never runs. Rule of thumb for the descriptions: one project with phases → orchestrate; one task now → engine."
+      "resolution": "proof-orchestrate delivers a typed task DAG, estimated ledger and authored handoff. A planning-only request does not execute domain tasks. proof-engine owns separately authorized execution, capability checks, the shared pre-flight and runtime results. An optional planning workflow is not execution of the project it plans."
     },
     {
       "skillA": "proof-docs",
@@ -705,7 +705,7 @@
       "skillB": "proof-algo",
       "risk": "Both change code inside a component; 'make this cleaner and faster' matches both.",
       "severity": "low",
-      "resolution": "Split on behavior preservation. proof-pattern's diffs are behavior-preserving by definition (a refactoring that changes behavior is a bug). proof-algo deliberately changes the performance profile and sometimes the semantics (ordering, fairness, memory visibility). If the test suite should pass unchanged before and after, it is proof-pattern."
+      "resolution": "Choose on the requested artifact: behavior-preserving structure/idiom work is proof-pattern; mechanism selection, complexity/correctness argument or measured performance is proof-algo. Both may preserve behavior and pass unchanged correctness tests; passing those tests does not distinguish them or prove universal equivalence."
     },
     {
       "skillA": "proof-harness",
@@ -822,6 +822,48 @@
       "severity": "low",
       "risk": "'Proof can't do X' arrives at the front door and could read as a routing failure.",
       "resolution": "Checkable question: does any existing skill's boundary contain the ask? Yes → route to it; no → the gap itself is the finding, escalated to proof-skill as a candidate charter. Guide never authors. Pointers on both sides."
+    },
+    {
+      "skillA": "proof-venture",
+      "skillB": "proof-build",
+      "severity": "medium",
+      "risk": "Both can receive an idea-to-product request and conduct phases.",
+      "resolution": "Reviewed 23 October 2026: venture resolves product/business choices as decision documents and emits the approved build brief. Build conducts that brief into working software and authorized delivery. A short implementation request need not run the full venture lifecycle."
+    },
+    {
+      "skillA": "proof-build",
+      "skillB": "proof-orchestrate",
+      "severity": "medium",
+      "risk": "Both decompose a multi-phase project and produce task plans.",
+      "resolution": "Reviewed 23 October 2026: orchestrate delivers a typed DAG, estimate and execution handoff; build conducts the agreed brief across specialist phases and repair gates. A plan-only request ends at orchestrate, even when it contains runnable scripts."
+    },
+    {
+      "skillA": "proof-experiment",
+      "skillB": "proof-research",
+      "severity": "medium",
+      "risk": "Both produce cited reports and can be asked to compare approaches.",
+      "resolution": "Reviewed 23 October 2026: research gathers and verifies existing sources; experiment generates new empirical evidence with a harness, raw artifacts and re-derived results. Related work is an input to experiment, not a second complete research deliverable by default."
+    },
+    {
+      "skillA": "proof-experiment",
+      "skillB": "proof-algo",
+      "severity": "medium",
+      "risk": "Both can benchmark approaches and report measured distributions.",
+      "resolution": "Reviewed 23 October 2026: algo chooses or validates the mechanism inside a named component and supplies bounds/invariants/performance evidence. Experiment addresses the broader empirical claim or controlled study. Share the same raw measurement packet rather than duplicating the run."
+    },
+    {
+      "skillA": "proof-experiment",
+      "skillB": "proof-debug",
+      "severity": "medium",
+      "risk": "Both use hypotheses, controlled checks and reproducible execution.",
+      "resolution": "Reviewed 23 October 2026: debug explains an observed defective behavior and produces a minimal correction; experiment tests a claim whose result may be null without any defect. A study uncovering a bug hands its reproduction to debug."
+    },
+    {
+      "skillA": "proof-experiment",
+      "skillB": "proof-docs",
+      "severity": "low",
+      "risk": "Both can produce a maintained Markdown report.",
+      "resolution": "Reviewed 23 October 2026: experiment owns the study finding, raw-artifact provenance and numeric re-derivation; docs supplies readable presentation/maintenance. A prose pass cannot replace the evidence gate or alter a reported number without re-derivation."
     }
   ],
   "descriptionRewrites": [

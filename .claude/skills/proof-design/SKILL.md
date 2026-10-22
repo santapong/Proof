@@ -97,7 +97,7 @@ Jump straight to the slice the user asked for; each row lists the reference and 
 
 ## Execution flags
 
-`--mode <lite|balanced|all-out>` is advertised in this skill's `argument-hint` but **parsed by `proof-engine`, never here**. This skill ships no workflow template — design work runs inline in this session — so there is no mode logic to carry. When the work hands off to a sibling that does run a workflow (`proof-ship` for the release, `proof-operate` for the live service, `proof-algo` for the mechanism inside a component), pass the raw argument string straight through unchanged so the flag reaches the one parser that honours it. See `../proof-engine/references/execution-modes.md`.
+This skill's invocation is `<system>`; it advertises no execution dial and runs design work inline. It ships no workflow template and parses no `--mode` flag. When the work hands off to a sibling that does run a workflow (`proof-ship` for the release, `proof-operate` for the live service, `proof-algo` for the mechanism inside a component), pass the raw argument string straight through unchanged so the flag reaches the one parser that honours it. See `../proof-engine/references/execution-modes.md`.
 
 ## Files in this skill
 

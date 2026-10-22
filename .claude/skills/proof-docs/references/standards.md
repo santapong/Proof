@@ -57,7 +57,7 @@ Pick **one** per repo and apply it uniformly (SKILL §3) — do not blend Google
 
 ## Vale — style-as-code enforcement
 
-**Vale 3.x** is the prose linter that turns the two house styles above into **executable rules** ("style as code"): it checks Markdown against configurable rule packages, including maintained Vale packages for the **Google** and **Microsoft** style guides, plus `write-good`, `proselint`, and `alex`. It belongs to **SKILL §6/§7**: wire Vale into CI so drift from the adopted style fails a check, and use it as the automated first pass of the **verify stage** in the `templates/doc-generation.workflow.js` pipeline before the adversarial accuracy review (SKILL §7). Vale checks *style*, never *truth* — it cannot catch an aspirational or wrong claim, which is why the human/agent accuracy verification of SKILL §5 stays mandatory.
+**Vale 3.x** is the prose linter that turns the two house styles above into **executable rules** ("style as code"): it checks Markdown against configurable rule packages, including maintained Vale packages for the **Google** and **Microsoft** style guides, plus `write-good`, `proselint`, and `alex`. It belongs to **SKILL §6/§7**: wire Vale into CI so drift from the adopted style fails a check, and use it as the automated first pass of the **verify stage** in the `../templates/doc-generation.workflow.js` pipeline before the adversarial accuracy review (SKILL §7). Vale checks *style*, never *truth* — it cannot catch an aspirational or wrong claim, which is why the human/agent accuracy verification of SKILL §5 stays mandatory.
 
 ## ISO/IEC documentation-process standards (name-level)
 

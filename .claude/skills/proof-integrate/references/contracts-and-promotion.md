@@ -69,15 +69,17 @@ Promotion here is narrow and specific: **cutting one external dependency over fr
 **The cutover**
 
 8. **Feature-flag the switch.** The flag selects the credential set and endpoint, not a code path — same code, different configuration — so flipping back is a config change and not a deploy.
-9. **One smoke-test transaction in production**, executed by a human, end to end, against a real account you control: make the call, confirm the provider's dashboard shows it, confirm the resulting webhook arrives and verifies, confirm your side recorded it exactly once. A green health check is not this test.
+9. **One explicitly authorized smoke-test transaction in production**, using a controlled account and a reviewed side-effect limit: make the call, confirm the provider's dashboard shows it, confirm the resulting webhook arrives and verifies, confirm your side recorded it exactly once. A green health check is not this test.
 10. **Watch the first real traffic deliberately** — 401/403 (wrong credential), 429 (production quota lower than sandbox), and webhook signature failures (wrong signing secret) are the three that show up in the first minutes.
 
 **Rollback**
 
-11. **Rollback is flipping the flag back to the sandbox credential pair.** Fast, config-only, no deploy.
+11. **Rollback restores a last-known-good production path, or disables/queues the affected operation.** Plan the treatment of in-flight requests and webhook deliveries. Never substitute sandbox credentials or simulated success for production work. A first launch with no previous production path needs an explicit unavailable/held state.
 12. **Rollback does not undo side effects.** Anything already sent to production — a charge, an email, a provisioned account — needs an explicit compensating action. Write that compensation down *before* the cutover; it is the part nobody plans and everybody needs.
-13. **Leave the sandbox registration intact and working** after promotion. Deleting it removes your rollback target and your canary's home.
+13. **Leave the sandbox registration intact for isolated tests**, not as a production rollback target. Verify the fallback production path or disabled state separately.
+
+Environment separation is provider-specific. For example, [Stripe API keys](https://docs.stripe.com/keys) separate sandbox and live objects/credentials (checked 23 October 2026). The production fallback rule above is a Proof design requirement derived from that boundary, not a claim that a sandbox restores a live service. No provider call was executed in this documentation review.
 
 ## 5. Boundary note
 
-This is the **integration-specific slice** of promotion — one dependency, one credential-and-endpoint cutover, one compensating-action plan. It rides on top of whatever general rollout mechanism the project already uses: canary and progressive delivery, feature-flag hygiene, blue-green or rolling deploys, and the release gates around them are `../../proof-ship/references/rollout-strategies.md`. Use its mechanics; do not restate them here. What this file adds on top is the part `proof-ship` cannot know — that the artifact being promoted is a *credential*, that the rollback target is a *sandbox registration*, and that production side effects at a third party are not covered by a code rollback.
+This is the **integration-specific slice** of promotion — one dependency, one credential-and-endpoint cutover, one compensating-action plan. It rides on top of whatever general rollout mechanism the project already uses: canary and progressive delivery, feature-flag hygiene, blue-green or rolling deploys, and the release gates around them are `../../proof-ship/references/rollout-strategies.md`. Use its mechanics; do not restate them here. What this file adds on top is the part `proof-ship` cannot know — that the artifact being promoted is a *credential*, that the fallback must preserve *production identity and state*, or explicitly stop the operation, and that production side effects at a third party are not covered by a code rollback.

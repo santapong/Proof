@@ -26,19 +26,15 @@ ISO 31000 defines risk as the *effect of uncertainty on objectives* and frames i
 
 The four-level Low/Medium/High/Critical rating the report assigns on a likelihood × impact basis is a risk matrix in the IEC 31010:2019 sense; the 4×4 likelihood-by-impact grid used to select a cell is this file's formalization of that scale, not a structure the sibling files spell out. When a reader asks why a small diff scored "critical," answer in this vocabulary: low likelihood but severe, irreversible consequence still lands in a high-risk cell — consequence is not outranked by probability. ISO 31000's **treatment** step (avoid / mitigate / accept) is where the report's rollback note and follow-up recommendations belong.
 
-## DORA change failure rate — why the audit exists
+## DORA — outcomes informing risk
 
-**Standard/source:** DORA (**DevOps Research and Assessment**) Four Keys, published in the annual *State of DevOps Report* and *Accelerate*. **Issuing body:** the DORA research program (now under Google Cloud). **Edition to pin:** the **most recent annual State of DevOps Report** (published each fall — verify the latest year before citing any benchmark numbers; a fresh annual edition supersedes its predecessor, so re-check the year rather than assuming the one you remember is current).
+**Authority: No** — research guidance. Consume the application's actual history
+using [`proof-ship`'s canonical definitions](../../proof-ship/references/dora.md).
+An audit estimates risk; it does not demonstrate that its review reduced
+production failures. No deployment history means that outcome is unavailable.
+The 23 October 2026 source check linked there supersedes this shelf's older
+July four-key/pilot statement in its historical log.
 
-Of DORA's four keys, one *is* this skill's reason for existing: **change failure rate** — the share of changes to production that result in degraded service and require remediation (hotfix, rollback, patch). The audit is the pre-merge instrument that drives that number down: every change flagged breaking, irreversible, or untested is a change failure caught before it ships.
-
-| DORA key | Relation to this skill |
-|---|---|
-| **Change failure rate** | The metric the audit directly targets — Steps 2, 4, 5 exist to predict and prevent it. |
-| **Failed deployment recovery time** | Informs the **rollback note** (Step 4): reversibility is a first-class risk factor. |
-| Deployment frequency / lead time | Context, not the audit's job — do not let audit rigor be used to argue for slowing delivery; the goal is *safe* throughput. |
-
-Frame the report's overall risk verdict in this light: "this change set raises change-failure risk on N surfaces, M of them irreversible" speaks the language leadership already tracks.
 
 ## Semantic Versioning — the impact-classification standard
 

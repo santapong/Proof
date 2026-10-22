@@ -6,7 +6,7 @@ argument-hint: <project> [--mode <lite|balanced|all-out>] [--planner <opus|fable
 
 # Orchestrating Projects
 
-You are the project manager for a multi-agent job. This skill is a **planning layer on top of the sibling `proof-engine` skill (`../proof-engine`)** — it does not introduce a new execution engine. The Workflow tool, the harness and loop policies, the JS templates, and the AIDLC framework are all **unchanged**; you reuse them exactly as `../proof-engine/SKILL.md` prescribes. Your job is to decide *what work exists, in what order, and who runs it* — then hand each phase to the workflow engine to execute.
+You are the project manager for a multi-agent job. This skill is a **planning layer on top of the sibling `proof-engine` skill (`../proof-engine`)** — it does not introduce a new execution engine. The Workflow tool, the harness and loop policies, the JS templates, and the AIDLC framework are all **unchanged**; you reuse them exactly as `../proof-engine/SKILL.md` prescribes. Your job is to decide *what work exists, in what order, and who runs it*. A planning-only request stops at the DAG, estimate and authored handoff; it does not execute the project. When execution is also authorized, `proof-engine` owns that run.
 
 The PM adds four things on top of a raw workflow run:
 
@@ -24,15 +24,15 @@ Follow these steps in order.
 From the skill args, extract:
 
 - **project** — everything that is not a flag: the goal to orchestrate. If empty, ask the user what project to run.
-- **`--mode <lite|balanced|all-out>`** — the run-level routing dial. Default: `balanced`, resolved **silently** when the flag is absent. `lite` pins every node *downward* — Haiku mechanical, Sonnet reasoned at `medium`, width 1 — for a small, well-specified project; note that gating and planner nodes stay on `claude-opus-5` even here, because their wrong answer is inherited by everything downstream. `all-out` pins every node to `claude-opus-5`, disables override modifier A, widens verifiers to 3 (5 on gating nodes), raises the loop-until-dry threshold to 3, and fires the pre-flight in step 8. Full contract in `../proof-engine/references/execution-modes.md`.
+- **`--mode <lite|balanced|all-out>`** — the run-level routing dial. Default: `balanced`, resolved **silently** when the flag is absent. `lite` pins every node *downward* — Haiku mechanical, Sonnet reasoned at `medium`, width 1 — for a small, well-specified project; note that gating and planner nodes stay on `claude-opus-5` even here, because their wrong answer is inherited by everything downstream. `all-out` pins every node to `claude-opus-5`, disables override modifier A, widens verifiers to 3 (5 on gating nodes), raises the loop-until-dry threshold to 3, and fires the pre-flight in step 9. Full contract in `../proof-engine/references/execution-modes.md`.
 - **`--planner <opus|fable>`** — routes only the single decompose/planning node. Default: `opus`. Orthogonal to `--mode` and legal in both. `fable` is an opt-in with a stated price — print the §M7 disclosure verbatim before the planner spawns, and record the choice in the cast ledger and the gate deliverable.
 - **`--fable-gate`** — routes one lens of the all-out gating vote to `claude-fable-5`, with a logged fallback to `claude-opus-5` on a refusal or ZDR 400. Legal only under `--mode all-out`; inert and logged elsewhere. Full contract: `../proof-engine/references/execution-modes.md` §M7b.
-- **`--budget <tokens>`** — a total token ceiling for the whole project (e.g. `--budget 2000000`). Splits across phases in the ledger (step 9). Omit for no ceiling.
+- **`--budget <tokens>`** — a total token ceiling for the whole project (e.g. `--budget 2000000`). Splits across phases in the ledger. Omit for no ceiling.
 - **`--dry-run`** — if present, produce the plan (DAG + ledger + first-phase script) and show it to the user, but do NOT execute.
 
 Flags are case-insensitive and the `=` form (`--mode=all-out`) is accepted. **Never guess an unrecognized value** — for a `--mode` or `--planner` value outside those listed, name the valid values and ask which to use. This skill and `../proof-engine` are the only two flag parsers in the plugin; every other skill passes its raw argument string through to `proof-engine`.
 
-**`--budget` × `--mode all-out`.** When both are set and the step-8 pre-flight's estimate **high** end exceeds the ceiling, **refuse to spawn** and offer exactly three exits: re-run at `--mode balanced`, raise the budget to a stated figure, or narrow the phase's scope. This is deliberately stricter than harness policy H6, which treats the budget as a runtime ceiling that throws mid-run once `budget.spent()` reaches `budget.total` — burning 80% of a ceiling and then dying is exactly the failure a pre-flight exists to prevent.
+**`--budget` × `--mode all-out`.** When both are set and the engine pre-flight's estimate **high** end exceeds the ceiling, **refuse to spawn** and offer exactly three exits: re-run at `--mode balanced`, raise the budget to a stated figure, or narrow the phase's scope. This is deliberately stricter than harness policy H6, which treats the budget as a runtime ceiling that throws mid-run once `budget.spent()` reaches `budget.total` — burning 80% of a ceiling and then dying is exactly the failure a pre-flight exists to prevent.
 
 ### 2. Load the governing documents (unchanged)
 
@@ -100,15 +100,14 @@ For each node, pick the shape using the **unchanged** harness/loop policy — do
 - **Loop only for unknown size** (L1/L6). A node whose `fanOut` is `"unknown"` (find *all* of something) is loop-until-dry; a `--budget`-scaled depth sweep is loop-until-budget with the `budget.total &&` guard (L2). A known work-list is a pipeline, never a loop.
 - **Verification scales to the ask** (H4) **and to the mode**: under `balanced`, single-vote for "any bugs" and 3 perspective-diverse for "thorough audit"; under `all-out`, always diverse-lens — 3 on a standard verify node and 5 on a gating one, with majority-refute at ⌈N/2⌉ (`../proof-engine/references/execution-modes.md` §M5). Judge panel for wide solution spaces in both.
 
-### 6. Assign a model + effort tier per node
+### 6. Assign routes from the shared contract
 
-This is the PM's signature move: **the right model for the right job** — and since v1.0.0 the routing table has **two columns**, one per `--mode`. Read the column the run's mode selected, from `../proof-engine/references/execution-modes.md` §M3, with the rationale and the worked example in `references/model-routing.md`.
-
-- **Do not assert a fleet ceiling — check the session model.** Read the model the session is running on, compare it against the tier the table assigns this node, **omit `opts.model` on a match**, and **pin when a silent mismatch would be costly**. "The fleet caps at model X" is a fact with an expiry date; a check is not.
-- **Under `--mode balanced` (the default):** omit `model` and inherit for judgment work (H8) — still the correct choice for the majority of nodes. Pin only where the table pins: **down** to `claude-haiku-4-5` for mechanical/scout/doc fan-outs (`effort` **omitted** — Haiku 4.5 has no effort dial), **down** to `claude-sonnet-5` for `implement`, and **up** to `claude-opus-5` on the two node kinds that pin even in balanced — the **gating** verify (`max`) and the **planner** (`xhigh`) — because a silent downgrade there is inherited by everything downstream.
-- **Under `--mode all-out`:** pin `claude-opus-5` on **every** node and lift each to its full-mode effort floor. Modifier A (wide fan-out pushes down) is **disabled** — do not apply it, and `log()` `modifier-A: suppressed` where a fan-out is dispatched. Modifier B still applies, but only on its second and third rungs (effort, then verifier width), because the model is already at the ceiling.
-- **`--planner fable`** overrides the planner node's model only. Never a fan-out, never inside a loop; print the §M7 disclosure verbatim before it spawns and record the fallback if it refuses.
-- Record a one-line **rationale** per node for the ledger (step 9) — why this tier, not a cheaper one — and **the rationale must name the mode**, because the same assignment means opposite things in the two columns. `claude-opus-5` on a scout node is an expensive mistake under `balanced` and the contract under `all-out`; a rationale that does not say which is unreadable after the fact.
+Read `../proof-engine/references/execution-modes.md` §M3–§M5. Resolve each node's
+route from its task type, selected mode and error cost; record the rationale.
+`references/model-routing.md` explains the decision and supplies a worked case,
+not a second routing table. Do not infer account availability from a model pin.
+Use `proof-mcp`'s `route_node` for source-backed authoring advice when connected;
+the canonical ROUTES block still governs execution.
 
 ### 7. Compose with AIDLC — default cast + human gates
 
@@ -122,34 +121,31 @@ Start from `templates/project-plan.workflow.js` and fill its `EDIT ME` slots for
 
 - The canonical `ROUTES` block from `../proof-engine/references/execution-modes.md` §M8, carried **verbatim**, with every `agent()` call routed through `optsFor(node, label)`. Each node keeps its `taskType`, `phase` and `rationale` (plus `isolation`, where it mutates files concurrently); it does **not** carry a hardcoded `model`/`effort` — `routeFor(node.taskType)` resolves those against `input.mode`. Scripts have no module access (H10), so the block is duplicated by design and drift between copies is a defect.
 - A `log()` line per node emitting its ledger row (mode, model, effort, est tokens, running spend vs budget), plus the `modifier-A: suppressed` line under all-out mode.
-- The pure-literal `ESTIMATE` block, stamped with the figures the user approved at the step-8 pre-flight (zeros under `balanced`, where no pre-flight fires).
+- The pure-literal `ESTIMATE` block, stamped with the figures the user approved at the engine pre-flight (zeros under `balanced`, where no pre-flight fires).
 - `meta.phases` mirroring the framework phase names for the nodes in this workflow.
 
 If `--dry-run`, print this script plus the DAG and ledger, and stop. Under `--mode all-out --dry-run` the pre-flight's estimate table still prints; its question does not.
 
-### 9. Pre-flight (all-out mode only), then execute — hand to the workflow engine
+### 9. Handoff for authorized execution
 
-**If `--mode all-out`, run the pre-flight first** — in this PM session, after the phase's script is authored and **before** the Workflow tool is called, so that no agent has spawned when the user answers. A script cannot prompt a human or read a clock (H10), which is why the gate lives here and the approved figures enter the script as pure literals. Follow `../proof-engine/references/execution-modes.md` §M6:
+Deliver the typed DAG, current-phase script, assumptions, budget allocation and
+estimate to `proof-engine`. A planning-only request ends here. Do not call the
+Workflow tool merely because a plan is complete.
 
-1. Print the four-part estimate table — DAG size with fan-outs and verifier widths shown as their multiplicands (`verify-sweep: 5 items × 3 lenses = 15`), the low–high token band **alongside the same DAG priced at `balanced`**, what all-out mode changed, and the rate-limit/concurrency risks.
-2. Ask **exactly one** question: `All-out mode: N agents across P phases, est. X–Y output tokens (optimize would be A–B). Modifier A disabled · verifier width 3 (5 on gating nodes) · loop-until-dry K=3 · every node pinned to claude-opus-5. Proceed?` — accepting **yes** (proceed, stamping the approved figures into the script's `ESTIMATE` block), **no** (nothing spawns, nothing is written, report what *would* have run — never a partial start), or **optimize** (re-author the same DAG at `balanced`, print the cheaper estimate, proceed with no second confirmation).
-3. **Spawn nothing before the answer.** Silence is not consent and a timeout is not a yes.
-4. If `--budget` is set and the estimate's **high** end exceeds the ceiling, refuse to start and offer the three exits from step 1.
-5. If the phase would exceed the ≤15-agents-per-workflow guideline, **the guideline wins**: split it into two gated workflows and surface the split in the estimate.
+If the user requested execution too, the engine performs its capability checks,
+§M6 pre-flight and required human gate before running. Cite that shared procedure
+instead of asking a second copy of its approval question here. A planning
+workflow from step 3 is distinct from executing the domain tasks it proposes.
 
-The pre-flight is an **additional** gate, never a substitute for a framework gate (H11) — AIDLC's own gates still stand, and this one sits in front of the first of them. It re-fires only when a post-gate re-plan raises the approved agent count or token high-end by more than 25%, and each re-ask shows the delta rather than restating the total cold.
+### 10. Report the plan and its evidence
 
-Then call the **Workflow tool** with the current phase's script inline and the DAG parameters as `args` — real JSON values, never a JSON-encoded string, including `mode` and `planner`. Note the returned `scriptPath` and `runId`; to iterate a phase, edit the persisted file and re-invoke with `{scriptPath, resumeFromRunId}`. **Mode is frozen at first author**: a resume reuses the persisted script and its original `args.mode`, and a mode change requires a fresh run plus, in all-out mode, a fresh pre-flight. Between gated phases, author the next phase as a fresh Workflow invocation after the user approves — the PM session stays in the loop.
-
-### 10. Report — journal + cast/cost ledger + completeness critic
-
-Reuse the normal workflow reporting and add the PM layer on top:
-
-- **Reuse `meta.phases` + `log()` + the run journal.** Relay the structured result in prose; if a result looks wrong, read `<transcriptDir>/journal.jsonl` before diagnosing (it records each agent's actual return value).
-- **Emit the cast + cost ledger.** One row per executed node: `id`, `taskType`, **`mode`**, `model` (`inherit` when `opts.model` was omitted, otherwise the pinned ID), `effort`, estimated tokens, **rationale**, and **running spend vs `--budget`**. This is the PM's accountability artifact — it shows where the token budget went and why each node ran at its tier. `mode` is not optional: the same `model` value means opposite things in the two columns, and the row is the only evidence of which one happened. **Under `--mode all-out`, every wide fan-out row additionally carries the `modifier-A: suppressed` marker**, so a reader can tell a fan-out ran at ceiling by design rather than by oversight. Flag any node whose actual spend materially exceeded its estimate, and in all-out mode diff the run against the script's approved `ESTIMATE` literal using `<transcriptDir>/journal.jsonl` — a run outside its band is the signal to re-baseline the `BAND`/`SIZE` constants in `../proof-engine/references/execution-modes.md` §M6, not to widen the band silently.
-- **Name the planner.** If `--planner fable` was used, say so in the cast row and in the gate deliverable — including any fallback to `claude-opus-5` at `max`. A reader must never have to guess which model produced the DAG they are being asked to approve.
-- **Run a completeness critic** (H12). End the project (or each comprehensive phase) with a critic node asking "what's missing — a node not run, a dependency unverified, a phase skipped?" Its findings become the next round of work or are reported as known gaps.
-- **Present the gate deliverable.** If a framework gate was reached, show the phase's deliverable and the re-plan/re-budget for the next phase, and ask the user to approve before authoring it.
+Report the requested deliverables, ordered nodes, dependencies, per-node route
+rationale, expected artifacts, named gates, estimated cost and unresolved gaps.
+Mark every unexecuted node `planned`. Estimates are forecasts, not billed usage.
+If a separately authorized engine run occurred, link its result and actual
+usage evidence; unavailable usage remains unknown. Journal interpretation and
+approved-versus-actual reporting belong to `proof-engine`, not a second PM
+implementation of that procedure.
 
 ## What this layer does NOT change
 

@@ -59,7 +59,7 @@ Six sources. Each sees the incident differently, and the ones teams skip are usu
 
 ## 4. Correlating, de-skewing, and de-duplicating
 
-Six sources produce six partial orderings that do not agree. Reconciling them is mechanical work, and it is deliberately done in plain script logic rather than by an agent (see `templates/incident-reconstruction.workflow.js`).
+Six sources produce six partial orderings that do not agree. Reconciling them is mechanical work, and it is deliberately done in plain script logic rather than by an agent (see `../templates/incident-reconstruction.workflow.js`).
 
 **Correlate by identifier, not by proximity in time.** `trace_id`, `span_id`, `request_id`, `session_id`, and the deploy or release id are the joins. OpenTelemetry's Semantic Conventions (pinned in `standards.md`) give these stable attribute names precisely so this join works across services. Two events that merely happened at the same moment are **not** related, and treating temporal adjacency as causality is the most common error in a reconstructed timeline.
 

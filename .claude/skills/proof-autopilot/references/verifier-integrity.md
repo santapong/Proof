@@ -124,7 +124,7 @@ that only gates *proposals*, not merges? Two reasons.
 ## Using this file
 
 Run the three guards as a pre-flight before the Propose gate, wired via
-`templates/verifier-canary.workflow.js`. Guards 1 and 2 are hard stops on every item;
+`../templates/verifier-canary.workflow.js`. Guards 1 and 2 are hard stops on every item;
 Guard 3 is a sampled trend. Re-check them whenever the verify stage, the rubric, or the
 credit ledger changes — a change that raises pass rates is exactly when to ask whether
 the work got better or the judge got easier.

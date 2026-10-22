@@ -6,7 +6,7 @@ argument-hint: <project>
 
 # Engineering Harnesses
 
-You are about to shape the *harness* a Claude Code project runs inside — the configuration that decides what Claude may do (permissions), what happens automatically around its actions (hooks), what external capabilities it has (MCP), and how work repeats without a human re-typing it (automation loops). A good harness makes the right thing automatic and the dangerous thing impossible; a bad one either nags on every action or quietly permits a `rm -rf`.
+You are about to shape the *harness* a Claude Code project runs inside — the configuration that decides what Claude may do (permissions), what happens automatically around its actions (hooks), what external capabilities it has (MCP), and how work repeats without a human re-typing it (automation loops). A harness can automate repeated work and constrain tool use. Its settings and example hooks are not a security sandbox; verify the actual host enforcement and authorized scope.
 
 **Design the harness safety-first and project-shared: deny is stronger than allow, secrets are never readable, and everything a teammate needs is committed.** This skill ships copy-paste scaffolds you adapt, not theory to reimplement.
 
@@ -87,7 +87,7 @@ Commit `settings.json`, `hooks/`, `loop.md`, and `.mcp.json`; gitignore `setting
 
 - `references/permissions.md` — settings.json locations/precedence, allow/deny/ask, rule syntax, safe defaults
 - `references/hooks.md` — hook events, settings structure, stdin input, exit-code control, common recipes; plus the guardrail misuse catalogue — deny-vs-ask, CI duplication, the SessionStart tax, allowlist rot
-- `references/skill-hooks.md` — the per-skill catalogue: which of the fleet's twenty-two skills' rules are worth mechanizing as project hooks, which belong in CI, and which must stay judgment
+- `references/skill-hooks.md` — the per-skill catalogue: which skill rules are worth mechanizing as project hooks, which belong in CI, and which must stay judgment
 - `references/mcp.md` — .mcp.json schema, transports, scopes, env expansion, trust
 - `references/automation-loops.md` — every recurring/automation mechanism and how to choose
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to its workflow

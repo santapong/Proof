@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Framework documentation review
+
+- Add a complete 26-skill task catalog, documentation index, per-file review inventory and prioritized gap/overlap review.
+- Consolidate planning/execution policy and DORA definitions; distinguish proposal activity from delivery measurements.
+- Correct generated-test verification, scout/refactor boundaries, authoring-size claims, venture defaults, integration rollback, incident precedence and trace-check limits. These are candidate guidance changes, not measured quality or token gains.
+
 ### Breaking — Proof 4 beta candidate
 - Rename all 26 active skills to the `proof-*` namespace, without legacy aliases, as requested by the owner. Update source references, normative routing inputs, templates and generated packs; retain historical release/study records.
 - Retire `THELOOPSKILL_ROOT`; use `PROOF_ROOT`. Old classifier labels/artifacts require explicit migration/retraining. No hidden old-name redirect is provided.

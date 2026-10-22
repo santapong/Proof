@@ -71,7 +71,7 @@ Define Φ(Dᵢ) ≥ 0 with Φ(D₀) = 0. Amortized cost is `ĉᵢ = cᵢ + Φ(D�
 | **Cardinality only, memory-constrained** | HyperLogLog — see `randomized-structures.md` | Exactness: ~1–2% relative error |
 | **FIFO/LIFO with high concurrency** | Ring buffer, lock-free queue — see `concurrency.md` | Simplicity, and often strict fairness |
 
-If two rows both match, you have two candidates and a real trade-off — that is precisely the case `templates/algorithm-bakeoff.workflow.js` exists for.
+If two rows both match, you have two candidates and a real trade-off — that is precisely the case `../templates/algorithm-bakeoff.workflow.js` exists for.
 
 ## 4. Structure profiles
 

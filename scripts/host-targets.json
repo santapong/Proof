@@ -69,7 +69,7 @@
     "dropSections": [
       {
         "file": "proof-orchestrate/SKILL.md",
-        "heading": "### 9. Pre-flight (all-out mode only), then execute \u2014 hand to the workflow engine",
+        "heading": "### 9. Handoff for authorized execution",
         "why": "ADR-0008 D8.5 \u2014 an execution clause that cannot be made true by renaming a noun. The planning the skill exists for is untouched."
       },
       {
@@ -80,10 +80,10 @@
     ],
     "rewrites": [
       {
-        "find": "the Claude Code built-in **verify** skill",
-        "replace": "your host's built-in verification skill, if it has one",
+        "find": "Claude Code's bundled `/verify` skill",
+        "replace": "your host's verification capability",
         "minHits": 1,
-        "why": "Host noun. proof-test/SKILL.md:56."
+        "why": "Host verification capability in proof-test and proof-debug; availability is checked by the surrounding instruction."
       },
       {
         "find": "Claude Code's own browser control",

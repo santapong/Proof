@@ -53,7 +53,7 @@ Case-design heuristics, the boundary checklist, and when property-based earns it
 2. **Pass for real** — confirm green, then sanity-check it isn't vacuous (an assertion that can't fail, e.g. `assert True`, is a bug).
 3. **For a regression test: show it goes red on the unfixed code first.** Add the failing test before (or with the fix reverted), watch it fail with the expected error, then apply/restore the fix and watch it pass. A regression test that was never red proves nothing.
 
-Pair this with the Claude Code built-in **verify** skill to exercise the change end-to-end, not just at the unit boundary.
+When available, use Claude Code's bundled `/verify` skill for the affected end-to-end path. Otherwise use the project's launch/test commands and report the exercised scope. An unavailable host skill does not justify inventing a pass.
 
 **A reproduction harness for a live outage is `proof-incident`'s artifact, not a suite entry** — it exists to pin down a failure while service is being restored, and it is committed as a regression test here only once the incident is closed and the root cause is known.
 
@@ -67,9 +67,9 @@ A handful of modules you can test inline in this session. For **a whole package 
 
 1. **Design fan-out** — one agent per module characterizes the unit and designs its cases (§1, §3), returning a structured case list.
 2. **Write** — per module, one agent writes the tests to repo conventions (§2, §4) from that case list.
-3. **Run (optional)** — per module, execute the new tests and report pass/fail, so a broken or vacuous file surfaces instead of shipping green-by-accident.
+3. **Verify after generation** — the supplied template implements design → write and returns an unverified result. After it returns, run the generated tests and the relevant end-to-end check. If execution is unavailable, report the files as generated but unverified; do not claim step 5 completed.
 
-This is the **pipeline** pattern (design → write → run per module, no barrier between modules) from the **`proof-engine`** skill (see its `templates/pipeline.workflow.js` and harness policy H1 pipeline-default, H4 adversarial verify). Invoke the `proof-engine` skill to author and execute the run; the test-generation template pre-wires the case schema, the convention-matching step, and the run-and-report gate. For a module or two you can hold in context, skip the workflow and write the tests directly.
+This is the **pipeline** pattern (design → write per module, then the explicit post-generation verification gate) from the **`proof-engine`** skill (see its `templates/pipeline.workflow.js` and harness policy H1 pipeline-default, H4 adversarial verify). Invoke the `proof-engine` skill to author and execute the run; the test-generation template pre-wires the case schema, the convention-matching step, and the run-and-report gate. For a module or two you can hold in context, skip the workflow and write the tests directly.
 
 **Execution flags.** `--mode <lite|balanced|all-out>` is advertised in this skill's `argument-hint` but **parsed by `proof-engine`, never here** — pass the raw argument string straight through and carry no mode logic of your own. See `../proof-engine/references/execution-modes.md`.
 

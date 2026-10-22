@@ -1,6 +1,6 @@
 # Standards shelves — the honesty convention
 
-Every skill carries `references/standards.md`. It names the authorities the skill reasons from, pinned to an exact edition, and grades each one's **provenance of authority**. This file is how to build one that does not rot or lie.
+Every skill carries `standards.md`. It names the authorities the skill reasons from, pinned to an exact edition, and grades each one's **provenance of authority**. This file is how to build one that does not rot or lie.
 
 The shelves are the plugin's actual value proposition: a skill that reasons from a cited, edition-pinned standard is doing something a general-purpose model cannot reliably do from memory. A shelf with a fabricated pin is worse than no shelf at all, because it launders a guess into an authority.
 

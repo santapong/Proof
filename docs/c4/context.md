@@ -14,7 +14,7 @@ Proof is a **Claude Code plugin**: twenty-six composable engineering skills buil
 - **Claude Code** discovers the plugin, loads the skill into context, and executes the workflow scripts the skill authors — Proof never runs anything itself.
 - The system **routes each node** of that workflow to a model tier, so a mechanical enumeration and an adversarial security verdict do not cost the same.
 - It **reads the target repository** freely; only `implement` nodes write, and only within the phase a human approved.
-- It **reads GitHub feedback and opens draft PRs** — the autonomous loop proposes and never merges.
+- With an authorized, configured runner, it **reads GitHub feedback and opens draft PRs** — the autonomous loop proposes and never merges.
 - It **confirms version pins against primary sources** before a standards shelf asserts one.
 
 ## Why the boundary sits here

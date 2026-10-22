@@ -16,6 +16,8 @@ This is a **composition layer over the `proof-engine` skill, not a new engine** 
 
 **Because an unattended runner (a Cloud Routine) has no per-run approval prompt, the guardrails are structural, not interactive: draft-PR-on-a-`claude/`-branch, an explicit never-merge rule, budget/round caps, and dedup against what already exists.** Those are non-negotiable — see §6.
 
+**Branch compatibility:** the live examples assume the host and target repository both permit `claude/` branches. Check both before enabling them. This repository's [branch policy](../../../docs/branch-policy.md) uses named `feat/`, `fix/` and other work branches; the live scaffold needs an explicit compatible adaptation here. Keep the dry proposal path rather than bypassing either policy.
+
 ## 1. The loop
 
 Each round: **intake → triage → act → verify → propose**; when intake is empty, **research/scan** for improvements instead. Full design in **`references/proof-design.md`**.

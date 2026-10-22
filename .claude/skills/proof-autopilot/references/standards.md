@@ -12,21 +12,19 @@ Use this file the way `owasp-cwe.md` is used in `proof-review`: as the naming au
 
 This shelf is lopsided toward *no*, and the honest reading is that **autonomous-agent safety has no ratified specification yet.** The loop's guardrails are justified by the concrete blast radius they bound — never merged, never pushed to `main`, budget-capped — and the frameworks below name that discipline rather than mandate it.
 
-## DORA — the Four Keys (throughput & stability)
+## DORA — delivery outcomes, by pointer
 
-**Framework:** DORA (DevOps Research and Assessment), now part of **Google Cloud**. Published annually as the **State of DevOps Report** — treat the report as the moving edition and the Four Keys as the stable metric set beneath it. The **2025 report** is the most recent annual edition, and it **pilots a fifth metric, Rework Rate**, alongside the four keys; `../../proof-audit/references/standards.md` and `../../proof-ship/references/dora.md` carry the same pin, and the three move together.
-**Authoritative: no** — a research programme, not a standards body. Its near-universal adoption is a fact about the industry, not about normative status.
+**Authority: No** — research guidance. Current definitions, source dates and the
+collection contract live in
+[`proof-ship`'s DORA reference](../../proof-ship/references/dora.md). Do not keep a
+second metric table here.
 
-The **Four Keys** are the measurement backbone for the loop's *output* — is it shipping small, safe, reversible change, or piling up risk?
-
-| Metric | What it measures | How the loop reads it |
-|---|---|---|
-| **Deployment Frequency** | How often change reaches users | Proxy: draft PRs opened per period. The loop optimizes for *many small* proposals, not few large ones. |
-| **Lead Time for Changes** | Commit → production latency | The `intake → propose` span of one round. Short-lived `claude/` branches keep this low. |
-| **Change Failure Rate** | Share of changes that fail / need remediation | The exact signal the credit ledger accumulates: `rejected / proposed` per kind (`credit-horizon.md`). |
-| **Failed Deployment Recovery Time** | Time to restore after a bad change | For a propose-only loop, this collapses to "time to close/revert a bad draft PR" — usually near-zero because nothing merged. |
-
-**Edition note.** The 2024 report **renamed** "Time to Restore Service" (a.k.a. MTTR) to **Failed Deployment Recovery Time** and continues to refine a fifth **reliability**/operational-performance dimension. Map to the Four Keys as named above; when you quote a benchmark (elite/high/medium/low cluster thresholds), cite the specific annual report you pulled it from — the cluster boundaries move year to year.
+A propose-only loop reports proposal volume, time-to-proposal, reviewed
+rejections and merge outcomes under their own names. These are not production
+delivery measurements. To study downstream delivery, link accepted changes to
+actual deployment and incident records; absence of those records is unknown.
+The historical July confirmation log below does not supersede the October
+correction in the linked reference.
 
 ## SPACE — don't optimize one number
 
@@ -43,7 +41,7 @@ SPACE is the counterweight to DORA here. DORA measures throughput; SPACE forbids
 | **Communication** | Silent auto-changes nobody understands | Every PR carries an `proof-audit` risk memo + summary comment |
 | **Efficiency & flow** | Long lead time, batched giant PRs | One item → one focused PR (`proof-design.md` §Act) |
 
-**Applying it:** when the loop reports its own health, pair a throughput number (DORA Deployment Frequency) with a satisfaction/performance number (merge rate from the ledger). A dashboard that shows only "42 PRs opened" is the SPACE anti-pattern.
+**Applying it:** when the loop reports its own health, pair a clearly named proposal-process measure with reviewer/value evidence; use deployment measurements only when actual deployment records exist. A dashboard that shows only "42 PRs opened" is the SPACE anti-pattern.
 
 ## Autonomous-agent safety — the propose-only discipline
 

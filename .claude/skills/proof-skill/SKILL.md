@@ -47,9 +47,9 @@ Draft the `description` to `references/boundary-design.md`. It must:
 - Say what it does, when to use it, **and which sibling to use instead** — for every rated overlap, on *both* sides. A one-way pointer leaves the boundary decidable from one direction only.
 - Resolve each overlap on a **checkable question**, never a judgment call.
 
-Then add the rows to `boundary-audit.json` and re-check every neighbour the new skill touches. A nineteenth skill is more selection pressure on the other eighteen, not the same.
+Then add the rows to `boundary-audit.json` and re-check every neighbour the new skill touches. Each additional skill adds selection pressure; check it against the current matrix.
 
-**If you cannot state a clean discriminator, the skill is wrong.** Say so and stop. That answer is cheap here and expensive after 100 KB of authoring.
+**If you cannot state a clean discriminator, the skill is wrong.** Say so and stop. That answer is cheap here and expensive after the body and references are written.
 
 ### 4. Research and grade the standards
 
@@ -63,9 +63,9 @@ Grade each on the plugin's three levels — **Yes** (a standards body ratified a
 
 Per `references/authoring.md`. The order matters: the router's flow determines what the references must contain, and writing references first produces files nothing points at.
 
-- **`SKILL.md`** — a thin router, 6–13 KB. Numbered steps that *point at* references. Its **first sentence** states the discriminating predicate, because by the time someone reads the body they have already selected the skill and the first thing they need to know is whether they chose right.
-- **`references/*.md`** — five to seven files, ~100 KB total, always including `standards.md`. Depth is free here; it costs nothing until the router asks for it.
-- **`templates/*.workflow.js`** — per `references/template-contract.md`. Carry the canonical `ROUTES` block **byte-identically**; it cannot be imported, because the sandbox has no module system.
+- **`SKILL.md`** — the smallest sufficient router; avoid a minimum byte target. Numbered steps that *point at* references. Its **first sentence** states the discriminating predicate, because by the time someone reads the body they have already selected the skill and the first thing they need to know is whether they chose right.
+- **`references/*.md`** — split by distinct questions, not a quota; include `standards.md`. Retrieved text costs context and requires maintenance, so add only useful depth.
+- **`templates/*.workflow.js`** — only when workflow execution is needed, per `references/template-contract.md`. Carry the canonical `ROUTES` block **byte-identically**; it cannot be imported, because the sandbox has no module system.
 
 ### 6. Prove it conforms
 

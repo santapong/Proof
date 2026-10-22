@@ -38,3 +38,11 @@ derivation of the old synthetic training fixture, with a parent hash recorded.
 It is not independent evaluation evidence. Frozen evaluation guards still reject
 a changed normative source: reproduce from the pinned old tree or register a
 new study rather than replacing its old hashes.
+
+## Instruction corrections in the candidate
+
+The [framework review](reviews/framework-review-2026-10-23.md) follows the naming
+pass. Venture now follows the shared `balanced` default; maximum-cost mode is
+explicit. Orchestrate stops at its plan unless execution is also requested.
+Generated tests stay unverified until run. These are guidance corrections, not
+new host runtime features or evidence of improved task outcomes.

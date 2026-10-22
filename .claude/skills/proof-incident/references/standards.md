@@ -79,7 +79,7 @@ Every entry is pinned to the edition current **as of 2026**; the closing edition
 **Publisher.** CNCF.
 **Authoritative: yes.**
 
-**Maps to the skill.** `proof-debug` uses this pin for single-process evidence reading; this skill applies **the same pin at incident scale** — correlating traces, logs, and metrics *across services* by trace and request id in `reproduction-timeline.md`, which is what makes the merge barrier in `templates/incident-reconstruction.workflow.js` mechanically possible at all.
+**Maps to the skill.** `proof-debug` uses this pin for single-process evidence reading; this skill applies **the same pin at incident scale** — correlating traces, logs, and metrics *across services* by trace and request id in `reproduction-timeline.md`, which is what makes the merge barrier in `../templates/incident-reconstruction.workflow.js` mechanically possible at all.
 
 **Propagation obligation — three skills pin this spec, not two.** `../../proof-debug/references/standards.md` carries it for single-process evidence reading and `../../proof-operate/references/standards.md` for `observability.md`'s naming layer. **When any one of them advances its pin, the other two advance in the same commit.** Do not assert here what the other two currently record — read them. A claim about a sibling file's contents is false the moment that file is edited, which is exactly how the versions drifted apart before. Two skills citing two different OTel editions while reading the same telemetry is a drift defect, not a difference of scope. Semantic Conventions ships on a near-monthly cadence, so this is the entry on this shelf most likely to be stale when you read it.
 

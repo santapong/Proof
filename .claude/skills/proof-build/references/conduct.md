@@ -22,7 +22,7 @@ A single planner produces a plan that is coherent and incomplete, and both failu
 
 ## 3. Phase conduct — the task obeys its owning skill
 
-Map the DAG onto the framework's phases (AIDLC default) and author **one workflow per gated phase** from `templates/v1-conductor.workflow.js`. The conductor's distinctive move is **delegated law**: each task names its owning skill from the roster, and the task's prompt is authored against that skill's references — read them before authoring, the way `proof-frontend` reads its own motion gates.
+Map the DAG onto the framework's phases (AIDLC default) and author **one workflow per gated phase** from `../templates/v1-conductor.workflow.js`. The conductor's distinctive move is **delegated law**: each task names its owning skill from the roster, and the task's prompt is authored against that skill's references — read them before authoring, the way `proof-frontend` reads its own motion gates.
 
 | Task smell | Owning skill |
 |---|---|

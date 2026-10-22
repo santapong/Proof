@@ -28,7 +28,7 @@ Route elsewhere when:
 | This used to work / used to be fast | `proof-debug` | A commit or a deploy correlates with the change. |
 | Reshape this code, same behavior | `proof-pattern` | The existing tests should pass unchanged afterward. |
 | Write the tests that ship with this | `proof-test` | The assertion is an expected value, not a measured distribution. |
-| Should we write this at all, or adopt something | `proof-scout` | Answering it adds a line to the dependency manifest. |
+| Should we write this at all, or adopt something | `proof-scout` | The reuse/adopt/build decision is still open, including standard-library and internal reuse. |
 | Judge this existing code for defects | `proof-review` | The deliverable is a findings list against a severity bar. |
 
 ## 2. The two honesty rules

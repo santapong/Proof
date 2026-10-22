@@ -29,6 +29,22 @@ compatibility, demand, commercial terms or payout settlement. The full framework
 and an independently usable skill are different offers. Do not represent a full
 plugin archive as a standalone skill without checking its dependencies/behavior.
 
+## Framework-wide review follow-up
+
+The [23 October framework review](docs/reviews/framework-review-2026-10-23.md)
+records each skill, corrected duplication and the remaining gaps. The source
+catalog is complete; native task quality is not established for all 26 skills.
+
+| Priority | Next outcome | Acceptance evidence |
+| --- | --- | --- |
+| Launch | One selected skill works in the claimed installed host and upload package | Actual bounded task, carried dependencies, artifact identity and observed outcome |
+| Product | Full accessibility/UX coverage has a clearly scoped owner | Capability charter and representative checks before adding another skill |
+| Runtime | Operations/automation scaffolds have an actual target runner, locking and telemetry | Dry-run/live-service qualification within authorized scope |
+| Evaluation | Quality and resource claims use real comparative tasks | Independent correctness, repeats, actual usage/cache/retry records and honest uncertainty |
+| Maintenance | External pins are rechecked when used | Primary source, date, affected shelf and unresolved fields |
+
+These are proposed follow-ups, not newly implemented systems or automatic work.
+
 ## Follow-up directions
 
 | Direction | Small next result | Boundary |

@@ -29,9 +29,9 @@ carries a dedup key; every `increment` is keyed to an event id, not to "this cod
 *Catches:* resume bugs, which otherwise surface only in the rare run that actually
 resumes — the worst possible discovery schedule.
 
-### 3. A superseded fact never influences a later decision
-After a correction lands, the retracted value appears in no subsequent context assembly
-or decision rationale. Mechanically: grep the trace for the retracted value after the
+### 3. No unqualified stale fact in recorded decision inputs
+After a correction lands, the retracted value must not be used as current in a subsequent context assembly
+or decision rationale. A text search can expose this violation; absence of the literal does not prove absence of paraphrased reuse or hidden influence. Mechanically: grep the trace for the retracted value after the
 correction's timestamp; anything found is either labeled-as-superseded (audit inclusion —
 allowed) or a violation. *Catches:* the 60.5% ranking failure (`supersession.md`) at the
 point where it matters — action, not storage. After a purge, run this with the purged
@@ -55,7 +55,7 @@ detector; the rule stays with the invariant or clause that owns it.
 
 | Violation | What the trace shows | Detector | Violates |
 |---|---|---|---|
-| **Side-channel phase** | Phase N+1's segment contains reads against raw sources (files, URLs) that phase N already read and checkpointed. | Diff phase N+1's read targets against its entry checkpoint: every read must name a checkpoint field or a pointer the checkpoint carries. Any other read is the violation — even when both reads happened to agree. | Clause 3 (`shared-state.md`) — the trace form of its re-derivation anti-pattern |
+| **Side-channel phase** | Phase N+1 silently replaces a checkpointed fact with a new raw-source reading, leaving the version or decision change unrecorded. | Compare reads and state deltas with the entry checkpoint. A documented freshness check or hypothesis test may reread sources; record its source/version, changed assumption and superseding delta. Flag silent replacement, not the mere reread. | Clause 3 (`shared-state.md`) — the trace form of its re-derivation anti-pattern |
 | **Keyless append** | A list field holds two entries identical except for timestamp: a resumed run's replayed phase appended its finding again. | Invariant 2's replay. Statically: grep the workflow script for appends into state with no key derivation. | Invariant 2; Clause 2 (the field's declared merge is append) |
 | **Summarize-and-destroy** | A compaction step whose output is prose naming no store records — nothing downstream can dereference. The summary *reads* complete; summaries always read complete to whoever compressed them, which is why eyeballing detects nothing here. | Invariant 1's paraphrase probes (`context-rules.md` §Testing). A probe that fails with no pointer to chase is the violation. | Invariant 1; the addressable-store rule |
 | **Zombie fact** | A decision rationale dated after a correction cites the retracted value, unlabeled — the store held the correction the whole time; assembly preferred the stale fact. | Invariant 3's grep, scoped to context assemblies and decision rationales. | Invariant 3; the retrieval-preference clause (`supersession.md`) |
@@ -88,7 +88,7 @@ detectors watch for from outside.
 
 ## Running them
 
-`templates/context-audit.workflow.js` runs the audit: inventory the target's context
+`../templates/context-audit.workflow.js` runs the audit: inventory the target's context
 surfaces, audit each dimension (budget, placement, compaction, state contract,
 supersession) against the rules, then check whatever traces are available against the
 four invariants, reporting each violation with the evidence line that proves it. The

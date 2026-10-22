@@ -4,6 +4,8 @@ Start with the deliverable. A reproducible bug belongs to `proof-debug`; a diff 
 
 The focused instructions live in [software-team intake](../.claude/skills/proof-guide/references/software-team.md), [context efficiency](../.claude/skills/proof-context/references/software-efficiency.md), and [skill improvement](../.claude/skills/proof-autopilot/references/skill-improvement.md). Read the reference for the current task. Small work should not expand into a full lifecycle or an agent team by default.
 
+For the complete owner/output map, use the [26-skill catalog](skills.md).
+
 ## Get a small reading plan
 
 Run these commands from a Proof source checkout with Node installed:
@@ -52,11 +54,13 @@ characters with identical candidate results. Enabling ML increased the mean
 candidate-entrypoint inventory from 26,594 to 37,442 characters. Neither measure is
 billed-token savings; the ML result does not justify making it the default.
 
-Reproduce the study with a new output basename:
+Reproduce the historical study only from its pinned pre-migration source tree, with a new output basename:
 
 ```sh
 node scripts/evaluate-software-context.mjs --out /tmp/proof-evaluation-trial
 ```
+
+The current candidate changes normative names and skill sources; the frozen runner rejects that drift. Follow [migration](migration-proof-4.md) rather than changing the freeze hashes to make it pass. A new comparison needs fresh registered inputs and criteria.
 
 The runner preserves prior reports and rejects overwrites. Its published fixture is
 now a regression/demo set; use fresh independently labelled team tasks for a future

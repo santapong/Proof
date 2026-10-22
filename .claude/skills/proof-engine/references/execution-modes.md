@@ -2,7 +2,7 @@
 
 This file governs **which model and how much effort each node gets**. It does not govern **what shape the DAG takes**. Mode is a run-level *routing* dial, not a new orchestration primitive: it moves tiers, effort, verifier width and one loop threshold, and it moves nothing else. Shape stays governed by `harness-policy.md` (H1–H12) and `loop-policy.md` (L1–L8), both of which this file consumes read-only and neither of which it may relax.
 
-There are three modes — **`lite`**, **`balanced`** (the default) and **`all-out`** — plus one orthogonal override, **`--planner opus|fable`**. The invariant the rest of this file elaborates is: **one parser, twenty-one skills, zero per-skill branching.** Routing *rationale* — why a task type maps to a tier at all — lives in `../../proof-orchestrate/references/model-routing.md`; the rule for how a script *expresses* a routing decision on an `agent()` call is `harness-policy.md` **H8**.
+There are three modes — **`lite`**, **`balanced`** (the default) and **`all-out`** — plus one orthogonal override, **`--planner opus|fable`**. The invariant the rest of this file elaborates is: **shared parsing, current skill fleet, zero per-skill branching.** Routing *rationale* — why a task type maps to a tier at all — lives in `../../proof-orchestrate/references/model-routing.md`; the rule for how a script *expresses* a routing decision on an `agent()` call is `harness-policy.md` **H8**.
 
 ## The three modes at a glance
 
@@ -46,7 +46,7 @@ The only policy value mode moves is **L1's dry-round threshold K**, and only by 
 
 If a mode change would fix your workflow's shape, the shape was wrong.
 
-## M2. Flag parsing — one parser, twenty-one skills
+## M2. Flag parsing — shared parsing, current skill fleet
 
 **Grammar.**
 

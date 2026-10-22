@@ -36,7 +36,7 @@ Per `references/conduct.md` §4. Every phase ends at a gating verify at the mode
 
 ### 6. Release
 
-The final phase runs `proof-ship`'s method: rollout choice, release checklist, tested rollback, and the v1 tag. `proof-audit`'s risk memo is the go/no-go input at the last gate.
+Prepare delivery using `proof-ship`: rollout choice, release checklist and relevant rollback evidence. Execute a push, deployment, publication or v1 tag only when the user's request authorizes that action. Otherwise report a release-ready v1 and name the remaining delivery step; do not call it shipped. `proof-audit`'s risk memo is the go/no-go input at the last gate.
 
 ### 7. Report
 

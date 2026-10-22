@@ -80,9 +80,9 @@ the loop by construction, so it can't be guarded the way AP1–AP5 are; it must 
 
 **Status here: guarded — see `verifier-integrity.md` (full treatment) and §7 of
 `SKILL.md`.** Three structural guards run in-band before Propose
-(`templates/verifier-canary.workflow.js`): an impossible-test canary, a diff-integrity
+(`../templates/verifier-canary.workflow.js`): an impossible-test canary, a diff-integrity
 check on protected paths, and a sampled cross-judge. One detector runs out-of-band
-(`templates/held-out-eval.workflow.js`, `held-out-eval.md`): a frozen suite with hidden
+(`../templates/held-out-eval.workflow.js`, `held-out-eval.md`): a frozen suite with hidden
 oracles whose rising false-accept rate is the meta-overfit alarm. This is the gate that
 must hold before SCALE (removing the human merge).
 

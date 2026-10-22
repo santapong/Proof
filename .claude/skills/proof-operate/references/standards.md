@@ -104,14 +104,14 @@ Use it when an organization needs the practice framed as a certifiable managemen
 
 **Maps to the skill.** Supplements `slo-model.md` where the SRE Book and Workbook only sketch: **error-budget policy templates** and their stakeholder sign-off structure, choosing targets for services whose users are other services, dependency-inherited budgets (what to do when a shared dependency spends your budget for you), and the reliability-stack framing that keeps an SLO from becoming a vanity metric. Cite it for policy shape; cite the Workbook for alert math.
 
-## DORA — the Four Keys, reused not re-derived
+## DORA — delivery measures, reused by pointer
 
-**Source.** **DORA** (DevOps Research and Assessment), now part of Google Cloud; published annually as the **State of DevOps Report**.
-**Edition.** The **current annual report** is the moving edition; the Four Keys are the stable metric set beneath it. **The 2024 report renamed "Time to Restore Service" (MTTR) to *Failed Deployment Recovery Time*.** When quoting a benchmark or a cluster threshold, cite the specific annual report you pulled it from — the boundaries move year to year.
-**Publisher.** DORA / Google Cloud — a research programme, not a standards body.
-**Authoritative: no.**
+**Authority: No** — research guidance. Current definitions and source dates live
+in [`proof-ship`'s DORA reference](../../proof-ship/references/dora.md). Keep live
+SLI/error-budget evidence here and join incident records to deployment records
+where applicable; do not count unrelated outages as failed deployments.
+The source check linked there supersedes this shelf's older four-key framing.
 
-**Maps to the skill — by pointer.** `../../proof-autopilot/references/standards.md` already carries the full Four Keys table and `../../proof-ship/references/dora.md` owns per-release instrumentation; **neither is reproduced here.** The single thing this skill adds is the connection worth naming: **Failed Deployment Recovery Time is exactly the metric the SCALE-rung automatic rollback in `autonomy-and-rollback.md` §3 exists to minimize.** An autonomous revert that fires in ninety seconds instead of a page that wakes someone in fifteen minutes is a change to that one number and to no other. If you are justifying SCALE to anyone, that is the metric to justify it in, and the honest-status section is the caveat that goes with it.
 
 ## Edition discipline
 

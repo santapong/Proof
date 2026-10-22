@@ -23,7 +23,7 @@ This skill is a **conductor, not a new engine**: every phase runs as `proof-engi
 ### 1. Parse the idea
 
 - **venture-idea** — everything that is not a flag. If empty, ask what the venture is and for whom.
-- **`--mode` / `--dry-run`** — advertised here; parsed by `proof-engine`. Pass the **raw argument string** through untouched (this skill parses nothing; `proof-engine` and `proof-orchestrate` are the only two parsers). **This skill's default mode is `all-out`** — the inversion of the plugin's lean default is deliberate and stated: venture decisions are cheap to research and ruinous to get wrong, so verification runs at ceiling unless the user narrows it. Say so, and show the §M6 price, before the first phase spawns.
+- **`--mode` / `--dry-run`** — advertised here; parsed by `proof-engine`. Pass the **raw argument string** through untouched (this skill parses nothing; `proof-engine` and `proof-orchestrate` are the only two parsers). **The default is `balanced`**, matching the shared parser and templates. Use `all-out` only when selected within the user's scope, with the §M6 estimate and required answer before execution. A venture idea alone does not authorize maximum-cost research.
 - `--dry-run` ends after the graph is priced: the phase plan, the node casts, and the estimate.
 
 ### 2. Conduct the graph — one workflow per human gate

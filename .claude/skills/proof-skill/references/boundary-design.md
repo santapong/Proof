@@ -49,7 +49,7 @@ Not a vibe. A question whose answer anyone can verify in one step.
 | `proof-design` / `proof-algo` | Is the deliverable a box-and-arrow diagram, or a Big-O and an invariant? |
 | `proof-skill` / `proof-harness` | Does it change what Claude **knows how to do**, or what Claude is **permitted** to do? |
 
-**If you cannot state the discriminator as a checkable question, the two skills are not genuinely separable.** Say so and propose a merge. That answer is cheap now and expensive after 100 KB of authoring.
+**If you cannot state the discriminator as a checkable question, the two skills are not genuinely separable.** Say so and propose a merge. That answer is cheap now and expensive after the body and references are written.
 
 ## Content overlap outranks wording
 

@@ -64,7 +64,7 @@ Migration sequencing — which deploy in the release carries expand, which carri
 
 ## 7. Instrument the release
 
-Tag every shipped change with the DORA keys so the release loop itself is measurable: deployment frequency, lead time for changes, change failure rate, failed deployment recovery time. Per-release instrumentation, the honest caveats about which metrics are stable and which are being piloted, and what feeds back to `proof-audit`: **`references/dora.md`**.
+Tag every shipped change with the DORA keys so the release loop itself is measurable: the current delivery-measurement fields. Per-release instrumentation, the current definition/source dates and collection limits, and what feeds back to `proof-audit`: **`references/dora.md`**.
 
 `proof-audit` already claims change-failure-rate as part of its own reason to exist. **You instrument it per release; you do not re-derive its framing.**
 
@@ -88,6 +88,6 @@ For those, run **`templates/release-readiness-gate.workflow.js`** — one checke
 - `references/supply-chain-gate.md` — the ship-time artifact gate: provenance, SBOM diff, signature; hard-block vs advisory; escalation
 - `references/rollback-playbook.md` — rollback-vs-roll-forward decision factors, per-strategy drill checklists, recording the outcome
 - `references/integration-train.md` — many task branches → one gated merge candidate → develop: when a train pays, the procedure, and the rules that keep it short-lived
-- `references/dora.md` — the four keys, per-release instrumentation, and what is stable versus piloted
+- `references/dora.md` — current definitions, deployment/incident collection design, and proposal-metric exclusions
 - `references/standards.md` — the authoritative standards this skill applies — named, version-pinned, and mapped to gate time
 - `templates/release-readiness-gate.workflow.js` — checker-per-gate-dimension → barrier → adversarial verify → go/no-go decision

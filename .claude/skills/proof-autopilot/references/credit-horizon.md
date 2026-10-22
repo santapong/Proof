@@ -7,7 +7,7 @@ is the gap the agentic-optimization framing names directly — of systems built 
 tooling to close this loop, most never do. This hook closes it here.
 
 > **Status:** the **write side** (the ledger + the reconcile pass in
-> `templates/credit-ledger.workflow.js`) ships now. The **read side** (biasing triage
+> `../templates/credit-ledger.workflow.js`) ships now. The **read side** (biasing triage
 > with `trustWeight`) is a deliberate deferred follow-up — see "Two hooks" below. Wiring
 > a read against an empty, all-`0.6` ledger teaches the triage agent nothing; let the
 > reconcile pass accumulate at least one `BATCH_SIZE` of real outcomes first.
@@ -72,7 +72,7 @@ proposed — they arrive later, on the reviewer's schedule, not the loop's. This
 reasonable), query every PR the loop has ever opened (label `automated`) that's closed
 since the last reconcile, classify its fate, increment the matching ledger counters, and
 recompute `trustWeight` for any kind that crossed `BATCH_SIZE`. See
-`templates/credit-ledger.workflow.js`.
+`../templates/credit-ledger.workflow.js`.
 
 ## Runtime note (H10)
 

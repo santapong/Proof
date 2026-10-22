@@ -6,7 +6,7 @@ Graded on the plugin's three levels — **Yes** (ratified by a standards body), 
 |---|---|---|---|
 | Semantic Versioning | **2.0.0** | No — de-facto specification (Tom Preston-Werner), never ratified by a standards body | The meaning of "version one": 1.0.0 is the release at which the public API becomes a promise — which is why §1 of `conduct.md` scopes v1 as the smallest contract worth promising, not the largest buildable feature set |
 | ISO/IEC/IEEE 12207 | 2017 edition | Yes — ratified, published | The sanity frame that a lifecycle is processes with defined outcomes, not a checklist of documents; the conductor's phase-gate-deliverable shape is consistent with its process view |
-| DORA (DevOps Research and Assessment) | Four keys as popularized by *Accelerate* (2018) and annual State of DevOps reports | No — research program, not a standard | The release phase reports lead time and change-failure framing via `proof-ship`, which owns the DORA shelf; this skill cites it only through that skill |
+| DORA (DevOps Research and Assessment) | Current definitions by pointer to `../../proof-ship/references/dora.md`; *Accelerate* (2018) is historical context | No — research program, not a standard | The release phase reports lead time and change-failure framing via `proof-ship`, which owns the DORA shelf; this skill cites it only through that skill |
 | AIDLC | This plugin's `proof-engine/frameworks/AIDLC.md` | Not a standard — internal framework | The default phase/gate structure the conductor maps the DAG onto; pluggable per `--framework` |
 
 ## Confirmation log

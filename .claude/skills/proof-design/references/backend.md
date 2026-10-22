@@ -105,7 +105,7 @@ Three patterns for the moment a single local transaction no longer covers the ch
 
 **The pattern**: in the *same* local transaction as the state change, insert the event into an `outbox` table. A separate relay process reads the outbox and publishes to the broker, marking rows sent (retrying safely, since consumers are idempotent). The DB transaction makes state-change-and-event atomic; the relay makes delivery reliable.
 
-- **When**: any time a write to the primary store must reliably produce an event or a second-store write — the standard fix for the dual-write problem, and the mechanism to break a shared table when extracting a service (see `references/architecture-patterns.md`).
+- **When**: any time a write to the primary store must reliably produce an event or a second-store write — the standard fix for the dual-write problem, and the mechanism to break a shared table when extracting a service (see `architecture-patterns.md`).
 - **Cost**: a relay to run and monitor, at-least-once publishing (so consumers must be idempotent anyway), and a little publish latency. Cheap relative to the corruption it prevents — usually the right call.
 
 ### Saga — a long-lived transaction across services
@@ -154,7 +154,7 @@ A backend that calls a database or another service **will** face slowness and fa
 - **Retries with exponential backoff and jitter** — retry only **idempotent** or idempotency-keyed operations (blind retries on a non-idempotent write double-charge). Back off exponentially and **add jitter** — synchronized retries without jitter reconverge into a thundering herd that DDoSes the recovering dependency. Cap attempts and the total deadline; a retry storm against a struggling service prevents its recovery.
 - **Circuit breaker** — when a dependency is failing, stop hammering it. After a failure threshold the breaker trips **open** and calls fail fast (serving a fallback or cached value) instead of piling onto a downed service; after a cooldown it goes **half-open**, lets a probe through, and closes on success. This is what stops one failed service from cascading into a system-wide outage as every caller's threads block on it. Pair with **bulkheads** — isolate resource pools per dependency so one saturated dependency can't consume the connections/threads the others need.
 
-**The failure this section prevents is the cascade**: dependency B slows, A's calls to B pile up with no timeout, A's pool exhausts, A stops serving C, and a localized problem becomes total. Timeout + breaker + bounded pool + jittered backoff each break one link in that chain. For turning these into SLO/error-budget targets and mapping them to capacity, see `references/nfr.md`.
+**The failure this section prevents is the cascade**: dependency B slows, A's calls to B pile up with no timeout, A's pool exhausts, A stops serving C, and a localized problem becomes total. Timeout + breaker + bounded pool + jittered backoff each break one link in that chain. For turning these into SLO/error-budget targets and mapping them to capacity, see `nfr.md`.
 
 ## Decision tables
 

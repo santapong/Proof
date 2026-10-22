@@ -6,9 +6,11 @@ argument-hint: <incident> [--mode <lite|balanced|all-out>]
 
 # Running an Incident
 
+**A declared incident or the organization's incident criteria take precedence.** Otherwise, use the known-condition runbook test below to route the alert. A successful runbook can mitigate an incident; it does not erase its declaration, communication or postmortem obligations.
+
 Does a runbook exist for this condition AND does executing it restore the SLI? Yes → `proof-operate`, steady state, no declaration. No, or impact exceeds the runbook's scope, or a human must be paged and coordinated → this skill.
 
-That predicate is the entire boundary, it is decidable in one question at the moment the page fires, and it is worded identically in `proof-operate/SKILL.md` so both skills answer it the same way. Its corollary is what each skill actually owns: **`proof-operate` owns AUTOMATED mitigation of KNOWN conditions; this skill owns HUMAN-COORDINATED mitigation of NOVEL ones — and only this skill writes postmortems.** A condition with a runbook that works is not an incident, it is operations doing its job. A condition without one, or one whose blast radius has outgrown the runbook that was written for it, needs a human in a named role making a call under uncertainty. That is what is being run here.
+That predicate is the entire boundary, it is decidable in one question at the moment the page fires, and it is worded identically in `proof-operate/SKILL.md` so both skills answer it the same way. Its corollary is what each skill actually owns: **`proof-operate` owns AUTOMATED mitigation of KNOWN conditions; this skill owns HUMAN-COORDINATED mitigation of NOVEL ones — and only this skill writes postmortems.** For an undeclared condition below the incident threshold, an authorized runbook that restores the SLI may remain steady-state operations. A condition without one, or one whose blast radius has outgrown the runbook that was written for it, needs a human in a named role making a call under uncertainty. That is what is being run here.
 
 Two more pointers, both decidable the same way:
 

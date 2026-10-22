@@ -119,8 +119,8 @@ On exit `0`, a hook may print JSON to control flow:
 
 ## High-value recipes (shipped as templates)
 
-- **SessionStart context/setup** (`templates/hooks/session-start.sh`) — print project reminders, current branch, and recent commits as `additionalContext`; the model starts each session oriented.
-- **PreToolUse secret/danger guard** (`templates/hooks/guard-secrets.sh`) — inspect `tool_input`; `exit 2` if a command or file path touches `.env`, `.ssh`, `.aws`, or a destructive `rm -rf`. A belt-and-suspenders backstop to the `deny` permission rules.
+- **SessionStart context/setup** (`../templates/hooks/session-start.sh`) — print project reminders, current branch, and recent commits as `additionalContext`; the model starts each session oriented.
+- **PreToolUse secret/danger guard** (`../templates/hooks/guard-secrets.sh`) — inspect `tool_input`; `exit 2` if a command or file path touches `.env`, `.ssh`, `.aws`, or a destructive `rm -rf`. A belt-and-suspenders backstop to the `deny` permission rules.
 - **PostToolUse formatter** — on `Edit|Write`, pipe the changed `file_path` to your formatter: `jq -r '.tool_input.file_path' | xargs npx prettier --write 2>/dev/null || true`. Keep it non-fatal so a missing formatter never blocks work.
 
 ## Testing a hook

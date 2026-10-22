@@ -10,7 +10,7 @@ You are about to stop someone from building what already exists. Before any non-
 
 **The failure mode this skill prevents is over-engineering: building a bespoke solution to a solved problem.** A from-scratch build is a liability you maintain forever; a well-chosen dependency is leverage. Bias toward reuse, and make anyone building from scratch earn it.
 
-**The dependency-manifest test decides whether this is even the right skill.** If answering the question would add a line to `package.json`, `requirements.txt`, `go.mod`, `Cargo.toml`, or the equivalent, it is this skill; if the dependency is already there and the question is how to use it well, it is **`proof-pattern`**; if the provider is already chosen and the question is how to wire it up, it is **`proof-integrate`**.
+**The discriminator is whether a reuse/adopt/build decision is still open.** This includes the standard library, an existing platform or internal code, so a new manifest entry is not required. Once selection is closed, applying framework idioms is **`proof-pattern`**; wiring the chosen external provider is **`proof-integrate`**.
 
 ## 1. State the need in solution-neutral terms
 

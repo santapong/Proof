@@ -59,7 +59,7 @@ Assertions over the agent's *trace*, checkable without a model checker:
 
 1. **Compaction preserves answers** — questions answerable before compaction are answerable after (spot-check with a fixed probe set).
 2. **State updates are idempotent** — replaying a checkpoint does not double-count.
-3. **A superseded fact never influences a later decision** — grep the trace for the retracted value after its correction.
+3. **No unqualified stale fact in the recorded decision inputs** — inspect post-correction context and rationale; text search detects some violations, not hidden causal influence.
 4. **No irreversible action without its recorded precondition check.**
 
 Run these via `templates/context-audit.workflow.js`, which audits a target (a repo's agent code, a workflow template, or a session transcript) against §2–§5 and reports violations with evidence lines. Verification anchors to the trace — an executable, external signal — not to another agent's opinion of the design.

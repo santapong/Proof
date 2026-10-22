@@ -26,7 +26,7 @@ Standards get revised, and a mapping keyed to a stale edition quietly rots. Rule
 |---|---|---|---|
 | **arc42** | arc42 (Starke/Hruschka), open | **v9 (current)** — v8 was Feb 2022; v9 is what `arc42.org/download` ships as of 2026-07-26. Section numbering is stable across the two, so a v8-keyed mapping still lands, but cite v9 | Documentation **template** for step 8: 12 sections (context, constraints, solution strategy, building blocks, runtime, deployment, crosscutting, decisions, quality, risks). |
 | **TOGAF Standard** | The Open Group | **10th Edition (2022)**, with **Technical Corrigendum 1 applied May 2025**. Confirmed current 2026-07-26 — no 11th edition | Enterprise-architecture **method** (the ADM) — the wider governance frame when a design spans an org, not one system. |
-| **C4 model** | Simon Brown | living (unversioned) — cite it as current with a retrieval date, never invent a version | The **diagram** notation, already used in `templates/c4-context.md` / `c4-container.md`. |
+| **C4 model** | Simon Brown | living (unversioned) — cite it as current with a retrieval date, never invent a version | The **diagram** notation, already used in `../templates/c4-context.md` / `c4-container.md`. |
 
 **How they compose.** C4 gives the pictures; **arc42 gives the prose around them** — drop your C4 Context and Container diagrams into arc42 sections 3 and 5, and your ADRs into section 9. arc42 is the complementary template the C4 templates slot into. Reach for **TOGAF's ADM** only at enterprise scale (multiple systems, capability planning); for a single-system design it is heavier than the step-8 artifacts this skill emits. Cross-ref: `architecture-patterns.md` (style selection feeds arc42 §4 "solution strategy").
 

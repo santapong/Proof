@@ -6,13 +6,13 @@ The order is **router → references → template**. It matters: the router's nu
 
 Everything below follows from one fact: **`SKILL.md` enters the agent's context on invocation, and `references/*.md` do not.** A reference file costs nothing until the router asks for it. A router costs its full size on every single use.
 
-A mature skill is roughly:
+Size follows the work rather than a fixed byte or file quota:
 
 | Part | Size | Why |
 |---|---|---|
-| `SKILL.md` | **6–13 KB** | Loaded every time — it competes with the user's actual task |
-| `references/` | **5–7 files, ~100 KB total** | Loaded selectively; depth is free here |
-| `templates/` | **1 file, 6–10 KB** | Never loaded into context at all — executed |
+| `SKILL.md` | Smallest sufficient router | Loaded when invoked; metadata discovery also has a host budget |
+| `references/` | Only the distinct questions worth maintaining | Loaded selectively; retrieved content is not free |
+| `templates/` | Only useful runnable scaffolds | Read/adapted during authoring, then executed by the host |
 
 The failure mode is gradual, which is why it needs a stated limit. A router grows an explanation, then a worked example, then a table — and at 30 KB it has become a reference file that also happens to load on every invocation. Open [`proof-review/SKILL.md`](../../proof-review/SKILL.md) as the exemplar: a large, technical domain covered in under 9 KB, because it refuses to explain anything it can cite.
 
@@ -53,7 +53,7 @@ Skills are read by a model under context pressure and by a human reviewing a PR.
 
 - **Assert, then qualify.** "Barriers must be earned" then the three cases — not "it may sometimes be preferable to consider avoiding barriers."
 - **Name the failure.** Rules survive when their cost is attached: *"Two skills shipped with unparseable frontmatter and passed every gate"* is remembered; *"validate your YAML"* is not. Prefer a real incident from this repo to a hypothetical.
-- **Numbers over adjectives.** "6–13 KB", "3 verifiers", "~30%" — not "small", "several", "a significant portion".
+- **Qualify numbers.** Name measured units and evidence; do not invent byte quotas, universal verifier counts or percentages to sound precise.
 - **Say what is *not* true.** The reader's wrong assumption is worth a sentence: *"A green gate is not a clean bill"*, *"the grade is about provenance, not quality"*.
 - **Admit the seams.** Where something is scaffolding rather than a proven recipe, say so in the body. `proof-operate` states plainly that without a live service its templates are gated scaffolds. That admission is what makes the rest of the file trustworthy.
 - **Second person, present tense, active voice.** "Read the audit before drafting." Not "the audit should be read".

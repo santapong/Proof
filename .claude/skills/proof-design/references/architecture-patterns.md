@@ -206,7 +206,7 @@ Escalate off the modular-monolith default **only** for a named, requirements-bac
 - "We might need to scale later." Design the seam now; extract when the profile proves the need. Reversibility is on your side — a clean module extracts in days.
 - "Reusability across projects." That's a shared library, not a service.
 
-**How to split when a trigger fires:** extract along the module seams the monolith already revealed — one bounded context at a time, starting with the single seam that hurts most (the one the trigger points at). Give the extracted service its own datastore; break the shared table with the outbox pattern for reliable events (see `references/backend.md`) rather than a synchronous dual-write. Keep the rest in the monolith. A **monolith with two extracted services** is a healthy, common end state — not a failure to "finish" migrating. Stop extracting when no remaining seam has a trigger.
+**How to split when a trigger fires:** extract along the module seams the monolith already revealed — one bounded context at a time, starting with the single seam that hurts most (the one the trigger points at). Give the extracted service its own datastore; break the shared table with the outbox pattern for reliable events (see `backend.md`) rather than a synchronous dual-write. Keep the rest in the monolith. A **monolith with two extracted services** is a healthy, common end state — not a failure to "finish" migrating. Stop extracting when no remaining seam has a trigger.
 
 ## Event-driven vs. request-response
 
@@ -227,8 +227,8 @@ A style decision that isn't recorded gets re-litigated every six months and can'
 
 Simon Brown's C4 is four nested levels of abstraction; **draw the top two, and go deeper only when a reader is genuinely confused without it.**
 
-1. **Context** — the system as one box, its human users, and the external systems it talks to. The "who uses this and what does it depend on" picture. Always draw this. Template: `templates/c4-context.md`.
-2. **Container** — the deployable/runnable units inside the system (web app, API, database, worker, broker) and how they communicate. This is where the monolith-vs-services decision becomes visible. Almost always draw this. Template: `templates/c4-container.md`.
+1. **Context** — the system as one box, its human users, and the external systems it talks to. The "who uses this and what does it depend on" picture. Always draw this. Template: `../templates/c4-context.md`.
+2. **Container** — the deployable/runnable units inside the system (web app, API, database, worker, broker) and how they communicate. This is where the monolith-vs-services decision becomes visible. Almost always draw this. Template: `../templates/c4-container.md`.
 3. **Component** — the major structural pieces inside one container. Draw only for a container whose internals are genuinely subtle; most don't need it.
 4. **Code** — class/sequence level. Effectively never hand-draw this; let the IDE generate it on demand. It rots the instant the code changes.
 
@@ -236,7 +236,7 @@ Both templates render as **Mermaid** (`C4Context` / `C4Container`), so the diagr
 
 ### ADRs — the decisions (Nygard format)
 
-One **Architecture Decision Record** per significant, hard-to-reverse choice: the architecture style, the primary datastore, a per-domain consistency policy, sync-vs-async, an extraction. Use Michael Nygard's format (the fields in `templates/adr-template.md`):
+One **Architecture Decision Record** per significant, hard-to-reverse choice: the architecture style, the primary datastore, a per-domain consistency policy, sync-vs-async, an extraction. Use Michael Nygard's format (the fields in `../templates/adr-template.md`):
 
 - **Title** — a short noun phrase, numbered (`0007-extract-billing-service`).
 - **Status** — Proposed / Accepted / Deprecated / Superseded-by-NNNN.

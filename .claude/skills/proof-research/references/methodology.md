@@ -43,4 +43,4 @@ Before finishing, audit against the Step 0 decomposition: which sub-questions ar
 ## Depth control
 
 - **Fact-check / narrow question** — a handful of sources, single verification pass, a paragraph of answer. Do it inline; don't spin up a workflow.
-- **Literature / market review** — broad sweep across all angles, per-claim verification, completeness pass, structured report. Run it as the `templates/research.workflow.js` workflow. If discovery keeps surfacing new material, loop the sweep until two consecutive rounds add nothing new (loop-until-dry, loop policy L1) rather than stopping at a fixed source count.
+- **Literature / market review** — broad sweep across all angles, per-claim verification, completeness pass, structured report. Run it as the `../templates/research.workflow.js` workflow. If discovery keeps surfacing new material, loop the sweep until two consecutive rounds add nothing new (loop-until-dry, loop policy L1) rather than stopping at a fixed source count.

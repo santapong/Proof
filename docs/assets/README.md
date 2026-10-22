@@ -26,7 +26,7 @@ architecture SVG is generated and should be rerendered after a spec change.
 
 ## Architecture evidence
 
-The current specification pins local candidate commit
+The diagram specification retains its locally verified source snapshot at candidate commit
 `c5e9198ce191605ee16e4da3d6d5ff71cba9a163`. Its 11 source references resolve to matching local Git blobs:
 manifests, guide/engine entrypoints, harness and routing policies, lifecycle
 gates, MCP server/contracts and host packaging. The candidate is not published;

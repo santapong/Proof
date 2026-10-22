@@ -1,5 +1,7 @@
 # Installing Proof
 
+Use the [documentation index](docs/README.md) and [26-skill catalog](docs/skills.md) to choose a task before installing more than you need.
+
 **Proof 4 beta candidate, 23 October 2026.** Use a checkout containing the
 `proof-*` directories. The public GitHub release is still v3.0.0; its old command
 names do not invoke this candidate. No legacy skill aliases are installed here.

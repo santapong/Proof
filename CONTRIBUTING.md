@@ -2,6 +2,8 @@
 
 Thanks for helping improve Proof. This repo is a Claude Code plugin of skills, so "contributing" usually means **adding or improving a skill**, **deepening a skill's reference standards**, or **adding a lifecycle framework**. This guide covers the conventions and how to validate a change.
 
+Use the [documentation index](docs/README.md), [skill catalog](docs/skills.md) and [framework review](docs/reviews/framework-review-2026-10-23.md) when changing ownership or shared policy.
+
 ## Repository shape
 
 Every skill lives in `.claude/skills/<name>/` and follows one shape:
@@ -138,7 +140,7 @@ Workflow templates read their arguments off one normalized `input` object, and a
 
 | Reserved | Flag | Values | Read by |
 |---|---|---|---|
-| `input.mode` | `--mode` | `balanced` (default) \| `all-out` | `const MODE` in the canonical `ROUTES` block (§M8) |
+| `input.mode` | `--mode` | `lite` \| `balanced` (default) \| `all-out` | `const MODE` in the canonical `ROUTES` block (§M8) |
 | `input.planner` | `--planner` | `opus` (default) \| `fable` | `const PLANNER` in the canonical `ROUTES` block (§M7, §M8) |
 
 **Never take `mode` for anything else.** `improvement-loop.workflow.js` had a dry/live safety switch on `input.mode` in v0.4.0 and had to rename it to `input.runMode` for this release — a breaking change to a shipped argument, carrying a back-compat branch that logs a warning when it sees a legacy value. After 1.0.0, renaming an argument is a breaking change; the cheap fix is to not collide in the first place.

@@ -18,7 +18,7 @@ establish a native installed-agent session or marketplace approval.
 [![Skills: 26](https://img.shields.io/badge/skills-26-6f42c1.svg)](#the-skills)
 [![Validation](https://github.com/santapong/Proof/actions/workflows/validate.yml/badge.svg?branch=develop)](https://github.com/santapong/Proof/actions/workflows/validate.yml)
 
-[First task](docs/getting-started.md) · [Quick start](#quick-start) · [Architecture](#architecture) · [Team workflow](#software-team-workflow) · [Skills](#the-skills) · [Migration](docs/migration-proof-4.md) · [Contributing](#contributing)
+[Docs](docs/README.md) · [All 26 skills](docs/skills.md) · [First task](docs/getting-started.md) · [Quick start](#quick-start) · [Architecture](#architecture) · [Team workflow](#software-team-workflow) · [Skills](#the-skills) · [Migration](docs/migration-proof-4.md) · [Contributing](#contributing)
 
 _Formerly Heimdall and TheLoopSkill. Those are historical product names, not aliases._
 
@@ -101,7 +101,7 @@ and PRs for review.
 | Operate a service or investigate an incident | `proof-operate`, `proof-incident` |
 | Document and improve the workflow itself | `proof-docs`, `proof-skill`, `proof-harness`, `proof-autopilot` |
 
-See the [skill atlas](docs/c4/skills.md) for visual groupings and
+See the [complete task catalog](docs/skills.md), the [framework review](docs/reviews/framework-review-2026-10-23.md), and the [skill atlas](docs/c4/skills.md) for visual groupings and
 [boundary audit](docs/design/boundary-audit.json) for the separating questions
 between overlapping skills. Flags are specific to each skill's entrypoint.
 

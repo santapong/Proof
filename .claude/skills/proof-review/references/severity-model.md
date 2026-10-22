@@ -36,7 +36,7 @@ Precedence when they disagree: **KEV > reachability-in-this-codebase > CVSS base
 
 ## Confidence — 0 to 1, earned by the trace
 
-Confidence is how sure you are the finding is real and exploitable, not how bad it would be. It is **earned by the data-flow trace and a passed confirm/refute test** (`vulnerability-playbooks.md`), never granted by a suspicious-looking pattern.
+The numeric confidence is a review-rubric score, not a calibrated probability or measured false-positive rate. It grades the available evidence, not how bad the defect would be. It is **earned by the data-flow trace and a passed confirm/refute test** (`vulnerability-playbooks.md`), never granted by a suspicious-looking pattern.
 
 | Confidence | Meaning |
 |---|---|
@@ -64,7 +64,7 @@ Rules the grid encodes:
 - **Low is out regardless of confidence.** Certainty that something is minor does not make it worth the reader's attention. This skill reports defects, not style — a certain-but-trivial issue is noise.
 - **When torn between reporting and dropping, drop.** Let the verification pass be where uncertain findings die, not the reader's inbox. Log every drop and every suppression (H6, no silent truncation) so the choice is auditable.
 
-The multi-agent template wires this bar into the adversarial-verify stage: only survivors that clear Critical/High/Medium at ≥ 0.8 are emitted. See `../SKILL.md` §8 and `templates/security-review.workflow.js`.
+The multi-agent template wires this bar into the adversarial-verify stage: only survivors that clear Critical/High/Medium at ≥ 0.8 are emitted. See `../SKILL.md` §8 and `../templates/security-review.workflow.js`.
 
 ## False-positive exclusions
 

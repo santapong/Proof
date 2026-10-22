@@ -1,0 +1,2330 @@
+{
+  "schema": 1,
+  "reviewed_at_utc": "2026-10-22T18:46:24.331804+00:00",
+  "baseline_commit": "0b49797f9d748f17160daa4593cdcc7fb024e4da",
+  "source_skill_count": 26,
+  "baseline_recorded_overlap_pairs": 39,
+  "candidate_recorded_overlap_pairs": 45,
+  "scope": "Complete tracked documentation/contract inventory and active path/claim-risk scan; every skill entrypoint and pair overlap reviewed. Targeted reference corrections; no blanket external-source or native behavior certification.",
+  "self_inventory_entry": "Excluded to avoid a circular content hash",
+  "counts": {
+    "retained": 180,
+    "updated": 75,
+    "added": 4,
+    "historical-preserved": 30
+  },
+  "files": [
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "19710642f17ecbf57d9183f17c8046fc4eb8471b555e26358d12cfcfa75693e3",
+      "candidate_sha256": "19710642f17ecbf57d9183f17c8046fc4eb8471b555e26358d12cfcfa75693e3"
+    },
+    {
+      "path": ".claude-plugin/plugin.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "1c29ae93671027a723bf4f5633b548e47dc8faa34c75da3b2f42e40c019cb38d",
+      "candidate_sha256": "1c29ae93671027a723bf4f5633b548e47dc8faa34c75da3b2f42e40c019cb38d"
+    },
+    {
+      "path": ".claude/commands/gate.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "57e0010edc6241d444852027b134216752dd4db1490dfc4e5bc3c7e7ef054f7c",
+      "candidate_sha256": "57e0010edc6241d444852027b134216752dd4db1490dfc4e5bc3c7e7ef054f7c"
+    },
+    {
+      "path": ".claude/commands/release.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "87542ef66d16f1d1feb860aa6ae0e00300e9dcd7a53bfcb8006e3e9a06816bf2",
+      "candidate_sha256": "87542ef66d16f1d1feb860aa6ae0e00300e9dcd7a53bfcb8006e3e9a06816bf2"
+    },
+    {
+      "path": ".claude/settings.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "9b73ca93de7e409c084b77586e138e0e10d9e3aa0c96cb8c30dd8ada4537b836",
+      "candidate_sha256": "9b73ca93de7e409c084b77586e138e0e10d9e3aa0c96cb8c30dd8ada4537b836"
+    },
+    {
+      "path": ".claude/skills/proof-algo/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "83aacc6c3fb9ca0870dab1fbceae34af738c41ec6861d8d976634894cc40a38d",
+      "candidate_sha256": "9157bf5d41e83baede078ebc6edfc66621a964bae7068dd821af31364bcb6cb3"
+    },
+    {
+      "path": ".claude/skills/proof-algo/references/benchmarking.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "c40b0f8b970befd44d3e2549523161d4d68e8de29e54a86dd3cccfbaf8e9c7e0",
+      "candidate_sha256": "c40b0f8b970befd44d3e2549523161d4d68e8de29e54a86dd3cccfbaf8e9c7e0"
+    },
+    {
+      "path": ".claude/skills/proof-algo/references/complexity-and-structures.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "b94bc5ee83efacacc9052dcbe28cf14709c63453ab3b069305d52bfd16ad244b",
+      "candidate_sha256": "02aedace67333d944e3ac623fc5a23a6a1158cde0ec2f5a6579b0bc67de96863"
+    },
+    {
+      "path": ".claude/skills/proof-algo/references/concurrency.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "f85892675278184d254af5886ccd269433809301ba7f3908f90283e0a095c52a",
+      "candidate_sha256": "f85892675278184d254af5886ccd269433809301ba7f3908f90283e0a095c52a"
+    },
+    {
+      "path": ".claude/skills/proof-algo/references/correctness.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "b7efc0bb155ed2d8b08da8f6924c145e9b9e993257d2e009f23bef49972c8d1a",
+      "candidate_sha256": "b7efc0bb155ed2d8b08da8f6924c145e9b9e993257d2e009f23bef49972c8d1a"
+    },
+    {
+      "path": ".claude/skills/proof-algo/references/randomized-structures.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "0fdabb72ed765ee3eff44e719698334cf57f9f927600038f3d13cb2f13b22f12",
+      "candidate_sha256": "0fdabb72ed765ee3eff44e719698334cf57f9f927600038f3d13cb2f13b22f12"
+    },
+    {
+      "path": ".claude/skills/proof-algo/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "e2c26429f9a52dfe23f3257b6a696e7a88767592db5140195c825317e63afa6e",
+      "candidate_sha256": "e2c26429f9a52dfe23f3257b6a696e7a88767592db5140195c825317e63afa6e"
+    },
+    {
+      "path": ".claude/skills/proof-audit/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "retained",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "02cd7473d92aa9952eb133059ff5be8b1b99b5c41e8c78fcf7fe3bca2b414273",
+      "candidate_sha256": "02cd7473d92aa9952eb133059ff5be8b1b99b5c41e8c78fcf7fe3bca2b414273"
+    },
+    {
+      "path": ".claude/skills/proof-audit/references/methodology.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "65e9678dbfb449ea2307d39347a78e23dd16bf3b2c3865fdbd43d36eda92d9c7",
+      "candidate_sha256": "6674303c88e08162062eea2bf6cdb0b3d1d5f7a1ac078a9c906736b05e3973ab"
+    },
+    {
+      "path": ".claude/skills/proof-audit/references/report-template.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "b353aa3e8f23ca5588e657571a6027ae13744a597398fa1f336bc0101dfab0c7",
+      "candidate_sha256": "b353aa3e8f23ca5588e657571a6027ae13744a597398fa1f336bc0101dfab0c7"
+    },
+    {
+      "path": ".claude/skills/proof-audit/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "0a884c589b0a3eb66bfea6d035daa0fba8b644274c40d7d31ef57fa0d0d207c9",
+      "candidate_sha256": "e001bbd54cce5af43ed6cb3a37fa93fc7964e16e5e6b2431ab1412f468cfb5ef"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "a410f49b27c74a6ef31478795923262c1e883f7ab220793c26d5fa1a71d661e1",
+      "candidate_sha256": "e92bc6c02fcba0516188f0a89d24eb30c3af01ec4fdecedc09d40d218b727ad5"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/references/anti-patterns.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "e1aafdce61186673ccec80caca3481383d998a79cee8ea96a2675a8e645f7d14",
+      "candidate_sha256": "498b1ca35b9b74a2efd15401ffa15104d56731a259208bb6030d58cd96522e8d"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/references/comprehension-rot.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "d0aae540ad62321ea7497bc553a7bebefd0a76622a3b423239e24c6d4bdf9af9",
+      "candidate_sha256": "bbb43f4a4189aba8ba5c905500825d953f1206f44abae19eb749a3d0492ca4e2"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/references/credit-horizon.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "822d4f9e4b3574a6b999649d0980a489ab20db721d14d0a82e8e408c58b909e0",
+      "candidate_sha256": "3f35714fd0321b94ea6afefc226bdde42d31abb5fc7fe8178cf75e3d10f9b199"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/references/deployment.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "09a6923325fe9804109dddd0a39cb64f17b24b742e4c19f7ad754d45ffbdbc3d",
+      "candidate_sha256": "56b2d5e0068531ad13b6a7381af874ea05d642c54c26b11df02b1920f35c3953"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/references/feedback-intake.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "d53200f435021b16d27cc908095f43d0be9d029df68bfd25beb8240e6a64b891",
+      "candidate_sha256": "d53200f435021b16d27cc908095f43d0be9d029df68bfd25beb8240e6a64b891"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/references/held-out-eval.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "493543c72e60683733e5ba1eeb2eea0a2c55f56eb762a731dcc68c5f0837555c",
+      "candidate_sha256": "493543c72e60683733e5ba1eeb2eea0a2c55f56eb762a731dcc68c5f0837555c"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/references/proof-design.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "8ea2c59a8f24750c7f21fd20d26a0dca5c2111d1af0238e74686681427032fb5",
+      "candidate_sha256": "8ea2c59a8f24750c7f21fd20d26a0dca5c2111d1af0238e74686681427032fb5"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/references/skill-improvement.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "bf78d93e37389f9f6316f8ef87dd81b425d8363a8c27860675c563142ffe5cc2",
+      "candidate_sha256": "bf78d93e37389f9f6316f8ef87dd81b425d8363a8c27860675c563142ffe5cc2"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "8a37a9adeba369fc51f184174999adf03a6d540baa2e4f31aa7bf67a12ba6b63",
+      "candidate_sha256": "366554982b01386bac2111fdda667991831374115daf6bcade1fbd304b66424f"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/references/verifier-integrity.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "d8a32b8ddaae75b15f1afe46791b889367c347d012121823b3febc611b98ebde",
+      "candidate_sha256": "a6b1fbc5e600ab6f3fe9bf8404f2077e50e62deb7e75938ef16245c26a8724ea"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/templates/comprehension-digest.routine.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "533eaf83cadce2568ddaaa05e8ec940f570b74592537a585d3905762a625f4af",
+      "candidate_sha256": "533eaf83cadce2568ddaaa05e8ec940f570b74592537a585d3905762a625f4af"
+    },
+    {
+      "path": ".claude/skills/proof-autopilot/templates/routine-prompt.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "856fedd7bf31abfd042652f6135d1f72ba1ff19c11c3b7e9179268b42698580a",
+      "candidate_sha256": "856fedd7bf31abfd042652f6135d1f72ba1ff19c11c3b7e9179268b42698580a"
+    },
+    {
+      "path": ".claude/skills/proof-build/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "1e64efbbac751a85381b3179305acbb4a09dc60267b794efc430c46231cdd97e",
+      "candidate_sha256": "0ed208b682d6449ed2cf6bf5d72b6911542da8206ff53eb9cc6f4cf6f413362e"
+    },
+    {
+      "path": ".claude/skills/proof-build/references/conduct.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "2ebcc16084efe60083d48921b93dbf49156052682f0071cb5c69961febed7261",
+      "candidate_sha256": "76c66c0eefb661c8704657b2f41429affa8bb1f47fdd2a69c594bf5cec0a6531"
+    },
+    {
+      "path": ".claude/skills/proof-build/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "106dd963b11986fc78e962b5d3fb6e89c2a49f63c0b6c9430f050d3bba66c9eb",
+      "candidate_sha256": "16134414f3957244bd1fb63f42f4c6e9d12380181ede35a3d376f701279c641e"
+    },
+    {
+      "path": ".claude/skills/proof-comprehend/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "retained",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "0d73319188040152df0bd723e6913e050c915daf5b0f64df6f518a24ebd53d80",
+      "candidate_sha256": "0d73319188040152df0bd723e6913e050c915daf5b0f64df6f518a24ebd53d80"
+    },
+    {
+      "path": ".claude/skills/proof-comprehend/references/architecture-recovery.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "1e56305636f3d7ae7dc833288c6253f84de27c444b422a6e1b4837a4d3dc7bc0",
+      "candidate_sha256": "1e56305636f3d7ae7dc833288c6253f84de27c444b422a6e1b4837a4d3dc7bc0"
+    },
+    {
+      "path": ".claude/skills/proof-comprehend/references/comprehension-traps.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "3ed73e6cf6f6180f59f294f1590944bc6e885507bddb30798d0f5aecb2501fea",
+      "candidate_sha256": "3ed73e6cf6f6180f59f294f1590944bc6e885507bddb30798d0f5aecb2501fea"
+    },
+    {
+      "path": ".claude/skills/proof-comprehend/references/decision-recovery.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "8f79675c6e76d1d6a4f853f9c7e767bfa8e9e38cc0de1111fb1b9d7b7b7c823e",
+      "candidate_sha256": "8f79675c6e76d1d6a4f853f9c7e767bfa8e9e38cc0de1111fb1b9d7b7b7c823e"
+    },
+    {
+      "path": ".claude/skills/proof-comprehend/references/feature-tracing.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "028ef29fc44ec747ff5f78d4a66c2cf0c78cce04ada1d57fdb3cfb23d0c235b9",
+      "candidate_sha256": "028ef29fc44ec747ff5f78d4a66c2cf0c78cce04ada1d57fdb3cfb23d0c235b9"
+    },
+    {
+      "path": ".claude/skills/proof-comprehend/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "e0441af0987ae5ed5b05620f55738d4e2ca7a8bfa04b942974f16b6ce0e197f9",
+      "candidate_sha256": "e0441af0987ae5ed5b05620f55738d4e2ca7a8bfa04b942974f16b6ce0e197f9"
+    },
+    {
+      "path": ".claude/skills/proof-context/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "cd4773f00de38272bc8924813db9f1e86a71bc3167ea1c0699e2b5668adb5465",
+      "candidate_sha256": "eee1ba83b98cddfb41302dae8f0cffdf1bd7b66c666c960e9c41f0d17eef0477"
+    },
+    {
+      "path": ".claude/skills/proof-context/references/context-rules.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "2497e05f45091c8c41d4eedc8fe2e909f6132ae215a7ffa21bcd7544757f07c2",
+      "candidate_sha256": "2497e05f45091c8c41d4eedc8fe2e909f6132ae215a7ffa21bcd7544757f07c2"
+    },
+    {
+      "path": ".claude/skills/proof-context/references/shared-state.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "f84eb34c2eb167f8dc752ed6820b894fafb435c69228f1c1f239b65835d7162f",
+      "candidate_sha256": "f84eb34c2eb167f8dc752ed6820b894fafb435c69228f1c1f239b65835d7162f"
+    },
+    {
+      "path": ".claude/skills/proof-context/references/software-efficiency.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "9f86c09ad945fab1042a3fab88e932012f603fae533b8a12a6414fd1f62dde31",
+      "candidate_sha256": "9f86c09ad945fab1042a3fab88e932012f603fae533b8a12a6414fd1f62dde31"
+    },
+    {
+      "path": ".claude/skills/proof-context/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "ecca843f5bfd44dea1c1e3ca3286503e5176414f3feca644d88e892ab0606a8e",
+      "candidate_sha256": "ecca843f5bfd44dea1c1e3ca3286503e5176414f3feca644d88e892ab0606a8e"
+    },
+    {
+      "path": ".claude/skills/proof-context/references/supersession.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "9c126e20a2824c5705e9d5ced590d69a18eb95fb4bdbfefbd94ea2f2f9b00598",
+      "candidate_sha256": "9c126e20a2824c5705e9d5ced590d69a18eb95fb4bdbfefbd94ea2f2f9b00598"
+    },
+    {
+      "path": ".claude/skills/proof-context/references/trace-invariants.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "b0776c12c73d441da45e91b3a3a4c6b9ad3077e6511e68fd3d5c65529acd5849",
+      "candidate_sha256": "d5552890f2b30e9c7c7906e9c2f1dcc1c4fd928440b654ad53c5261536fe6aca"
+    },
+    {
+      "path": ".claude/skills/proof-debug/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "fe28ad9257df19ac6961c1313e5f8301ce7692f476aa97b280a86cefe55f7697",
+      "candidate_sha256": "1918971c9b1030cc12ce739c2b14414a867f3a2b7099d866ed384fd44b2debdd"
+    },
+    {
+      "path": ".claude/skills/proof-debug/references/hypothesis-testing.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "ae525db0dc294478eb12983f01fefa9726a221ea6b74b2682f02433f0b3d6251",
+      "candidate_sha256": "ae525db0dc294478eb12983f01fefa9726a221ea6b74b2682f02433f0b3d6251"
+    },
+    {
+      "path": ".claude/skills/proof-debug/references/methodology.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "d879e2a1a7fb657346f6e80829e0a9787ae219ddc1bfd0401cbb9ecd836f932e",
+      "candidate_sha256": "d879e2a1a7fb657346f6e80829e0a9787ae219ddc1bfd0401cbb9ecd836f932e"
+    },
+    {
+      "path": ".claude/skills/proof-debug/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "fb2e30612d958eb28ec243f966fbc4c7f2f35d0249c0bdd2bd002fb78462df3e",
+      "candidate_sha256": "fb2e30612d958eb28ec243f966fbc4c7f2f35d0249c0bdd2bd002fb78462df3e"
+    },
+    {
+      "path": ".claude/skills/proof-design/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "b3cd94661306cc7a508631dbc02589507c7d7e32562d49c5cebb87ec081db75e",
+      "candidate_sha256": "1c7f5fd120e8190dc687b855a73289fb909029fe1f8cdbef4047e02236e8f303"
+    },
+    {
+      "path": ".claude/skills/proof-design/references/api-design.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "c40911e881077e7a4f6b150683344d40b6873fd9ba457a3ab4e5255abe1a14dc",
+      "candidate_sha256": "c40911e881077e7a4f6b150683344d40b6873fd9ba457a3ab4e5255abe1a14dc"
+    },
+    {
+      "path": ".claude/skills/proof-design/references/architecture-patterns.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "81737ac9e341bdf6b15e5ebae021d44be03099eb6ac91b318a16be44f11ca271",
+      "candidate_sha256": "dd0d8df46e48551a5782fa4bb83f718685c1b7c4176d319c1611aea5d796983a"
+    },
+    {
+      "path": ".claude/skills/proof-design/references/backend.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "48915c4eb7d06f93531aee7ed5714cbfbd5807df4c5f8ecff67ae369b45a0a9f",
+      "candidate_sha256": "753a67582d92422f45babc1d38c5be1e8e9b5346f1ef13aef251356eac396838"
+    },
+    {
+      "path": ".claude/skills/proof-design/references/deployment.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "17f559ac74db94c481ce27af5427b62c65b7bf7c3b0635e5c1747d818eb5e2b2",
+      "candidate_sha256": "f5c1a9170608f447ebf0c19cd32b86820fe549b3c251c6a616c7335e926cbca5"
+    },
+    {
+      "path": ".claude/skills/proof-design/references/frontend.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "83360224d39d72e550b3f9dd9b756156070e7df090a5b948bc2748fe5ec3eb85",
+      "candidate_sha256": "984ba3a69963a8b182fe93d26a9a88425b92e5e40d02c1815f2a72badf606356"
+    },
+    {
+      "path": ".claude/skills/proof-design/references/nfr.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "200b4e19c557545f1929246143292d2de401e2ac214104d98e631a2c09b702b2",
+      "candidate_sha256": "2517a07b85481061fcebbd28315110d7715496dda5fbd0ba62f1810f9a19917c"
+    },
+    {
+      "path": ".claude/skills/proof-design/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "7c371e81b4cd8118f612b426b0fd8b9638a3563b4e2b392ba0bc800df274b402",
+      "candidate_sha256": "1c07b6d46f5ca8d15ebd8e7b50410f0d89ed794e2c94fd235bc01458d0c23dcc"
+    },
+    {
+      "path": ".claude/skills/proof-design/templates/adr-template.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "c38dc73666567ae01071d38785a5bb11690ef2312fbdb32a90ec1702c4b2c3bd",
+      "candidate_sha256": "c38dc73666567ae01071d38785a5bb11690ef2312fbdb32a90ec1702c4b2c3bd"
+    },
+    {
+      "path": ".claude/skills/proof-design/templates/c4-container.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "7b88a8a5e6a0e8f16d4cc442d72ffcf0a11512a8d9821822fa6a94942ba5c1f3",
+      "candidate_sha256": "7b88a8a5e6a0e8f16d4cc442d72ffcf0a11512a8d9821822fa6a94942ba5c1f3"
+    },
+    {
+      "path": ".claude/skills/proof-design/templates/c4-context.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "1398286135131ff84ed74ae9ecadab2d837e08287ea7d1c06e35d9dde67cfc59",
+      "candidate_sha256": "1398286135131ff84ed74ae9ecadab2d837e08287ea7d1c06e35d9dde67cfc59"
+    },
+    {
+      "path": ".claude/skills/proof-docs/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "7adad8549e8aa938ca8f3a5d525a779c54e2aba56ca704669e0c49bce97a9d79",
+      "candidate_sha256": "2d5eef84d4c9a22bc976c5631b510f65e53e94fd26c6199defa73b229d1fe8ff"
+    },
+    {
+      "path": ".claude/skills/proof-docs/references/doc-types.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "466b10511d13574f07272399fd4484f2e3a10e9df7953152b08272010eb65deb",
+      "candidate_sha256": "466b10511d13574f07272399fd4484f2e3a10e9df7953152b08272010eb65deb"
+    },
+    {
+      "path": ".claude/skills/proof-docs/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "a47c410abbd6c8340e28351450fbe77891d5675d3c1e19b4fab8da034b8debbd",
+      "candidate_sha256": "8d6f42d4c4fa0fff03387577dfeff00557896acd7f43296785c9f6c1cbb89b21"
+    },
+    {
+      "path": ".claude/skills/proof-docs/references/style.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "e03000063827a4e175c2e1117cef528e4d9d34ed4f0439c03adbd487cc30c44b",
+      "candidate_sha256": "e03000063827a4e175c2e1117cef528e4d9d34ed4f0439c03adbd487cc30c44b"
+    },
+    {
+      "path": ".claude/skills/proof-engine/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "retained",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "7bc436842839f9ab95e6590cd79570d25ccdfeeb5fd2bf4f256395ff6931027e",
+      "candidate_sha256": "7bc436842839f9ab95e6590cd79570d25ccdfeeb5fd2bf4f256395ff6931027e"
+    },
+    {
+      "path": ".claude/skills/proof-engine/frameworks/AIDLC.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "6349efc0cf8ccad7108954b41ebed33b577ee009d6e8a303a252804186fc59f4",
+      "candidate_sha256": "6349efc0cf8ccad7108954b41ebed33b577ee009d6e8a303a252804186fc59f4"
+    },
+    {
+      "path": ".claude/skills/proof-engine/frameworks/README.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "e604d39b6c0bb63450344bd8d36e4047224d2891f4415e4bf4385ada3ef0ff96",
+      "candidate_sha256": "e604d39b6c0bb63450344bd8d36e4047224d2891f4415e4bf4385ada3ef0ff96"
+    },
+    {
+      "path": ".claude/skills/proof-engine/frameworks/VENTURE.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "1f234e7346fdaf0730dea748e880ec823cac909e990b68f44b42b143fac1a2c7",
+      "candidate_sha256": "1f234e7346fdaf0730dea748e880ec823cac909e990b68f44b42b143fac1a2c7"
+    },
+    {
+      "path": ".claude/skills/proof-engine/frameworks/_TEMPLATE.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "ea66786439cc6960b5b917d9945bd7d88afd229591d7f62541002a1f56c24a6e",
+      "candidate_sha256": "ea66786439cc6960b5b917d9945bd7d88afd229591d7f62541002a1f56c24a6e"
+    },
+    {
+      "path": ".claude/skills/proof-engine/references/execution-modes.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "01862a2c4d56017591592d438bafa9acc624b7465efc1192ea5cf62b5c494caa",
+      "candidate_sha256": "fd710df8048755ef6a7e2778dcedf51a53df8017c2485baad6f7a25bbd930c3e"
+    },
+    {
+      "path": ".claude/skills/proof-engine/references/harness-policy.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "d84812e6e31c51abaaa38e2ec0126698a02a75d1c9f337d0472988913b4e4dc0",
+      "candidate_sha256": "d84812e6e31c51abaaa38e2ec0126698a02a75d1c9f337d0472988913b4e4dc0"
+    },
+    {
+      "path": ".claude/skills/proof-engine/references/loop-policy.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "4961fcccee1c04ffb0859f301e8da4fbf7e33171056b6264d309e5e37e7fbea9",
+      "candidate_sha256": "4961fcccee1c04ffb0859f301e8da4fbf7e33171056b6264d309e5e37e7fbea9"
+    },
+    {
+      "path": ".claude/skills/proof-engine/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "786de9e4ccce43ad6b7e3f6f210e114ab60e4774067bd0df0570056602529ff4",
+      "candidate_sha256": "786de9e4ccce43ad6b7e3f6f210e114ab60e4774067bd0df0570056602529ff4"
+    },
+    {
+      "path": ".claude/skills/proof-experiment/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "retained",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "009b7448a0faabdcae4012a8366565412f59b87f6c62a72674d48cb2ea6ba3a6",
+      "candidate_sha256": "009b7448a0faabdcae4012a8366565412f59b87f6c62a72674d48cb2ea6ba3a6"
+    },
+    {
+      "path": ".claude/skills/proof-experiment/references/evidence-gate.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "c35e0d3f556eded724ceadec575326ae5b7a79ef54defbc13635d1ea2a2ca2ba",
+      "candidate_sha256": "c35e0d3f556eded724ceadec575326ae5b7a79ef54defbc13635d1ea2a2ca2ba"
+    },
+    {
+      "path": ".claude/skills/proof-experiment/references/harness.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "8ebbe2f80816576be705c2178361bafd094e1a5d93249afc23b7a09618db5f7a",
+      "candidate_sha256": "8ebbe2f80816576be705c2178361bafd094e1a5d93249afc23b7a09618db5f7a"
+    },
+    {
+      "path": ".claude/skills/proof-experiment/references/hypothesis.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "8a1ba51bb1d62a10e639bfe467dfddfe3b81b6a27131636b3151a6d3a529e310",
+      "candidate_sha256": "8a1ba51bb1d62a10e639bfe467dfddfe3b81b6a27131636b3151a6d3a529e310"
+    },
+    {
+      "path": ".claude/skills/proof-experiment/references/prior-art.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "dfd54ae10878c40a8fcfc001e7e560b7896641edbd8425a6a5a1a9059fb3c447",
+      "candidate_sha256": "dfd54ae10878c40a8fcfc001e7e560b7896641edbd8425a6a5a1a9059fb3c447"
+    },
+    {
+      "path": ".claude/skills/proof-experiment/references/reporting.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "87be9591d3847da1ac67b240f6ef0ed7985326fadebd3169473dbd996cad2610",
+      "candidate_sha256": "87be9591d3847da1ac67b240f6ef0ed7985326fadebd3169473dbd996cad2610"
+    },
+    {
+      "path": ".claude/skills/proof-experiment/references/review.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "37cbb338da0e17e656d0f9f43422535ff3786670369afc56df25b337ffeaedf9",
+      "candidate_sha256": "37cbb338da0e17e656d0f9f43422535ff3786670369afc56df25b337ffeaedf9"
+    },
+    {
+      "path": ".claude/skills/proof-experiment/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "eec54981206977c0cc1184c59c12138e8c53bd4b566ea031e5f6ac65ab92e635",
+      "candidate_sha256": "eec54981206977c0cc1184c59c12138e8c53bd4b566ea031e5f6ac65ab92e635"
+    },
+    {
+      "path": ".claude/skills/proof-frontend/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "1647484f27998df73a9bd2c35af51bffcc8dca87124d12be61f0ba8ab2f4821c",
+      "candidate_sha256": "6958d5ac1935d5afc582c41d55d737c3aedbf88c4e8ef584ef786db6ef12477d"
+    },
+    {
+      "path": ".claude/skills/proof-frontend/references/accessibility.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "7fcddaa66ffda7c88cb09af7d9157f8197128522e4a99f68231190b70050909d",
+      "candidate_sha256": "7fcddaa66ffda7c88cb09af7d9157f8197128522e4a99f68231190b70050909d"
+    },
+    {
+      "path": ".claude/skills/proof-frontend/references/choreography.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "a196d6ec061718710e440c8e7e219a73c9bc074a571d41ff5ccdae0adac2cafc",
+      "candidate_sha256": "a196d6ec061718710e440c8e7e219a73c9bc074a571d41ff5ccdae0adac2cafc"
+    },
+    {
+      "path": ".claude/skills/proof-frontend/references/motion-toolkit.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "e6ebfd4289b11983a1051565998f53d4648b0928ef2ebd7fa36bd1c1452306c8",
+      "candidate_sha256": "e6ebfd4289b11983a1051565998f53d4648b0928ef2ebd7fa36bd1c1452306c8"
+    },
+    {
+      "path": ".claude/skills/proof-frontend/references/perceived-performance.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "9fac6af0f8164ef7dd5e93b7e50a5f44e5e1672a8f605a17e288823f7768a839",
+      "candidate_sha256": "9fac6af0f8164ef7dd5e93b7e50a5f44e5e1672a8f605a17e288823f7768a839"
+    },
+    {
+      "path": ".claude/skills/proof-frontend/references/scroll-cinema.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "33305558f35699768383eab78c9e23e20628db894963fb87d3fcc3e9d787062c",
+      "candidate_sha256": "33305558f35699768383eab78c9e23e20628db894963fb87d3fcc3e9d787062c"
+    },
+    {
+      "path": ".claude/skills/proof-frontend/references/sourcing-ideas.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "8438c9a42b926ee6bbfb5b4a2a251244d7ad9dad3a3cc6e4e6f68ebc98b4df58",
+      "candidate_sha256": "8438c9a42b926ee6bbfb5b4a2a251244d7ad9dad3a3cc6e4e6f68ebc98b4df58"
+    },
+    {
+      "path": ".claude/skills/proof-frontend/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "b7d81fbb4270992ad3be74342bf84ddba4f31120ee3b43c906f9b8095f32882a",
+      "candidate_sha256": "b7d81fbb4270992ad3be74342bf84ddba4f31120ee3b43c906f9b8095f32882a"
+    },
+    {
+      "path": ".claude/skills/proof-frontend/references/typography-and-restraint.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "5c20bb8122322c43b82f782f5ef04afdcf0d4ee4a5db7580028eff7a440a69ba",
+      "candidate_sha256": "5c20bb8122322c43b82f782f5ef04afdcf0d4ee4a5db7580028eff7a440a69ba"
+    },
+    {
+      "path": ".claude/skills/proof-frontend/references/verifying-motion.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "02f8f1eb82b015e58a549941f482dd9c8f0c505a4587914480d3cd37a8f2508c",
+      "candidate_sha256": "4d833e1e33495aa10597d758edb762cd9ff0cf5e93cf31f0d301f7c5e586d125"
+    },
+    {
+      "path": ".claude/skills/proof-guide/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "retained",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "0ebe70b53a27a14ae4f0ffeda23e814325b333035771f3a1b02dc2a2efcdbfb4",
+      "candidate_sha256": "0ebe70b53a27a14ae4f0ffeda23e814325b333035771f3a1b02dc2a2efcdbfb4"
+    },
+    {
+      "path": ".claude/skills/proof-guide/references/dispatch.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "f6625d14b1e2bdf5621f4ed97761abede52894d4f16f6ff093e2cc475a84ca55",
+      "candidate_sha256": "f6625d14b1e2bdf5621f4ed97761abede52894d4f16f6ff093e2cc475a84ca55"
+    },
+    {
+      "path": ".claude/skills/proof-guide/references/guide-traps.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "62ea262ed14d74515922f369ae7d54a78c48b598d095f994cb96b6b5f94eac9b",
+      "candidate_sha256": "62ea262ed14d74515922f369ae7d54a78c48b598d095f994cb96b6b5f94eac9b"
+    },
+    {
+      "path": ".claude/skills/proof-guide/references/interview.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "ef8cae8e255680e80bfff1cd5fbc0e4dcc08aaf5df9fbb4c81cb14266062acae",
+      "candidate_sha256": "ef8cae8e255680e80bfff1cd5fbc0e4dcc08aaf5df9fbb4c81cb14266062acae"
+    },
+    {
+      "path": ".claude/skills/proof-guide/references/software-team.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "6bc9389b9ee30d1c711ad677b318c10fe1f501ee94d58251cf4b3b53d4ebf7da",
+      "candidate_sha256": "6bc9389b9ee30d1c711ad677b318c10fe1f501ee94d58251cf4b3b53d4ebf7da"
+    },
+    {
+      "path": ".claude/skills/proof-guide/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "e5eb4882690263ff249194e19a5b28db935f3accf0ea2a054f7096bcc7466251",
+      "candidate_sha256": "e5eb4882690263ff249194e19a5b28db935f3accf0ea2a054f7096bcc7466251"
+    },
+    {
+      "path": ".claude/skills/proof-harness/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "2991d0c821a44549a13037b42605d563880edf3f57d928a83b3fa597c9af1a68",
+      "candidate_sha256": "d44bef7c8e9186e7e68bd1bf61653cc70e4f7e39697d4cf2b009ec449f0d19ca"
+    },
+    {
+      "path": ".claude/skills/proof-harness/references/automation-loops.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "fc386e2e1fe7aa61617276b64d1a6bcd05d94dbd9d615e0c7b463b9b93ab7594",
+      "candidate_sha256": "e1a4a2725cc57dd22c7eb9d75f63acb63f2187495d0708d51bf7d054e7a9f02d"
+    },
+    {
+      "path": ".claude/skills/proof-harness/references/hooks.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "cec12c30cd9a363d63712f1e107264d8c9458336b8cfb0202f32260305de89b9",
+      "candidate_sha256": "bd4104ae6e294a3667d7ee1a20ebefbbe7f267ba916d535dcca830bd2c84605c"
+    },
+    {
+      "path": ".claude/skills/proof-harness/references/mcp.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "48f5240b8ffa9eba6d56ceae1ea2bcc34b6523e23f188378f5ea8fd4adbd5bca",
+      "candidate_sha256": "48f5240b8ffa9eba6d56ceae1ea2bcc34b6523e23f188378f5ea8fd4adbd5bca"
+    },
+    {
+      "path": ".claude/skills/proof-harness/references/permissions.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "a7128f0478001e2cf8dcc40ed02ef836878ac8408fa93118daa3dd3acaf91f46",
+      "candidate_sha256": "a7128f0478001e2cf8dcc40ed02ef836878ac8408fa93118daa3dd3acaf91f46"
+    },
+    {
+      "path": ".claude/skills/proof-harness/references/skill-hooks.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "c9b2d776304fccc6f53c32f9281c3d6fcf1d884e9ea82c3ac8d7e0e60754160d",
+      "candidate_sha256": "095d17005d23e04518a042b4d8712cbdf4db6787e5093275b0ceb9ef82e69380"
+    },
+    {
+      "path": ".claude/skills/proof-harness/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "5698395491e23bab70b6167a214aeb2776865098870a517a47bf63deed7cb73a",
+      "candidate_sha256": "5698395491e23bab70b6167a214aeb2776865098870a517a47bf63deed7cb73a"
+    },
+    {
+      "path": ".claude/skills/proof-harness/templates/loop.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "68e3415c38ec4a4a2eafc4f430f71acaac998863a8c3a8c13455e370a1121a40",
+      "candidate_sha256": "68e3415c38ec4a4a2eafc4f430f71acaac998863a8c3a8c13455e370a1121a40"
+    },
+    {
+      "path": ".claude/skills/proof-harness/templates/mcp.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "3ef172695741cf1523d175dbd17bdbb6ee428b98a6d3c3ddb740c1c55ae7fd8a",
+      "candidate_sha256": "3ef172695741cf1523d175dbd17bdbb6ee428b98a6d3c3ddb740c1c55ae7fd8a"
+    },
+    {
+      "path": ".claude/skills/proof-harness/templates/settings.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "f604606d7b0b7b0ee89af86cec14424bc77cab80e3ebe1acdec96f094aad49c0",
+      "candidate_sha256": "f604606d7b0b7b0ee89af86cec14424bc77cab80e3ebe1acdec96f094aad49c0"
+    },
+    {
+      "path": ".claude/skills/proof-incident/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "6b22f06812d0e5d116d9924c30306534893aaa9273ad8443d3110e65b545ab24",
+      "candidate_sha256": "177c0bd24e941fb0ab0ebf7395235aece5850fd231745f5d67951667ab042107"
+    },
+    {
+      "path": ".claude/skills/proof-incident/references/incident-command.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "319a6f37ce1ae36ca7a397085a767bef878f7de4c1560c293d7b109f466c24e0",
+      "candidate_sha256": "319a6f37ce1ae36ca7a397085a767bef878f7de4c1560c293d7b109f466c24e0"
+    },
+    {
+      "path": ".claude/skills/proof-incident/references/mitigation-playbook.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "d0f6c83706fc8e40dfda012b004a58091a5e0183d086de66a16078784affd3ab",
+      "candidate_sha256": "d0f6c83706fc8e40dfda012b004a58091a5e0183d086de66a16078784affd3ab"
+    },
+    {
+      "path": ".claude/skills/proof-incident/references/postmortem.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "1e4793fda598fdecb994ca2a82ca326818f5b31a00955ab230702602ead10841",
+      "candidate_sha256": "1e4793fda598fdecb994ca2a82ca326818f5b31a00955ab230702602ead10841"
+    },
+    {
+      "path": ".claude/skills/proof-incident/references/reproduction-timeline.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "5415e94dbdeba715e40658d2ab3062104ce2f3f115315c57accfe55b7b2a823e",
+      "candidate_sha256": "3d6fc4e49a05c27f54627c812c409e95232c961122564eba2feef39ee8bb7d8a"
+    },
+    {
+      "path": ".claude/skills/proof-incident/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "5bd7925c5f3d389f563b694527e5efaed45785b62c5ea3f39c79f6f26e884623",
+      "candidate_sha256": "92ce9522933632493ca8bedae05ca754bba1c3ed85d35dc026f0427a84727c8f"
+    },
+    {
+      "path": ".claude/skills/proof-integrate/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "3a676629f4180b2a5b9e1072b138edbac65c87e1f92fbe97074e3160ac9c4bdf",
+      "candidate_sha256": "57aed856dcfae16697f1a43fd266cbdc62353cd8f7e8d1648a0522dffafc7777"
+    },
+    {
+      "path": ".claude/skills/proof-integrate/references/auth-and-secrets.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "08576f24ecb7b709b70d28f9f0cd97471ab851e9be99dcce7bf45e9cdd8b1917",
+      "candidate_sha256": "08576f24ecb7b709b70d28f9f0cd97471ab851e9be99dcce7bf45e9cdd8b1917"
+    },
+    {
+      "path": ".claude/skills/proof-integrate/references/contracts-and-promotion.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "f78a4ea9ea01ce83233689f6b977e99f0bc8f0ea67e3d26fcc0dd9f642d0b0fd",
+      "candidate_sha256": "b9230033eefffb959a03e8b498c4d909813974dd6816d59868b86c2cfc11a134"
+    },
+    {
+      "path": ".claude/skills/proof-integrate/references/resilience.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "b2d1556b147fe134ffddf7a6679a453466e363d85943161172d47810eceee79c",
+      "candidate_sha256": "b2d1556b147fe134ffddf7a6679a453466e363d85943161172d47810eceee79c"
+    },
+    {
+      "path": ".claude/skills/proof-integrate/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "9462ad2c4ea193faf953a36ed1a0026fb68a06f5399fb1325230799b2aa93565",
+      "candidate_sha256": "9462ad2c4ea193faf953a36ed1a0026fb68a06f5399fb1325230799b2aa93565"
+    },
+    {
+      "path": ".claude/skills/proof-integrate/references/webhooks-and-idempotency.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "3816c3536195faa5c9f4ac664820adb5080057117a5877fefba1962de657cc59",
+      "candidate_sha256": "3816c3536195faa5c9f4ac664820adb5080057117a5877fefba1962de657cc59"
+    },
+    {
+      "path": ".claude/skills/proof-operate/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "cb3a5b5698f1b3aefbc054abd54d832d6b4a1de32076de6705694e8efe356963",
+      "candidate_sha256": "fd09c69ce6a3bd612c57fd65d0372eb866f19def58320288aca778d9c16a8a0b"
+    },
+    {
+      "path": ".claude/skills/proof-operate/references/alerting.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "760a56b000556e3e040190b13a5af7fed64c07f931badc0da8f70c005e183b9b",
+      "candidate_sha256": "760a56b000556e3e040190b13a5af7fed64c07f931badc0da8f70c005e183b9b"
+    },
+    {
+      "path": ".claude/skills/proof-operate/references/autonomy-and-rollback.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "a48ccac05d77fe349233a9a4ea97565f2760cd77faff54a48cec67b38ab4f3a0",
+      "candidate_sha256": "a48ccac05d77fe349233a9a4ea97565f2760cd77faff54a48cec67b38ab4f3a0"
+    },
+    {
+      "path": ".claude/skills/proof-operate/references/observability.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "f53e76e5642a52a6fde0dd37b96ccf3c6e9ce708a86fc34ea8988a3c500597fd",
+      "candidate_sha256": "f53e76e5642a52a6fde0dd37b96ccf3c6e9ce708a86fc34ea8988a3c500597fd"
+    },
+    {
+      "path": ".claude/skills/proof-operate/references/on-call-triage.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "09684b6af1520ea6c7e17c2b453e0e93c57db5667f10cac37e24215dfd9d25d2",
+      "candidate_sha256": "09684b6af1520ea6c7e17c2b453e0e93c57db5667f10cac37e24215dfd9d25d2"
+    },
+    {
+      "path": ".claude/skills/proof-operate/references/runbooks.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "60d762256ade2a8e77ad10c7edda2253e61467751edebf8755e8a696a0cbdcbd",
+      "candidate_sha256": "60d762256ade2a8e77ad10c7edda2253e61467751edebf8755e8a696a0cbdcbd"
+    },
+    {
+      "path": ".claude/skills/proof-operate/references/slo-model.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "67443c372694d07019beacf4a97fce9da667b41cc4ed169f31ed96ba1889704d",
+      "candidate_sha256": "67443c372694d07019beacf4a97fce9da667b41cc4ed169f31ed96ba1889704d"
+    },
+    {
+      "path": ".claude/skills/proof-operate/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "b049e5c3529bfc538ead1f7b04dbf0e35301d37fa4c367a592b87e91d1683665",
+      "candidate_sha256": "dea177df5e7cf7f774cb9558fac83aac4d2baab1ccc2ba672a9d2a7ec4009853"
+    },
+    {
+      "path": ".claude/skills/proof-orchestrate/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "a9b74e709fd8e5e1f53ce5b30c6e00a504f8fd3258811db6924f6be2f5507e9d",
+      "candidate_sha256": "28a862ccc1851d3d8886f60288e4f0092bd6b087aa943b7ae6de686620ee7c00"
+    },
+    {
+      "path": ".claude/skills/proof-orchestrate/references/coverage-planning.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "60bf79f11dfe47e693f57affc832486cab43234fdc5d46881ef962b19737d713",
+      "candidate_sha256": "60bf79f11dfe47e693f57affc832486cab43234fdc5d46881ef962b19737d713"
+    },
+    {
+      "path": ".claude/skills/proof-orchestrate/references/model-routing.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "55a17528522e78b6145713e2bbe69d155d7ac18f82d01fab7957a794343048d7",
+      "candidate_sha256": "b248eab28bc94f8bdde59bf4d78391638b470f57aa0bd962828db7e651e76e7f"
+    },
+    {
+      "path": ".claude/skills/proof-orchestrate/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "475b5f82d412c45043e945f2cab084bb2f470e2ba7a7bf673dd1617a2f9557aa",
+      "candidate_sha256": "475b5f82d412c45043e945f2cab084bb2f470e2ba7a7bf673dd1617a2f9557aa"
+    },
+    {
+      "path": ".claude/skills/proof-orchestrate/references/task-decomposition.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "39a0968f3909878023f164d465a01f0b3b38c8299a31a5e41445447c4c193a5f",
+      "candidate_sha256": "39a0968f3909878023f164d465a01f0b3b38c8299a31a5e41445447c4c193a5f"
+    },
+    {
+      "path": ".claude/skills/proof-pattern/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "a3ba4e0a9f5312b6aa1be368bcdcd57fdca79f906d1dfa0a4bf42883cb4a4868",
+      "candidate_sha256": "2e9395dd18e4ebe3578499141170aeb6d7810c3f6b3f1bee26fb4ad675dfc6e2"
+    },
+    {
+      "path": ".claude/skills/proof-pattern/references/design-patterns.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "be893ac004ca8444fe6e465c597a7e6e2c84e68f7a5fc413aa2ebace3f6dfec8",
+      "candidate_sha256": "be893ac004ca8444fe6e465c597a7e6e2c84e68f7a5fc413aa2ebace3f6dfec8"
+    },
+    {
+      "path": ".claude/skills/proof-pattern/references/framework-idioms.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "d8d6cf981bf22933bae4a0e0d1ff385eaab9d270e2abcfd470c0b6ba3a174d11",
+      "candidate_sha256": "d8d6cf981bf22933bae4a0e0d1ff385eaab9d270e2abcfd470c0b6ba3a174d11"
+    },
+    {
+      "path": ".claude/skills/proof-pattern/references/refactoring-catalog.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "f0fdcd8db97dcdd0cc4b9147f4f5b66a6c657a760fe7bc6b684e5b0a5c48da34",
+      "candidate_sha256": "dcba1a071451d624df95c9797ca60f660fc0558fe899bae5f69e9293c613b9f7"
+    },
+    {
+      "path": ".claude/skills/proof-pattern/references/solid-and-style.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "fe147245656b5dbf369f28103e05b1da336d460c6ac10b82762ddb31ce522892",
+      "candidate_sha256": "fe147245656b5dbf369f28103e05b1da336d460c6ac10b82762ddb31ce522892"
+    },
+    {
+      "path": ".claude/skills/proof-pattern/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "56f7bdd3aba2ce98a02ae53c1f6e03b9297103dc806a4f04c07f8398661ba128",
+      "candidate_sha256": "56f7bdd3aba2ce98a02ae53c1f6e03b9297103dc806a4f04c07f8398661ba128"
+    },
+    {
+      "path": ".claude/skills/proof-research/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "retained",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "616371a8add7c2f8caf1007636205e972e2372fabcd3c60c337133ebc10310c3",
+      "candidate_sha256": "616371a8add7c2f8caf1007636205e972e2372fabcd3c60c337133ebc10310c3"
+    },
+    {
+      "path": ".claude/skills/proof-research/references/methodology.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "986cf3370ff37fb72bf68ed16ffeaa60280d48ae11400351212abfc0766f680a",
+      "candidate_sha256": "40f32e49463f869ee98884ac19c3365fcfccebaaaee41e6d1aea7d69f8e3837d"
+    },
+    {
+      "path": ".claude/skills/proof-research/references/source-evaluation.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "e84beea04334b903752f35dbda7aff40be4b1c2c0002e60b0a6c5bece37f67e7",
+      "candidate_sha256": "e84beea04334b903752f35dbda7aff40be4b1c2c0002e60b0a6c5bece37f67e7"
+    },
+    {
+      "path": ".claude/skills/proof-research/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "908f819c2dac04f12117ce5c63dd288f0e3df0710b0de809d288f9bc5cb381d2",
+      "candidate_sha256": "9a9656000a7454139c64fe88883e7a34aabce7aac456511e876299cff4c2203e"
+    },
+    {
+      "path": ".claude/skills/proof-review/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "retained",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "1bdcdbe87f8a27f34c644a402d16fa985ed3bcc20ea45781dabb601ce1165c52",
+      "candidate_sha256": "1bdcdbe87f8a27f34c644a402d16fa985ed3bcc20ea45781dabb601ce1165c52"
+    },
+    {
+      "path": ".claude/skills/proof-review/references/methodology.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "998e8b0454e1741796ec0d4ff685637021e9e3260c87391b36e74409d259af51",
+      "candidate_sha256": "998e8b0454e1741796ec0d4ff685637021e9e3260c87391b36e74409d259af51"
+    },
+    {
+      "path": ".claude/skills/proof-review/references/owasp-cwe.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "1403a817f62eb648e1a6f19395288fbe05cf1a845cf9eb49278c06b5339f048a",
+      "candidate_sha256": "1403a817f62eb648e1a6f19395288fbe05cf1a845cf9eb49278c06b5339f048a"
+    },
+    {
+      "path": ".claude/skills/proof-review/references/quality-checks.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "3984c769d4c712d882b5e43a7be99cca31ad26646c663e8d832f511f955c9e90",
+      "candidate_sha256": "3984c769d4c712d882b5e43a7be99cca31ad26646c663e8d832f511f955c9e90"
+    },
+    {
+      "path": ".claude/skills/proof-review/references/severity-model.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "be68a78beb3d1b43a212b3980f17562042455fe7cb9ea39e1ad4faea03f1ea07",
+      "candidate_sha256": "6a46162e76a3059a55d5a014a30cac5c79cdb7f8e926c067079a97e05f4eef8e"
+    },
+    {
+      "path": ".claude/skills/proof-review/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "b91175c0430430254bb255b9e87962002a1a75cc8482bd42d6ae7cdb1eee189d",
+      "candidate_sha256": "b91175c0430430254bb255b9e87962002a1a75cc8482bd42d6ae7cdb1eee189d"
+    },
+    {
+      "path": ".claude/skills/proof-review/references/vulnerability-playbooks.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "f94cbc8df83bf9ba7c806d7b1e337e2f3a44e3cf08a82ac11548533689591244",
+      "candidate_sha256": "f94cbc8df83bf9ba7c806d7b1e337e2f3a44e3cf08a82ac11548533689591244"
+    },
+    {
+      "path": ".claude/skills/proof-scout/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "adcbdc039407c977e1b8a4c4d05615d06213122b31ddf72d0f3f6879287d046a",
+      "candidate_sha256": "d187f88c5aea1d717ab8561a8965e58a8f343159a050fa1a384a8a3c90abed97"
+    },
+    {
+      "path": ".claude/skills/proof-scout/references/build-vs-buy.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "169330c36fa2420a23b9b71457d59df8a7c5a11098d93c5c5764ae33f22ac996",
+      "candidate_sha256": "169330c36fa2420a23b9b71457d59df8a7c5a11098d93c5c5764ae33f22ac996"
+    },
+    {
+      "path": ".claude/skills/proof-scout/references/evaluation-criteria.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "93f30e9098e04d21fc041080068d42f3acf856c2dddff679608a6f33287ae7d2",
+      "candidate_sha256": "93f30e9098e04d21fc041080068d42f3acf856c2dddff679608a6f33287ae7d2"
+    },
+    {
+      "path": ".claude/skills/proof-scout/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "57b2d0f6461e9e7275d71151ef8d611962b3bf2e49a43f312466a56b9d0e8878",
+      "candidate_sha256": "57b2d0f6461e9e7275d71151ef8d611962b3bf2e49a43f312466a56b9d0e8878"
+    },
+    {
+      "path": ".claude/skills/proof-scout/references/where-to-look.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "3e28de9ef86a43e9c8ff9675b8bb63767abc2123b5f031b462053332e511d8ff",
+      "candidate_sha256": "3e28de9ef86a43e9c8ff9675b8bb63767abc2123b5f031b462053332e511d8ff"
+    },
+    {
+      "path": ".claude/skills/proof-ship/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "c1afef763b354f87a408f1c590fdfd35accb53c3a651a1041726d69f238e28f3",
+      "candidate_sha256": "5335ee8bb0b3a6187cf5dfb42d477fb9fb0bf79372cb1be33271e45a0bcc590a"
+    },
+    {
+      "path": ".claude/skills/proof-ship/references/dora.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "de862449a42ad60bb3e0f141b66286f2cdef50bec7c2bd1f7b5f8ba44b459c12",
+      "candidate_sha256": "ec05b978473123401b5976ffba75df5d9da4c8c882d1fda370388f8cef003d1c"
+    },
+    {
+      "path": ".claude/skills/proof-ship/references/integration-train.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "c030b8f258a7d770a9b6c5b6c804d766ba4ab5da0e77504684a16980091fefba",
+      "candidate_sha256": "c030b8f258a7d770a9b6c5b6c804d766ba4ab5da0e77504684a16980091fefba"
+    },
+    {
+      "path": ".claude/skills/proof-ship/references/migrations.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "2421c3ad93ae67d8a3dbea021a4e1e3319f65d200f81563f4f05e32b82d497ac",
+      "candidate_sha256": "2421c3ad93ae67d8a3dbea021a4e1e3319f65d200f81563f4f05e32b82d497ac"
+    },
+    {
+      "path": ".claude/skills/proof-ship/references/release-gates.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "b91ddfc8fc4fc51f6d69abc61c542aae457371c8f17ef0e68237d24108663dab",
+      "candidate_sha256": "b91ddfc8fc4fc51f6d69abc61c542aae457371c8f17ef0e68237d24108663dab"
+    },
+    {
+      "path": ".claude/skills/proof-ship/references/rollback-playbook.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "feb5350a5a157c70e88b0800450b86196b56c6bfa5a11a548001ffc20d8017a7",
+      "candidate_sha256": "feb5350a5a157c70e88b0800450b86196b56c6bfa5a11a548001ffc20d8017a7"
+    },
+    {
+      "path": ".claude/skills/proof-ship/references/rollout-strategies.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "3f0a85c5abc43b1130a5aa24efa6c54f48758641211c410bcfc79ef6de92311d",
+      "candidate_sha256": "3f0a85c5abc43b1130a5aa24efa6c54f48758641211c410bcfc79ef6de92311d"
+    },
+    {
+      "path": ".claude/skills/proof-ship/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "32a8d9f67e7bc595252f1d91ded24c17821b564cb74c4050e9eae23c2883737c",
+      "candidate_sha256": "164be5eaa95a681c1413e38f9caf6a66ce4e2cbe07eb7045bc7f46bca2822ca8"
+    },
+    {
+      "path": ".claude/skills/proof-ship/references/supply-chain-gate.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "c3a2f405f476b8cbea6561ec4d25ca001708117420905a9725037d65b16aeadc",
+      "candidate_sha256": "c3a2f405f476b8cbea6561ec4d25ca001708117420905a9725037d65b16aeadc"
+    },
+    {
+      "path": ".claude/skills/proof-skill/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "3f01e7783f8c4ce97a7859735a40b6e74b9946fdff67b4d05bef8e361ea8cfdd",
+      "candidate_sha256": "ebff60c993fc984f47357a6af29d01dd1d76c41d08ae34fafcfa54e95baf1129"
+    },
+    {
+      "path": ".claude/skills/proof-skill/references/authoring.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "f0bd09ea348f7a0e12abe1681fad03fc3d5f1ea949e96c404e576f4cc6bf7e1c",
+      "candidate_sha256": "7d5980ab87f30f10bddc0f9b0b08c3460cad00c21b5caa82a1db8ec9553d6e3a"
+    },
+    {
+      "path": ".claude/skills/proof-skill/references/boundary-design.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "61a187b47299db212f79199062de5ba8f4203b9704af5e441a8755949a815b92",
+      "candidate_sha256": "71f942a8d44b7e3fc2b052a97b0ebeeff9483c49e859eb5ac9983f18b947379f"
+    },
+    {
+      "path": ".claude/skills/proof-skill/references/standards-shelves.md",
+      "role": "skill-reference",
+      "disposition": "updated",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "5f3345339f18c54f5b93aaaee08493ff79c2dde91b14d70ab178554f100cf4fb",
+      "candidate_sha256": "1db6192c45550a173ecc566e37cfb9d3df5b758a088bcfea8c3bc6372b59a9ec"
+    },
+    {
+      "path": ".claude/skills/proof-skill/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "6d25cb7c97bae138f792cb0eeb278c5680e74ce111010bcf2bf27ce6e2d2c0b3",
+      "candidate_sha256": "6d25cb7c97bae138f792cb0eeb278c5680e74ce111010bcf2bf27ce6e2d2c0b3"
+    },
+    {
+      "path": ".claude/skills/proof-skill/references/template-contract.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "329420cc451b080f0d210121369a7074b3ccea05d3f0ee5414fdfb96bd88c561",
+      "candidate_sha256": "329420cc451b080f0d210121369a7074b3ccea05d3f0ee5414fdfb96bd88c561"
+    },
+    {
+      "path": ".claude/skills/proof-test/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "689967573c9d3ab8e0b75bf3bb00d589228d76cfdd0cc5f0492c9e7e16aac130",
+      "candidate_sha256": "223417127f48ccb01647946a709754a6a8d8d126b0a41beac36598dfdd1312d1"
+    },
+    {
+      "path": ".claude/skills/proof-test/references/framework-conventions.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "62241e1318397e79b8f15c10efa27f926a93060723f882cdbb572a646e4621b3",
+      "candidate_sha256": "62241e1318397e79b8f15c10efa27f926a93060723f882cdbb572a646e4621b3"
+    },
+    {
+      "path": ".claude/skills/proof-test/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "9a4b125836ef3b0f87ebd5ab6353a7bb325ccfecb06bc4df166dff9a2e3898f8",
+      "candidate_sha256": "9a4b125836ef3b0f87ebd5ab6353a7bb325ccfecb06bc4df166dff9a2e3898f8"
+    },
+    {
+      "path": ".claude/skills/proof-test/references/test-design.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "0118c3185fad688b092ade5ce7b39b8d2655e52da290498a92a18de008f7015c",
+      "candidate_sha256": "0118c3185fad688b092ade5ce7b39b8d2655e52da290498a92a18de008f7015c"
+    },
+    {
+      "path": ".claude/skills/proof-venture/SKILL.md",
+      "role": "skill-entrypoint",
+      "disposition": "updated",
+      "review_depth": "All entrypoint sections and neighboring boundaries reviewed; no native task run",
+      "baseline_sha256": "6c084782c75aa4ca55c652704f7ce5d3284421a27fc63c3a4bd69394fe6aa709",
+      "candidate_sha256": "61826c905f8f7902a931c77572835c6d01cf56004f3773b33821766e5809bb0e"
+    },
+    {
+      "path": ".claude/skills/proof-venture/references/discovery.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "1718d46e7f1be209fca438e92a65d17e687975e345f8f7aaa05705c96a24abc6",
+      "candidate_sha256": "1718d46e7f1be209fca438e92a65d17e687975e345f8f7aaa05705c96a24abc6"
+    },
+    {
+      "path": ".claude/skills/proof-venture/references/go-to-market.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "4f31d7847a38fded5bfbd97a9c4b296e9b2a57aeba7222442e4d17953f9ae422",
+      "candidate_sha256": "4f31d7847a38fded5bfbd97a9c4b296e9b2a57aeba7222442e4d17953f9ae422"
+    },
+    {
+      "path": ".claude/skills/proof-venture/references/lifecycle.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "d8c6cde931e5cca481ee11f85286da80cab2386c24a75d91ef2e207cf6c2e7ec",
+      "candidate_sha256": "d8c6cde931e5cca481ee11f85286da80cab2386c24a75d91ef2e207cf6c2e7ec"
+    },
+    {
+      "path": ".claude/skills/proof-venture/references/standards.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "aec9f44329c251aa3cdd2a72e3a6f9b8c8f44729c375ad3df8162fb891ef84e6",
+      "candidate_sha256": "aec9f44329c251aa3cdd2a72e3a6f9b8c8f44729c375ad3df8162fb891ef84e6"
+    },
+    {
+      "path": ".claude/skills/proof-venture/references/state-contract.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "a6818c57f3efcbf474d97ef382de77a5576f43f7140147da4cdf70b3c4233dcd",
+      "candidate_sha256": "a6818c57f3efcbf474d97ef382de77a5576f43f7140147da4cdf70b3c4233dcd"
+    },
+    {
+      "path": ".claude/skills/proof-venture/references/vision-roadmap.md",
+      "role": "skill-reference",
+      "disposition": "retained",
+      "review_depth": "Path/heading/claim-risk scan; targeted semantic review for changed claims; external editions not blanket requalified",
+      "baseline_sha256": "ff7da0c7d145e2e6e9f3c6569c416335874d5cb7125ee71541b4a6b48e140db8",
+      "candidate_sha256": "ff7da0c7d145e2e6e9f3c6569c416335874d5cb7125ee71541b4a6b48e140db8"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "c2e20ed831ab4fe88a762d210fba75b3f73ea4073cd96799900873844ae52961",
+      "candidate_sha256": "c2e20ed831ab4fe88a762d210fba75b3f73ea4073cd96799900873844ae52961"
+    },
+    {
+      "path": ".github/rulesets/permanent-branches.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "76963b710198551e593d02ee6f56aa1abe3906b9dcb27317c487ba68e01200db",
+      "candidate_sha256": "76963b710198551e593d02ee6f56aa1abe3906b9dcb27317c487ba68e01200db"
+    },
+    {
+      "path": ".mcp.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "64a8eab0600bd75896dbfc3b913c564999cbe87e6d46bf6b91fe121268178975",
+      "candidate_sha256": "64a8eab0600bd75896dbfc3b913c564999cbe87e6d46bf6b91fe121268178975"
+    },
+    {
+      "path": "AGENTS.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "c0ca55b18d341b7bebc692fdbef7eb677a80e6b74fae5d65d07091b443ee002a",
+      "candidate_sha256": "c0ca55b18d341b7bebc692fdbef7eb677a80e6b74fae5d65d07091b443ee002a"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "76c69c739196819e88cb0b521c108a90691cd2d4ffbc4d21ba99f0378ec67ca1",
+      "candidate_sha256": "b2028fba203db7d1e414a1a4f2d10ee0a08dff415a1bc2aa3f79c3627ab8f319"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "ae3c01538e8300f0a8bb0a2df7e1b8ddabf05bf80b710ca3006d22e1783c4dd1",
+      "candidate_sha256": "6eb09908a43f3c3f81a1eff4eab6efb86504b3d00c4a51804453f12523a60753"
+    },
+    {
+      "path": "INSTALL.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "a5afad5001a66086a46a9ecbaa8afef910f8229e3ab60a11ca2c7534228fce92",
+      "candidate_sha256": "bafef6683f7763abe87881d38d3cc4944e38b3f29588dbdd257ceae3ff077485"
+    },
+    {
+      "path": "LICENSE",
+      "role": "license",
+      "disposition": "retained",
+      "review_depth": "Retained; no legal-terms revision",
+      "baseline_sha256": "d14f31b564a2663105c4908aafb6cc6abc254c973b65f28e4d229ab03b3fda6b",
+      "candidate_sha256": "d14f31b564a2663105c4908aafb6cc6abc254c973b65f28e4d229ab03b3fda6b"
+    },
+    {
+      "path": "README.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "f7d91c1b490cbcdb5b5b7ccdfa8b6e1171c7d84ef4c3850dd928397f41dd4d2d",
+      "candidate_sha256": "92ab08afca67283ff34202663caf0c6e3cd75751988a905990907775dd5dce1c"
+    },
+    {
+      "path": "ROADMAP.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "d81847b366a2bfa304299881162e6e3dc8d7c93e5e2c5043da0d649943af15b1",
+      "candidate_sha256": "1a058749f186482f8f0e8afe7e3c02016140909f6227bbc4c8c263fa32b214e0"
+    },
+    {
+      "path": "docs/README.md",
+      "role": "active-guide",
+      "disposition": "added",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": null,
+      "candidate_sha256": "1ef15524c77f8d58e6ca339dee81e2ef61584ae2929b259a677586f5a4bf5802"
+    },
+    {
+      "path": "docs/assets/README.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "f40e10f03945c4162a2a940da495be3a0fa22743169e5a7b40a0f2b8af69fc94",
+      "candidate_sha256": "6aca62123d2b1d0be8a582ede72609ad6bb3e68fa3a18d44fbf32c122904f2fd"
+    },
+    {
+      "path": "docs/assets/proof-architecture-verification.json",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "cc20951496d1838d92b1247fcf61e5cf0bce437736cfa5364fc8c9b557910063",
+      "candidate_sha256": "cc20951496d1838d92b1247fcf61e5cf0bce437736cfa5364fc8c9b557910063"
+    },
+    {
+      "path": "docs/assets/proof-architecture.architecture.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "0807f583ae9d8b9d59c4f3e8b6532bfa4c55de9f3cd0b0ac2738b8e3419960ba",
+      "candidate_sha256": "0807f583ae9d8b9d59c4f3e8b6532bfa4c55de9f3cd0b0ac2738b8e3419960ba"
+    },
+    {
+      "path": "docs/assets/proof-architecture.html",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "278700e05414cdca644a40d555b1b1e7d179a2f0631ee663846632f1c8ab30bc",
+      "candidate_sha256": "278700e05414cdca644a40d555b1b1e7d179a2f0631ee663846632f1c8ab30bc"
+    },
+    {
+      "path": "docs/assets/proof-architecture.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "7320958f9b7001dd0844fc9fb4c54850171ed1ed41957260ceea040ff34978ad",
+      "candidate_sha256": "7320958f9b7001dd0844fc9fb4c54850171ed1ed41957260ceea040ff34978ad"
+    },
+    {
+      "path": "docs/assets/proof-banner-prompt.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "a504ccb05cc54446b960e4dfca6442d814e187a14e8be72647e94d742983b26f",
+      "candidate_sha256": "a504ccb05cc54446b960e4dfca6442d814e187a14e8be72647e94d742983b26f"
+    },
+    {
+      "path": "docs/assets/proof-workflow.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "a1b970df3c57b90ddf6eb4fa8fb186f3c890d812d7cc2f25f86cb7018389925a",
+      "candidate_sha256": "a1b970df3c57b90ddf6eb4fa8fb186f3c890d812d7cc2f25f86cb7018389925a"
+    },
+    {
+      "path": "docs/branch-policy.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "4690f262396d07964b3a3cedb8c1925b46a509094d912e661bbb17e51410a6c6",
+      "candidate_sha256": "4690f262396d07964b3a3cedb8c1925b46a509094d912e661bbb17e51410a6c6"
+    },
+    {
+      "path": "docs/c4/README.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "8e84d11b43237dac54536165b070f173735531cece55666e4366200e37d16718",
+      "candidate_sha256": "8e84d11b43237dac54536165b070f173735531cece55666e4366200e37d16718"
+    },
+    {
+      "path": "docs/c4/component.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "3af8c96735900de7c36b997eb0ca8ddedf742907fce6af1f1b118496638e6ace",
+      "candidate_sha256": "3af8c96735900de7c36b997eb0ca8ddedf742907fce6af1f1b118496638e6ace"
+    },
+    {
+      "path": "docs/c4/container.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "35a765f9ea65c020452b806c5817fc74aa1743960391a4d7512ee8875bf2d8bf",
+      "candidate_sha256": "c59f236fe00e46cd3ed8eca57197d792c1262a7510c134549e83579b28d03a99"
+    },
+    {
+      "path": "docs/c4/context.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "15536c5ada5037ddfcd27c73324ade622ed7f2a02ef17569f0f3d95008c98090",
+      "candidate_sha256": "505b8416ab5cd8a7927d62517e02998c10ba361e84f7b2a6dc7eacf2926b3dd0"
+    },
+    {
+      "path": "docs/c4/diagrams/autonomy-ladder.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "8b5519894df50dc7bc81715e56452fe9e85587497593dc06cf22260871ae666b",
+      "candidate_sha256": "8b5519894df50dc7bc81715e56452fe9e85587497593dc06cf22260871ae666b"
+    },
+    {
+      "path": "docs/c4/diagrams/component-engine.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "c29bd4bb3000da760f46ab9a70fdb9eb1032178f3f9a64d7e651a2a425757478",
+      "candidate_sha256": "c29bd4bb3000da760f46ab9a70fdb9eb1032178f3f9a64d7e651a2a425757478"
+    },
+    {
+      "path": "docs/c4/diagrams/container.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "9a71d8ce8c86c564881e323d17e9fc4c46ff8db346657f5d70c4b39488f9a9c7",
+      "candidate_sha256": "9a71d8ce8c86c564881e323d17e9fc4c46ff8db346657f5d70c4b39488f9a9c7"
+    },
+    {
+      "path": "docs/c4/diagrams/context-glance.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "3485e99d9950a403d9082e4807395ba69cd0bebecd9af2dfa78dc15a3b92df3c",
+      "candidate_sha256": "3485e99d9950a403d9082e4807395ba69cd0bebecd9af2dfa78dc15a3b92df3c"
+    },
+    {
+      "path": "docs/c4/diagrams/context.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "2e5d1e45fb34d3473bfcd61d45698eb256f458318fc66abd2b7d94e8af9f5ad2",
+      "candidate_sha256": "2e5d1e45fb34d3473bfcd61d45698eb256f458318fc66abd2b7d94e8af9f5ad2"
+    },
+    {
+      "path": "docs/c4/diagrams/skill-composition.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "f91a0f0c1eb6ec5fb6953a92e6cc79e61c0fa1f2b7485f663ea2c0838d766795",
+      "candidate_sha256": "f91a0f0c1eb6ec5fb6953a92e6cc79e61c0fa1f2b7485f663ea2c0838d766795"
+    },
+    {
+      "path": "docs/c4/diagrams/skill-container-view.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "b243f609d211bfc406b474056d53bd554f459731994984128f269efd253b0af5",
+      "candidate_sha256": "b243f609d211bfc406b474056d53bd554f459731994984128f269efd253b0af5"
+    },
+    {
+      "path": "docs/c4/diagrams/skills-build-verify.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "b54c013e451e985a602a0adb5edad0594836b01c518c66076f86943154d7b95a",
+      "candidate_sha256": "b54c013e451e985a602a0adb5edad0594836b01c518c66076f86943154d7b95a"
+    },
+    {
+      "path": "docs/c4/diagrams/skills-design-mechanism.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "7c8b2011b6bbdfb86fb7e6c672f5ec41f3315fa6895476d8e9dcb48b918e9ebe",
+      "candidate_sha256": "7c8b2011b6bbdfb86fb7e6c672f5ec41f3315fa6895476d8e9dcb48b918e9ebe"
+    },
+    {
+      "path": "docs/c4/diagrams/skills-engine-planning.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "4d27f55fcfaa020173ee210432f32f45a73c29e68df5a78d92a031cd8ab63e7a",
+      "candidate_sha256": "4d27f55fcfaa020173ee210432f32f45a73c29e68df5a78d92a031cd8ab63e7a"
+    },
+    {
+      "path": "docs/c4/diagrams/skills-integrate-ship.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "75d7801c60d690e6b23ed6ce674bb0f0377c3ba121ca92331c16c646c5437406",
+      "candidate_sha256": "75d7801c60d690e6b23ed6ce674bb0f0377c3ba121ca92331c16c646c5437406"
+    },
+    {
+      "path": "docs/c4/diagrams/skills-knowledge-automation.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "c4ef898a340ef45849247cd82157e83da592fce6548ffc3db5a96bf4c7233209",
+      "candidate_sha256": "c4ef898a340ef45849247cd82157e83da592fce6548ffc3db5a96bf4c7233209"
+    },
+    {
+      "path": "docs/c4/diagrams/skills-run-respond.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "1382d51a80b5182ebf2caaca2fdc13d11d12d087c932d4ed44139c69775c4e99",
+      "candidate_sha256": "1382d51a80b5182ebf2caaca2fdc13d11d12d087c932d4ed44139c69775c4e99"
+    },
+    {
+      "path": "docs/c4/diagrams/src/autonomy-ladder.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "3e303d0dadb5ec1a6a2be57af1e36196032bcd4be8713c0520de118a18cfa44e",
+      "candidate_sha256": "3e303d0dadb5ec1a6a2be57af1e36196032bcd4be8713c0520de118a18cfa44e"
+    },
+    {
+      "path": "docs/c4/diagrams/src/component-engine.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "ae84f148f962edfc82cd651e30dac1f691792cf780c80808d4f817c8f971b1e6",
+      "candidate_sha256": "ae84f148f962edfc82cd651e30dac1f691792cf780c80808d4f817c8f971b1e6"
+    },
+    {
+      "path": "docs/c4/diagrams/src/container.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "26e9f28049c69a9f8d7a75ce7a1a30425c79f7eff8a44d79adbe76b0a8c8e225",
+      "candidate_sha256": "26e9f28049c69a9f8d7a75ce7a1a30425c79f7eff8a44d79adbe76b0a8c8e225"
+    },
+    {
+      "path": "docs/c4/diagrams/src/context-glance.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "79b477da1b0629f25f58788804b758217be8ab775a130236dd6aae2213c9882a",
+      "candidate_sha256": "79b477da1b0629f25f58788804b758217be8ab775a130236dd6aae2213c9882a"
+    },
+    {
+      "path": "docs/c4/diagrams/src/context.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "a88e1bd2d5447085974541ef2be875e9df8298daef3e87c28b7b84de3039e1fa",
+      "candidate_sha256": "a88e1bd2d5447085974541ef2be875e9df8298daef3e87c28b7b84de3039e1fa"
+    },
+    {
+      "path": "docs/c4/diagrams/src/skill-composition.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "047329f052d527b3d6c84219fdd55556f210202167fc200f4bdfe2c4cde916a5",
+      "candidate_sha256": "047329f052d527b3d6c84219fdd55556f210202167fc200f4bdfe2c4cde916a5"
+    },
+    {
+      "path": "docs/c4/diagrams/src/skill-container-view.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "2bb80783f24035ff593895f21cf60cc3507f3b14c8187cd30b04eca1225f765d",
+      "candidate_sha256": "2bb80783f24035ff593895f21cf60cc3507f3b14c8187cd30b04eca1225f765d"
+    },
+    {
+      "path": "docs/c4/diagrams/src/skills-build-verify.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "25099eb1c79a576221519e5298a6979785f68eb06302737342d122d1630e51f3",
+      "candidate_sha256": "25099eb1c79a576221519e5298a6979785f68eb06302737342d122d1630e51f3"
+    },
+    {
+      "path": "docs/c4/diagrams/src/skills-design-mechanism.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "7d4128a05b0e0c1e4304b8596ea6758adcd04c1f2db4bf50e16258a43d507c61",
+      "candidate_sha256": "7d4128a05b0e0c1e4304b8596ea6758adcd04c1f2db4bf50e16258a43d507c61"
+    },
+    {
+      "path": "docs/c4/diagrams/src/skills-engine-planning.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "eee2732a619a19374ae7a0cc9a51ad9f8ec8a5291a46a5646556283b97a614c6",
+      "candidate_sha256": "eee2732a619a19374ae7a0cc9a51ad9f8ec8a5291a46a5646556283b97a614c6"
+    },
+    {
+      "path": "docs/c4/diagrams/src/skills-integrate-ship.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "154bd84b055aecbea70995871e2b87aac3a70772458cb925f725329cb9475c1e",
+      "candidate_sha256": "154bd84b055aecbea70995871e2b87aac3a70772458cb925f725329cb9475c1e"
+    },
+    {
+      "path": "docs/c4/diagrams/src/skills-knowledge-automation.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "e2843e59b6b6879d0c3ac0b675a738356c17793590c0d47faf8f8ade14f32900",
+      "candidate_sha256": "e2843e59b6b6879d0c3ac0b675a738356c17793590c0d47faf8f8ade14f32900"
+    },
+    {
+      "path": "docs/c4/diagrams/src/skills-run-respond.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "fb1d3fcb395933139482383cebc43cfa0bc9579fef1304d7ca5578db1e99657e",
+      "candidate_sha256": "fb1d3fcb395933139482383cebc43cfa0bc9579fef1304d7ca5578db1e99657e"
+    },
+    {
+      "path": "docs/c4/diagrams/src/view-development.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "b6c2ff79872e7c02996463a51ec7e735ed77dbd37897d6b0e95d83ca32994582",
+      "candidate_sha256": "b6c2ff79872e7c02996463a51ec7e735ed77dbd37897d6b0e95d83ca32994582"
+    },
+    {
+      "path": "docs/c4/diagrams/src/view-logical.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "2c2d29836cf61a216e7c34495fe608b3cb49b42f7f0faecbe3893357805eae13",
+      "candidate_sha256": "2c2d29836cf61a216e7c34495fe608b3cb49b42f7f0faecbe3893357805eae13"
+    },
+    {
+      "path": "docs/c4/diagrams/src/view-physical.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "8bd827467eb54688061917b91e02a3ae8b15a77aa1d4720a7269f57cda9ed0ec",
+      "candidate_sha256": "8bd827467eb54688061917b91e02a3ae8b15a77aa1d4720a7269f57cda9ed0ec"
+    },
+    {
+      "path": "docs/c4/diagrams/src/view-process.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "c1aee05ebdb7607d414c987a6aa6b7bf12846d1ffb546cee9af11369990181fa",
+      "candidate_sha256": "c1aee05ebdb7607d414c987a6aa6b7bf12846d1ffb546cee9af11369990181fa"
+    },
+    {
+      "path": "docs/c4/diagrams/src/view-scenarios.mmd",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "bd12f03b78a24a633b9f1ec2c882ef45396c829434b129fe6fd1d4a21c7d20ae",
+      "candidate_sha256": "bd12f03b78a24a633b9f1ec2c882ef45396c829434b129fe6fd1d4a21c7d20ae"
+    },
+    {
+      "path": "docs/c4/diagrams/view-development.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "13aef07576e700b7efeb8dd50c91ecf80c9e5d1f738ef2d6d005d6c00ed14f0c",
+      "candidate_sha256": "13aef07576e700b7efeb8dd50c91ecf80c9e5d1f738ef2d6d005d6c00ed14f0c"
+    },
+    {
+      "path": "docs/c4/diagrams/view-logical.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "f6e0ff8f9f9e02d83a3c0491eb8d110579c1b2b7d10e62c20d63ffcaea9bf9e8",
+      "candidate_sha256": "f6e0ff8f9f9e02d83a3c0491eb8d110579c1b2b7d10e62c20d63ffcaea9bf9e8"
+    },
+    {
+      "path": "docs/c4/diagrams/view-physical.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "4d34a5ff8b54f4a2693359c14e5849be070603c0721555979450bf3da3b434af",
+      "candidate_sha256": "4d34a5ff8b54f4a2693359c14e5849be070603c0721555979450bf3da3b434af"
+    },
+    {
+      "path": "docs/c4/diagrams/view-process.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "87232dccd5f1d1212dea89c4e1c091e0a79e892fdcca8418857ddef53f20f42f",
+      "candidate_sha256": "87232dccd5f1d1212dea89c4e1c091e0a79e892fdcca8418857ddef53f20f42f"
+    },
+    {
+      "path": "docs/c4/diagrams/view-scenarios.svg",
+      "role": "documentation-artifact",
+      "disposition": "retained",
+      "review_depth": "Inventory/XML or source association only; no fresh visual acceptance",
+      "baseline_sha256": "fa15f7e2de0e2022d55079b9d3aff3d6993c3ffa574984f81266c0990261d9ac",
+      "candidate_sha256": "fa15f7e2de0e2022d55079b9d3aff3d6993c3ffa574984f81266c0990261d9ac"
+    },
+    {
+      "path": "docs/c4/skill-anatomy.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "437ce893115763c343c6bbc679b9127b32d37aa82db364b1510010114e6dbe39",
+      "candidate_sha256": "692ebb45a6227c04568012b76aaf583323d8985360892ebe12bc1a176a491fcb"
+    },
+    {
+      "path": "docs/c4/skills.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "cd91940848359000dbd5a34130a145459e09bbd6835cfd93e3478d672b59ed2d",
+      "candidate_sha256": "0dea82b613638077f5f2cf51f9070dfa45c63eaf5b483448523be89e68a1cd2c"
+    },
+    {
+      "path": "docs/design/ADR-0002-dependency-seam-and-boot-contract.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "3d6603db975d64f0926ae1b458a8f5d54d6a7ab80a5682d7125ed18d425b2e67",
+      "candidate_sha256": "3d6603db975d64f0926ae1b458a8f5d54d6a7ab80a5682d7125ed18d425b2e67"
+    },
+    {
+      "path": "docs/design/ADR-0003-tool-contracts-and-call-sites.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "451d82d5611b82c1fb17cc81638a6281c0e0b25fb5132892664bff70974183f5",
+      "candidate_sha256": "451d82d5611b82c1fb17cc81638a6281c0e0b25fb5132892664bff70974183f5"
+    },
+    {
+      "path": "docs/design/ADR-0004-extraction-strategy-and-failure-semantics.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "091a651262394f6f131baa6a66471f030117859c570dd473788acdda90df0e3f",
+      "candidate_sha256": "091a651262394f6f131baa6a66471f030117859c570dd473788acdda90df0e3f"
+    },
+    {
+      "path": "docs/design/ADR-0005-correctness-invariant-no-silent-default.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "2bfec874535807d7df1b91d3a873c9bc96462e4ac2998f5343e1878db8d51eff",
+      "candidate_sha256": "2bfec874535807d7df1b91d3a873c9bc96462e4ac2998f5343e1878db8d51eff"
+    },
+    {
+      "path": "docs/design/ADR-0006-width-shape-band-coverage-and-flag-selected-rows.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "5bd7fdc7855ab39c8d9b4823650fb4d1803169f3fe18881990649a695d570aca",
+      "candidate_sha256": "5bd7fdc7855ab39c8d9b4823650fb4d1803169f3fe18881990649a695d570aca"
+    },
+    {
+      "path": "docs/design/ADR-0007-boundary-lookup-matching-and-speech-act.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "b0c9616f246ef88b0408ae1fb97418759f66945f1b4c5bcda7e87faaa2cee7fa",
+      "candidate_sha256": "b0c9616f246ef88b0408ae1fb97418759f66945f1b4c5bcda7e87faaa2cee7fa"
+    },
+    {
+      "path": "docs/design/ADR-0008-host-packaging-seam.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "981d2fe092ce78def14d2cc89d968b4c6826f65af717b2d29afe3d187e45f11f",
+      "candidate_sha256": "981d2fe092ce78def14d2cc89d968b4c6826f65af717b2d29afe3d187e45f11f"
+    },
+    {
+      "path": "docs/design/ADR-0011-software-context-advisor.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "9710719596fb5e0b4644206c762bbde9cf837727715e225d1f76401d7e530b9a",
+      "candidate_sha256": "9710719596fb5e0b4644206c762bbde9cf837727715e225d1f76401d7e530b9a"
+    },
+    {
+      "path": "docs/design/README.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "5f6cd96461ae22f636b8529be2e1a143550a3fd3429e209c9d7ec4b1e1f0ba83",
+      "candidate_sha256": "3d14f9c3fec565d83e01f33c660a737a360da74511aa7d5393a9259e0eb6f79d"
+    },
+    {
+      "path": "docs/design/agent-engineering-terms.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "5c523bf69bbccb29e5cffc670a67d72d171fe9eff4645570c860e5a113101a7e",
+      "candidate_sha256": "5c523bf69bbccb29e5cffc670a67d72d171fe9eff4645570c860e5a113101a7e"
+    },
+    {
+      "path": "docs/design/boundary-audit.json",
+      "role": "contract-or-configuration",
+      "disposition": "updated",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "e7181c8d610786a826bf1a29d490d3f44264ed8c0627b1ac3fba4d04a1cfcd20",
+      "candidate_sha256": "ad0da86ec08aac3f621a5a480a3d03273532d2d2e67f86e315aa58153d4405d4"
+    },
+    {
+      "path": "docs/design/execution-mode-spec.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "0643d9b412a5a2360fd33dd9be7029a2c8381750abe83b4326e4c440b2a91b30",
+      "candidate_sha256": "0643d9b412a5a2360fd33dd9be7029a2c8381750abe83b4326e4c440b2a91b30"
+    },
+    {
+      "path": "docs/design/host-tier-c-discovery.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "f9990b3fff0cabe080371c37fd35d8928ec1252e9c2c5535b258749fcef9d647",
+      "candidate_sha256": "f9990b3fff0cabe080371c37fd35d8928ec1252e9c2c5535b258749fcef9d647"
+    },
+    {
+      "path": "docs/examples/first-review/README.md",
+      "role": "active-guide",
+      "disposition": "retained",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "4049979f9e22e60ca488f425ad26ae217d0bb32fc6a20b071f3d16c035339b33",
+      "candidate_sha256": "4049979f9e22e60ca488f425ad26ae217d0bb32fc6a20b071f3d16c035339b33"
+    },
+    {
+      "path": "docs/examples/routing-study-2026-09-01.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "c6d522fa8f4368fe773c672ac9eaf0029cc15079a54a858752ae8c6ef6e34cc8",
+      "candidate_sha256": "c6d522fa8f4368fe773c672ac9eaf0029cc15079a54a858752ae8c6ef6e34cc8"
+    },
+    {
+      "path": "docs/examples/software-efficiency-evaluation-final.json",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "7b0bfd41e41a1a3d91c9d7c1d9fdab0cb0e16cc03ffea4b8de683fba7d7eebf8",
+      "candidate_sha256": "7b0bfd41e41a1a3d91c9d7c1d9fdab0cb0e16cc03ffea4b8de683fba7d7eebf8"
+    },
+    {
+      "path": "docs/examples/software-efficiency-evaluation-final.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "defbc96e4037f9d0754228baeda4f149487fb0d04d17e9ea9870e1f34eeedf55",
+      "candidate_sha256": "defbc96e4037f9d0754228baeda4f149487fb0d04d17e9ea9870e1f34eeedf55"
+    },
+    {
+      "path": "docs/examples/software-efficiency-evaluation.json",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "3e9cdff86dba9ba84ee8cd1a2d895ab535295f88ebb59502d9e1d8b5f88fba86",
+      "candidate_sha256": "3e9cdff86dba9ba84ee8cd1a2d895ab535295f88ebb59502d9e1d8b5f88fba86"
+    },
+    {
+      "path": "docs/examples/software-efficiency-evaluation.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "9115a8fd70c29d380fa18d1c2fdcd75954f10e0b7e47dd95ccdcd63c13937686",
+      "candidate_sha256": "9115a8fd70c29d380fa18d1c2fdcd75954f10e0b7e47dd95ccdcd63c13937686"
+    },
+    {
+      "path": "docs/examples/software-prose-forward-evaluation.json",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "65ee8632f63b07775a5e765fae2e7508b17bb1803f2c4d8864b188d62e093bbc",
+      "candidate_sha256": "65ee8632f63b07775a5e765fae2e7508b17bb1803f2c4d8864b188d62e093bbc"
+    },
+    {
+      "path": "docs/examples/software-prose-forward-evaluation.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "528080320b1c7031272d84f015a85cfcf8c786f1489cefd7d4bbceb175779111",
+      "candidate_sha256": "528080320b1c7031272d84f015a85cfcf8c786f1489cefd7d4bbceb175779111"
+    },
+    {
+      "path": "docs/examples/software-routing-eval.freeze.json",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "74079fa78c9bd2f25e90fe739b530bffdb4cb59255fca0bae2d8f1888cfa1c6b",
+      "candidate_sha256": "74079fa78c9bd2f25e90fe739b530bffdb4cb59255fca0bae2d8f1888cfa1c6b"
+    },
+    {
+      "path": "docs/examples/software-routing-eval.jsonl",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "edfcc0de2d4572a112ccacfb075736887125a2fc994b16955e35e41b95b46d19",
+      "candidate_sha256": "edfcc0de2d4572a112ccacfb075736887125a2fc994b16955e35e41b95b46d19"
+    },
+    {
+      "path": "docs/examples/software-routing-train-proof-v4.jsonl",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "d016e97af7b6e364d198fce9bbc96cc6724782306949109f35a4743cbea29697",
+      "candidate_sha256": "d016e97af7b6e364d198fce9bbc96cc6724782306949109f35a4743cbea29697"
+    },
+    {
+      "path": "docs/examples/software-routing-train-proof-v4.provenance.json",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "a1fb5aac50a242548fe7ff432f4725cbe41dc79c289cfffd8215e75a44f1bec5",
+      "candidate_sha256": "a1fb5aac50a242548fe7ff432f4725cbe41dc79c289cfffd8215e75a44f1bec5"
+    },
+    {
+      "path": "docs/examples/software-routing-train.jsonl",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "33f5efd8c52bbe8433002142126a147ac84101f2a49099c2731c8d9f3acefc28",
+      "candidate_sha256": "33f5efd8c52bbe8433002142126a147ac84101f2a49099c2731c8d9f3acefc28"
+    },
+    {
+      "path": "docs/examples/software-team-source-manifest-2026-09-09.json",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "c66fc4d15eebf0546f4f129bef9371523ccc0e5f5035de9ac5e89b05894f53a8",
+      "candidate_sha256": "c66fc4d15eebf0546f4f129bef9371523ccc0e5f5035de9ac5e89b05894f53a8"
+    },
+    {
+      "path": "docs/examples/software-team-validation-2026-09-09.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "2e6f0e74479369beeeb27929213f1cf7eed4e8af87c58050926243515d74f4e7",
+      "candidate_sha256": "2e6f0e74479369beeeb27929213f1cf7eed4e8af87c58050926243515d74f4e7"
+    },
+    {
+      "path": "docs/examples/venture-p1-lite-run.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "98bf9de00d2399e521dd3452a88172dd4904b84cad6e8fd9833f09dc3eaff78e",
+      "candidate_sha256": "98bf9de00d2399e521dd3452a88172dd4904b84cad6e8fd9833f09dc3eaff78e"
+    },
+    {
+      "path": "docs/getting-started.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "e0889115cd655debc64454070222ca155a9ae6afb54088599069928bdb402fb0",
+      "candidate_sha256": "0ad8282bffde7f4010ab1ad6693530e91408e6f1bcc09c7800f6b692cf84a692"
+    },
+    {
+      "path": "docs/migration-proof-4.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "01b62f3bbdc2138a1ecdf069aae94bff57524ace9948a9d363c7d2548b87886e",
+      "candidate_sha256": "f5428c5082cadfe5416ad7379a12b7621aa4f7e920fe5adfb4efbe412bef5f07"
+    },
+    {
+      "path": "docs/overview.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "428fb43584e751d01f2e8dbf1bfbe631507fcdb7c7d818e538091218f09d0064",
+      "candidate_sha256": "9a1980f35f04e5015afafd1d02b98f2eb72561568c0738871777b6d41dceed10"
+    },
+    {
+      "path": "docs/plans/v1.0.0.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "d84d7dd2f16977dccf0250c2ffdfefe0caf19a93c77ebe7161dc11ff1372f92f",
+      "candidate_sha256": "d84d7dd2f16977dccf0250c2ffdfefe0caf19a93c77ebe7161dc11ff1372f92f"
+    },
+    {
+      "path": "docs/reviews/README.md",
+      "role": "active-guide",
+      "disposition": "added",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": null,
+      "candidate_sha256": "a1ca80f1ef531508b02a6a18c8ad4857c9061ab8201ea3ae887ba97f7e03d5f3"
+    },
+    {
+      "path": "docs/reviews/developer-launch-2026-10-23.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "fd38fe9598602ea5a856b68ffe7b0322f0e19afa4591681fb30249dde464d5d6",
+      "candidate_sha256": "fd38fe9598602ea5a856b68ffe7b0322f0e19afa4591681fb30249dde464d5d6"
+    },
+    {
+      "path": "docs/reviews/developer-launch-checks-2026-10-23.json",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "1493eac6ea874353324271050ded392c4aa64975dcbbacd1b63e676c3ec0a669",
+      "candidate_sha256": "1493eac6ea874353324271050ded392c4aa64975dcbbacd1b63e676c3ec0a669"
+    },
+    {
+      "path": "docs/reviews/framework-review-2026-10-23.md",
+      "role": "active-guide",
+      "disposition": "added",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": null,
+      "candidate_sha256": "4c0db5337e6a9663ff165a7691fe238242e8e023fd3c155f4932e6f27061f4eb"
+    },
+    {
+      "path": "docs/skills.md",
+      "role": "active-guide",
+      "disposition": "added",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": null,
+      "candidate_sha256": "f6e3889fb0f48d2142598a369c63f8e6ae75f7a8ebe4cf64669e3fa2d2df1255"
+    },
+    {
+      "path": "docs/software-team.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "4cb6383f62dcf1ef7ccb81017f42e8805d95ee0873bb072db69435ebe1138f9d",
+      "candidate_sha256": "538d07c5c55870d85e81b44b68dc995ba4b5d15f5fd12956a8fdfbd016e0a85a"
+    },
+    {
+      "path": "docs/views/4plus1.md",
+      "role": "active-guide",
+      "disposition": "updated",
+      "review_depth": "Navigation/claim consistency with source; structural check scope recorded separately",
+      "baseline_sha256": "ab69f85d11c8169dd19c0ed0a598182c9c112c187ab4ade61a634c1478ac41e5",
+      "candidate_sha256": "8abf685e1a7d1378d044e3069155d9e7fbab6a91c77e097971f8cb39b5e97801"
+    },
+    {
+      "path": "mcp/ADR-0001-runtime-and-dependency.md",
+      "role": "historical-evidence",
+      "disposition": "historical-preserved",
+      "review_depth": "Preserved bytes/identity; not re-dated or requalified",
+      "baseline_sha256": "361ec2ab7c8892cfc4dc590161b4189b4657be65bc9f7ab2b8f30a186f14453c",
+      "candidate_sha256": "361ec2ab7c8892cfc4dc590161b4189b4657be65bc9f7ab2b8f30a186f14453c"
+    },
+    {
+      "path": "mcp/boundary-match-contract.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "f13effd1144bd23c93c8cab35b6395a4214ab022039014f80c566fc6270194e7",
+      "candidate_sha256": "f13effd1144bd23c93c8cab35b6395a4214ab022039014f80c566fc6270194e7"
+    },
+    {
+      "path": "mcp/correctness-invariant.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "f15348bd3e39d0a81dd7319bce42ca5ae30a605dcb80428a8023f20e91e8701f",
+      "candidate_sha256": "f15348bd3e39d0a81dd7319bce42ca5ae30a605dcb80428a8023f20e91e8701f"
+    },
+    {
+      "path": "mcp/extraction-contract.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "9b52e75a66ee5e2150aee5d9dedb32dee7ebf7aab912651cc3894fe336dea7f2",
+      "candidate_sha256": "9b52e75a66ee5e2150aee5d9dedb32dee7ebf7aab912651cc3894fe336dea7f2"
+    },
+    {
+      "path": "mcp/runtime-pin.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "92daf3ce91c314c25f20a942f399a8d10abce9beba2b6fb92b9636ac4229dc41",
+      "candidate_sha256": "92daf3ce91c314c25f20a942f399a8d10abce9beba2b6fb92b9636ac4229dc41"
+    },
+    {
+      "path": "mcp/tool-contracts.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "2f63810ddb66c98a827072a150a46544662d34e925bffd1612b9cd24eede6ccf",
+      "candidate_sha256": "2f63810ddb66c98a827072a150a46544662d34e925bffd1612b9cd24eede6ccf"
+    },
+    {
+      "path": "mcp/width-and-band-contract.json",
+      "role": "contract-or-configuration",
+      "disposition": "retained",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "551efb3c8d5bc0d5a4f5d539c5b92ed024658bedb2a7ef3fb77de3e46a4223a5",
+      "candidate_sha256": "551efb3c8d5bc0d5a4f5d539c5b92ed024658bedb2a7ef3fb77de3e46a4223a5"
+    },
+    {
+      "path": "scripts/host-targets.json",
+      "role": "contract-or-configuration",
+      "disposition": "updated",
+      "review_depth": "Parsed/inventoried and linked source scope; not proof of runtime installation",
+      "baseline_sha256": "211a6e484747fa6149370f3c3a3913a35c449d768a590a2b3dac9c3a52fbcbc9",
+      "candidate_sha256": "78935689ded0af13b21f7ed438de08698add07d642be98aeba3ee5e6cedf39ba"
+    }
+  ]
+}

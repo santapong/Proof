@@ -8,7 +8,7 @@ argument-hint: <target> [--mode <lite|balanced|all-out>]
 
 **This skill produces a DIFF; `proof-review` produces a FINDINGS LIST.** That is the whole discriminator between the two, and it is decidable at request time: if the user wants the mess named and the code left untouched, they want `proof-review`; if they want the mess *gone* from the source, they want this skill. A smell that `proof-review` reports in its quality section is exactly this skill's input trigger — the two compose, they do not compete.
 
-The second boundary is decidable from one file. **Run the dependency-manifest test against `proof-scout`: if answering the question adds a line to `package.json` / `requirements.txt` / `go.mod` / `Cargo.toml`, it is `proof-scout`; if the dependency is already there, it is `proof-pattern`.** "What's the best way to do X in React?" is genuinely ambiguous until you check whether React is already a dependency. It is here, so the question is which idiom — this skill. It is not, so the question is which library — that skill.
+**Is an adoption decision still open?** Choosing a library, a platform feature, standard-library functionality or reuse of internal code is `proof-scout`. Applying an already-selected framework idiom to existing code is `proof-pattern`. A dependency manifest is evidence of adoption, not the definition of the boundary; scout can legitimately recommend no new dependency.
 
 You are about to change the *shape* of working code without changing what it does. The engine is a named catalog move applied in small steps against a green test suite, not a rewrite you like better. **A refactoring that changes behavior is not a refactoring, it is a bug** — §4 is the constraint every other section serves.
 
@@ -23,8 +23,8 @@ Route elsewhere when:
 | The request is really… | Skill | The test |
 |---|---|---|
 | Name the smells and defects, leave the code alone | `proof-review` | The deliverable is a report, not a diff. |
-| Pick a framework or library that is not yet adopted | `proof-scout` | Answering it adds a line to the dependency manifest. |
-| Change the complexity, concurrency semantics, or performance profile | `proof-algo` | The existing tests should *not* pass unchanged after the change. |
+| Pick a framework or library that is not yet adopted | `proof-scout` | The adoption decision is still open; a manifest change is only one possible outcome. |
+| Change the complexity, concurrency semantics, or performance profile | `proof-algo` | The requested result is a complexity bound or measured performance change; correctness tests can still pass unchanged. |
 | Move a component, deployable, or contract boundary | `proof-design` | The restructuring crosses module boundaries rather than staying inside them. |
 | Make broken code work | `proof-debug` | There is an observed failure to reproduce. |
 
@@ -51,11 +51,11 @@ Every standard these four cite is named, version-pinned, and mapped to this skil
 
 ## 4. Behavior preservation is the hard constraint
 
-A refactor is **not complete until it is proven behavior-identical** against the §2 safety net: same tests, unchanged, green before and green after. Not "should be equivalent" — run them.
+Run the same §2 safety-net tests before and after. Passing them supports behavior preservation for the covered cases; it is not a proof of equivalence for every possible input. Investigate any unexpected behavior change.
 
 **The handoff rule:** if applying a treatment turns up a behavior change the user did not ask for, that is a bug, and it goes to **`proof-debug`**. Never fix it silently as a side effect of the refactor. A diff that both restructures code and quietly corrects a defect is unreviewable — the reviewer cannot tell which change caused which effect, and the correction ships without a regression test proving it. Stop, report the behavior difference, and let `proof-debug` own it with its own reproduction and its own test. If the user then wants both, they are two diffs.
 
-The same rule runs the other way for `proof-algo`: if the change is *supposed* to alter the performance profile, ordering, fairness, or memory visibility, the tests will not pass unchanged and it is not this skill's work.
+Use `proof-algo` when the requested deliverable is a changed mechanism, a complexity argument or a measured performance result. An optimization can preserve observable correctness and pass the same tests; test stability alone does not choose between the skills. Changes to ordering, fairness or memory visibility need an explicit contract and appropriate checks.
 
 ## 5. Orchestration: scale past one file
 

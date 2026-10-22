@@ -34,7 +34,7 @@ Cloud Routines run on Anthropic infrastructure with **your machine off** and **n
 
 1. **Create a scheduled Routine** (Claude Code on the web → Routines, or `/schedule`). Minimum interval is **1 hour**; hourly or nightly is plenty for a self-improving loop.
 2. **Add a `pull_request` trigger** for reactivity (Routines fire on `pull_request` and `release` events). Each event starts a fresh session.
-3. **Set the prompt** to `templates/routine-prompt.md`.
+3. **Set the prompt** to `../templates/routine-prompt.md`.
 4. **Poll issues in the prompt** — Routines do **not** trigger on issues or issue-comments, so the prompt must list open issues each run (see `feedback-intake.md`). If you need instant issue-comment reactivity, add a **GitHub Action** on `issue_comment` (Actions support that event; Routines don't).
 
 ### Safety scopes (all of them)
@@ -51,7 +51,7 @@ Actions appear under **your** GitHub identity (commits, PRs, comments are yours)
 
 - **GitHub Action** driving Claude Code — the way to react to `issue_comment` / `issues` events (which Routines can't), and for team-wide, repo-native automation. Gate with the App's permissions and `--max-turns`.
 - **Headless `claude -p`** on your own scheduler (cron/CI/systemd) — full control, but you host and schedule it.
-- **Interactive `/loop`** with `templates/routine-prompt.md` copied to `.claude/loop.md` — for a **supervised** burst while you watch a session; not truly unattended (fires only while the session is running and idle).
+- **Interactive `/loop`** with `../templates/routine-prompt.md` copied to `.claude/loop.md` — for a **supervised** burst while you watch a session; not truly unattended (fires only while the session is running and idle).
 
 Prefer the lightest mechanism that meets the need: a supervised `/loop` to try it out, a Cloud Routine once you trust it.
 
@@ -61,20 +61,20 @@ There is **no native email** in Claude Code. The loop notifies by **posting a Gi
 
 ## Companion Routines
 
-Two lighter Routines run *alongside* the main improvement loop, on their own schedules. Both are read-mostly and never touch code. Run `references/anti-patterns.md` before deploying any of the three.
+Two lighter Routines run *alongside* the main improvement loop, on their own schedules. Both are read-mostly and never touch code. Run `anti-patterns.md` before deploying any of the three.
 
-### Credit-ledger reconcile — `templates/credit-ledger.workflow.js` (daily)
+### Credit-ledger reconcile — `../templates/credit-ledger.workflow.js` (daily)
 
-Learns which proposal *kinds* actually get merged and records it in a trust ledger (`references/credit-horizon.md`).
+Learns which proposal *kinds* actually get merged and records it in a trust ledger (`credit-horizon.md`).
 
 - **One-time setup**: open an issue titled `🤖 Credit Ledger (automated, do not edit)`, label it `credit-ledger`, and paste the empty-ledger JSON from `credit-horizon.md` as the body. Note its issue number.
 - **Deploy**: a Routine (or headless run) that invokes the template with `args: { repo, ledgerIssueNumber, nowMs, nowIso }`. The main loop must already be labeling PRs `automated` + `kind:<kind>` (see `routine-prompt.md`) for the ledger to attribute outcomes.
 - **The `nowMs` / `nowIso` args are required**: workflow scripts can't read the clock (harness policy H10), so the deploying Routine supplies the current time (epoch ms + ISO string). The reconcile uses them only to age-out stale PRs and stamp `lastRecalc`.
 - **Cadence**: daily is fine; **every few days is also fine** — the `BATCH_SIZE=10` gate means trust weights only recompute once enough new outcomes have accrued, so a slower cadence loses nothing and spends fewer routine-runs against your daily cap.
 
-### Comprehension digest — `templates/comprehension-digest.routine.md` (weekly)
+### Comprehension digest — `../templates/comprehension-digest.routine.md` (weekly)
 
-Random-samples merged PRs and opens a `comprehension-check` issue so a human actually reads what shipped (`references/comprehension-rot.md`). It's a **Routine prompt** (a live session samples randomly — a script can't, per H10), deployed weekly.
+Random-samples merged PRs and opens a `comprehension-check` issue so a human actually reads what shipped (`comprehension-rot.md`). It's a **Routine prompt** (a live session samples randomly — a script can't, per H10), deployed weekly.
 
 ## First-run checklist
 
@@ -82,10 +82,10 @@ Random-samples merged PRs and opens a `comprehension-check` issue so a human act
 - [ ] "Unrestricted branch pushes" is **off**; pushes go to `claude/*`.
 - [ ] Network is **Trusted**; only GitHub (+ optional alphaXiv) connectors are enabled.
 - [ ] Routine prompt is `routine-prompt.md`, with the never-merge rule intact.
-- [ ] You've run `templates/improvement-loop.workflow.js` in `runMode:"dry"` once and reviewed the proposals it would make.
+- [ ] You've run `../templates/improvement-loop.workflow.js` in `runMode:"dry"` once and reviewed the proposals it would make.
 - [ ] An opt-in label convention limits which issues the loop will act on.
 - [ ] (If using the credit ledger) the pinned `🤖 Credit Ledger` issue exists and its number is wired into the reconcile Routine's `args`.
-- [ ] You ran `references/anti-patterns.md` against the current design (AP5 in particular) before raising concurrency.
+- [ ] You ran `anti-patterns.md` against the current design (AP5 in particular) before raising concurrency.
 
 ---
 
@@ -144,7 +144,7 @@ A pinned issue (`🔒 Autonomy State (automated, do not edit)`) holds current mo
 
 This is the one place the branch-push lockout no longer holds — the loop must push/merge to `main` for eligible kinds. The guardrail **moves**, it doesn't vanish:
 
-- A **merge-gate** that re-checks eligibility + all preconditions immediately before any merge (`templates/canary-merge.workflow.js`).
+- A **merge-gate** that re-checks eligibility + all preconditions immediately before any merge (`../templates/canary-merge.workflow.js`).
 - **Branch protection on `main`** requiring that merge-gate's status check to pass — so even the automated path cannot merge an ineligible change.
 - The **tripwire** above, wired to both the held-out alarm and the rollback rate.
 

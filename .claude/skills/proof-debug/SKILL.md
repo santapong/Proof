@@ -36,7 +36,7 @@ Make the **smallest correct change** that addresses the root cause — resist re
 
 ## 7. Verify end to end
 
-Confirm the fix in the real flow, not just the unit test. Invoke the built-in **`verify`** skill to drive the affected path end to end and observe the corrected behavior on the original reproduction from §1. Then **check the neighbors**: re-run the surrounding test suite and exercise adjacent code paths that share the changed logic, so the fix did not trade one bug for another. A fix that passes its own test but breaks a sibling is not done.
+Confirm the fix in the real flow, not just the unit test. When available, use Claude Code's bundled `/verify` skill; otherwise drive the project's affected path with its own commands. Observe the corrected behavior on the original reproduction from §1 and report what actually ran. Then **check the neighbors**: re-run the surrounding test suite and exercise adjacent code paths that share the changed logic, so the fix did not trade one bug for another. A fix that passes its own test but breaks a sibling is not done.
 
 ## 8. Orchestration: many candidate causes
 

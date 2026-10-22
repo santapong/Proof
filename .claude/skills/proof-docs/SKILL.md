@@ -12,7 +12,7 @@ You are about to write or update technical documentation. The engine is you read
 
 **Using the wrong doc type is the most common documentation failure** — a reference dump when the reader needed a tutorial, or a chatty walkthrough when they needed a lookup table. Classify the need before writing a line. The Diataxis model splits docs along two axes (study vs. work, practical vs. theoretical):
 
-- **Tutorial** — learning-oriented; take a beginner through a guaranteed-success first run.
+- **Tutorial** — learning-oriented; take a beginner through a small first run with explicit prerequisites and expected results.
 - **How-to guide** — task-oriented; get a competent user through one real goal.
 - **Reference** — information-oriented; describe the API/config/CLI exhaustively and neutrally for lookup.
 - **Explanation** — understanding-oriented; the why, the trade-offs, the background.

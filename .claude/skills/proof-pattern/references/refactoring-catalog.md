@@ -4,7 +4,7 @@ The spine of this skill. Fowler's *Refactoring*, 2nd edition (2018) — pinned i
 
 **The rule this file enforces: no smell, no refactor.** Name the smell from §1 before you touch anything. If nothing in §1 fits, there is no work here.
 
-**The constraint this file enforces: behavior preservation.** A refactoring changes the structure of code without changing its observable behavior. **A refactor is not complete until it is proven behavior-identical against the safety net** (§3) — same tests, unchanged, green before and green after. Not argued, not "obviously equivalent". Run them.
+**The constraint this file enforces: behavior preservation.** A refactoring changes the structure of code without changing its observable behavior. **Run the safety net before and after** (§3), with the same behavioral assertions. A green suite supports preservation over its covered cases; it does not prove equivalence for all inputs.
 
 Move names below are 2nd-edition names; where 2e renamed a move or a smell, the 1st-edition name is in parentheses so a reader working from the older book can follow.
 

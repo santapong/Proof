@@ -6,9 +6,11 @@ argument-hint: <service> [--mode <lite|balanced|all-out>]
 
 # Operating a Service
 
+**A declared incident or the organization's incident criteria take precedence.** Otherwise, use the known-condition runbook test below to route the alert. A successful runbook can mitigate an incident; it does not erase its declaration, communication or postmortem obligations.
+
 Does a runbook exist for this condition AND does executing it restore the SLI? Yes → this skill, steady state, no declaration. No, or impact exceeds the runbook's scope, or a human must be paged and coordinated → `proof-incident`.
 
-That predicate is the entire boundary, it is decidable in one question at the moment the page fires, and it is worded identically in `proof-incident/SKILL.md` so both skills answer it the same way. Its corollary is what each skill actually owns: **this skill owns AUTOMATED mitigation of KNOWN conditions; `proof-incident` owns HUMAN-COORDINATED mitigation of NOVEL ones — and only `proof-incident` writes postmortems.** A condition with a runbook that works is not an incident, it is operations doing its job. This skill never writes a postmortem and never names a root cause; when a runbook fails to clear an alert, it packages a handoff and stops (§5).
+That predicate is the entire boundary, it is decidable in one question at the moment the page fires, and it is worded identically in `proof-incident/SKILL.md` so both skills answer it the same way. Its corollary is what each skill actually owns: **this skill owns AUTOMATED mitigation of KNOWN conditions; `proof-incident` owns HUMAN-COORDINATED mitigation of NOVEL ones — and only `proof-incident` writes postmortems.** For an undeclared condition below the incident threshold, an authorized runbook that restores the SLI may remain steady-state operations. This skill never writes a postmortem and never names a root cause; when a runbook fails to clear an alert, it packages a handoff and stops (§5).
 
 Three more boundaries, each decidable the same way:
 
@@ -29,7 +31,7 @@ Three more boundaries, each decidable the same way:
 Everything else in this skill reads from one number. Open **`references/slo-model.md`** and produce it before designing a single alert.
 
 1. **Choose the SLI** users actually feel — availability, latency, quality/correctness, or freshness/throughput — and measure it *where they feel it* (load balancer or client), not deep in the stack where it flatters you.
-2. **Set the SLO** from user expectation and historical performance, not aspiration. The internal SLO is always **stricter** than any external SLA.
+2. **Set the SLO** from user expectation and historical performance, not aspiration. Choose and document an internal target with enough margin for the external SLA and the measurement window; do not assume every service already has that margin.
 3. **Derive the error budget** — `(1 − SLO)` over a compliance window — and express spend as a **burn rate**: budget consumed per unit time.
 4. **Write the error-budget policy**: what happens at 0% budget, and who is allowed to waive it. This is the half `proof-design`'s design-time treatment never had, and a budget with no policy is a dashboard, not a control.
 
@@ -67,7 +69,7 @@ Open **`references/autonomy-and-rollback.md`** — deliberately *not* named `dep
 
 ## 7. Standards
 
-Cite from **`references/standards.md`**, never from memory. It pins the Google SRE Book and the SRE Workbook, Ewaschuk's alerting philosophy, RED and USE, OpenTelemetry Semantic Conventions, the Principles of Chaos Engineering, ISO/IEC 20000-1, Hidalgo's *Implementing Service Level Objectives*, and DORA's Four Keys — and it records for each whether it is an **authoritative specification** or **practitioner doctrine**, because the two are cited differently. It also carries an edition watch for *Site Reliability Engineering, 2nd Edition*: the book is announced but has not shipped, so do not cite it for a page or chapter number until it does.
+Cite from **`references/standards.md`**, never from memory. It pins the Google SRE Book and the SRE Workbook, Ewaschuk's alerting philosophy, RED and USE, OpenTelemetry Semantic Conventions, the Principles of Chaos Engineering, ISO/IEC 20000-1, Hidalgo's *Implementing Service Level Objectives*, and DORA's delivery measurements by pointer — and it records for each whether it is an **authoritative specification** or **practitioner doctrine**, because the two are cited differently. It also carries an edition watch for *Site Reliability Engineering, 2nd Edition*: the book is announced but has not shipped, so do not cite it for a page or chapter number until it does.
 
 ## 8. Orchestration: size-gate first, then the workflow
 

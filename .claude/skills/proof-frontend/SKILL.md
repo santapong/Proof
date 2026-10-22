@@ -133,3 +133,4 @@ Inline for a single interaction. For a whole surface, `templates/motion-audit.wo
 | `references/typography-and-restraint.md` | Modular scale, optical sizing, negative space, restraint as a decision |
 | `references/perceived-performance.md` | Skeletons, optimistic UI, and what actually shortens a perceived wait |
 | `references/accessibility.md` | The flash thresholds, pause/stop/hide, focus across view transitions, reduced-motion patterns |
+| `templates/motion-audit.workflow.js` | Static per-interaction motion audit and runtime-check specification; browser checks remain separate |

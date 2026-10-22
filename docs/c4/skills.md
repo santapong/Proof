@@ -20,7 +20,7 @@ The router enters context on invocation. References and templates enter context 
 
 ## Engine & planning
 
-The base layer. Everything else authors through `proof-engine`; `proof-skill` authors the skills themselves.
+The execution layer authors through `proof-engine`; inline specialists need no workflow. `proof-skill` authors the skills themselves. See [all 26 task outcomes](../skills.md).
 
 ![Skill group — engine and planning](diagrams/skills-engine-planning.svg)
 
@@ -38,7 +38,7 @@ Three altitudes on "how should this be built", separated by the shape of the del
 
 <sub>Diagram source: [`diagrams/src/skills-design-mechanism.mmd`](diagrams/src/skills-design-mechanism.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
-**The tests.** Boxes and contracts → `proof-design`. A complexity bound or an invariant → `proof-algo`. A diff whose test suite passes unchanged before and after → `proof-pattern`. *Shard the queue across N nodes* is design; *which lock-free queue and what are its progress guarantees* is mechanism.
+**The tests.** Boxes and contracts → `proof-design`. A complexity bound or an invariant → `proof-algo`. A structural refactor with behavioral-check evidence → `proof-pattern`. Optimization may also pass unchanged correctness tests; its requested result is the mechanism/performance argument. *Shard the queue across N nodes* is design; *which lock-free queue and what are its progress guarantees* is mechanism.
 
 ---
 
@@ -62,7 +62,7 @@ Both face outward — one at someone else's API, one at production.
 
 <sub>Diagram source: [`diagrams/src/skills-integrate-ship.mmd`](diagrams/src/skills-integrate-ship.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
-**The tests.** Does answering add a line to the dependency manifest? → `proof-scout` first, then `proof-integrate`. Does this system *publish* the API or *consume* it? → design vs integrate. Idempotency appears in both, as different obligations: design requires callers to send a key, integrate requires this system to send one.
+**The tests.** Is the reuse/adopt/build decision still open? → `proof-scout` first, then `proof-integrate`. Does this system *publish* the API or *consume* it? → design vs integrate. Idempotency appears in both, as different obligations: design requires callers to send a key, integrate requires this system to send one.
 
 ---
 
@@ -74,7 +74,7 @@ The thinnest boundary in the fleet, held apart by one checkable predicate.
 
 <sub>Diagram source: [`diagrams/src/skills-run-respond.mmd`](diagrams/src/skills-run-respond.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
-**The predicate, stated as the first sentence of both bodies:** *does a runbook exist for this condition, **and** does executing it restore the SLI?* Yes → `proof-operate`, no declaration. No, or the impact exceeds the runbook's scope, or a human must be paged → `proof-incident`. Only `proof-incident` writes postmortems.
+**After honoring a declared incident or organizational declaration criteria:** *does a runbook exist for this condition, **and** does executing it restore the SLI?* Yes → `proof-operate`, no declaration. No, or the impact exceeds the runbook's scope, or a human must be paged → `proof-incident`. Only `proof-incident` writes postmortems.
 
 This pair ships **on probation**: a review tripwire fires if either skill's body spends more than ~30% of its length restating the other's phase, on the grounds that one honest skill beats two fighting for the same trigger.
 

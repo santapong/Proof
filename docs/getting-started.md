@@ -68,6 +68,8 @@ arithmetic defect and an independent check that fails on it. It provides a
 concrete review input and expected evidence. Running that check is not an AI
 skill evaluation or proof of a complete host workflow.
 
+Use the [26-skill catalog](skills.md) for the expected result and handoff of every skill.
+
 ## Larger work and troubleshooting
 
 `proof-build` conducts an agreed software brief; `proof-orchestrate` plans a task

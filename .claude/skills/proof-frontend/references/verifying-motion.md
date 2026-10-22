@@ -170,7 +170,7 @@ These checks stop you shipping something *broken* or *harmful*. They do not tell
 
 ## Wiring it in
 
-1. Run `templates/motion-audit.workflow.js` — it inventories the motion and emits, per interaction, **which of these checks apply**.
+1. Run `../templates/motion-audit.workflow.js` — it inventories the motion and emits, per interaction, **which of these checks apply**.
 2. Hand that spec to **`proof-test`**, which authors the files in your project's stack.
 3. Put the accessibility checks (1, 3, 4) in CI. They are the ones with a named criterion behind them and no legitimate reason to fail.
 4. Keep the visual checkpoints (8) out of a blocking gate unless someone actually reviews the diffs.

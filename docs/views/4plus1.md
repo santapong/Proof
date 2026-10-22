@@ -45,7 +45,7 @@ constrains the engine, the engine executes the domain skills, the domain skills 
 gate, and autonomy composes the lot on a schedule.**
 
 - **Governance** — `harness-policy` (H1–H12), `loop-policy` (L1–L8), `execution-modes` (M1–M9) and
-  three lifecycle frameworks. Read by every skill, modified by none. This layer is why 26 skills
+  two selectable lifecycle frameworks plus an authoring scaffold. Read by workflow-authoring skills; inline specialists use the applicable rules. This layer is why 26 skills
   share one orchestration discipline.
 - **Engine & planning (7)** — `proof-engine` runs one workflow; `proof-orchestrate` plans a project
   into a DAG before it; `proof-context` decides what agents carry between phases; `proof-build`

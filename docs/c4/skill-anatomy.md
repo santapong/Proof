@@ -6,15 +6,15 @@ The `proof-skill` skill scaffolds all of this for you. Read this to understand w
 
 ```
 .claude/skills/<name>/
-├── SKILL.md                     ~6–13 KB   thin router, enters agent context on invocation
+├── SKILL.md                     small      thin router, enters agent context on invocation
 ├── references/
-│   ├── standards.md             ~8–12 KB   version-pinned authorities, three-grade honesty
-│   └── <topic>.md          ~10–26 KB ea.   deep knowledge, loaded ON DEMAND
+│   ├── standards.md             scoped     version-pinned authorities, three-grade honesty
+│   └── <topic>.md          as needed       deep knowledge, loaded ON DEMAND
 └── templates/
-    └── <name>.workflow.js       ~6–10 KB   read during authoring, executed by the Workflow tool
+    └── <name>.workflow.js       as needed  read during authoring, executed by the Workflow tool
 ```
 
-The tree is illustrative: reference sizes and counts vary, and some skills have no workflow template.
+The tree is illustrative. There is no minimum byte count or file quota; some skills have no workflow template. Add only guidance the task needs.
 
 ## The three parts have three different loading regimes
 
@@ -54,7 +54,7 @@ Every skill carries one. It names the authorities the skill reasons from, pinned
 
 | Grade | Means | Cite it as |
 |---|---|---|
-| **Yes** | A standards body, government agency, or licensed framework owner ratified and published it | A normative requirement |
+| **Yes** | A standards body, government agency, or licensed framework owner ratified and published it | A published specification/guideline, with its actual applicability |
 | **Draft** | Real working-group or committee output that **nothing has ratified** | A draft, naming the revision and status every time |
 | **No** | Real, widely followed, and still somebody's opinion — a book, a vendor practice, an OSS project's own spec | Evidence or vocabulary, never a requirement |
 
@@ -88,7 +88,7 @@ Shape follows the [harness policy](../../.claude/skills/proof-engine/references/
 3. **Research the standards.** Confirm every version against a primary source. Grade honestly.
 4. **Author** router → references → template, in that order, so the router's flow determines what the references need to contain.
 5. **Validate**: `node scripts/validate.mjs`. It runs in CI on every push and PR.
-6. **Re-check the neighbours.** Each added skill is more selection pressure on the other twenty-four, not the same. Every overlap it touches needs its pointer on both sides.
+6. **Re-check the neighbours.** Each added skill is more selection pressure on the existing fleet, not the same. Every overlap it touches needs its pointer on both sides.
 
 ## What the gate can and cannot check
 

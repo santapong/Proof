@@ -12,7 +12,7 @@ Everything below moved to `proof-ship` in v1.0.0. Follow the pointer rather than
 |---|---|
 | Rolling / blue-green / canary mechanics, failure modes, the recreate baseline, the **Risk → strategy table**, feature-flag kinds and hygiene, IaC, environment topology, exemplars | `../../proof-ship/references/rollout-strategies.md` |
 | Expand-contract (parallel change) migrations and their release sequencing | `../../proof-ship/references/migrations.md` |
-| DORA metrics — the four keys and per-release instrumentation | `../../proof-ship/references/dora.md` |
+| DORA delivery measurements and collection design | `../../proof-ship/references/dora.md` |
 | CI/CD pipeline gates, the pre-deploy checklist and go/no-go, SLO-gated promotion | `../../proof-ship/references/release-gates.md` |
 | Rollback drills and the rollback-vs-roll-forward decision | `../../proof-ship/references/rollback-playbook.md` |
 

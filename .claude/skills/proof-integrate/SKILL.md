@@ -13,7 +13,7 @@ You are about to build or harden the boundary between this system and somebody e
 Ask one question before anything else — **who owns the contract you are coding against?**
 
 - **They own it → this skill.** Their auth flow, their webhook payloads, their rate limits, their sandbox, their versioning cadence. You cannot change any of it; you can only survive it. Every reference in this skill exists because a dependency you do not control fails in ways an in-process call never does.
-- **You own it → `proof-design`.** The API *this* system publishes to its own callers is `proof-design/references/api-design.md` — and it deliberately covers the same vocabulary from the other side: §6 idempotency keys you *require*, §9 rate limits you *enforce*, §12 the auth methods you *accept*. Same nouns, opposite side of the wire. If you find yourself deciding what status code to return, you are in the wrong skill.
+- **You own it → `proof-design`.** The API *this* system publishes to its own callers is `proof-design/references/api-design.md` — and it deliberately covers the same vocabulary from the other side: §6 idempotency keys you *require*, §9 rate limits you *enforce*, §12 the auth methods you *accept*. Same nouns, opposite side of the wire. Adapter and webhook acknowledgement codes that obey the provider contract remain integration work; designing a new public API contract belongs to `proof-design`.
 
 Three more lines that keep this skill from swallowing its neighbours:
 
@@ -52,7 +52,7 @@ Two rules worth stating in the router because they get skipped: **never retry wi
 
 Read **`references/contracts-and-promotion.md`**. Its load-bearing distinction is the **Pact boundary**: consumer-driven contract testing assumes the provider will verify your pact in *their* CI. The dividing question is *"can we get the provider to run our pact?"* **Yes → `proof-test`. No → `proof-integrate`** — and for almost every third-party platform the answer is no, which is why this file substitutes provider-spec validation, recorded sandbox fixtures, and spec-drift diffing on version bumps.
 
-The same file carries the promotion checklist: separate app registration and webhook endpoint per environment, feature-flagged cutover, one smoke-test transaction in production, rollback by reverting to the sandbox credential pair.
+The same file carries the promotion checklist: separate app registration and webhook endpoint per environment, feature-flagged cutover, one smoke-test transaction in production, rollback to a last-known-good production path or a disabled/queued state. Sandbox credentials never become a production fallback.
 
 ## 7. Cite the standard, pinned
 

@@ -22,7 +22,7 @@ from three weeks ago you've genuinely forgotten.
 
 Runs on a schedule (weekly; tune to your merge volume), separate from the improvement
 loop itself. Shipped as a copy-paste Routine prompt at
-`templates/comprehension-digest.routine.md` — a **live** Claude session does the random
+`../templates/comprehension-digest.routine.md` — a **live** Claude session does the random
 sampling, which is why this is a Routine prompt rather than a `.workflow.js` template
 (workflow scripts can't call `Math.random()` — harness policy H10).
 
