@@ -10,7 +10,7 @@ sequenceDiagram
     participant WF as Workflow tool<br/>(sandbox)
     participant A as Agents<br/>(≤ cap, concurrent)
 
-    Dev->>Sess: /loop-review <target> --mode all-out
+    Dev->>Sess: /proof-review <target> --mode all-out
     Sess->>MCP: route_node / estimate_phase (stdio JSON-RPC)
     MCP-->>Sess: routing + cost facts, cited
     Note over Sess: Authoring is sequential and in-context —<br/>no agent has spawned yet

@@ -3,16 +3,16 @@ title: "Component diagram — how the twenty-six skills compose"
 ---
 %%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 48}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
 flowchart TB
-    guide(["<b>loop-guide</b><br/><i>the front door</i><br/>interview → verdict → dispatch"])
+    guide(["<b>proof-guide</b><br/><i>the front door</i><br/>interview → verdict → dispatch"])
 
     subgraph core["<b>Engine &amp; planning</b>"]
         direction TB
-        orch("<b>loop-orchestrate</b><br/><i>planning layer</i>")
-        build("<b>loop-build</b><br/><i>v1 conductor</i>")
-        vent("<b>loop-venture</b><br/><i>venture conductor</i>")
-        ctx("<b>loop-context</b><br/><i>agent state</i>")
-        mk("<b>loop-skill</b><br/><i>meta</i>")
-        eng{{"<b>loop-engine</b><br/><i>orchestration engine</i><br/>pipeline · parallel · loop"}}
+        orch("<b>proof-orchestrate</b><br/><i>planning layer</i>")
+        build("<b>proof-build</b><br/><i>v1 conductor</i>")
+        vent("<b>proof-venture</b><br/><i>venture conductor</i>")
+        ctx("<b>proof-context</b><br/><i>agent state</i>")
+        mk("<b>proof-skill</b><br/><i>meta</i>")
+        eng{{"<b>proof-engine</b><br/><i>orchestration engine</i><br/>pipeline · parallel · loop"}}
     end
 
     subgraph gov["<b>Governance</b> — read-only law"]
@@ -23,37 +23,37 @@ flowchart TB
 
     subgraph know["<b>Knowledge</b>"]
         direction TB
-        comp("<b>loop-comprehend</b><br/><i>codebase understanding</i>")
-        res("<b>loop-research</b><br/><i>cited research</i>")
-        scout("<b>loop-scout</b><br/><i>prior art</i>")
-        docs("<b>loop-docs</b><br/><i>documentation</i>")
+        comp("<b>proof-comprehend</b><br/><i>codebase understanding</i>")
+        res("<b>proof-research</b><br/><i>cited research</i>")
+        scout("<b>proof-scout</b><br/><i>prior art</i>")
+        docs("<b>proof-docs</b><br/><i>documentation</i>")
     end
 
     subgraph make["<b>Design · build · verify</b>"]
         direction TB
-        design("<b>loop-design</b><br/><i>architecture</i>")
-        algo("<b>loop-algo</b><br/><i>mechanism</i>")
-        fe("<b>loop-frontend</b><br/><i>UI craft</i>")
-        pat("<b>loop-pattern</b><br/><i>refactoring</i>")
-        rev("<b>loop-review</b><br/><i>security + quality</i>")
-        exp("<b>loop-experiment</b><br/><i>controlled evaluation</i>")
-        aud("<b>loop-audit</b><br/><i>change impact</i>")
+        design("<b>proof-design</b><br/><i>architecture</i>")
+        algo("<b>proof-algo</b><br/><i>mechanism</i>")
+        fe("<b>proof-frontend</b><br/><i>UI craft</i>")
+        pat("<b>proof-pattern</b><br/><i>refactoring</i>")
+        rev("<b>proof-review</b><br/><i>security + quality</i>")
+        exp("<b>proof-experiment</b><br/><i>controlled evaluation</i>")
+        aud("<b>proof-audit</b><br/><i>change impact</i>")
     end
 
     subgraph run["<b>Integrate · ship · run</b> — the operational cycle"]
         direction LR
-        intg("<b>loop-integrate</b><br/><i>platform integration</i>")
-        test("<b>loop-test</b><br/><i>tests</i>")
-        ship("<b>loop-ship</b><br/><i>release</i>")
-        ops("<b>loop-operate</b><br/><i>steady state</i>")
-        inc("<b>loop-incident</b><br/><i>live failure</i>")
-        dbg("<b>loop-debug</b><br/><i>root cause</i>")
+        intg("<b>proof-integrate</b><br/><i>platform integration</i>")
+        test("<b>proof-test</b><br/><i>tests</i>")
+        ship("<b>proof-ship</b><br/><i>release</i>")
+        ops("<b>proof-operate</b><br/><i>steady state</i>")
+        inc("<b>proof-incident</b><br/><i>live failure</i>")
+        dbg("<b>proof-debug</b><br/><i>root cause</i>")
     end
 
     subgraph autom["<b>Automation</b>"]
         direction TB
-        harn("<b>loop-harness</b><br/><i>Claude Code harness</i>")
-        auto("<b>loop-autopilot</b><br/><i>autonomous loop</i><br/>draft PRs, never merges")
+        harn("<b>proof-harness</b><br/><i>Claude Code harness</i>")
+        auto("<b>proof-autopilot</b><br/><i>autonomous loop</i><br/>draft PRs, never merges")
     end
 
     %% front door

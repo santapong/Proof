@@ -2,7 +2,7 @@
   "$comment": "D6 — normative machine-readable resolution of the three semantic gaps where D3's approved route_node and estimate_phase signatures cannot answer correctly from the source. Beside mcp/runtime-pin.json (D1), mcp/tool-contracts.json (D3), mcp/extraction-contract.json (D4) and mcp/correctness-invariant.json (D5). Every number here was measured against the tree on the date below; every rule cites file:line.",
   "adr": "docs/design/ADR-0006-width-shape-band-coverage-and-flag-selected-rows.md",
   "decidedOn": "2026-07-27",
-  "ownerSkill": "loop-engine",
+  "ownerSkill": "proof-engine",
   "constrains": {
     "file": "mcp/tool-contracts.json",
     "paths": [
@@ -17,7 +17,7 @@
   },
 
   "sourcePins": {
-    "file": ".claude/skills/loop-engine/references/execution-modes.md",
+    "file": ".claude/skills/proof-engine/references/execution-modes.md",
     "bytesAfterD6Edits": 49983,
     "sha256AfterD6Edits": "44f38c6a940821da47549a5588f8ac5dee1ed387ac3ac845d545c06ec291ab27",
     "bandTable": {
@@ -126,10 +126,10 @@
     "liveDefectNotFixedByD6": {
       "$comment": "MEASURED. Four call sites invoke WIDTH outside the domain execution-modes.md:397 declares, over EVERY node, into the cast ledger — the audit artifact. Under all-out a scout node's row reads width:3 where §M6:185 says 1, and §M6:180's agents = Σ items(n) × width(n) computed from that ledger is 3x over on every non-verify node. Not fixed here: D6 rules on route_node and estimate_phase signatures, not templates.",
       "sites": [
-        { "file": ".claude/skills/loop-orchestrate/templates/project-plan.workflow.js", "line": 290, "expr": "width:${WIDTH(n.taskType)}", "context": "cast log, every node in TASKS" },
-        { "file": ".claude/skills/loop-orchestrate/templates/project-plan.workflow.js", "line": 420, "expr": "width: WIDTH(n.taskType)", "context": "JSON ledger" },
-        { "file": ".claude/skills/loop-build/templates/v1-conductor.workflow.js", "line": 208, "expr": "width:${WIDTH(n.taskType)}", "context": "cast log, every node" },
-        { "file": ".claude/skills/loop-build/templates/v1-conductor.workflow.js", "line": 332, "expr": "width: WIDTH(n.taskType)", "context": "JSON ledger" }
+        { "file": ".claude/skills/proof-orchestrate/templates/project-plan.workflow.js", "line": 290, "expr": "width:${WIDTH(n.taskType)}", "context": "cast log, every node in TASKS" },
+        { "file": ".claude/skills/proof-orchestrate/templates/project-plan.workflow.js", "line": 420, "expr": "width: WIDTH(n.taskType)", "context": "JSON ledger" },
+        { "file": ".claude/skills/proof-build/templates/v1-conductor.workflow.js", "line": 208, "expr": "width:${WIDTH(n.taskType)}", "context": "cast log, every node" },
+        { "file": ".claude/skills/proof-build/templates/v1-conductor.workflow.js", "line": 332, "expr": "width: WIDTH(n.taskType)", "context": "JSON ledger" }
       ],
       "whyNoGateCatchesIt": "scripts/validate.mjs reads only §M8 from execution-modes.md (:442-565) and diffs TEMPLATES AGAINST THE BLOCK, never a call site against §M5.",
       "remedy": "Report the §M5 width at the ledger, not WIDTH(n.taskType) — the call sites are OUTSIDE the canonical block, so this needs no fleet-wide block change and no check-5 impact."
@@ -153,7 +153,7 @@
       "ok": false,
       "code": "mode_not_priceable",
       "messageMustName": ["the mode supplied", "that the BAND table has exactly two columns"],
-      "citationMustPointAt": { "file": ".claude/skills/loop-engine/references/execution-modes.md", "line": 225, "why": "A positive sentence stating the absence. Citing absence-by-omission from a table header is weak evidence; citing an explicit sentence is strong. This is why the doc fix was worth opening." },
+      "citationMustPointAt": { "file": ".claude/skills/proof-engine/references/execution-modes.md", "line": 225, "why": "A positive sentence stating the absence. Citing absence-by-omission from a table header is weak evidence; citing an explicit sentence is strong. This is why the doc fix was worth opening." },
       "fix": "Re-run the estimate at --mode balanced or --mode all-out; lite has no published band.",
       "fallback": "Today's instruction unchanged — read §M6's BAND table directly and note that it prices balanced and all-out only.",
       "detailsMustCarry": {
@@ -163,7 +163,7 @@
       }
     },
     "docFixApplied": {
-      "file": ".claude/skills/loop-engine/references/execution-modes.md",
+      "file": ".claude/skills/proof-engine/references/execution-modes.md",
       "line": 225,
       "kind": "additive paragraph after :223",
       "isNot": "a lite column",
@@ -246,7 +246,7 @@
 
   "gateBaselineAfterD6": {
     "validate": { "command": "node scripts/validate.mjs", "result": "PASSED", "assertions": 45252, "failures": 0, "warnings": 5, "exit": 0 },
-    "smoke": { "command": "node scripts/smoke.mjs", "passed": 26, "of": 27, "preExistingFailure": ".claude/skills/loop-build/templates/v1-conductor.workflow.js — declares a planner node but --planner fable never routed to claude-fable-5", "attributableToD6": false },
+    "smoke": { "command": "node scripts/smoke.mjs", "passed": 26, "of": 27, "preExistingFailure": ".claude/skills/proof-build/templates/v1-conductor.workflow.js — declares a planner node but --planner fable never routed to claude-fable-5", "attributableToD6": false },
     "note": "Identical to the baseline recorded in ADR-0001 through ADR-0005. validate.mjs reads only §M8 from execution-modes.md (:442-565), so neither D6 edit is in its path — which is also why the §M5/§M6 drift D6 found survived."
   },
 

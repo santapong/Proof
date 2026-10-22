@@ -22,7 +22,7 @@ A skill's `references/` file may cross-reference a **sibling skill's** `referenc
 ## Authoring a `SKILL.md`
 
 - **Frontmatter is required**: a YAML block with `name`, `description` and `argument-hint`.
-  - `name` — lowercase letters, numbers, hyphens; gerund style **matching the directory exactly** (`loop-review`, `loop-test`). A mismatch does not error, it just fails to resolve.
+  - `name` — lowercase letters, numbers, hyphens; gerund style **matching the directory exactly** (`proof-review`, `proof-test`). A mismatch does not error, it just fails to resolve.
   - `description` — third person, **≤1024 characters**, stating *what it does* AND *when to use it* (the trigger phrases Claude matches on). No first/second person.
   - `argument-hint` — the invocation shape, including every flag the skill accepts (`<target> [--mode <lite|balanced|all-out>]`).
   - **Quote any value containing a colon.** `description: Integrate a platform: OAuth 2.0 flows…` is not valid YAML — a colon followed by whitespace opens a nested mapping, and the parser reports `mapping values are not allowed here`. Two skills shipped this way in 1.0.0. Wrap the whole value in double quotes and it is safe by construction; `node scripts/validate.mjs` rejects the unquoted form.
@@ -38,7 +38,7 @@ Each skill carries a `references/standards.md` that grounds it in authoritative 
 2. **Pin** the current version/edition (with an "edition discipline" note — standards get revised).
 3. **Map** it to *this skill's* workflow — how a practitioner applies it here, not a generic description.
 
-`loop-review/references/owasp-cwe.md` is the exemplar (OWASP Top 10 2021, CWE Top 25, ASVS 5.0, CVSS v4). Match that rigor.
+`proof-review/references/owasp-cwe.md` is the exemplar (OWASP Top 10 2021, CWE Top 25, ASVS 5.0, CVSS v4). Match that rigor.
 
 ## Authoring a workflow template (`*.workflow.js`)
 
@@ -49,14 +49,14 @@ Workflow templates run under the Workflow tool's runtime, which has hard constra
 - **No `Date.now()`, `Math.random()`, or argless `new Date()`** — they throw (they'd break resume). Pass timestamps in via `args`; vary prompts by index for diversity.
 - Normalize input: `const input = typeof args === 'string' ? JSON.parse(args) : args`.
 - `.filter(Boolean)` every `parallel()` result (dead agents resolve to `null`); pass a `schema` to every consumed `agent()`; `log()` progress.
-- Prefer `pipeline()`; use a `parallel()` barrier only when a stage needs all prior results (dedup/merge, early-exit). See the harness & loop policies under `.claude/skills/loop-engine/references/`.
-- **Every template that sets `model` or `effort` carries the canonical `ROUTES` block verbatim** from `.claude/skills/loop-engine/references/execution-modes.md` §M8, and routes each `agent()` call through `optsFor()`. The duplication is intentional: H10 gives scripts no filesystem and no module access, so the block cannot be imported. §M8 is the single source of truth, and **drift between copies is a defect** — when the block changes, every copy changes in the same commit. `node scripts/validate.mjs` enforces this: it reads §M8 at runtime and diffs every copy against it, so a §M8 edit that misses a template fails the gate rather than shipping.
+- Prefer `pipeline()`; use a `parallel()` barrier only when a stage needs all prior results (dedup/merge, early-exit). See the harness & loop policies under `.claude/skills/proof-engine/references/`.
+- **Every template that sets `model` or `effort` carries the canonical `ROUTES` block verbatim** from `.claude/skills/proof-engine/references/execution-modes.md` §M8, and routes each `agent()` call through `optsFor()`. The duplication is intentional: H10 gives scripts no filesystem and no module access, so the block cannot be imported. §M8 is the single source of truth, and **drift between copies is a defect** — when the block changes, every copy changes in the same commit. `node scripts/validate.mjs` enforces this: it reads §M8 at runtime and diffs every copy against it, so a §M8 edit that misses a template fails the gate rather than shipping.
 - **`input.mode` and `input.planner` are reserved fleet-wide** and belong to that block. See [Reserved argument names](#reserved-argument-names) before you name a new argument.
 - **A Haiku-routed node carries no `effort`.** Haiku 4.5 has no effort dial, so `ROUTES` records `effort: null` and `optsFor()` omits the key. Writing `effort: 'low'` on a Haiku node is a no-op at best and an error at worst.
 
 ## Adding a lifecycle framework
 
-Copy `.claude/skills/loop-engine/frameworks/_TEMPLATE.md` to `frameworks/<Name>.md`, fill in the phases (each with a human gate where appropriate), and it's usable via `/loop-engine <task> --framework <Name>`. No skill changes needed.
+Copy `.claude/skills/proof-engine/frameworks/_TEMPLATE.md` to `frameworks/<Name>.md`, fill in the phases (each with a human gate where appropriate), and it's usable via `/proof-engine <task> --framework <Name>`. No skill changes needed.
 
 ## Validating your change
 
@@ -71,7 +71,7 @@ It exits **0** when the tree conforms and **non-zero** with a `file:line` for ev
 | # | Check | Fails on |
 |---|---|---|
 | 1 | Frontmatter parses, and carries `name`, `description`, `argument-hint` | YAML that does not parse; a missing or empty required key; a `description` over 1024 characters |
-| 2 | `name:` matches the skill's directory | `.claude/skills/loop-algo/` declaring `name: loop-algorithms` — the skill silently fails to resolve |
+| 2 | `name:` matches the skill's directory | `.claude/skills/proof-algo/` declaring `name: proof-algorithms` — the skill silently fails to resolve |
 | 3 | Every `*.workflow.js` parses | `node --check` on the source wrapped exactly as the Workflow runtime wraps it |
 | 4 | Harness policy **H10** | `Date.now()`, `Math.random()`, argless `new Date()`, `performance.now()`, `crypto.randomUUID()` in executable code |
 | 5 | Canonical `ROUTES` conformance | any copy that is not byte-identical to `execution-modes.md` §M8, and any bare `model:`/`effort:` literal outside the block |
@@ -95,7 +95,7 @@ Also run, and note in the PR:
 claude plugin validate . --strict
 
 # Hook scripts (if you touched them) parse and behave
-bash -n .claude/skills/loop-harness/templates/hooks/*.sh
+bash -n .claude/skills/proof-harness/templates/hooks/*.sh
 
 # Templates actually RUN, and route as intended in both modes (should print 0 failed)
 node scripts/smoke.mjs
@@ -105,6 +105,9 @@ node scripts/check-host-packs.mjs
 
 # Local advisory retrieval, opt-in model validation, and abstention behavior
 node scripts/test-software-context.mjs
+
+# Build packs first. Uses disposable directories; no provider calls.
+node scripts/test-public-names.mjs
 ```
 
 The context advisor's synthetic routing evaluation is documented in
@@ -113,12 +116,12 @@ from the frozen evaluation requests; passing a published fixture does not establ
 live selection quality or billed-token savings. Do not adjust the evaluator to make
 an optimization pass.
 
-**On the third gate.** `check-host-packs.mjs` builds the Cursor / Codex / Antigravity packs twice and asserts they are byte-identical, that no held-back skill's router leaked in, that no `*.workflow.js` survived, that no `${CLAUDE_*}` expansion remains, that every skill which lost a template says so, and that **every `../<sibling-skill>/…` pointer resolves inside the pack**. That last one is the check most likely to catch you: four skills are held back from packs by [ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md), so a new cross-reference into `loop-engine`, `loop-harness`, `loop-skill` or `loop-autopilot` is green in `.claude/skills/` and red here. The fix is a `carryFiles` entry in `scripts/host-targets.json` (§D8.9), a stub, or a rethink of the pointer — not an edit to `dist/`, which is generated and git-ignored and will be overwritten on the next pack.
+**On the third gate.** `check-host-packs.mjs` builds the Cursor / Codex / Antigravity packs twice and asserts they are byte-identical, that no held-back skill's router leaked in, that no `*.workflow.js` survived, that no `${CLAUDE_*}` expansion remains, that every skill which lost a template says so, and that **every `../<sibling-skill>/…` pointer resolves inside the pack**. That last one is the check most likely to catch you: four skills are held back from packs by [ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md), so a new cross-reference into `proof-engine`, `proof-harness`, `proof-skill` or `proof-autopilot` is green in `.claude/skills/` and red here. The fix is a `carryFiles` entry in `scripts/host-targets.json` (§D8.9), a stub, or a rethink of the pointer — not an edit to `dist/`, which is generated and git-ignored and will be overwritten on the next pack.
 
 To parse a single template by hand without the script — note the temp file. `node --check` stats the path it is given rather than reading the stream, so piping into `node --check /dev/stdin` fails with `ENOENT … /proc/<pid>/fd/pipe:[…]` on every input, including valid ones:
 
 ```bash
-f=.claude/skills/loop-engine/templates/pipeline.workflow.js
+f=.claude/skills/proof-engine/templates/pipeline.workflow.js
 t=$(mktemp /tmp/wf-XXXXXX.js)
 { echo 'async function wf(agent,parallel,pipeline,phase,log,args,budget,workflow){';
   sed 's/^export const meta/const meta/' "$f"; echo '}'; } > "$t"

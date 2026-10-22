@@ -26,7 +26,7 @@ finds, and is not yet written.
 | File | What it is | Authority |
 |---|---|---|
 | `boundary-audit.json` | The 22-skill scope matrix: one mutually-exclusive scope line per skill, every rated overlap with its resolution, and the approved `description:` text for each skill. | **Outranks the build manifest.** Where a plan and this file disagree, this file wins. |
-| `execution-mode-spec.json` | The `--mode optimize\|full` and `--planner opus\|fable` contract as specified before implementation: routing table, flag grammar, pre-flight, back-compat. | Superseded at the point of use by `.claude/skills/loop-engine/references/execution-modes.md`, which is what the skills actually load. Kept as the design record. |
+| `execution-mode-spec.json` | The `--mode optimize\|full` and `--planner opus\|fable` contract as specified before implementation: routing table, flag grammar, pre-flight, back-compat. | Superseded at the point of use by `.claude/skills/proof-engine/references/execution-modes.md`, which is what the skills actually load. Kept as the design record. |
 
 ## Research records — informative, not normative
 

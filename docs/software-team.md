@@ -1,15 +1,15 @@
 # Proof for a software team
 
-Start with the deliverable. A reproducible bug belongs to `loop-debug`; a diff to assess belongs to `loop-review`; a request for tests belongs to `loop-test`. Use `loop-guide` when the owner is unclear. Carry the issue, relevant revision, acceptance evidence and current work to the next person or agent so each handoff can resume without rediscovering the task.
+Start with the deliverable. A reproducible bug belongs to `proof-debug`; a diff to assess belongs to `proof-review`; a request for tests belongs to `proof-test`. Use `proof-guide` when the owner is unclear. Carry the issue, relevant revision, acceptance evidence and current work to the next person or agent so each handoff can resume without rediscovering the task.
 
-The focused instructions live in [software-team intake](../.claude/skills/loop-guide/references/software-team.md), [context efficiency](../.claude/skills/loop-context/references/software-efficiency.md), and [skill improvement](../.claude/skills/loop-autopilot/references/skill-improvement.md). Read the reference for the current task. Small work should not expand into a full lifecycle or an agent team by default.
+The focused instructions live in [software-team intake](../.claude/skills/proof-guide/references/software-team.md), [context efficiency](../.claude/skills/proof-context/references/software-efficiency.md), and [skill improvement](../.claude/skills/proof-autopilot/references/skill-improvement.md). Read the reference for the current task. Small work should not expand into a full lifecycle or an agent team by default.
 
 ## Get a small reading plan
 
 Run these commands from a Proof source checkout with Node installed:
 
 ```sh
-node scripts/software-context.mjs rank --skill loop-review
+node scripts/software-context.mjs rank --skill proof-review
 node scripts/software-context.mjs rank --task "Review the changes on this branch for defects"
 ```
 
@@ -21,7 +21,7 @@ The helper reports characters and a rough token proxy for an explicit reading-su
 
 ```sh
 node scripts/software-context.mjs train \
-  --data docs/examples/software-routing-train.jsonl \
+  --data docs/examples/software-routing-train-proof-v4.jsonl \
   --out /tmp/proof-routing.json
 node scripts/software-context.mjs rank \
   --task "Review the changes on this branch for defects" \

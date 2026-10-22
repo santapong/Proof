@@ -2,7 +2,7 @@
 
 The twenty-six skills share a router-and-reference structure, with templates where needed. This document explains **why** that shape, because the constraints are not obvious and several of them were learned by shipping the wrong thing first. `CONTRIBUTING.md` tells you the mechanics — what to write and how to validate it. This tells you what each part is *for*, which is what you need before adding the next one.
 
-The `loop-skill` skill scaffolds all of this for you. Read this to understand what it emits and why, or to review a skill someone else wrote.
+The `proof-skill` skill scaffolds all of this for you. Read this to understand what it emits and why, or to review a skill someone else wrote.
 
 ```
 .claude/skills/<name>/
@@ -44,7 +44,7 @@ Three rules, each earned:
 
 The body is a numbered flow that **points at** references. It names what to read and when; it does not restate what those files say.
 
-The failure mode is gradual: a router grows an explanation, then an example, then a table, and at 30 KB it is a reference file that also happens to be loaded on every invocation. Open [`loop-review/SKILL.md`](../../.claude/skills/loop-review/SKILL.md) as the exemplar — it covers a large domain in under 9 KB by refusing to explain anything it can cite.
+The failure mode is gradual: a router grows an explanation, then an example, then a table, and at 30 KB it is a reference file that also happens to be loaded on every invocation. Open [`proof-review/SKILL.md`](../../.claude/skills/proof-review/SKILL.md) as the exemplar — it covers a large domain in under 9 KB by refusing to explain anything it can cite.
 
 Where a skill has a near neighbour, the body's **first sentence** states the discriminating predicate. That placement is deliberate: by the time someone is reading the body they have already selected the skill, so the first thing they should learn is whether they selected the right one.
 
@@ -79,11 +79,11 @@ The template runs where there is no filesystem, no module system, no clock, and 
 - A `schema` on every `agent()` call whose result the script consumes.
 - The canonical **`ROUTES` block, byte-identical**, in any template that sets `model` or `effort`. It cannot be imported — there is no module system — so it is duplicated by rule, with the gate diffing every copy against `execution-modes.md` §M8.
 
-Shape follows the [harness policy](../../.claude/skills/loop-engine/references/harness-policy.md): `pipeline()` by default, a `parallel()` barrier only for a genuine cross-item reduce, a loop only for unknown-size discovery. Any barrier carries an inline comment justifying itself under H2.
+Shape follows the [harness policy](../../.claude/skills/proof-engine/references/harness-policy.md): `pipeline()` by default, a `parallel()` barrier only for a genuine cross-item reduce, a loop only for unknown-size discovery. Any barrier carries an inline comment justifying itself under H2.
 
 ## Adding a skill — the lifecycle
 
-1. **Check it should exist.** Does an existing skill already cover this, or cover it *partially* in a reference file? `loop-ship` and `loop-operate` were nearly duplicates of content already living inside `loop-design` — the fix was to *move* that content, not to duplicate it. Two skills cannot share one body of knowledge and be selected reliably.
+1. **Check it should exist.** Does an existing skill already cover this, or cover it *partially* in a reference file? `proof-ship` and `proof-operate` were nearly duplicates of content already living inside `proof-design` — the fix was to *move* that content, not to duplicate it. Two skills cannot share one body of knowledge and be selected reliably.
 2. **Write the boundary first.** Draft the `description` and the checkable discriminator against every neighbour, and add the rows to `boundary-audit.json`. If this step is hard, the skill is wrong — fix it here, not after authoring 100 KB.
 3. **Research the standards.** Confirm every version against a primary source. Grade honestly.
 4. **Author** router → references → template, in that order, so the router's flow determines what the references need to contain.

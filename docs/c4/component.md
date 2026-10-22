@@ -1,19 +1,19 @@
-# C4 Component (Level 3) — inside `loop-engine`
+# C4 Component (Level 3) — inside `proof-engine`
 
-C4 says stop at Level 2 unless a container's internals are genuinely non-obvious. One container here qualifies: **`loop-engine`**, the orchestration engine every other skill authors through. Its internals are non-obvious for a specific reason — the work is split across **two execution contexts with incompatible capabilities**, and almost every design constraint in this plugin falls out of that split.
+C4 says stop at Level 2 unless a container's internals are genuinely non-obvious. One container here qualifies: **`proof-engine`**, the orchestration engine every other skill authors through. Its internals are non-obvious for a specific reason — the work is split across **two execution contexts with incompatible capabilities**, and almost every design constraint in this plugin falls out of that split.
 
 - **Authoring context** (the agent session): can read files, search the web, ask the human a question, and reason. Invokes the Workflow tool after authoring.
 - **Execution context** (the Workflow sandbox): can spawn agents in parallel. **Cannot** read the filesystem, import a module, read a clock, or prompt anybody.
 
 Anything interactive or estimated must therefore happen at authoring time and enter the script **only as pure literals**. That single sentence explains the pre-flight's placement, the `ESTIMATE` literal, and the duplication rule below.
 
-![C4 Component diagram — inside loop-engine](diagrams/component-engine.svg)
+![C4 Component diagram — inside proof-engine](diagrams/component-engine.svg)
 
 <sub>Diagram source: [`diagrams/src/component-engine.mmd`](diagrams/src/component-engine.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
 ## The mechanism, component by component
 
-**Flag Parser (§M2).** Only two files in the whole plugin parse flags — this one and `loop-orchestrate`. Domain skills that advertise `--mode` forward their *raw argument string*; that pass-through is the entire inheritance mechanism, which is why no domain skill contains mode logic. Two skills (`loop-design`, `loop-harness`) advertise nothing, because they ship no template and route nothing: a skill that cannot honour a flag must not advertise it.
+**Flag Parser (§M2).** Only two files in the whole plugin parse flags — this one and `proof-orchestrate`. Domain skills that advertise `--mode` forward their *raw argument string*; that pass-through is the entire inheritance mechanism, which is why no domain skill contains mode logic. Two skills (`proof-design`, `proof-harness`) advertise nothing, because they ship no template and route nothing: a skill that cannot honour a flag must not advertise it.
 
 **Shape Selector (H1/H2/L1).** Three shapes, and the discipline is in refusing the wrong one. `pipeline()` is the default — item A can be in stage 3 while item B is still in stage 1, so wall-clock is the slowest *chain*, not the sum of slowest-per-stage. A `parallel()` **barrier** is allowed only when a stage genuinely needs the whole prior set: a cross-item dedup, a zero-count early exit, or a prompt that compares findings against each other. "I need to flatten first" is not a barrier. A **loop** is only for unknown-size discovery; a known work-list is a pipeline, never a loop.
 

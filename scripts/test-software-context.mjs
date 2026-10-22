@@ -11,7 +11,7 @@ import { boundaryLookup } from '../mcp/lib/boundary_lookup.mjs'
 
 const scratch = mkdtempSync(join(tmpdir(), 'proof-context-test-'))
 const root = join(scratch, 'repo')
-const fixture = join(DEFAULT_ROOT, 'docs/examples/software-routing-train.jsonl')
+const fixture = join(DEFAULT_ROOT, 'docs/examples/software-routing-train-proof-v4.jsonl')
 const dataPath = join(scratch, 'train.jsonl')
 let checks = 0
 function check(name, action) {
@@ -27,9 +27,9 @@ function resign(model) {
 try {
   const paths = ['docs/design/boundary-audit.json', 'mcp/boundary-match-contract.json',
     'mcp/lib/boundary.mjs', 'mcp/lib/boundary_lookup.mjs', 'scripts/lib/software-context.mjs',
-    '.claude/skills/loop-engine/references/execution-modes.md',
+    '.claude/skills/proof-engine/references/execution-modes.md',
     ...readdirSync(join(DEFAULT_ROOT, '.claude/skills'), { withFileTypes: true })
-      .filter((e) => e.isDirectory() && /^loop-/.test(e.name)).map((e) => `.claude/skills/${e.name}/SKILL.md`)]
+      .filter((e) => e.isDirectory() && /^proof-/.test(e.name)).map((e) => `.claude/skills/${e.name}/SKILL.md`)]
   for (const path of paths) {
     mkdirSync(dirname(join(root, path)), { recursive: true })
     cpSync(join(DEFAULT_ROOT, path), join(root, path))
@@ -65,7 +65,7 @@ try {
     const optional = rankContext({ root, task, modelPath: artifact })
     assert.deepEqual(optional.lexical, baseline.lexical)
     assert.equal(optional.learned.status, 'candidates')
-    assert.equal(optional.learned.candidates[0].skill, 'loop-review')
+    assert.equal(optional.learned.candidates[0].skill, 'proof-review')
     assert.match(optional.learned.scoreMeaning, /Uncalibrated/)
     assert(optional.learned.candidates.length >= 2)
   })
@@ -77,13 +77,13 @@ try {
     assert.equal(result.outcome, 'abstain')
     assert.deepEqual(result.lexical.candidates, [])
     assert.equal(result.learned.status, 'abstain')
-    assert.equal(result.readPlan.entries[0].path, '.claude/skills/loop-guide/SKILL.md')
+    assert.equal(result.readPlan.entries[0].path, '.claude/skills/proof-guide/SKILL.md')
   })
   for (const unknown of ['book me a flight to Berlin', 'help me', 'what is the capital of Peru']) check(`unknown task ${unknown} falls back`, () => {
     const result = rankContext({ root, task: unknown, modelPath: artifact })
     assert.equal(result.outcome, 'abstain')
     assert.equal(result.learned.status, 'abstain')
-    assert.equal(result.fallback.skill, 'loop-guide')
+    assert.equal(result.fallback.skill, 'proof-guide')
   })
   check('ambiguous task remains an advisory shortlist', () => {
     const result = rankContext({ root, task: 'review and debug a failing test with a runtime exception', modelPath: artifact })
@@ -97,7 +97,7 @@ try {
     walk(result)
   })
   check('explicit known skill bypasses inference and keeps full entrypoint', () => {
-    const result = rankContext({ root, skill: 'loop-review' })
+    const result = rankContext({ root, skill: 'proof-review' })
     assert.equal(result.outcome, 'exact')
     assert.equal(result.learned.status, 'disabled')
     assert.equal(result.lexical.candidates.length, 1)
@@ -149,8 +149,8 @@ try {
     }
     assert.equal(result.auditIntegrity.matrixSize, audit.matrix.length)
   })
-  check('unknown skill fails instead of guessing', () => fails(() => rankContext({ root, skill: 'loop-typo' }), 'not_found'))
-  for (const options of [{ task, skill: 'loop-test' }, { skill: 'loop-test', modelPath: artifact },
+  check('unknown skill fails instead of guessing', () => fails(() => rankContext({ root, skill: 'proof-typo' }), 'not_found'))
+  for (const options of [{ task, skill: 'proof-test' }, { skill: 'proof-test', modelPath: artifact },
     { task, limit: 1 }, { task, limit: 6 }, { task: 123 }, { task: 'x'.repeat(4001) },
     { task, modelPath: '' }, { task, modelPath: '   ' }, { task, root: '' }, { task, root: '   ' }]) {
     check('invalid rank options are rejected', () => fails(() => rankContext({ root, ...options }), 'invalid_argument'))
@@ -160,7 +160,7 @@ try {
   }
   for (const mutate of [
     (r) => { r[0].reviewed = false }, (r) => { delete r[0].reviewed }, (r) => { r[0].split = 'test' },
-    (r) => { r[0].skill = 'loop-missing' }, (r) => { r[0].provenance.kind = 'unreviewed' },
+    (r) => { r[0].skill = 'proof-missing' }, (r) => { r[0].provenance.kind = 'unreviewed' },
     (r) => { r[0].provenance.reviewer = '' }, (r) => { r[0].unexpected = true },
     (r) => { r[0].task = 'the and for' }, (r) => { r[1].id = r[0].id },
     (r) => { r[1].task = r[0].task.toUpperCase() }, (r) => r.splice(3), (r) => r.splice(1, 2),
@@ -178,7 +178,7 @@ try {
     fails(() => rankContext({ root, task, modelPath: artifact }), 'stale_model')
     writeFileSync(dataPath, rawTraining)
   })
-  for (const source of ['.claude/skills/loop-test/SKILL.md', '.claude/skills/loop-engine/references/execution-modes.md',
+  for (const source of ['.claude/skills/proof-test/SKILL.md', '.claude/skills/proof-engine/references/execution-modes.md',
     'docs/design/boundary-audit.json']) check(`source changes invalidate model: ${source}`, () => {
     const path = join(root, source), before = readFileSync(path, 'utf8')
     writeFileSync(path, before + '\n')
@@ -217,10 +217,10 @@ try {
   check('equal learned evidence abstains and prototype-like words stay finite', () => {
     const common = { split: 'train', reviewed: true, provenance: rows[0].provenance }
     writeRows([
-      { ...common, id: 'a', task: 'constructor crash null', skill: 'loop-debug' },
-      { ...common, id: 'b', task: 'stack error trace', skill: 'loop-debug' },
-      { ...common, id: 'c', task: 'null crash constructor', skill: 'loop-review' },
-      { ...common, id: 'd', task: 'trace error stack', skill: 'loop-review' },
+      { ...common, id: 'a', task: 'constructor crash null', skill: 'proof-debug' },
+      { ...common, id: 'b', task: 'stack error trace', skill: 'proof-debug' },
+      { ...common, id: 'c', task: 'null crash constructor', skill: 'proof-review' },
+      { ...common, id: 'd', task: 'trace error stack', skill: 'proof-review' },
     ])
     const tied = join(scratch, 'tied.json')
     trainModel({ root, dataPath, outPath: tied })
@@ -228,12 +228,12 @@ try {
     writeFileSync(dataPath, rawTraining)
   })
   check('CLI returns JSON for exact entrypoints', () => {
-    const child = spawnSync(process.execPath, [join(DEFAULT_ROOT, 'scripts/software-context.mjs'), 'rank', '--skill', 'loop-test', '--root', root], { encoding: 'utf8' })
+    const child = spawnSync(process.execPath, [join(DEFAULT_ROOT, 'scripts/software-context.mjs'), 'rank', '--skill', 'proof-test', '--root', root], { encoding: 'utf8' })
     assert.equal(child.status, 0, child.stderr)
     assert.equal(JSON.parse(child.stdout).outcome, 'exact')
   })
   check('CLI rejects duplicate and unknown flags', () => {
-    for (const args of [['rank', '--skill', 'loop-test', '--skill', 'loop-debug'], ['rank', '--mode', 'lite'],
+    for (const args of [['rank', '--skill', 'proof-test', '--skill', 'proof-debug'], ['rank', '--mode', 'lite'],
       ['rank', '--task', task, '--model', ''], ['rank', '--task', task, '--root', '']]) {
       const child = spawnSync(process.execPath, [join(DEFAULT_ROOT, 'scripts/software-context.mjs'), ...args], { encoding: 'utf8' })
       assert.equal(child.status, 1)

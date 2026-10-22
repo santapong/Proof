@@ -24,7 +24,7 @@ flowchart TB
     repo["<b>Target Repository</b><br/><i>«external system»</i>"]
     hosts["<b>Other agent hosts</b><br/><i>«external system» — not yet verified</i>"]
 
-    dev -- "invokes /loop-*" --> cc
+    dev -- "invokes /proof-*" --> cc
     cc -- "discovers the<br/>plugin from" --> manifest
     cc -- "loads on invocation" --> routers
     cc -- "spawns over stdio;<br/>calls 5 tools" --> mcp

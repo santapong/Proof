@@ -21,10 +21,10 @@ links in that viewer are pinned to the inspected implementation revision.
 
 ![Scope, work, verify, and human gate: a bounded software-team phase.](../assets/proof-workflow.svg)
 
-1. **Select a skill.** Invoke it directly or use `loop-guide` for task intake.
+1. **Select a skill.** Invoke it directly or use `proof-guide` for task intake.
    Read its boundary and complete entrypoint before committing to the task.
 2. **Author a phase.** Load the relevant references and shared policies.
-   `loop-engine` maps the task to a lifecycle phase and authors the script.
+   `proof-engine` maps the task to a lifecycle phase and authors the script.
    The `all-out` pre-flight happens in this session, before execution.
 3. **Execute and verify.** The host runs the script. Canonical `ROUTES` supplies
    per-node model options. Relevant checks and adversarial review produce
@@ -38,7 +38,7 @@ links in that viewer are pinned to the inspected implementation revision.
 | --- | --- | --- |
 | Context | Who uses Proof, and what is outside it? | [C4 Level 1](context.md) |
 | Containers | What loads as instructions, runs as a process, or is generated? | [C4 Level 2](container.md) |
-| Components | How do authoring, routing, and execution fit inside `loop-engine`? | [C4 Level 3](component.md) |
+| Components | How do authoring, routing, and execution fit inside `proof-engine`? | [C4 Level 3](component.md) |
 | Skill atlas | How do the 26 skills divide responsibilities? | [Fleet diagrams](skills.md) · [Skill anatomy](skill-anatomy.md) |
 | Runtime and development | What runs concurrently, where does it run, and what changes? | [4+1 views](../views/4plus1.md) |
 | Decisions | Which contracts govern the implementation? | [ADRs and boundary audit](../design/README.md) |
@@ -50,7 +50,7 @@ keep their own abstraction boundaries; the overview does not replace them.
 
 | Boundary | Current behavior | Source |
 | --- | --- | --- |
-| Authoring / execution | The session can read files and interact; a running workflow script cannot import modules, read the filesystem, or prompt the user. | [Harness policy H10](../../.claude/skills/loop-engine/references/harness-policy.md) |
+| Authoring / execution | The session can read files and interact; a running workflow script cannot import modules, read the filesystem, or prompt the user. | [Harness policy H10](../../.claude/skills/proof-engine/references/harness-policy.md) |
 | MCP / runtime | Five MCP tools assist authoring. They are not callable from inside a running workflow script. | [MCP contracts](../../mcp/tool-contracts.json) · [Server](../../mcp/server.mjs) |
 | Knowledge / host execution | Portable packs carry 22 skills to three hosts and exclude workflow scripts and four native skills. | [Host packaging](../design/ADR-0008-host-packaging-seam.md) |
 | Advice / authority | The local lexical matcher and optional ML classifier suggest candidates. Boundaries, permissions, model tiers, and verification gates retain authority. | [Context advisor design](../design/ADR-0011-software-context-advisor.md) |
@@ -108,7 +108,7 @@ This project's own build supplied a cautionary data point: a dedup step once mer
 
 Every node carries a `taskType`. The `ROUTES` block maps `taskType + mode` to a model and effort: mechanical enumeration to the cheapest capable tier, implementation to the middle, judgment and adversarial verification to the top. Two override modifiers cut across it — **wide fan-out pushes a tier down** (budget governs when per-item judgment is small and multiplied 300×), **high downstream error-cost pushes a tier up** (accepting a wrong result costs far more than the check).
 
-Three modes expose this as one dial: `lite`, `balanced` (default), and `all-out`. The canonical `ROUTES` block defines their model, effort, and width settings. The old names `optimize` and `full` remain compatibility aliases for `balanced` and `all-out`. See [execution-modes.md](../../.claude/skills/loop-engine/references/execution-modes.md) for the exact contract.
+Three modes expose this as one dial: `lite`, `balanced` (default), and `all-out`. The canonical `ROUTES` block defines their model, effort, and width settings. The old names `optimize` and `full` remain compatibility aliases for `balanced` and `all-out`. See [execution-modes.md](../../.claude/skills/proof-engine/references/execution-modes.md) for the exact contract.
 
 > The economics are the classic *cost-sensitive learning* trade-off: the loss matrix is asymmetric, so the optimal decision threshold is not the accuracy-maximising one. Charles Elkan, *The Foundations of Cost-Sensitive Learning*, IJCAI 2001.
 
@@ -117,7 +117,7 @@ Three modes expose this as one dial: `lite`, `balanced` (default), and `all-out`
 Phases end at gates. At a gate the run **stops**, presents its deliverable and its ledger, and waits. The autonomous loop opens **draft PRs and never merges**. The autonomy ladder (OBSERVE → VERIFY → SUSTAIN → SCALE) makes the progression explicit, and its safety property is that it **degrades downward**: any alarm drops it a rung, and the floor is always propose-only.
 
 > Phase-gate review as a delivery discipline: Robert G. Cooper's Stage-Gate model (1986 onward).
-> The lifecycle framework shipped here is [AIDLC](../../.claude/skills/loop-engine/frameworks/AIDLC.md) — Inception → Construction → Operation, each ending at a gate.
+> The lifecycle framework shipped here is [AIDLC](../../.claude/skills/proof-engine/frameworks/AIDLC.md) — Inception → Construction → Operation, each ending at a gate.
 
 ### 6 · Duplication as a rule, not an apology
 
@@ -140,10 +140,10 @@ A validation step nobody has ever seen fail is not evidence. The host's `plugin 
 | Standard | Applied to |
 |---|---|
 | **C4 model** — Simon Brown, [c4model.com](https://c4model.com) | These diagrams. Levels 1–3; Level 4 deliberately skipped |
-| **Diátaxis** — Daniele Procida, [diataxis.fr](https://diataxis.fr) | Doc-type separation across the repo; `loop-docs` applies it |
+| **Diátaxis** — Daniele Procida, [diataxis.fr](https://diataxis.fr) | Doc-type separation across the repo; `proof-docs` applies it |
 | **Semantic Versioning 2.0.0** | The plugin version. 1.0.0 freezes skill names and flag surface |
 | **Keep a Changelog 1.1.0** | `CHANGELOG.md` |
-| **MADR** | Architecture decision records; `loop-design` ships the template |
+| **MADR** | Architecture decision records; `proof-design` ships the template |
 
 Every skill additionally carries a version-pinned `references/standards.md` naming the authoritative standards *it* applies — OWASP / CWE / ASVS for review, SLSA / CycloneDX / in-toto for release, Google SRE for operations, and so on. Those shelves distinguish **ratified standards** from **somebody's opinion**, because the two are cited differently, and each carries a confirmation log recording what was verified against a primary source and when.
 

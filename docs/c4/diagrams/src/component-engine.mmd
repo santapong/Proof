@@ -1,10 +1,10 @@
 ---
-title: "Component diagram — loop-engine"
+title: "Component diagram — proof-engine"
 ---
 flowchart TB
     dev["<b>Developer</b><br/><i>«person»</i><br/>Invokes; answers the pre-flight and the gates"]
 
-    subgraph engine["<b>loop-engine</b> &nbsp;[CONTAINER]"]
+    subgraph engine["<b>proof-engine</b> &nbsp;[CONTAINER]"]
         parser["<b>Flag Parser</b><br/><i>«component» step 1, §M2</i><br/>--mode · --planner · --framework · --budget<br/>· --dry-run; never guesses an unknown value"]
         mapper["<b>Framework Mapper</b><br/><i>«component» step 3</i><br/>Maps the task onto phases;<br/>locates the human gates"]
         shaper["<b>Shape Selector</b><br/><i>«component» step 4 — H1, H2, L1</i><br/>Pipeline by default; barriers earned;<br/>loops only for unknown size"]

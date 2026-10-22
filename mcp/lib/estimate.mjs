@@ -75,7 +75,7 @@ import { fileURLToPath } from 'node:url'
 
 const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/lib
 const DEFAULT_ROOT = path.resolve(HERE, '..', '..') // repo root, two levels up from mcp/lib
-const MODES_DOC_REL = path.join('.claude', 'skills', 'loop-engine', 'references', 'execution-modes.md')
+const MODES_DOC_REL = path.join('.claude', 'skills', 'proof-engine', 'references', 'execution-modes.md')
 
 // The ten §M8 ROUTES / §M3 kinds. Declared here, not imported (see file header) and not re-derived
 // by evaluating §M8 (that would pull node:vm into a module that has no other reason to need it, for

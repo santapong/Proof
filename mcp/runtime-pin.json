@@ -3,8 +3,10 @@
   "adr": "ADR-0001-runtime-and-dependency.md",
   "decidedOn": "2026-07-27",
   "verifiedOn": "2026-07-27",
-  "repoState": { "branch": "develop", "head": "4dd461a" },
-
+  "repoState": {
+    "branch": "develop",
+    "head": "4dd461a"
+  },
   "runtime": {
     "decision": "zero-dependency",
     "transport": "stdio",
@@ -18,7 +20,6 @@
     "stdoutIsProtocolOnly": true,
     "diagnosticsStream": "stderr"
   },
-
   "protocol": {
     "advertise": "2025-06-18",
     "negotiation": "echo the client's requested protocolVersion verbatim when it is in supportedVersions; otherwise reply with advertise",
@@ -41,17 +42,22 @@
       "resources/read"
     ],
     "unknownMethod": -32601,
-    "errorCodes": { "parse": -32700, "methodNotFound": -32601, "invalidParams": -32602, "internal": -32603 },
+    "errorCodes": {
+      "parse": -32700,
+      "methodNotFound": -32601,
+      "invalidParams": -32602,
+      "internal": -32603
+    },
     "domainFailureShape": "successful tools/call result with isError: true, never a JSON-RPC error"
   },
-
-  "serverInfo": { "name": "proof-mcp", "version": "0.2.0" },
-
+  "serverInfo": {
+    "name": "proof-mcp",
+    "version": "0.3.0-beta.1"
+  },
   "goldenQueryGate": {
-    "requirement": "MUST drive the server through the real SDK client (Client + StdioClientTransport) — this is what makes the zero-dependency choice safe",
+    "requirement": "MUST drive the server through the real SDK client (Client + StdioClientTransport) \u2014 this is what makes the zero-dependency choice safe",
     "sdkUsage": "test-time only, via npx or a scratch tree; never a shipped dependency, never committed to the repo"
   },
-
   "runnerUp": {
     "condition": "only if HTTP/streamable transport is un-deferred, or a required capability lands that must be hand-implemented (sampling, elicitation, progress, tasks)",
     "shape": "scoped mcp/package.json; repo root stays manifest-free",
@@ -79,7 +85,7 @@
         "registerPrompt",
         "any direct import of zod"
       ],
-      "reason": "registerTool inputSchema is ZodRawShapeCompat | AnySchema, and AnySchema = z3.ZodTypeAny | z4.$ZodType (dist/esm/server/zod-compat.d.ts:3) — both Zod. The high-level API makes 'one runtime dep' false. The low-level Server takes SDK-exported schemas, so your source never imports zod and hand-written JSON Schema passes through unmodified.",
+      "reason": "registerTool inputSchema is ZodRawShapeCompat | AnySchema, and AnySchema = z3.ZodTypeAny | z4.$ZodType (dist/esm/server/zod-compat.d.ts:3) \u2014 both Zod. The high-level API makes 'one runtime dep' false. The low-level Server takes SDK-exported schemas, so your source never imports zod and hand-written JSON Schema passes through unmodified.",
       "inputSchemaStyle": "hand-written JSON Schema literals"
     },
     "doNotUse": {
@@ -88,18 +94,30 @@
       "reason": "17 minors stale; lacks registerResource entirely, and its four resource() overloads are @deprecated on 1.29.0. Pin against what ships, not what is installed."
     }
   },
-
   "gateBaseline": {
     "measuredOn": "2026-07-27",
-    "validate": { "command": "node scripts/validate.mjs", "exit": 0, "assertions": 45252, "failures": 0, "warnings": 5 },
+    "validate": {
+      "command": "node scripts/validate.mjs",
+      "exit": 0,
+      "assertions": 45252,
+      "failures": 0,
+      "warnings": 5
+    },
     "smoke": {
       "command": "node scripts/smoke.mjs",
       "exit": 1,
       "executed": 27,
       "passed": 26,
-      "preExistingFailure": ".claude/skills/loop-build/templates/v1-conductor.workflow.js — declares a planner node but --planner fable never routed to claude-fable-5",
+      "preExistingFailure": ".claude/skills/loop-build/templates/v1-conductor.workflow.js \u2014 declares a planner node but --planner fable never routed to claude-fable-5",
       "note": "pre-existing on develop before any mcp/ work; not caused by and not in scope for D1"
     },
     "mcpDirIsGateNeutral": "validate.mjs scopes its walk to .claude/skills (line 24) and node --checks in os.tmpdir() (line 287); smoke.mjs walks ROOT but skips node_modules by name (line 25) and collects only *.workflow.js"
+  },
+  "publicNamesMigration": {
+    "date": "2026-10-23",
+    "canonicalPrefix": "proof-",
+    "legacySkillAliases": false,
+    "rootEnvironment": "PROOF_ROOT",
+    "status": "local review candidate; not released"
   }
 }

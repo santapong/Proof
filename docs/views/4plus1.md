@@ -47,14 +47,14 @@ gate, and autonomy composes the lot on a schedule.**
 - **Governance** — `harness-policy` (H1–H12), `loop-policy` (L1–L8), `execution-modes` (M1–M9) and
   three lifecycle frameworks. Read by every skill, modified by none. This layer is why 26 skills
   share one orchestration discipline.
-- **Engine & planning (7)** — `loop-engine` runs one workflow; `loop-orchestrate` plans a project
-  into a DAG before it; `loop-context` decides what agents carry between phases; `loop-build`
-  conducts a whole v1; `loop-skill` authors new members of the fleet; `loop-guide`
-  routes intake; `loop-venture` assesses a product idea.
+- **Engine & planning (7)** — `proof-engine` runs one workflow; `proof-orchestrate` plans a project
+  into a DAG before it; `proof-context` decides what agents carry between phases; `proof-build`
+  conducts a whole v1; `proof-skill` authors new members of the fleet; `proof-guide`
+  routes intake; `proof-venture` assesses a product idea.
 - **Domain skills (18)** — grouped by lifecycle role, not by technology. Each owns one
   mutually-exclusive scope line in the [boundary audit](../design/boundary-audit.json), which is
-  normative for resolving scope. The group includes `loop-experiment` for controlled evaluations.
-- **Autonomy (1)** — `loop-autopilot` is the only skill that composes others unattended, and it is
+  normative for resolving scope. The group includes `proof-experiment` for controlled evaluations.
+- **Autonomy (1)** — `proof-autopilot` is the only skill that composes others unattended, and it is
   propose-only by construction.
 
 **What this view is not for.** It shows no timing, no machine, and no file. A skill "depending on"

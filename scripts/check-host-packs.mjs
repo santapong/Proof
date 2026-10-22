@@ -90,7 +90,7 @@ for (const hostKey of Object.keys(DESC.hosts)) {
       // 5b. Cross-skill pointers. Held at warning level through H0, promoted to a failure in H1
       // once all 32 were closed by the D8.9 carry pass — a packed skill that points at a file the
       // pack does not contain is a broken skill, and the next one to appear should stop CI.
-      for (const m of text.matchAll(/`(\.\.\/loop-[a-z-]+[a-z0-9._/-]*)`/g)) {
+      for (const m of text.matchAll(/`(\.\.\/proof-[a-z-]+[a-z0-9._/-]*)`/g)) {
         if (!existsSync(join(outRoot, skillDir, m[1]))) {
           fail(hostKey, `${rel} points outside the pack at ${m[1]} (D8.9) — carry the file, stub it, or hold this skill back too`)
         }

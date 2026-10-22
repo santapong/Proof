@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Ask-before-editing-the-harness (skill-hooks.md Tier 1, loop-harness row):
+# Ask-before-editing-the-harness (skill-hooks.md Tier 1, proof-harness row):
 # edits to .claude/settings.json or .claude/hooks/ are one-way doors — surface
 # an explicit ask. Also asks on `git push origin main` (releases are deliberate,
 # and legitimate, so ask — never deny).

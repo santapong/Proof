@@ -64,3 +64,6 @@ jobs:
       # prose is reported, not failed — that report is how the next rewrite rule gets found.
       - name: Check per-host skill packs
         run: node scripts/check-host-packs.mjs
+
+      - name: Check canonical names and clean-directory tools
+        run: node scripts/test-public-names.mjs
