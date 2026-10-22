@@ -69,7 +69,7 @@ Close the shelf with a **confirmation log**: what you verified against a primary
 
 ## `templates/*.workflow.js` — written for a sandbox
 
-The template runs where there is no filesystem, no module system, no clock, and no human to prompt. Every rule below follows from that, and the [validation gate](../../scripts/validate.mjs) enforces each one:
+The template contract targets a host sandbox without filesystem/module access, a clock or human prompts. The [validation gate](../../scripts/validate.mjs) checks the static contracts it can observe; actual host behavior needs a separate probe:
 
 - `export const meta = {…}` first, a **pure literal** — the host reads it before executing anything.
 - Plain JavaScript. Never TypeScript.

@@ -3,7 +3,7 @@ title: "4+1 · Logical view — what the system is made of, functionally"
 ---
 %%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 35, "rankSpacing": 55}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
 flowchart TB
-    subgraph gov["<b>Governance</b> — read by every skill, modified by none"]
+    subgraph gov["<b>Governance</b> — shared by workflow authors"]
         direction LR
         harness["harness policy<br/><i>H1–H12</i>"]
         loop["loop policy<br/><i>L1–L8</i>"]
@@ -35,13 +35,13 @@ flowchart TB
     end
 
     gov -- "constrains the shape of<br/>every workflow" --> engine
-    engine -- "executes the phases<br/>a domain skill defines" --> domain
+    engine -- "routes / conducts requested<br/>specialist work" --> domain
     domain -- "hands work back at<br/>each phase gate" --> engine
-    auto -- "composes the fleet<br/>on a schedule" --> domain
+    auto -- "composes only within<br/>authorized runner scope" --> domain
     engine -- "runs the loop's<br/>proposed changes" --> auto
 
     classDef law fill:#FDE68A,stroke:#B45309,stroke-width:2px,color:#000
-    classDef eng fill:#BFDBFE,stroke:#1D4ED8,stroke-width:2px,color:#0C1B33
+    classDef eng fill:#D8F1EE,stroke:#0F766E,stroke-width:2px,color:#102F35
     classDef dom fill:#F1F5F9,stroke:#475569,stroke-width:2px,color:#0F172A
     classDef aut fill:#99F6E4,stroke:#0F766E,stroke-width:2px,color:#042F2E
     class harness,loop,modes,aidlc law
@@ -49,7 +49,7 @@ flowchart TB
     class d1,d2,d3,d4 dom
     class a1 aut
     style gov fill:#FFFBEB,stroke:#D97706,stroke-width:2px,stroke-dasharray:6 4
-    style engine fill:#EFF6FF,stroke:#93C5FD,stroke-width:2px
+    style engine fill:#F1F9F7,stroke:#8BC8C1,stroke-width:2px
     style domain fill:#F8FAFC,stroke:#94A3B8,stroke-width:2px
     style auto fill:#F0FDFA,stroke:#5EEAD4,stroke-width:2px
     linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#57534E

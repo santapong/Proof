@@ -1,49 +1,42 @@
 ---
-title: "4+1 · Physical view — where each piece actually executes"
+title: "4+1 · Execution placement — Proof source, target code and host boundaries"
 ---
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 40, "rankSpacing": 60}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
 flowchart TB
-    subgraph machine["<b>Developer's machine</b> &nbsp;<i>«deployment node»</i>"]
-        direction TB
-        ccproc["<b>Claude Code</b><br/><i>«process»</i><br/>Loads skills into context;<br/>runs the Workflow sandbox in-process"]
-        mcpproc["<b>proof-mcp</b><br/><i>«child process» node server.mjs</i><br/>stdio JSON-RPC, spawned by the host,<br/>dies with the session"]
-        files["<b>Repo checkout</b><br/><i>«filesystem»</i><br/>.claude/skills/ · mcp/ · docs/ · dist/"]
+    subgraph machine["<b>Developer machine</b>"]
+        cc["<b>Claude Code</b><br/>Agent session and local tools"]
+        mcp["<b>proof-mcp</b><br/>Local Node stdio child process"]
+        source["<b>Proof checkout</b><br/>Skills · policy · MCP source · pack builder"]
+        target["<b>Target project</b><br/>Its code, tests and Git history"]
     end
-
-    subgraph cloud["<b>Anthropic API</b> &nbsp;<i>«deployment node»</i>"]
-        models["<b>Model fleet</b><br/><i>«managed service»</i><br/>Haiku 4.5 · Sonnet 5 · Opus 5 · Fable 5"]
+    wf["<b>Host-managed Workflow</b><br/>Optional execution environment;<br/>deployment internals are outside Proof"]
+    models["<b>Configured provider</b><br/>Account / model availability required"]
+    subgraph git["<b>GitHub — optional remote integration</b>"]
+        origin["Proof repository<br/>Branches / PRs / source"]
+        runner["Actions runner<br/>Node 22; source/package checks"]
     end
-
-    subgraph gh["<b>GitHub</b> &nbsp;<i>«deployment node»</i>"]
-        direction TB
-        runner["<b>Actions runner</b><br/><i>«ephemeral container» ubuntu-latest + Node 22</i><br/>Repository validation and branch-policy checks"]
-        origin["<b>Origin repo</b><br/><i>«service»</i><br/>Branches, PRs, releases"]
+    subgraph other["<b>Another host installation — qualify separately</b>"]
+        host["Cursor / Codex / Antigravity<br/>22-skill reduced pack"]
+        otherMcp["Its own proof-mcp process<br/>When configured and connected"]
+        otherSource["Retained complete Proof source<br/>Generated MCP path must resolve"]
     end
-
-    subgraph other["<b>Another developer's machine</b> &nbsp;<i>«deployment node» — ROADMAP H1/H3/H4</i>"]
-        host["<b>Cursor / Codex / Antigravity</b><br/><i>«process»</i><br/>Reads an installed pack;<br/>spawns its own proof-mcp"]
-    end
-
-    ccproc -- "stdio" --> mcpproc
-    ccproc -- "HTTPS — model requests" --> models
-    mcpproc -- "reads at boot<br/>and per call" --> files
-    ccproc -- "reads and patches" --> files
-    files -- "push / PR" --> origin
-    origin -- "triggers" --> runner
-    runner -- "checks out and gates" --> files
-    files -. "pack-host.mjs → copied by hand" .-> host
-    host -. "spawns its own<br/>node server.mjs" .-> mcpproc
-
-    classDef proc fill:#1E40AF,stroke:#1E3A8A,stroke-width:2px,color:#fff
-    classDef store fill:#BFDBFE,stroke:#1D4ED8,stroke-width:2px,color:#0C1B33
-    classDef svc fill:#E7E5E4,stroke:#78716C,stroke-width:2px,color:#1C1917
-    classDef planned fill:#FAFAF9,stroke:#A8A29E,stroke-width:2px,stroke-dasharray:6 4,color:#57534E
-    class ccproc,mcpproc proc
-    class files store
-    class models,runner,origin svc
-    class host planned
-    style machine fill:#EFF6FF,stroke:#93C5FD,stroke-width:2px
-    style cloud fill:#F8FAFC,stroke:#94A3B8,stroke-width:2px
-    style gh fill:#F8FAFC,stroke:#94A3B8,stroke-width:2px
-    style other fill:#FAFAF9,stroke:#A8A29E,stroke-width:2px,stroke-dasharray:6 4
-    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#57534E
+    cc -- "stdio JSON-RPC" --> mcp
+    mcp -- "reads Proof sources" --> source
+    cc -- "reads / authorized edits" --> target
+    cc -- "authorized script + args" --> wf
+    wf -- "model calls" --> models
+    cc -- "inline model calls" --> models
+    source -. "authorized push / PR" .-> origin
+    origin -- "triggers configured checks" --> runner
+    runner -- "checks out a fresh copy" --> source
+    source -. "generate and copy pack" .-> host
+    host -. "reviewed stdio configuration" .-> otherMcp
+    otherMcp -- "reads" --> otherSource
+    classDef proc fill:#115E59,stroke:#164E55,color:#fff
+    classDef store fill:#D8F1EE,stroke:#0F766E,color:#102F35
+    classDef ext fill:#E7E5E4,stroke:#78716C,color:#1C1917
+    class cc,mcp,otherMcp proc
+    class source,target,otherSource store
+    class wf,models,origin,runner,host ext
+    style machine fill:#F1F9F7,stroke:#8BC8C1
+    style git fill:#F8FAFC,stroke:#94A3B8
+    style other fill:#FAFAF9,stroke:#A8A29E,stroke-dasharray:6 4

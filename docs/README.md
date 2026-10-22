@@ -7,11 +7,12 @@ candidate; [migration](migration-proof-4.md) distinguishes it from published v3.
 | --- | --- |
 | Try one bounded task | [Your first task](getting-started.md) |
 | Choose among every skill | [All 26 skills](skills.md) |
+| Use Proof’s visual identity | [Identity](identity.md), [artwork sources and checks](assets/README.md) |
 | Understand how the parts fit | [Overview](overview.md) |
 | Install or migrate a host | [Installation](../INSTALL.md), [Proof 4 migration](migration-proof-4.md) |
 | Work with a software team | [Team guide](software-team.md) |
 | Review responsibilities, gaps and duplicate work | [Framework review](reviews/framework-review-2026-10-23.md) |
-| Inspect documentation coverage | [Per-file inventory](reviews/documentation-inventory-2026-10-23.json) |
+| Inspect documentation coverage | [Framework-review file inventory](reviews/documentation-inventory-2026-10-23.json), [later artwork verification](assets/proof-architecture-verification-2026-10-23.json) |
 | Understand architecture | [C4](c4/README.md), [skill anatomy](c4/skill-anatomy.md), [4+1 views](views/4plus1.md) |
 | Contribute a skill or change | [Contributing](../CONTRIBUTING.md), [branch policy](branch-policy.md), [design authority](design/README.md) |
 | See plans versus released work | [Roadmap](../ROADMAP.md), [changelog](../CHANGELOG.md) |

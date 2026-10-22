@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Proof identity and architecture refresh
+
+- Add a new Proof-identity README banner and saved generation prompt; retain the original banner as a historical asset.
+- Refresh the overview, workflow, all 18 detailed architecture sources and their SVGs around inline work, authorized Workflow execution, 26 distinct skills and the reduced 22-skill path.
+- Correct engine authoring order, review barriers, execution-placement assumptions and artifact-versus-runtime labels; update the README and architecture guides together.
+- Pin the documentation renderer and deterministic SVG IDs. Record source identities, browser/visual checks and PNG alternatives separately from runtime or launch acceptance.
+
 ### Framework documentation review
 
 - Add a complete 26-skill task catalog, documentation index, per-file review inventory and prioritized gap/overlap review.

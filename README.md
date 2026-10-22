@@ -1,6 +1,6 @@
 # Proof
 
-![Proof — governed multi-agent workflows](docs/assets/proof-banner.png)
+![Proof — a skill framework for building better software](docs/assets/proof-banner-v4.png)
 
 **A skill framework for building better software with AI agents.**
 
@@ -51,12 +51,13 @@ for intake, handoffs, and context advice.
 
 ## Architecture
 
-![Proof architecture: skill routers and references load into the Claude Code authoring session; shared policies and MCP tools support authoring; the host Workflow tool returns evidence for a human gate. Portable packs are generated separately.](docs/assets/proof-architecture.svg)
+![Proof architecture: 26 skills support scoped agent work and checked evidence; shared policies and MCP assist authoring; the host Workflow is optional and authorized; reduced packs contain 22 knowledge skills.](docs/assets/proof-architecture.svg)
 
-The **authoring session** reads a skill and the references it needs, then uses
-`proof-engine` to prepare a bounded workflow. The **host's Workflow tool** executes
-that script. `proof-mcp` supplies authoring tools and source citations; it is
-separate from the execution sandbox. Results return to a human gate.
+The **agent session** reads a skill and the references needed for the task.
+Small work stays inline; when a supported, authorized Workflow is useful,
+`proof-engine` authors the script and the host executes it. `proof-mcp` supplies
+source-backed authoring advice. Report the artifact, actual checks and remaining
+gaps, then follow the applicable next step or human gate.
 
 | Part | Responsibility |
 | --- | --- |
@@ -68,11 +69,11 @@ separate from the execution sandbox. Results return to a human gate.
 
 Explore the [architecture guide](docs/c4/README.md),
 [detailed skill composition](docs/c4/diagrams/skill-composition.svg), or
-[runtime and development views](docs/views/4plus1.md).
+[runtime and development views](docs/views/4plus1.md). The [artwork guide](docs/assets/README.md) records the editable sources, PNG alternatives and visual-check scope.
 
 ## Software-team workflow
 
-![Four stages: scope the task, run one bounded phase, verify evidence, and stop at a human gate.](docs/assets/proof-workflow.svg)
+![Four stages: scope the task, do bounded work, verify evidence, and choose the authorized next step.](docs/assets/proof-workflow.svg)
 
 Start with the task, repository state, constraints, and acceptance evidence.
 Read the relevant references, run the phase, and hand back changed paths, check
@@ -145,7 +146,7 @@ Use a focused `feat/*`, `fix/*`, `docs/*`, or other documented branch and remove
 after verified integration. See the [branch policy](docs/branch-policy.md).
 
 [Contributing and checks](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) ·
-[Architecture sources](docs/c4/README.md#diagram-sources-and-rendering).
+[Architecture sources](docs/c4/README.md#diagram-sources-and-rendering) · [Proof identity](docs/identity.md).
 
 ## License
 

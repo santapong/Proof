@@ -30,7 +30,7 @@ for (const edge of spec.connections) {
   const a = nodes.get(edge.from), b = nodes.get(edge.to)
   if (!a || !b) throw new Error(`Unknown edge endpoint: ${edge.id}`)
   const [ax, ay] = a.pos, [aw, ah] = a.size, [bx, by] = b.pos, [bw, bh] = b.size
-  let start, end
+  let start, end, points, labelPosition
   if (ay === by) {
     const forward = bx > ax
     start = [ax + (forward ? aw : 0), ay + ah / 2]
@@ -39,16 +39,26 @@ for (const edge of spec.connections) {
     const down = by > ay
     start = [ax + aw / 2, ay + (down ? ah : 0)]
     end = [bx + bw / 2, by + (down ? 0 : bh)]
-  } else throw new Error(`Static overview requires aligned endpoints; review layout for ${edge.id}`)
-  const x = (start[0] + end[0]) / 2, y = (start[1] + end[1]) / 2
+  } else {
+    // Keep an optional branch in the clear channel between the two node columns.
+    // Offset its source port from the main path so the relationships stay distinct.
+    const right = bx > ax
+    start = [ax + (right ? aw : 0), ay + ah * 0.75]
+    end = [bx + (right ? 0 : bw), by + bh / 2]
+    const channelX = (start[0] + end[0]) / 2
+    points = [start, [channelX, start[1]], [channelX, end[1]], end]
+    labelPosition = [channelX, (start[1] + end[1]) / 2]
+  }
+  points ??= [start, end]
+  const [x,y] = edge.labelAt ?? labelPosition ?? [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2]
   const labelWidth = edge.label.length * 8 + 16
   const labelY = ay === by ? y - 18 : y
-  parts.push(`<g data-edge-id="${escape(edge.id)}"><path class="edge${edge.variant === 'emphasis' ? '' : ' support'}" d="M${start}L${end}"/><rect x="${x-labelWidth/2}" y="${labelY-16}" width="${labelWidth}" height="22" rx="4" fill="var(--bg)"/><text class="edge-label" x="${x}" y="${labelY}" text-anchor="middle">${escape(edge.label)}</text></g>`)
+  parts.push(`<g data-edge-id="${escape(edge.id)}"><path class="edge${edge.variant === 'emphasis' ? '' : ' support'}" d="M${points.map(point => point.join(',')).join('L')}"/><rect x="${x-labelWidth/2}" y="${labelY-16}" width="${labelWidth}" height="22" rx="4" fill="var(--bg)"/><text class="edge-label" x="${x}" y="${labelY}" text-anchor="middle">${escape(edge.label)}</text></g>`)
 }
 for (const node of spec.components) {
   const [x,y] = node.pos, [w,h] = node.size
   parts.push(`<g data-node-id="${escape(node.id)}"><rect class="${node.type === 'security' ? 'governance' : 'card'}" x="${x}" y="${y}" width="${w}" height="${h}" rx="12"/><text class="node-title" x="${x+w/2}" y="${y+35}" text-anchor="middle">${escape(node.label)}</text><text class="node-detail" x="${x+w/2}" y="${y+59}" text-anchor="middle">${escape(node.sublabel)}</text></g>`)
 }
-parts.push(`<text class="note" x="40" y="${height-24}">Solid arrows: task path. Dashed arrows: supporting inputs and pack generation.</text></svg>\n`)
+parts.push(`<text class="note" x="40" y="${height-24}">Main path: skill → work → evidence. Dashed: packaging, advice and optional Workflow.</text></svg>\n`)
 writeFileSync(output, parts.join('\n'))
 console.log(`Rendered ${nodes.size} nodes and ${spec.connections.length} relationships to ${fileURLToPath(output)}`)

@@ -3,7 +3,7 @@ title: "Skill group — build & verify"
 ---
 flowchart TB
     subgraph g["<b>Build &amp; verify</b>"]
-        test["<b>proof-test</b><br/><i>«component» tests</i><br/>Deliverable: test files that run and<br/>fail for the right reason"]
+        test["<b>proof-test</b><br/><i>«component» tests</i><br/>Tests + actual execution evidence;<br/>generation alone stays unverified"]
         rev["<b>proof-review</b><br/><i>«component» security + quality</i><br/>Deliverable: a findings list;<br/>judges, never refactors"]
         aud["<b>proof-audit</b><br/><i>«component» change impact</i><br/>Deliverable: a backward-looking<br/>risk memo over a diff"]
         dbg["<b>proof-debug</b><br/><i>«component» root cause</i><br/>Deliverable: minimal fix + regression;<br/>requires a REPRODUCIBLE defect"]
@@ -16,7 +16,8 @@ flowchart TB
     inc["<b>proof-incident</b><br/><i>«external» live failure</i>"]
     algo["<b>proof-algo</b><br/><i>«external» mechanism</i>"]
 
-    exp -- "executes the study workflow" --> eng
+    exp -- "requests an authorized study workflow" --> eng
+    rev -- "requested remediation" --> pat
     aud -- "security dimension" --> rev
     aud -- "risk memo → go/no-go" --> ship
     rev -- "each smell class points<br/>at its remediation" --> pat

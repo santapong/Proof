@@ -4,11 +4,11 @@ title: "Skill group — knowledge & automation"
 flowchart TB
     subgraph g["<b>Knowledge &amp; automation</b>"]
         comp["<b>proof-comprehend</b><br/><i>«component» codebase understanding</i><br/>As-built maps, feature traces,<br/>recovered confidence-graded ADRs"]
-        res["<b>proof-research</b><br/><i>«component» cited research</i><br/>Search fan-out → deep-read →<br/>refute-first verify → cited synthesis"]
-        scout["<b>proof-scout</b><br/><i>«component» prior art</i><br/>Build-vs-buy BEFORE building;<br/>ends at a named recommendation"]
+        res["<b>proof-research</b><br/><i>«component» cited research</i><br/>Retrieve → read →<br/>refute-first verify → cited synthesis"]
+        scout["<b>proof-scout</b><br/><i>«component» prior art</i><br/>Reuse / adapt / build decision;<br/>ends at a named recommendation"]
         docs["<b>proof-docs</b><br/><i>«component» documentation</i><br/>Diátaxis; for a HUMAN READER<br/>seeking understanding"]
         harn["<b>proof-harness</b><br/><i>«component» Claude's harness</i><br/>Permissions, hooks, MCP, schedules —<br/>what Claude is PERMITTED to do"]
-        auto["<b>proof-autopilot</b><br/><i>«component» autonomous loop</i><br/>Reads feedback, acts on a branch,<br/>opens DRAFT PRs; never merges"]
+        auto["<b>proof-autopilot</b><br/><i>«component» autonomous loop</i><br/>Reads feedback, acts on a branch,<br/>dry proposals; authorized remote drafts only"]
     end
 
     design["<b>proof-design</b><br/><i>«external» architecture</i>"]
@@ -21,7 +21,7 @@ flowchart TB
     comp -- "hands findings to<br/>become maintained docs" --> docs
     docs -- "consumes the<br/>ADR / C4 it emits" --> design
     inc -- "postmortem prose pass —<br/>incident owns the timeline" --> docs
-    harn -- "unattended substrate" --> auto
+    harn -- "authorized runner setup" --> auto
     auto -- "composes" --> many
     mk -- "permitted-to-do vs<br/>knows-how-to-do" --> harn
     mk -- "gate-checked directory vs<br/>prose for a reader" --> docs

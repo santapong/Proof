@@ -1,6 +1,6 @@
-# C4 — the skill fleet
+# Skill relationships — Proof
 
-Twenty-six skills, drawn at two altitudes.
+All 26 skills, grouped by the outcome and handoff they own. The diagrams are source-backed maps of instructions, not evidence that each host workflow has run.
 
 **One diagram per skill would be twenty-six copies of the same picture.** Skills share a router-and-reference structure, with templates where the task needs them — which is drawn once below as the *skill container view* and explained in [`skill-anatomy.md`](skill-anatomy.md). What actually differs between skills is their **relationships**: who delegates to whom, and where each one stops. So the per-skill views are grouped by role, and each shows the edges that make its members distinct.
 
@@ -26,7 +26,7 @@ The execution layer authors through `proof-engine`; inline specialists need no w
 
 <sub>Diagram source: [`diagrams/src/skills-engine-planning.mmd`](diagrams/src/skills-engine-planning.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
 
-**Where each stops.** `proof-orchestrate` plans and never runs; `proof-engine` runs one task now. `proof-skill` changes what Claude *knows how to do* — `proof-harness` changes what it is *permitted* to do.
+**Where each stops.** A plan-only `proof-orchestrate` request stops at the handoff; `proof-engine` runs one task now. `proof-skill` changes what Claude *knows how to do* — `proof-harness` changes what it is *permitted* to do.
 
 ---
 

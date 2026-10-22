@@ -18,7 +18,7 @@ flowchart TB
     design -- "execution machinery<br/>lives there" --> ship
     design -- "measuring the targets<br/>lives there" --> ops
     rev -- "findings become<br/>remediation" --> pat
-    pat -- "behaviour preservation<br/>proved by" --> test
+    pat -- "covered behaviour<br/>checked by" --> test
     algo -- "correctness oracle" --> test
     scout -- "already-adopted dependency:<br/>idiom, not selection" --> pat
 
