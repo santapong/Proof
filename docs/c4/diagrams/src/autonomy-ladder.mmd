@@ -1,17 +1,16 @@
-%%{init: {"themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
+---
+title: "Autonomy ladder — qualification before promotion"
+---
 flowchart TB
-    O["<b>OBSERVE</b> — report only<br/>loop: reports · human: reads &amp; acts<br/><code>loop-audit</code>, <code>loop-review</code>"]
-    V["<b>VERIFY</b> — propose, human merges<br/>loop: acts on a branch + adversarial verify · human: approves &amp; merges<br/><code>loop-autopilot</code> (default)"]
-    S["<b>SUSTAIN</b> — keep the loop honest<br/>loop: detects its own gaming / drift · human: reads the alarms<br/><code>verifier-integrity</code> + <code>held-out-eval</code> (AP6)"]
-    C["<b>SCALE</b> — autonomous delivery <i>(off by default)</i><br/>loop: merges behind a canary + self-rolls-back · human: handles exceptions<br/><code>deployment.md §Advanced</code> + <code>canary-merge</code>"]
-    O --> V --> S --> C
-    C -. "any alarm degrades autonomy one rung down — the floor is always safe" .-> V
-
-    classDef r1 fill:#CCFBF1,stroke:#0F766E,color:#042F2E
-    classDef r2 fill:#99F6E4,stroke:#0F766E,color:#042F2E
-    classDef r3 fill:#5EEAD4,stroke:#0F766E,color:#042F2E
-    classDef r4 fill:#F0FDFA,stroke:#0F766E,stroke-dasharray:6 4,color:#042F2E
-    class O r1
-    class V r2
-    class S r3
-    class C r4
+    O["<b>OBSERVE</b><br/>Findings and check evidence;<br/>human chooses the next action"]
+    V["<b>VERIFY</b><br/>Dry/local proposals by default;<br/>authorized draft PRs, human merges"]
+    S["<b>SUSTAIN</b><br/>External oracle and verifier-drift checks;<br/>runner / ground truth required"]
+    C["<b>SCALE — off by default</b><br/>Gated design for qualified canary delivery;<br/>not proven unattended safety"]
+    O -- "explicit qualification" --> V
+    V -- "external evidence" --> S
+    S -- "separate authorization + qualification" --> C
+    C -. "alarm: return to propose-only" .-> V
+    classDef observe fill:#E5F4F1,stroke:#0F766E,color:#102F35
+    classDef qualify fill:#FEF3C7,stroke:#B45309,color:#422006
+    class O,V observe
+    class S,C qualify

@@ -1,0 +1,8 @@
+{
+  "source": "docs/examples/software-routing-train.jsonl",
+  "source_sha256": "33f5efd8c52bbe8433002142126a147ac84101f2a49099c2731c8d9f3acefc28",
+  "transformation": "Exact skill identifier rename only; task text, labels otherwise, IDs and provenance preserved",
+  "derived_sha256": "d016e97af7b6e364d198fce9bbc96cc6724782306949109f35a4743cbea29697",
+  "historical_results_recomputed": false,
+  "independent_evaluation": false
+}

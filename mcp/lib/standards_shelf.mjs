@@ -14,17 +14,17 @@
 // ADR-0005 forbids — UNLESS a shape is narrow enough to locate by coordinate rather than by judgment.
 // Grepping all 21 shelves (Phase 3 S4 research pass, repo head at task start) turns up exactly that
 // narrow shape in 13 of 21 shelves: a bold-led line beginning `**Re-check` (bullet or numbered-item
-// prefix tolerated — loop-algo/loop-autopilot/loop-docs/loop-harness/loop-incident/loop-integrate/
-// loop-operate/loop-pattern/loop-review/loop-scout/loop-ship/loop-skill), or, for loop-design alone, an
+// prefix tolerated — proof-algo/proof-autopilot/proof-docs/proof-harness/proof-incident/proof-integrate/
+// proof-operate/proof-pattern/proof-review/proof-scout/proof-ship/proof-skill), or, for proof-design alone, an
 // H2 heading whose text contains "re-check" ("## Re-check cadence and confirmation log"), where the
-// cadence sentence is the section's first paragraph. The remaining 8 shelves (loop-audit, loop-debug,
-// loop-engine, loop-frontend, loop-orchestrate, loop-research, loop-test, loop-build) either never mention
+// cadence sentence is the section's first paragraph. The remaining 8 shelves (proof-audit, proof-debug,
+// proof-engine, proof-frontend, proof-orchestrate, proof-research, proof-test, proof-build) either never mention
 // re-checking at all, or only in ordinary (non-bold) prose with no anchor a coordinate walk can pick
 // out without guessing WHICH sentence is "the" cadence — those correctly come back with
 // recheckCadence:null and an explained reason, never a guess. This module implements exactly that
 // narrow, coordinate-first extraction: heading shape tried first (matching locateConfirmationLog's own
 // precedence rule), then the bold-inline shape with last-match-wins (the same "at the foot" rule
-// locateConfirmationLog already established, needed here too — loop-ship has TWO bold "**Re-check"
+// locateConfirmationLog already established, needed here too — proof-ship has TWO bold "**Re-check"
 // lines, one about a report-year detail at line 28 and the real shelf-level cadence note at line 80).
 //
 // ============================================================================================
@@ -92,7 +92,7 @@ import {
 
 const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/lib
 const DEFAULT_ROOT = path.resolve(HERE, '..', '..') // repo root, two levels up from mcp/lib
-const SERVER_VERSION = '0.2.0'
+const SERVER_VERSION = '0.3.0-beta.1'
 
 function resolveRoot(root) {
   return root ? path.resolve(root) : DEFAULT_ROOT
@@ -145,7 +145,7 @@ function dedupeCitations(list) {
 // recheckCadence extraction — see the file header for the full rationale and the measured 13/21
 // coverage. Two shapes, tried in order, mirroring locateConfirmationLog's own precedence rule exactly
 // (heading shape first, because a heading changes what content to return; inline shape second, with
-// last-match-wins for "at the foot" shelves like loop-ship that mention "**Re-check" twice for two
+// last-match-wins for "at the foot" shelves like proof-ship that mention "**Re-check" twice for two
 // different things).
 // ---------------------------------------------------------------------------
 
@@ -191,7 +191,7 @@ function locateRecheckCadence(relFile, lines, skill) {
     // that is not there.
   }
 
-  let matchLineIdx = -1 // 0-indexed, last match wins — loop-ship's own two "**Re-check" lines are
+  let matchLineIdx = -1 // 0-indexed, last match wins — proof-ship's own two "**Re-check" lines are
   // exactly why: line 28 is about a report-year detail, line 80 is the real shelf-level cadence note.
   for (let i = 0; i < lines.length; i++) {
     if (RECHECK_INLINE_RE.test(lines[i])) matchLineIdx = i
@@ -417,7 +417,7 @@ function standardsShelf(rawInput, options = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// node -e 'import("./mcp/lib/standards_shelf.mjs").then(m => console.log(JSON.stringify(m.standardsShelf({skill:"loop-design"}), null, 2)))'
+// node -e 'import("./mcp/lib/standards_shelf.mjs").then(m => console.log(JSON.stringify(m.standardsShelf({skill:"proof-design"}), null, 2)))'
 // (double-quoted specifier above deliberately, so this doc comment does not itself match
 // ADR-0002 §D2.3.6's assertNoDependencies() grep for a single-quoted import(...) specifier)
 // ---------------------------------------------------------------------------

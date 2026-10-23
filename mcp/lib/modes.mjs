@@ -48,7 +48,7 @@ import { fileURLToPath } from 'node:url'
 
 const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/lib
 const DEFAULT_ROOT = path.resolve(HERE, '..', '..') // repo root, two levels up from mcp/lib
-const MODES_DOC_REL = path.join('.claude', 'skills', 'loop-engine', 'references', 'execution-modes.md')
+const MODES_DOC_REL = path.join('.claude', 'skills', 'proof-engine', 'references', 'execution-modes.md')
 
 // Mirrors §M8:312 `const MODE_ALIAS = { optimize: 'balanced', full: 'all-out' }` and §M9.6:427's
 // "deprecated aliases, still accepted". Hand-mirrored, not vm-evaluated — see the file-header note.

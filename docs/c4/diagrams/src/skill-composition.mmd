@@ -3,19 +3,19 @@ title: "Component diagram — how the twenty-six skills compose"
 ---
 %%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 48}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
 flowchart TB
-    guide(["<b>loop-guide</b><br/><i>the front door</i><br/>interview → verdict → dispatch"])
+    guide["<b>proof-guide</b><br/><i>the front door</i><br/>interview → verdict → dispatch"]
 
     subgraph core["<b>Engine &amp; planning</b>"]
         direction TB
-        orch("<b>loop-orchestrate</b><br/><i>planning layer</i>")
-        build("<b>loop-build</b><br/><i>v1 conductor</i>")
-        vent("<b>loop-venture</b><br/><i>venture conductor</i>")
-        ctx("<b>loop-context</b><br/><i>agent state</i>")
-        mk("<b>loop-skill</b><br/><i>meta</i>")
-        eng{{"<b>loop-engine</b><br/><i>orchestration engine</i><br/>pipeline · parallel · loop"}}
+        orch("<b>proof-orchestrate</b><br/><i>planning layer</i>")
+        build("<b>proof-build</b><br/><i>v1 conductor</i>")
+        vent("<b>proof-venture</b><br/><i>venture conductor</i>")
+        ctx("<b>proof-context</b><br/><i>agent state</i>")
+        mk("<b>proof-skill</b><br/><i>meta</i>")
+        eng{{"<b>proof-engine</b><br/><i>orchestration engine</i><br/>pipeline · parallel · loop"}}
     end
 
-    subgraph gov["<b>Governance</b> — read-only law"]
+    subgraph gov["<b>Governance</b> — shared source contracts"]
         direction TB
         pol[["<b>Engineering policies</b><br/><i>harness H1–H12 · loop L1–L8 · modes M1–M9</i>"]]
         fw[["<b>Lifecycle frameworks</b><br/><i>AIDLC · VENTURE — phases and human gates</i>"]]
@@ -23,37 +23,37 @@ flowchart TB
 
     subgraph know["<b>Knowledge</b>"]
         direction TB
-        comp("<b>loop-comprehend</b><br/><i>codebase understanding</i>")
-        res("<b>loop-research</b><br/><i>cited research</i>")
-        scout("<b>loop-scout</b><br/><i>prior art</i>")
-        docs("<b>loop-docs</b><br/><i>documentation</i>")
+        comp("<b>proof-comprehend</b><br/><i>codebase understanding</i>")
+        res("<b>proof-research</b><br/><i>cited research</i>")
+        scout("<b>proof-scout</b><br/><i>prior art</i>")
+        docs("<b>proof-docs</b><br/><i>documentation</i>")
     end
 
     subgraph make["<b>Design · build · verify</b>"]
         direction TB
-        design("<b>loop-design</b><br/><i>architecture</i>")
-        algo("<b>loop-algo</b><br/><i>mechanism</i>")
-        fe("<b>loop-frontend</b><br/><i>UI craft</i>")
-        pat("<b>loop-pattern</b><br/><i>refactoring</i>")
-        rev("<b>loop-review</b><br/><i>security + quality</i>")
-        exp("<b>loop-experiment</b><br/><i>controlled evaluation</i>")
-        aud("<b>loop-audit</b><br/><i>change impact</i>")
+        design("<b>proof-design</b><br/><i>architecture</i>")
+        algo("<b>proof-algo</b><br/><i>mechanism</i>")
+        fe("<b>proof-frontend</b><br/><i>UI craft</i>")
+        pat("<b>proof-pattern</b><br/><i>refactoring</i>")
+        rev("<b>proof-review</b><br/><i>security + quality</i>")
+        exp("<b>proof-experiment</b><br/><i>controlled evaluation</i>")
+        aud("<b>proof-audit</b><br/><i>change impact</i>")
     end
 
     subgraph run["<b>Integrate · ship · run</b> — the operational cycle"]
         direction LR
-        intg("<b>loop-integrate</b><br/><i>platform integration</i>")
-        test("<b>loop-test</b><br/><i>tests</i>")
-        ship("<b>loop-ship</b><br/><i>release</i>")
-        ops("<b>loop-operate</b><br/><i>steady state</i>")
-        inc("<b>loop-incident</b><br/><i>live failure</i>")
-        dbg("<b>loop-debug</b><br/><i>root cause</i>")
+        intg("<b>proof-integrate</b><br/><i>platform integration</i>")
+        test("<b>proof-test</b><br/><i>tests</i>")
+        ship("<b>proof-ship</b><br/><i>release</i>")
+        ops("<b>proof-operate</b><br/><i>steady state</i>")
+        inc("<b>proof-incident</b><br/><i>live failure</i>")
+        dbg("<b>proof-debug</b><br/><i>root cause</i>")
     end
 
     subgraph autom["<b>Automation</b>"]
         direction TB
-        harn("<b>loop-harness</b><br/><i>Claude Code harness</i>")
-        auto("<b>loop-autopilot</b><br/><i>autonomous loop</i><br/>draft PRs, never merges")
+        harn("<b>proof-harness</b><br/><i>Claude Code harness</i>")
+        auto("<b>proof-autopilot</b><br/><i>autonomous loop</i><br/>dry proposals first; never merges")
     end
 
     %% front door
@@ -74,7 +74,7 @@ flowchart TB
     mk -. "authors against" .-> pol
     mk -- "emits templates for" --> eng
     auto -- "runs the loop on" --> eng
-    harn -- "unattended substrate" --> auto
+    harn -- "authorized runner setup" --> auto
 
     %% knowledge flows
     comp -- "recovered ADRs" --> design
@@ -85,7 +85,11 @@ flowchart TB
     scout -- "hands over a<br/>named provider" --> intg
     fe -- "which library<br/>to adopt at all" --> scout
 
-    exp -- "runs a controlled study on" --> eng
+    exp -- "existing evidence" --> res
+    exp -- "study write-up" --> docs
+    exp -- "mechanism evidence" --> algo
+    exp -- "observed defect" --> dbg
+    exp -- "authorized study workflow" --> eng
 
     %% design & verify flows
     design -- "mechanism inside<br/>a component" --> algo
@@ -96,17 +100,17 @@ flowchart TB
 
     %% the operational cycle
     intg -- "specifies contract tests" --> test
-    test -- "ready to release" --> ship
+    test -- "executed test evidence" --> ship
     ship -- "bake complete —<br/>the service is yours" --> ops
-    ops -- "no runbook, or<br/>beyond its scope" --> inc
+    ops -- "declared / escalating impact,<br/>or unresolved runbook condition" --> inc
     inc -- "service restored —<br/>now find the defect" --> dbg
     dbg -- "lock it with<br/>a regression" --> test
 
-    %% shape key: stadium = front door · hexagon = the engine · double-edged = read-only law · rounded = skill
+    %% shape key: front-door label = routing entry · hexagon = the engine · double-edged = shared source contracts · rounded = skill
     classDef frontdoor fill:#FDE68A,stroke:#B45309,stroke-width:2px,color:#1C1917
     classDef law fill:#E7E5E4,stroke:#78716C,color:#1C1917
-    classDef engine fill:#1D4ED8,stroke:#1E3A8A,stroke-width:2px,color:#FFFFFF
-    classDef coreSkill fill:#BFDBFE,stroke:#1D4ED8,color:#0C1B33
+    classDef engine fill:#0F766E,stroke:#164E55,stroke-width:2px,color:#FFFFFF
+    classDef coreSkill fill:#D8F1EE,stroke:#0F766E,color:#102F35
     classDef knowSkill fill:#DDD6FE,stroke:#6D28D9,color:#1E1B4B
     classDef makeSkill fill:#BBF7D0,stroke:#15803D,color:#052E16
     classDef runSkill fill:#FECACA,stroke:#B91C1C,color:#450A0A
@@ -121,7 +125,7 @@ flowchart TB
     class intg,test,ship,ops,inc,dbg runSkill
     class harn,auto autoSkill
 
-    style core fill:#EFF6FF,stroke:#93C5FD
+    style core fill:#F1F9F7,stroke:#8BC8C1
     style gov fill:#FAFAF9,stroke:#A8A29E,stroke-dasharray:5 5
     style know fill:#F5F3FF,stroke:#C4B5FD
     style make fill:#F0FDF4,stroke:#86EFAC

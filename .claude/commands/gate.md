@@ -8,6 +8,7 @@ Run the full gate suite for this repo and report each result on one line:
 4. `node scripts/check-host-packs.mjs` — generated host packs and reference integrity
 5. `node scripts/test-software-context.mjs` — local context advisor behavior and model validation
 6. `node scripts/test-branch-policy.mjs` — branch names, PR destinations, and rejection behavior
+7. `node scripts/test-public-names.mjs` — Proof-only names, clean-directory tools and portable metadata
 
 If any gate is red, stop and show the failing lines — do not proceed to other work
 until it is green or the user redirects.

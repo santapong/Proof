@@ -69,7 +69,7 @@ async function run(file, { mode, planner, argsOverride } = {}) {
     base: 'HEAD~1', head: 'HEAD', diff: 'x', repo: { owner: 'o', name: 'n' },
     areas: [{ id: 'a1', name: 'area', files: ['a.js'] }, { id: 'a2', name: 'area2', files: ['b.js'] }],
     items: ['a', 'b'], files: ['a.js', 'b.js'], units: [{ id: 'u1' }, { id: 'u2' }],
-    skills: [{ id: 'loop-x', purpose: 'test', neighbours: [] }],
+    skills: [{ id: 'proof-x', purpose: 'test', neighbours: [] }],
     tasks: [{ id: 't1', prompt: 'p', kind: 'k' }, { id: 't2', prompt: 'p2', kind: 'k' }],
     candidates: [{ id: 'c1' }, { id: 'c2' }], findings: [{ id: 'f1' }],
     interactions: [{ id: 'i1', what: 'w', file: 'a.js:1', trigger: 'user-direct' }],
@@ -107,7 +107,7 @@ for (const f of files) {
     // one or two calls is not, and that is the shape both 2.4.0 defects actually took:
     // venture-node threw on the first `.key` read, and venture-band-conductor ran an empty band,
     // leaving only its opus-pinned gating nodes. Both PASSED this file's emptiness check. A third
-    // instance (loop-experiment's related-work stop-guard, written truthy instead of `=== true`,
+    // instance (proof-experiment's related-work stop-guard, written truthy instead of `=== true`,
     // aborting after one call under the Proxy stub) also passed. Three for three: "made at least
     // one call" does not mean "ran".
     //

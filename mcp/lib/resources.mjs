@@ -99,7 +99,7 @@ function isWithinRoot(root, target) {
 // hardRules names explicitly ("Every resources/read result carries mimeType (text/markdown,
 // application/json, text/javascript)"). .mjs is added alongside .js for the same ES-module-source
 // reason (none exist under .claude/skills today, but a future template could be one). .sh is added
-// because .claude/skills/loop-harness/templates/hooks/{guard-secrets,session-start}.sh are real,
+// because .claude/skills/proof-harness/templates/hooks/{guard-secrets,session-start}.sh are real,
 // walked files with no entry in D3.7's three-type list — omitting them would silently exclude two
 // real template files from the surface rather than serving them, which is the exact silent drop
 // ADR-0005 forbids for a tool answer and this module holds itself to the same standard for. No IANA
@@ -115,7 +115,7 @@ const MIME_TYPES = new Map([
 ])
 
 // Size guard. execution-modes.md — the largest single file this task's brief names — is 49983 bytes
-// (~48.8 KiB), MEASURED via `ls -la .claude/skills/loop-engine/references/execution-modes.md` at
+// (~48.8 KiB), MEASURED via `ls -la .claude/skills/proof-engine/references/execution-modes.md` at
 // task start, not assumed. 262144 (256 KiB) is >5x that: comfortable headroom for the largest
 // legitimate file in the surface while still bounding what a single resources/read pulls into
 // memory and onto the wire. Enforced on READ, not on LIST — listing only stat()s a file (cheap, no
@@ -152,7 +152,7 @@ const SKILL_SUBDIRS = ['references', 'templates', 'frameworks']
 const EXTRA_FILES_REL = [path.join('docs', 'design', 'boundary-audit.json')]
 
 // ---------------------------------------------------------------------------
-// Recursive file walk. .claude/skills/loop-harness/templates/hooks/ is a real, MEASURED one-level-
+// Recursive file walk. .claude/skills/proof-harness/templates/hooks/ is a real, MEASURED one-level-
 // deep subdirectory (the only such case in the tree at task start) — this walker does not assume
 // depth 1 is the only depth that will ever exist, and recurses arbitrarily. A directory symlink that
 // resolves outside sourceRootReal is refused and not descended into (D3.7 hardRules: "a symlink
@@ -364,7 +364,7 @@ function readResource(root, uri) {
       ok: false,
       code: 'invalid_uri',
       message: `resource URI must start with '${RESOURCE_URI_SCHEME}'; got ${JSON.stringify(uri)}`,
-      fix: `Use a URI returned by resources/list, e.g. '${RESOURCE_URI_SCHEME}.claude/skills/loop-design/SKILL.md'.`,
+      fix: `Use a URI returned by resources/list, e.g. '${RESOURCE_URI_SCHEME}.claude/skills/proof-design/SKILL.md'.`,
     }
   }
 
@@ -436,7 +436,7 @@ function readResource(root, uri) {
 
 // ---------------------------------------------------------------------------
 // node -e 'import("./mcp/lib/resources.mjs").then(m => console.log(JSON.stringify(m.listResources().resources.length)))'
-// node -e 'import("./mcp/lib/resources.mjs").then(m => console.log(JSON.stringify(m.readResource(undefined, "proof://.claude/skills/loop-design/SKILL.md").mimeType)))'
+// node -e 'import("./mcp/lib/resources.mjs").then(m => console.log(JSON.stringify(m.readResource(undefined, "proof://.claude/skills/proof-design/SKILL.md").mimeType)))'
 // (double-quoted specifiers above deliberately, so this doc comment does not itself match
 // ADR-0002 §D2.3.6's assertNoDependencies() grep for a single-quoted import(...) specifier)
 // ---------------------------------------------------------------------------
@@ -465,7 +465,7 @@ function readResource(root, uri) {
 //         four consumer routers already point at ../../../docs/design/boundary-audit.json, so
 //         stopping at .claude/skills leaves the most-referenced file outside it." Joins.
 //       * execution-mode-spec.json — NOT parsed by any tool. docs/design/README.md says it is
-//         "Superseded at the point of use by .claude/skills/loop-engine/references/execution-
+//         "Superseded at the point of use by .claude/skills/proof-engine/references/execution-
 //         modes.md, which is what the skills actually load" — and execution-modes.md is what
 //         route_node/estimate_phase actually read, and is already IN the surface as one of the 105
 //         references/*.md files. Including the superseded design record too would be reach beyond

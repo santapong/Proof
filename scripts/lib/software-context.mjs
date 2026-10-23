@@ -10,7 +10,7 @@ import { tokenize } from '../../mcp/lib/boundary.mjs'
 
 export const DEFAULT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const AUDIT = 'docs/design/boundary-audit.json'
-const MODES = '.claude/skills/loop-engine/references/execution-modes.md'
+const MODES = '.claude/skills/proof-engine/references/execution-modes.md'
 const SCHEMA = 'proof-software-context-v1'
 const ALGORITHM = 'multinomial-naive-bayes-add-one-ascii-v1'
 const STOP = new Set('a an and are as at be by can for from i in is it of on or our that the their this to we with you'.split(' '))
@@ -50,14 +50,14 @@ function catalog(root) {
     fail('source_unparseable', `Cannot read the authoritative boundary audit (${error.code || 'invalid_json'}).`)
   }
   if (!Array.isArray(audit.matrix) || audit.matrix.length < 2 ||
-      audit.matrix.some((r) => !isObject(r) || !/^loop-[a-z0-9-]+$/.test(r.skill) ||
+      audit.matrix.some((r) => !isObject(r) || !/^proof-[a-z0-9-]+$/.test(r.skill) ||
         typeof r.scope !== 'string' || !Array.isArray(r.useInsteadWhen)) ||
       new Set(audit.matrix.map((r) => r.skill)).size !== audit.matrix.length) {
     fail('source_unparseable', 'Invalid boundary matrix; restore its normative source.')
   }
   const skills = audit.matrix.map((r) => r.skill).sort(cmp)
   const installed = readdirSync(join(root, '.claude/skills'), { withFileTypes: true })
-    .filter((e) => e.isDirectory() && /^loop-/.test(e.name)).map((e) => e.name).sort(cmp)
+    .filter((e) => e.isDirectory() && /^proof-/.test(e.name)).map((e) => e.name).sort(cmp)
   if (encode(skills) !== encode(installed)) fail('source_stale', 'Skill catalog and boundary matrix disagree; reconcile before routing.')
   const paths = [AUDIT, MODES, 'mcp/boundary-match-contract.json', 'mcp/lib/boundary.mjs',
     'mcp/lib/boundary_lookup.mjs', 'scripts/lib/software-context.mjs', ...skills.map(entryPath)].sort(cmp)
@@ -211,7 +211,7 @@ function readPlan(cat, skills, outcome) {
   const totalCharacters = entries.reduce((sum, entry) => sum + entry.characters, 0)
   const allEntrypointCharacters = cat.skills.reduce((sum, skill) => sum + cat.texts.get(entryPath(skill)).length, 0)
   return { purpose: outcome === 'exact' ? 'Read the explicitly requested complete skill entrypoint.' : outcome === 'abstain'
-    ? 'Start with loop-guide to clarify scope; do not assign the highest score by default.'
+    ? 'Start with proof-guide to clarify scope; do not assign the highest score by default.'
     : 'Adjudicate candidates with the boundary audit, then read the chosen complete entrypoint; the listed union is a cost ceiling for candidate entrypoints.',
     entries, totalCharacters, allEntrypointCharacters,
     tokenProxy: { label: 'ceil(UTF-16 character count / 4); proxy only, not tokenizer output or billed savings',
@@ -234,13 +234,13 @@ export function rankContext({ root = DEFAULT_ROOT, task, skill, modelPath, limit
   const base = { ok: true, advisoryOnly: true, sourceSha256: cat.sourceSha256,
     authority: { boundaries: AUDIT, executionRouting: MODES,
       rule: 'Ranks suggest candidates only. Normative boundaries, canonical model tiers, verifier widths, and human gates remain authoritative.' } }
-  const fallback = { skill: 'loop-guide', path: entryPath('loop-guide'), boundaryPath: AUDIT,
+  const fallback = { skill: 'proof-guide', path: entryPath('proof-guide'), boundaryPath: AUDIT,
     instruction: 'If the task is unclear or evidence conflicts, inspect the audit and clarify the deliverable before dispatch.' }
   if (skill === undefined && (!task?.trim() || !tokenize(task).length)) {
     return { ...base, outcome: 'abstain', reason: 'No usable task terms; provide a deliverable or explicit --skill.',
       lexical: { status: 'abstain', candidates: [] },
       learned: model ? learnedCandidates(model, task || '', limit) : { status: 'disabled' },
-      fallback, readPlan: readPlan(cat, ['loop-guide'], 'abstain') }
+      fallback, readPlan: readPlan(cat, ['proof-guide'], 'abstain') }
   }
   const lookup = boundaryLookup(skill === undefined ? { query: task, limit } : { skill }, { root })
   if (!lookup.ok) fail(lookup.error?.code || 'source_unparseable', lookup.error?.message || 'Boundary lookup failed.')
@@ -281,5 +281,5 @@ export function rankContext({ root = DEFAULT_ROOT, task, skill, modelPath, limit
     }),
     reason: outcome === 'abstain' ? 'The authoritative lexical lookup found insufficient discriminating terms; optional learned suggestions do not override that fallback.'
       : exact ? 'Explicit caller choice; read the full skill and applicable boundaries.' : 'Compare candidates and stored conditions before dispatch; missing discriminators require manual boundary inspection.',
-    fallback, readPlan: readPlan(cat, outcome === 'abstain' ? ['loop-guide'] : union, outcome) }
+    fallback, readPlan: readPlan(cat, outcome === 'abstain' ? ['proof-guide'] : union, outcome) }
 }

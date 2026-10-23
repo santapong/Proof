@@ -3,20 +3,20 @@ title: "Skill group — run & respond"
 ---
 flowchart TB
     subgraph g["<b>Run &amp; respond</b>"]
-        ops["<b>loop-operate</b><br/><i>«component» steady state</i><br/>AUTOMATED mitigation of KNOWN conditions:<br/>SLIs/SLOs, burn-rate alerts, runbooks, auto-rollback"]
-        inc["<b>loop-incident</b><br/><i>«component» exception state</i><br/>HUMAN-COORDINATED mitigation of NOVEL failures:<br/>triage, comms, mitigate first, postmortem"]
+        ops["<b>proof-operate</b><br/><i>«component» steady state</i><br/>Scoped operation of known conditions:<br/>SLIs/SLOs, burn-rate alerts, runbooks, auto-rollback"]
+        inc["<b>proof-incident</b><br/><i>«component» exception state</i><br/>DECLARED or escalating incidents:<br/>triage, comms, mitigate first, postmortem"]
     end
 
-    ship["<b>loop-ship</b><br/><i>«external» release</i>"]
-    dbg["<b>loop-debug</b><br/><i>«external» root cause</i>"]
-    auto["<b>loop-autopilot</b><br/><i>«external» autonomous loop</i>"]
-    harn["<b>loop-harness</b><br/><i>«external» Claude's harness</i>"]
+    ship["<b>proof-ship</b><br/><i>«external» release</i>"]
+    dbg["<b>proof-debug</b><br/><i>«external» root cause</i>"]
+    auto["<b>proof-autopilot</b><br/><i>«external» autonomous loop</i>"]
+    harn["<b>proof-harness</b><br/><i>«external» Claude's harness</i>"]
 
     ship <-- "ship hands over after bake;<br/>ops owns the rollback signal" --> ops
-    ops -- "no runbook, or impact<br/>beyond its scope" --> inc
+    ops -- "declared incident, escalation,<br/>or unresolved runbook condition" --> inc
     inc -- "service restored —<br/>hand the defect over" --> dbg
     ops -- "cites the autonomy ladder;<br/>never redefines it" --> auto
-    harn -- "may deploy a runbook's schedule —<br/>composition, one-directional" --> ops
+    harn -- "may configure its event-driven runner" --> ops
 
     classDef component fill:#FECACA,stroke:#B91C1C,color:#450A0A
     classDef extc fill:#E7E5E4,stroke:#78716C,color:#1C1917

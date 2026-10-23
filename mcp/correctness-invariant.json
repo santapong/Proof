@@ -2,7 +2,7 @@
   "$comment": "NORMATIVE. The correctness invariant every proof-mcp tool rests on, plus the arithmetic rules that make estimate_phase reproducible. Companion to docs/design/ADR-0005-correctness-invariant-no-silent-default.md. Composes with mcp/runtime-pin.json (D1), mcp/tool-contracts.json (D3) and mcp/extraction-contract.json (D4); amends none of them.",
   "adr": "docs/design/ADR-0005-correctness-invariant-no-silent-default.md",
   "decidedOn": "2026-07-27",
-  "decidedBy": "loop-algo (D5, phase 1 DECIDE)",
+  "decidedBy": "proof-algo (D5, phase 1 DECIDE)",
   "appliesTo": "every tool and every resource read of proof-mcp",
   "measurementBaseline": {
     "branch": "develop",
@@ -27,7 +27,7 @@
       "scriptLayer": "execution-modes.md §M8:306-392 — forgives, correctly, because H10 (harness-policy.md:76) leaves a script no way to refuse without dying mid-DAG.",
       "parserLayer": "execution-modes.md §M2:59 — 'An unrecognized value is never guessed: name the three valid values and ask.'",
       "ruling": "An MCP tool is a parser-layer citizen. It does not inherit §M8's fallbacks.",
-      "repoAcknowledgement": "execution-modes.md §M9.5:421 already names the hazard: 'ROUTES[MODE] falls back to balanced for any unrecognized value rather than failing loudly', and records the breaking rename it forced in loop-autopilot/templates/improvement-loop.workflow.js."
+      "repoAcknowledgement": "execution-modes.md §M9.5:421 already names the hazard: 'ROUTES[MODE] falls back to balanced for any unrecognized value rather than failing loudly', and records the breaking rename it forced in proof-autopilot/templates/improvement-loop.workflow.js."
     }
   },
 

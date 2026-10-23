@@ -3,20 +3,21 @@ title: "Skill group — build & verify"
 ---
 flowchart TB
     subgraph g["<b>Build &amp; verify</b>"]
-        test["<b>loop-test</b><br/><i>«component» tests</i><br/>Deliverable: test files that run and<br/>fail for the right reason"]
-        rev["<b>loop-review</b><br/><i>«component» security + quality</i><br/>Deliverable: a findings list;<br/>judges, never refactors"]
-        aud["<b>loop-audit</b><br/><i>«component» change impact</i><br/>Deliverable: a backward-looking<br/>risk memo over a diff"]
-        dbg["<b>loop-debug</b><br/><i>«component» root cause</i><br/>Deliverable: minimal fix + regression;<br/>requires a REPRODUCIBLE defect"]
-        exp["<b>loop-experiment</b><br/><i>«component» evaluation</i><br/>Deliverable: controlled comparison<br/>with a reproducible evidence record"]
+        test["<b>proof-test</b><br/><i>«component» tests</i><br/>Tests + actual execution evidence;<br/>generation alone stays unverified"]
+        rev["<b>proof-review</b><br/><i>«component» security + quality</i><br/>Deliverable: a findings list;<br/>judges, never refactors"]
+        aud["<b>proof-audit</b><br/><i>«component» change impact</i><br/>Deliverable: a backward-looking<br/>risk memo over a diff"]
+        dbg["<b>proof-debug</b><br/><i>«component» root cause</i><br/>Deliverable: minimal fix + regression;<br/>requires a REPRODUCIBLE defect"]
+        exp["<b>proof-experiment</b><br/><i>«component» evaluation</i><br/>Deliverable: controlled comparison<br/>with a reproducible evidence record"]
     end
 
-    eng["<b>loop-engine</b><br/><i>«external» workflow execution</i>"]
-    pat["<b>loop-pattern</b><br/><i>«external» refactoring</i>"]
-    ship["<b>loop-ship</b><br/><i>«external» release</i>"]
-    inc["<b>loop-incident</b><br/><i>«external» live failure</i>"]
-    algo["<b>loop-algo</b><br/><i>«external» mechanism</i>"]
+    eng["<b>proof-engine</b><br/><i>«external» workflow execution</i>"]
+    pat["<b>proof-pattern</b><br/><i>«external» refactoring</i>"]
+    ship["<b>proof-ship</b><br/><i>«external» release</i>"]
+    inc["<b>proof-incident</b><br/><i>«external» live failure</i>"]
+    algo["<b>proof-algo</b><br/><i>«external» mechanism</i>"]
 
-    exp -- "executes the study workflow" --> eng
+    exp -- "requests an authorized study workflow" --> eng
+    rev -- "requested remediation" --> pat
     aud -- "security dimension" --> rev
     aud -- "risk memo → go/no-go" --> ship
     rev -- "each smell class points<br/>at its remediation" --> pat

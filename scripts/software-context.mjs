@@ -4,8 +4,8 @@ import { rankContext, trainModel } from './lib/software-context.mjs'
 const HELP = `Proof software context helper — local, advisory, no provider calls.
 
   node scripts/software-context.mjs rank --task "review this pull request for defects"
-  node scripts/software-context.mjs rank --skill loop-review
-  node scripts/software-context.mjs train --data docs/examples/software-routing-train.jsonl --out /tmp/proof-routing.json
+  node scripts/software-context.mjs rank --skill proof-review
+  node scripts/software-context.mjs train --data docs/examples/software-routing-train-proof-v4.jsonl --out /tmp/proof-routing.json
   node scripts/software-context.mjs rank --task "debug an intermittent crash" --model /tmp/proof-routing.json
 
 rank: --task TEXT or --skill NAME; optional --model FILE and --limit 2..5 (default 3).

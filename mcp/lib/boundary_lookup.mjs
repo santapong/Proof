@@ -80,7 +80,7 @@ import {
 
 const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/lib
 const DEFAULT_ROOT = path.resolve(HERE, '..', '..') // repo root, two levels up from mcp/lib
-const SERVER_VERSION = '0.2.0'
+const SERVER_VERSION = '0.3.0-beta.1'
 
 function resolveRoot(root) {
   return root ? path.resolve(root) : DEFAULT_ROOT
@@ -193,7 +193,7 @@ function readLiveDescription(root, skill) {
 }
 
 // §D7.7 — "unrecorded" when the audit never approved a description for this skill (3 skills, measured
-// today: loop-skill, loop-frontend, loop-build); "current"/"drifted" by exact string comparison against
+// today: proof-skill, proof-frontend, proof-build); "current"/"drifted" by exact string comparison against
 // the approved text when one exists; "live_unreadable" — the disclosed 4th state (see file header) —
 // when an approved text exists but the live SKILL.md could not be read/parsed to compare against it.
 function computeDescriptionIsStale(root, skill, approvedDescription) {
@@ -285,7 +285,7 @@ function computeAuditIntegrity(root, read) {
 
   // descriptionDrift — computed over EVERY approved-description row, not only candidates in the
   // current shortlist: §D7.8 requires this block on every answer, and a caller who never happens to
-  // rank loop-algo or loop-operate into their shortlist should still see that the audit has 2 drifted
+  // rank proof-algo or proof-operate into their shortlist should still see that the audit has 2 drifted
   // descriptions somewhere. Costs 18 extra live reads per call (measured cheap: readLiveDescription is
   // one small file read + a short linear scan, well inside boundary.mjs's own ~1.5ms/call budget).
   const descriptionDrift = []
@@ -365,7 +365,7 @@ function buildSeparatingQuestion(a, b) {
   const notes = []
   if (!storedDiscriminator) {
     notes.push(
-      `No stored discriminator exists between '${a.skill}' and '${b.skill}' in either direction — an audit gap against .claude/skills/loop-skill/SKILL.md:47's "for every rated overlap, on both sides" rule (ADR-0007 §D7.6's null-branch: 161 of 210 unordered pairs measured with none today). Do not infer a boundary that is not stored; read docs/design/boundary-audit.json by hand for this pair.`
+      `No stored discriminator exists between '${a.skill}' and '${b.skill}' in either direction — an audit gap against .claude/skills/proof-skill/SKILL.md:47's "for every rated overlap, on both sides" rule (ADR-0007 §D7.6's null-branch: 161 of 210 unordered pairs measured with none today). Do not infer a boundary that is not stored; read docs/design/boundary-audit.json by hand for this pair.`
     )
   }
 

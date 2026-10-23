@@ -1,15 +1,17 @@
 # Proof for a software team
 
-Start with the deliverable. A reproducible bug belongs to `loop-debug`; a diff to assess belongs to `loop-review`; a request for tests belongs to `loop-test`. Use `loop-guide` when the owner is unclear. Carry the issue, relevant revision, acceptance evidence and current work to the next person or agent so each handoff can resume without rediscovering the task.
+Start with the deliverable. A reproducible bug belongs to `proof-debug`; a diff to assess belongs to `proof-review`; a request for tests belongs to `proof-test`. Use `proof-guide` when the owner is unclear. Carry the issue, relevant revision, acceptance evidence and current work to the next person or agent so each handoff can resume without rediscovering the task.
 
-The focused instructions live in [software-team intake](../.claude/skills/loop-guide/references/software-team.md), [context efficiency](../.claude/skills/loop-context/references/software-efficiency.md), and [skill improvement](../.claude/skills/loop-autopilot/references/skill-improvement.md). Read the reference for the current task. Small work should not expand into a full lifecycle or an agent team by default.
+The focused instructions live in [software-team intake](../.claude/skills/proof-guide/references/software-team.md), [context efficiency](../.claude/skills/proof-context/references/software-efficiency.md), and [skill improvement](../.claude/skills/proof-autopilot/references/skill-improvement.md). Read the reference for the current task. Small work should not expand into a full lifecycle or an agent team by default.
+
+For the complete owner/output map, use the [26-skill catalog](skills.md).
 
 ## Get a small reading plan
 
 Run these commands from a Proof source checkout with Node installed:
 
 ```sh
-node scripts/software-context.mjs rank --skill loop-review
+node scripts/software-context.mjs rank --skill proof-review
 node scripts/software-context.mjs rank --task "Review the changes on this branch for defects"
 ```
 
@@ -21,7 +23,7 @@ The helper reports characters and a rough token proxy for an explicit reading-su
 
 ```sh
 node scripts/software-context.mjs train \
-  --data docs/examples/software-routing-train.jsonl \
+  --data docs/examples/software-routing-train-proof-v4.jsonl \
   --out /tmp/proof-routing.json
 node scripts/software-context.mjs rank \
   --task "Review the changes on this branch for defects" \
@@ -52,11 +54,13 @@ characters with identical candidate results. Enabling ML increased the mean
 candidate-entrypoint inventory from 26,594 to 37,442 characters. Neither measure is
 billed-token savings; the ML result does not justify making it the default.
 
-Reproduce the study with a new output basename:
+Reproduce the historical study only from its pinned pre-migration source tree, with a new output basename:
 
 ```sh
 node scripts/evaluate-software-context.mjs --out /tmp/proof-evaluation-trial
 ```
+
+The current candidate changes normative names and skill sources; the frozen runner rejects that drift. Follow [migration](migration-proof-4.md) rather than changing the freeze hashes to make it pass. A new comparison needs fresh registered inputs and criteria.
 
 The runner preserves prior reports and rejects overwrites. Its published fixture is
 now a regression/demo set; use fresh independently labelled team tasks for a future

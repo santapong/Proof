@@ -1,38 +1,40 @@
 ---
-title: "4+1 · Process view — what runs concurrently, and where it blocks"
+title: "4+1 · Process view — a large authorized review"
 ---
-%%{init: {"themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px", "actorBkg": "#BFDBFE", "actorBorder": "#1D4ED8", "actorTextColor": "#0C1B33", "activationBkgColor": "#DBEAFE", "activationBorderColor": "#1D4ED8", "noteBkgColor": "#FDE68A", "noteBorderColor": "#B45309", "sequenceNumberColor": "#FFFFFF"}, "sequence": {"actorMargin": 45, "boxMargin": 8}}}%%
+%%{init: {"themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "14px", "actorBkg": "#D8F1EE", "actorBorder": "#0F766E", "actorTextColor": "#102F35", "noteBkgColor": "#FEF3C7", "noteBorderColor": "#B45309"}, "sequence": {"actorMargin": 42, "boxMargin": 8}}}%%
 sequenceDiagram
     autonumber
-    actor Dev as Developer
-    participant Sess as Main session<br/>(the conductor)
-    participant MCP as proof-mcp<br/>(child process)
-    participant WF as Workflow tool<br/>(sandbox)
-    participant A as Agents<br/>(≤ cap, concurrent)
-
-    Dev->>Sess: /loop-review <target> --mode all-out
-    Sess->>MCP: route_node / estimate_phase (stdio JSON-RPC)
-    MCP-->>Sess: routing + cost facts, cited
-    Note over Sess: Authoring is sequential and in-context —<br/>no agent has spawned yet
-
-    Sess->>Dev: pre-flight: N agents, est. X–Y tokens. Proceed?
-    Dev-->>Sess: approve (exactly one confirmation)
-
-    Sess->>WF: execute script + args
-    par find (fan-out, one per dimension)
-        WF->>A: agent(dimension 1)
-        WF->>A: agent(dimension 2)
-        WF->>A: agent(dimension n)
+    actor Dev as Builder / developer
+    participant Sess as Agent session
+    participant MCP as proof-mcp
+    participant WF as Host Workflow
+    participant A as Scoped agents
+    Dev->>Sess: /proof:proof-review target --mode all-out
+    Note over Sess: Small reviews may stay inline. This example is a large review.
+    opt MCP connected
+        Sess->>MCP: route_node / estimate_phase
+        MCP-->>Sess: source-backed authoring advice
     end
-    Note over WF,A: pipeline() — item 1 may reach verify<br/>while item n is still finding
-
-    par verify (adversarial, per finding)
-        WF->>A: refute finding 1
-        WF->>A: refute finding 2
+    Sess->>Sess: Author scoped script and estimate
+    Sess->>Dev: all-out pre-flight: estimated work / cost / limits
+    alt User authorizes the run
+        Dev-->>Sess: proceed within stated scope
+        Sess->>WF: script + args
+        par independent finder dimensions
+            WF->>A: find candidates in dimension A
+            A-->>WF: source-anchored candidates
+        and another dimension
+            WF->>A: find candidates in dimension B
+            A-->>WF: source-anchored candidates
+        end
+        Note over WF: Dedup barrier after finder results<br/>Only survivors enter verification
+        loop candidate and mode-resolved lenses (stagger same-model bursts)
+            WF->>A: try to refute the candidate
+            A-->>WF: verdict + actual evidence, or no verdict
+        end
+        WF-->>Sess: structured result + available journal/usage evidence
+        Sess->>Dev: supported findings, scope, checks and unknowns
+        Note over Sess,Dev: No supported finding is valid. A dead lens is not a pass.
+    else Declined or dry-run
+        Sess->>Dev: plan / estimate only<br/>No workflow agents
     end
-    A-->>WF: verdicts
-    WF-->>Sess: structured result + journal
-
-    Sess->>Dev: phase gate — deliverable + cost ledger
-    Note over Dev,Sess: BLOCKING — a human decides.<br/>The loop proposes, never merges
-    Dev-->>Sess: approve / repair / stop

@@ -1,42 +1,41 @@
-# C4 Container (Level 2) — Proof
+# Content and runtime map — Proof
 
-**What are the separately-loadable units inside the plugin, what is each one made of, and how do they talk?**
+This is a **C4-inspired content/runtime view**. C4 containers ordinarily describe
+applications and data stores; Proof also needs to show separately loaded
+instruction artifacts. The diagram labels those as artifacts rather than
+pretending every Markdown file is a deployable process. See the
+[official C4 container definition](https://c4model.com/diagrams/container).
 
-A C4 container is a *runtime or deploy boundary*, not a Docker container. For the instruction library, the meaningful boundary is **what gets loaded, when, and by whom** — and that is genuinely different per unit. A `SKILL.md` enters the agent's context the moment a skill is invoked; a `references/*.md` file is read only if that skill's router decides it is needed; a `*.workflow.js` is read and adapted during authoring, then *executed* by the Workflow tool in a sandbox with no filesystem. Those are three different loading regimes, so they are three containers.
+![Proof content and runtime map](diagrams/container.svg)
 
-![C4 Container diagram — Proof](diagrams/container.svg)
+[Editable source](diagrams/src/container.mmd).
 
-<sub>Diagram source: [`diagrams/src/container.mmd`](diagrams/src/container.mmd) · regenerate with `node scripts/render-diagrams.mjs`</sub>
+| Part | Actual role |
+| --- | --- |
+| Plugin manifests | Discovery/install metadata |
+| 26 skill routers | Task selection and bounded method instructions |
+| Reference library | On-demand specialist knowledge and dated standards shelves |
+| Shared policies | One authority for shapes, loops, routes and gates |
+| AIDLC / VENTURE | Two selectable lifecycle definitions; the template is an authoring scaffold |
+| 32 Workflow templates | Read/adapted in the session; executed only by a capable host |
+| Boundary matrix / ADRs | Live selection contracts versus historical decisions |
+| `proof-mcp` | A local Node stdio process: five authoring tools and read-only resources |
+| Repository checks | Local/CI structural, stub-execution and package evidence |
+| Generated host packs | 22 knowledge skills; four native skills and Workflow scripts excluded |
 
-## The containers, and why each is its own unit
+## Three paths
 
-| Container | Loading regime | Why it is separate |
-|---|---|---|
-| **Skill Routers** | Into agent context, on invocation | The `description` field is API: it is the discovery metadata used to describe when a skill applies. Routers stay thin so twenty-six of them can coexist without drowning the context window. |
-| **Reference Library** | On demand, by the router's flow | Progressive disclosure. The complete reference library need not enter context at once; the router decides which two or three matter for this task. |
-| **Workflow Templates** | Authored in the session, executed in the sandbox | A different execution model entirely — plain JS in a sandbox with no filesystem, no clock, and no module access. That sandbox is what forces the `ROUTES` duplication rule (see [Component](component.md)). |
-| **Governance Policies** | Read-only, before authoring | Consumed by every skill and modified by none. Separating them is what lets twenty-six skills share one orchestration discipline instead of twenty-six dialects. |
-| **Lifecycle Frameworks** | Read-only, selected by flag | Pluggable: `--framework <name>` resolves to a file. AIDLC is the default, not the only option. |
-| **Design Records** | Review-time, by humans and reviewers | Normative and machine-readable. Kept because three of its mandates were once dropped from a build plan and, since every review checked the plan instead, nobody noticed. |
-| **Validation Gate** | CI, on push and PR | The only container that *executes in the repo's own CI*. It exists because the host's `plugin validate` reads the marketplace manifest and never opens a `SKILL.md`. |
-| **Plugin Manifests** | By the host, at install | The discovery contract. Skills under `.claude/skills/` are auto-discovered, so this rarely changes. |
-| **MCP Server** (`mcp/`) | A **process**, spawned by the host over stdio | The only container with a lifecycle of its own. Five tools plus read-only resources, parsed live from the same source documents the skills read — with source citations so a reviewer can check the answer. Zero dependencies, by [ADR-0001](../../mcp/ADR-0001-runtime-and-dependency.md). |
-| **Host Packs** (`dist/<host>/`) | **Generated**, then installed into a *different* host | Not loaded by Claude Code at all — this is the repo's output for Cursor, Codex and Antigravity. Generated from the Skill Routers and Reference Library, minus the four skills that are Claude Code-native by subject and minus every template, per [ADR-0008](../design/ADR-0008-host-packaging-seam.md). Git-ignored; gated by `scripts/check-host-packs.mjs`. |
+**Inline:** task → selected skill/references → scoped work → checked artifact.
+No Workflow or agent team is required merely because a skill is used.
 
-## The three flows worth tracing
+**Workflow:** scope and authoring → shared policy/template → any required
+pre-flight → authorized host execution → actual results and phase gate. MCP
+advises authoring; it is not drawn as a service inside that sandbox.
 
-**Selection.** `Developer → Claude Code → Skill Routers`. The host matches the request against twenty-six `description` fields. The session may also consider the explicit invocation, task context, and boundary evidence — which is why the [boundary audit](../design/boundary-audit.json) treats those fields as the product's real API surface.
+**Packaging:** canonical source → deterministic pack build → reviewed host
+installation. The emitted MCP path must resolve to a retained complete source
+checkout. Packaging is not native-host acceptance.
 
-**Authoring.** `Router → Policies + Framework + References → Template`. The skill reads its law, maps the task onto phases, and fills a template's `EDIT ME` slots. This all happens *in the agent's context*, at authoring time, which is what makes it possible for an interactive pre-flight to exist at all — a script cannot prompt a human, but the session can.
-
-**Execution.** `Claude Code → Template → Model Fleet → Repository`. The Workflow tool runs the script; the script's `ROUTES` block decides each node's model and effort; agents read the repository and, in an `implement` node, write to it. The developer sees a phase gate at the end, not a merge.
-
-## Boundaries this diagram asserts
-
-- **Templates never call the fleet directly on their own authority** — every `agent()` call takes its `model` and `effort` from `ROUTES`, so routing policy cannot be quietly overridden per template. The gate enforces this by rejecting a bare `model:` literal outside the block.
-- **Repository writes follow authorization.** Workflow agents may read or patch the target repository in an approved phase. The authoring session and local developer tools can also access files; this diagram is not a filesystem access-control boundary.
-- **The gate points at routers and templates, not at references.** Reference *content* is not mechanically checkable — a stale version pin looks exactly like a fresh one to a parser. That gap is real, and it is why standards accuracy is a review discipline with a confirmation log rather than a CI check.
-
----
-
-**Previous:** [Context (Level 1)](context.md) · **Next:** [Component (Level 3)](component.md) → [mechanism, ideas and references](README.md)
+The [engine flow](component.md) explains interpreted authoring responsibilities;
+the [execution-placement view](../views/4plus1.md#4--physical-view) separates the
+Proof checkout, target code, local MCP process and host-managed execution.

@@ -3,19 +3,19 @@ title: "Skill group — engine & planning"
 ---
 flowchart TB
     subgraph g["<b>Engine &amp; planning</b>"]
-        eng{{"<b>loop-engine</b><br/><i>«component» orchestration engine</i><br/>Authors and runs the workflow script —<br/>pipeline, parallel, loop"}}
-        orch["<b>loop-orchestrate</b><br/><i>«component» planning layer</i><br/>Decomposes a project into a task DAG;<br/>routes a model to each node"]
-        mk["<b>loop-skill</b><br/><i>«component» meta</i><br/>Authors a conforming skill directory<br/>and proves it with the gate"]
-        build["<b>loop-build</b><br/><i>«component» v1 conductor</i><br/>Brief → shipped version one:<br/>multi-planner plan, delegated-law build, gates"]
-        vent["<b>loop-venture</b><br/><i>«component» venture conductor</i><br/>Idea → gated decision documents:<br/>discovery, kill/pivot vision, GTM∥build∥deploy band"]
-        ctx["<b>loop-context</b><br/><i>«component» agent state</i><br/>Budgets, compaction, typed shared state,<br/>supersession, trace invariants"]
-        guide["<b>loop-guide</b><br/><i>«component» front door</i><br/>Interview → routing verdict → dispatch;<br/>does no domain work"]
+        eng{{"<b>proof-engine</b><br/><i>«component» orchestration engine</i><br/>Authors and runs the workflow script —<br/>pipeline, parallel, loop"}}
+        orch["<b>proof-orchestrate</b><br/><i>«component» planning layer</i><br/>Decomposes a project into a task DAG;<br/>routes a model to each node"]
+        mk["<b>proof-skill</b><br/><i>«component» meta</i><br/>Authors a conforming skill directory<br/>with structural gate evidence"]
+        build["<b>proof-build</b><br/><i>«component» v1 conductor</i><br/>Brief → working v1 + authorized delivery:<br/>multi-planner plan, delegated-law build, gates"]
+        vent["<b>proof-venture</b><br/><i>«component» venture conductor</i><br/>Idea → gated decision documents:<br/>discovery, kill/pivot vision, GTM∥build∥deploy band"]
+        ctx["<b>proof-context</b><br/><i>«component» agent state</i><br/>Budgets, compaction, typed shared state,<br/>supersession, trace invariants"]
+        guide["<b>proof-guide</b><br/><i>«component» front door</i><br/>Interview → routing verdict → dispatch;<br/>does no domain work"]
     end
 
-    law["<b>Governance</b><br/><i>«external» read-only law</i><br/>harness · loop · modes · AIDLC"]
+    law["<b>Governance</b><br/><i>«external» shared source contracts</i><br/>harness · loop · modes · AIDLC"]
     audit["<b>boundary-audit.json</b><br/><i>«external» normative</i><br/>Skill scope boundaries"]
     gate["<b>validate.mjs</b><br/><i>«external» CI gate</i><br/>Rejects a contract breach"]
-    all["<b>The other nineteen skills</b><br/><i>«external» domain skills</i><br/>Author through the engine"]
+    all["<b>The other nineteen skills</b><br/><i>«external» domain skills</i><br/>Use inline work or authorized workflows"]
 
     law -. "governs shape<br/>and routing" .-> eng
     orch -- "hands over the<br/>DAG to execute" --> eng
@@ -32,10 +32,10 @@ flowchart TB
     ctx -- "typed state between<br/>agents and phases" --> eng
     guide -- "routes on the matrix,<br/>escalates a project to" --> build
 
-    classDef component fill:#BFDBFE,stroke:#1D4ED8,color:#0C1B33
+    classDef component fill:#D8F1EE,stroke:#0F766E,color:#102F35
     classDef extc fill:#E7E5E4,stroke:#78716C,color:#1C1917
-    classDef engine fill:#1D4ED8,stroke:#1E3A8A,stroke-width:2px,color:#FFFFFF
+    classDef engine fill:#0F766E,stroke:#164E55,stroke-width:2px,color:#FFFFFF
     class eng engine
     class orch,mk,build,vent,ctx,guide component
     class law,audit,gate,all extc
-    style g fill:#EFF6FF,stroke:#93C5FD
+    style g fill:#F1F9F7,stroke:#8BC8C1

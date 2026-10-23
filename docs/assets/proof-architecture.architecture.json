@@ -2,62 +2,253 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "Proof architecture",
+    "title": "Proof — from a goal to checked evidence",
     "locale": "en",
     "quality_profile": "showcase",
     "repository": {
       "url": "https://github.com/santapong/Proof",
-      "revision": "2b24538454c72618a3d7ef077c21170ddde17694"
+      "revision": "5ff9786a9ef8eae9440fd2b547f522880a0f1396"
     }
   },
   "components": [
     {
-      "id": "skill-library", "type": "backend", "label": "Skill library",
-      "sublabel": "26 routers + references", "pos": [40, 260], "size": [180, 80],
-      "sources": [{ "path": ".claude-plugin/plugin.json" }, { "path": ".claude/skills/loop-guide/SKILL.md" }]
+      "id": "skill-library",
+      "type": "backend",
+      "label": "Skill library",
+      "sublabel": "26 focused engineering skills",
+      "pos": [
+        40,
+        200
+      ],
+      "size": [
+        230,
+        80
+      ],
+      "sources": [
+        {
+          "path": ".claude-plugin/plugin.json"
+        },
+        {
+          "path": "docs/skills.md"
+        }
+      ]
     },
     {
-      "id": "authoring-session", "type": "frontend", "label": "Claude Code",
-      "sublabel": "Authoring session", "pos": [340, 260], "size": [180, 80],
-      "sources": [{ "path": ".claude/skills/loop-engine/SKILL.md" }]
+      "id": "authoring-session",
+      "type": "frontend",
+      "label": "Agent session",
+      "sublabel": "Choose · plan · work",
+      "pos": [
+        400,
+        200
+      ],
+      "size": [
+        230,
+        80
+      ],
+      "sources": [
+        {
+          "path": ".claude/skills/proof-guide/SKILL.md"
+        },
+        {
+          "path": ".claude/skills/proof-orchestrate/SKILL.md"
+        },
+        {
+          "path": ".claude/skills/proof-engine/SKILL.md"
+        }
+      ]
     },
     {
-      "id": "workflow-runtime", "type": "external", "label": "Workflow tool",
-      "sublabel": "Host execution runtime", "pos": [640, 260], "size": [180, 80],
-      "sources": [{ "path": ".claude/skills/loop-engine/references/harness-policy.md" }]
+      "id": "phase-result",
+      "type": "security",
+      "label": "Evidence + next step",
+      "sublabel": "Checked artifacts · human gate",
+      "pos": [
+        760,
+        200
+      ],
+      "size": [
+        230,
+        80
+      ],
+      "sources": [
+        {
+          "path": ".claude/skills/proof-test/SKILL.md"
+        },
+        {
+          "path": ".claude/skills/proof-engine/frameworks/AIDLC.md"
+        }
+      ]
     },
     {
-      "id": "phase-result", "type": "security", "label": "Evidence + gate",
-      "sublabel": "Human reviews next step", "pos": [940, 260], "size": [180, 80],
-      "sources": [{ "path": ".claude/skills/loop-engine/frameworks/AIDLC.md" }]
+      "id": "shared-policy",
+      "type": "security",
+      "label": "Shared policies",
+      "sublabel": "Scope · routes · bounded loops",
+      "pos": [
+        400,
+        40
+      ],
+      "size": [
+        230,
+        80
+      ],
+      "sources": [
+        {
+          "path": ".claude/skills/proof-engine/references/harness-policy.md"
+        },
+        {
+          "path": ".claude/skills/proof-engine/references/execution-modes.md"
+        },
+        {
+          "path": ".claude/skills/proof-engine/references/loop-policy.md"
+        }
+      ]
     },
     {
-      "id": "shared-policy", "type": "security", "label": "Shared policies",
-      "sublabel": "ROUTES + lifecycle", "pos": [340, 50], "size": [180, 80],
-      "sources": [{ "path": ".claude/skills/loop-engine/references/execution-modes.md" }, { "path": ".claude/skills/loop-engine/references/loop-policy.md" }]
+      "id": "portable-skills",
+      "type": "backend",
+      "label": "Portable packs",
+      "sublabel": "22 skills · sequential path",
+      "pos": [
+        40,
+        360
+      ],
+      "size": [
+        230,
+        80
+      ],
+      "sources": [
+        {
+          "path": "scripts/host-targets.json"
+        },
+        {
+          "path": "scripts/pack-host.mjs"
+        }
+      ]
     },
     {
-      "id": "authoring-tools", "type": "backend", "label": "proof-mcp",
-      "sublabel": "Authoring-time tools", "pos": [340, 470], "size": [180, 80],
-      "sources": [{ "path": "mcp/server.mjs" }, { "path": "mcp/tool-contracts.json" }]
+      "id": "authoring-tools",
+      "type": "backend",
+      "label": "proof-mcp",
+      "sublabel": "Source-backed authoring advice",
+      "pos": [
+        400,
+        360
+      ],
+      "size": [
+        230,
+        80
+      ],
+      "sources": [
+        {
+          "path": "mcp/server.mjs"
+        },
+        {
+          "path": "mcp/tool-contracts.json"
+        }
+      ]
     },
     {
-      "id": "portable-skills", "type": "backend", "label": "Portable packs",
-      "sublabel": "22 skills / 3 hosts", "pos": [40, 470], "size": [180, 80],
-      "sources": [{ "path": "scripts/host-targets.json" }, { "path": "scripts/pack-host.mjs" }]
+      "id": "workflow-runtime",
+      "type": "external",
+      "label": "Host Workflow",
+      "sublabel": "When supported + authorized",
+      "pos": [
+        760,
+        360
+      ],
+      "size": [
+        230,
+        80
+      ],
+      "sources": [
+        {
+          "path": ".claude/skills/proof-engine/SKILL.md"
+        }
+      ]
     }
   ],
   "connections": [
-    { "id": "load-skill", "from": "skill-library", "to": "authoring-session", "label": "load", "variant": "emphasis" },
-    { "id": "execute-script", "from": "authoring-session", "to": "workflow-runtime", "label": "execute", "variant": "emphasis" },
-    { "id": "return-evidence", "from": "workflow-runtime", "to": "phase-result", "label": "return", "variant": "emphasis" },
-    { "id": "read-policy", "from": "shared-policy", "to": "authoring-session", "label": "govern", "variant": "security", "labelAt": [430, 195] },
-    { "id": "authoring-advice", "from": "authoring-tools", "to": "authoring-session", "label": "advise", "variant": "dashed" },
-    { "id": "build-packs", "from": "skill-library", "to": "portable-skills", "label": "build", "variant": "dashed", "labelAt": [130, 405] }
+    {
+      "id": "load-skill",
+      "from": "skill-library",
+      "to": "authoring-session",
+      "label": "load",
+      "variant": "emphasis"
+    },
+    {
+      "id": "report-evidence",
+      "from": "authoring-session",
+      "to": "phase-result",
+      "label": "report",
+      "variant": "emphasis"
+    },
+    {
+      "id": "read-policy",
+      "from": "shared-policy",
+      "to": "authoring-session",
+      "label": "govern",
+      "variant": "security",
+      "labelAt": [
+        515,
+        160
+      ]
+    },
+    {
+      "id": "build-packs",
+      "from": "skill-library",
+      "to": "portable-skills",
+      "label": "package",
+      "variant": "dashed",
+      "labelAt": [
+        155,
+        320
+      ]
+    },
+    {
+      "id": "authoring-advice",
+      "from": "authoring-tools",
+      "to": "authoring-session",
+      "label": "advise",
+      "variant": "dashed"
+    },
+    {
+      "id": "execute-script",
+      "from": "authoring-session",
+      "to": "workflow-runtime",
+      "label": "execute script",
+      "variant": "dashed"
+    },
+    {
+      "id": "return-evidence",
+      "from": "workflow-runtime",
+      "to": "phase-result",
+      "label": "return",
+      "variant": "dashed"
+    }
   ],
   "cards": [
-    { "dot": "cyan", "title": "Progressive disclosure", "items": ["Load one skill, then the references needed for the task."] },
-    { "dot": "amber", "title": "Execution boundary", "items": ["MCP assists authoring. The workflow runs in the host sandbox."] },
-    { "dot": "emerald", "title": "Portable knowledge", "items": ["Cursor, Codex and Antigravity packs exclude workflow scripts."] }
+    {
+      "dot": "cyan",
+      "title": "Start small",
+      "items": [
+        "One goal and a useful deliverable. Inline work needs no Workflow."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Execution boundary",
+      "items": [
+        "The host executes authorized scripts; MCP assists authoring."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Portable knowledge",
+      "items": [
+        "Reduced packs exclude the Workflow executor and four native skills."
+      ]
+    }
   ]
 }

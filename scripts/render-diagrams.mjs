@@ -5,7 +5,7 @@
 // Edit the .mmd, run this script, commit both the source and the .svg.
 //
 // Stdlib-only by design, like the rest of scripts/. The renderer itself is fetched
-// on demand via `npx @mermaid-js/mermaid-cli`; no dependency is added to the repo.
+// on demand via `npx @mermaid-js/mermaid-cli@11.17.0`; no dependency is added to the repo.
 // A Chromium-based browser is required: set MERMAID_BROWSER, or the script probes
 // the common local install paths before letting puppeteer resolve its own.
 import { readdirSync, writeFileSync, existsSync, mkdtempSync, rmSync } from 'node:fs'
@@ -20,6 +20,7 @@ const OUT = join(ROOT, 'docs/c4/diagrams')
 
 const BROWSERS = [
   process.env.MERMAID_BROWSER,
+  '/opt/brave.com/brave/brave', // direct binary; avoid launcher processes surviving capture
   '/opt/brave.com/brave/brave-browser',
   '/usr/bin/chromium',
   '/usr/bin/chromium-browser',
@@ -40,8 +41,11 @@ if (sources.length === 0) {
 let failed = 0
 for (const f of sources) {
   const name = f.replace(/\.mmd$/, '')
+  const mermaidConfig = join(work, `${name}.config.json`)
+  writeFileSync(mermaidConfig, JSON.stringify({ deterministicIds: true, deterministicIDSeed: `proof-${name}` }))
   const args = [
-    '-y', '@mermaid-js/mermaid-cli',
+    '-y', '@mermaid-js/mermaid-cli@11.17.0',
+    '-c', mermaidConfig,
     '-i', join(SRC, f),
     '-o', join(OUT, `${name}.svg`),
     '-b', 'white', // readable in both GitHub themes; transparent would vanish in dark mode

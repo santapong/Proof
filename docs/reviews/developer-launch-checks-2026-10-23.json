@@ -1,0 +1,270 @@
+{
+  "schema": 1,
+  "checked_at_utc": "2026-10-22T18:10:28.898969+00:00",
+  "client_date_asia_bangkok": "2026-10-23",
+  "baseline_commit": "1000b9aabcab4b27386aa71b3b917e1ab4e7894e",
+  "branch": "feat/proof-onboarding-review",
+  "candidate_plugin_version": "4.0.0-beta.1",
+  "candidate_mcp_server_version": "0.3.0-beta.1",
+  "user_naming_decision": "proof-* only; no loop-* aliases",
+  "scope": "Local source/product review and candidate improvements; no publication, host-model run or installed-user change",
+  "observed_environment": {
+    "claude_code": "2.1.263",
+    "node": "v26.8.1"
+  },
+  "checks": [
+    {
+      "name": "validate",
+      "command": [
+        "node",
+        "scripts/validate.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 1.6479194309999912,
+      "log": "dist/launch-review-20261023/validate.log",
+      "log_sha256": "56d0e51bf1f0e048f957d78ce52cd9470bc3c7e5398cebc289de3cf9b882423c",
+      "tail": [
+        "  warn  .claude/skills/proof-docs/templates/doc-generation.workflow.js:12  [inline-routing-literal] model/effort literal in a comment (prose, not executed): // OMITTED — Haiku 4.5 has no effort dial, and writing effort:'low' on it is a no-op at be",
+        "",
+        "PASSED — 55326 assertions, 0 failures, 3 warning(s)."
+      ]
+    },
+    {
+      "name": "smoke",
+      "command": [
+        "node",
+        "scripts/smoke.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.33440756700019847,
+      "log": "dist/launch-review-20261023/smoke.log",
+      "log_sha256": "4968f696d2ae3064b25d1f86d21b81df25bdb99e2e8df8a2831e118da43e4d56",
+      "tail": [
+        "32 templates executed — 32 passed, 0 failed"
+      ]
+    },
+    {
+      "name": "routing-parity",
+      "command": [
+        "node",
+        "scripts/check-modes-extraction-parity.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.07777355500002159,
+      "log": "dist/launch-review-20261023/routing-parity.log",
+      "log_sha256": "442bdee7ed885383333332a683faf4d65fdb70a9251ccc289a244db4460970ab",
+      "tail": [
+        "PARITY OK — both locators agree: 87 lines, doc line 308, byte-identical block text."
+      ]
+    },
+    {
+      "name": "host-packs",
+      "command": [
+        "node",
+        "scripts/check-host-packs.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 58.27527040699988,
+      "log": "dist/launch-review-20261023/host-packs.log",
+      "log_sha256": "8d317014ed8d073501e7d95eee6c8dc5622becf7f7edcf8cd0483bac5fc10db0",
+      "tail": [
+        "Each line is a candidate for a rewrite rule in scripts/host-targets.json.",
+        "",
+        "host packs OK — 3 host(s) checked, 15 residual-prose warning(s)."
+      ]
+    },
+    {
+      "name": "context",
+      "command": [
+        "node",
+        "scripts/test-software-context.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 1.3999105679999957,
+      "log": "dist/launch-review-20261023/context.log",
+      "log_sha256": "8ea145464259c218bac55f5307a3675be0bbcf7d78c564a0daed45b1467d4925",
+      "tail": [
+        "software-context: 62 behavioral checks passed; no provider calls."
+      ]
+    },
+    {
+      "name": "branch-policy",
+      "command": [
+        "node",
+        "scripts/test-branch-policy.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2685697239999172,
+      "log": "dist/launch-review-20261023/branch-policy.log",
+      "log_sha256": "961155026ef9039c2bfbd088c14d68aab761da2dfc0e0631676be632972130ec",
+      "tail": [
+        "Branch policy: 58 checks passed"
+      ]
+    },
+    {
+      "name": "public-names",
+      "command": [
+        "node",
+        "scripts/test-public-names.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 11.044127588000265,
+      "log": "dist/launch-review-20261023/public-names.log",
+      "log_sha256": "68ef188e593e4bfff18a966c0cd1b33cfb5fa24b67a9386cf13e6adb394dcd3b",
+      "tail": [
+        "public-names: 12 clean-directory/protocol checks passed; no host model or marketplace validation claimed."
+      ]
+    },
+    {
+      "name": "plugin",
+      "command": [
+        "claude",
+        "plugin",
+        "validate",
+        ".",
+        "--strict"
+      ],
+      "exit_code": 0,
+      "seconds": 0.8393821039999239,
+      "log": "dist/launch-review-20261023/plugin.log",
+      "log_sha256": "f1a96154361dc55938f654ff194ca163b242d1005842a76bef7bfa07bf69242a",
+      "tail": [
+        "Validating marketplace manifest: /mnt/data/worktrees/proof-onboarding-review-20261023/.claude-plugin/marketplace.json",
+        "",
+        "✔ Validation passed"
+      ]
+    }
+  ],
+  "portable_frontmatter_validations": 66,
+  "portable_host_skill_counts": {
+    "codex": 22,
+    "cursor": 22,
+    "antigravity": 22
+  },
+  "active_canonical_skill_count": 26,
+  "legacy_skill_directories": 0,
+  "history_preservation": {
+    "historical_files_preserved": 14,
+    "released_changelog_sections_unchanged": true,
+    "historical_visual_verification_unchanged": true,
+    "checked_document_targets": 54,
+    "checked_document_files": [
+      "README.md",
+      "INSTALL.md",
+      "ROADMAP.md",
+      "CONTRIBUTING.md",
+      "docs/getting-started.md",
+      "docs/migration-proof-4.md",
+      "docs/examples/first-review/README.md",
+      "docs/reviews/developer-launch-2026-10-23.md",
+      "docs/assets/README.md"
+    ],
+    "parsed_svgs": 20,
+    "readme_architecture_regeneration_byte_identical": true
+  },
+  "source_sha256": {
+    ".claude-plugin/plugin.json": "1c29ae93671027a723bf4f5633b548e47dc8faa34c75da3b2f42e40c019cb38d",
+    ".claude-plugin/marketplace.json": "19710642f17ecbf57d9183f17c8046fc4eb8471b555e26358d12cfcfa75693e3",
+    "mcp/server.mjs": "5b4010b413a8cc49b5d347b91ae381847f88e256d5111f1cafa2bef6ffea339d",
+    "mcp/runtime-pin.json": "92daf3ce91c314c25f20a942f399a8d10abce9beba2b6fb92b9636ac4229dc41",
+    "scripts/host-targets.json": "211a6e484747fa6149370f3c3a3913a35c449d768a590a2b3dac9c3a52fbcbc9",
+    "scripts/test-public-names.mjs": "3a94e638074140b03cbe8fe564087a01528d0c03d21f9c56d0e0b06b91c03b95",
+    "scripts/pack-host.mjs": "51a6a266c42bf1eb93d9a4f205dd33b0b67037a8e701906229ea4954d5461a7a",
+    "docs/design/boundary-audit.json": "e7181c8d610786a826bf1a29d490d3f44264ed8c0627b1ac3fba4d04a1cfcd20",
+    "README.md": "f7d91c1b490cbcdb5b5b7ccdfa8b6e1171c7d84ef4c3850dd928397f41dd4d2d",
+    "INSTALL.md": "a5afad5001a66086a46a9ecbaa8afef910f8229e3ab60a11ca2c7534228fce92",
+    "ROADMAP.md": "d81847b366a2bfa304299881162e6e3dc8d7c93e5e2c5043da0d649943af15b1",
+    "docs/getting-started.md": "e0889115cd655debc64454070222ca155a9ae6afb54088599069928bdb402fb0",
+    "docs/migration-proof-4.md": "01b62f3bbdc2138a1ecdf069aae94bff57524ace9948a9d363c7d2548b87886e",
+    "mcp/lib/route_node.mjs": "1d0671e7f1bb51c3b552192f93cef0fde88ed5128e86d65758f135b13082326d",
+    "mcp/lib/estimate_phase.mjs": "ce1bdfbe52ab7709fd8a4f7c4d7b85fa0aaba35eb68100d8d095b1f8748d3fb6",
+    "mcp/lib/boundary_lookup.mjs": "0ff9ead3a777f71f2457e655f44edbea1541891c1f5571d002d00bbb62eefa20",
+    "mcp/lib/standards_shelf.mjs": "b01af2ae6f2a58942ec072a099419428702493f1908f7718cd5f18f134981c3f",
+    "mcp/lib/run_gate.mjs": "21bd370ffe114e165c5cc57e4405b7b8e49d35fd159f4a193262d7ad1002261b",
+    "CONTRIBUTING.md": "ae3c01538e8300f0a8bb0a2df7e1b8ddabf05bf80b710ca3006d22e1783c4dd1",
+    "docs/assets/proof-architecture.architecture.json": "0807f583ae9d8b9d59c4f3e8b6532bfa4c55de9f3cd0b0ac2738b8e3419960ba",
+    "docs/assets/proof-architecture.html": "278700e05414cdca644a40d555b1b1e7d179a2f0631ee663846632f1c8ab30bc",
+    "docs/assets/README.md": "f40e10f03945c4162a2a940da495be3a0fa22743169e5a7b40a0f2b8af69fc94",
+    "docs/reviews/developer-launch-2026-10-23.md": "fd38fe9598602ea5a856b68ffe7b0322f0e19afa4591681fb30249dde464d5d6"
+  },
+  "private_email": {
+    "read_authorized": true,
+    "subject": "Agensi x Proof",
+    "message_date_asia_bangkok": "2026-10-17",
+    "observation": "Invitation to repackage individual skills; no submission/approval claim",
+    "body_or_headers_stored": false
+  },
+  "source_review": [
+    {
+      "url": "https://code.claude.com/docs/en/skills",
+      "scope": "Namespace and portable versus Claude-only metadata"
+    },
+    {
+      "url": "https://code.claude.com/docs/en/workflows",
+      "scope": "Documented capability, permissions and runtime distinction"
+    },
+    {
+      "url": "https://learn.chatgpt.com/docs/build-skills",
+      "scope": "Current Codex discovery paths and invocation"
+    },
+    {
+      "url": "https://agentskills.io/specification",
+      "scope": "Name/directory and common frontmatter"
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/models/overview",
+      "scope": "Catalog reviewed; model pins not migrated or provider-tested"
+    },
+    {
+      "url": "https://modelcontextprotocol.io/specification/versioning",
+      "scope": "New protocol exists; no unsupported advertise-version bump"
+    },
+    {
+      "url": "https://owasp.org/Top10/2025/",
+      "scope": "Named taxonomy edition exists; not all shelf citations requalified"
+    }
+  ],
+  "limitations": [
+    "Protocol smoke is not the separately specified SDK golden-query gate",
+    "No actual host-model invocation or Agensi archive/listing qualification",
+    "No complete revalidation of every standards-shelf edition",
+    "Existing comment/residual-host warnings retained",
+    "No comparative quality, user-comprehension or token/cost benefit established"
+  ],
+  "implementation_commit": "c5e9198ce191605ee16e4da3d6d5ff71cba9a163",
+  "gate_batch_checked_at_utc": "2026-10-22T17:55:58.542444+00:00",
+  "host_descriptor_followup_at_utc": "2026-10-22T18:05:43.718375+00:00",
+  "hook_checks": {
+    "syntax_files": 4,
+    "read_and_protected_edit_cases_passed": 2,
+    "real_edits_executed": false
+  },
+  "architecture_source_check": {
+    "receipt": "dist/launch-review-20261023/architecture-sources.json",
+    "sha256": "aea55253b7290f22d74f8c2e6c059282e2c7f3ebf55f10a2102ea0e1f2bd3750",
+    "references": 11,
+    "local_commit_only": true,
+    "github_links_enabled": false,
+    "fresh_visual_acceptance": false
+  },
+  "regressions_retained": [
+    {
+      "scope": "Reference filename required by public rename",
+      "log": "dist/launch-review-20261023/rename-validate.log",
+      "sha256": "b85e29d3b916b6972f612b194b9eea5415bc3ca950b963f952bf36b934249830"
+    },
+    {
+      "scope": "Introduced beta identity mismatch, reproduced before correction",
+      "negative_log": "dist/launch-review-20261023/version-negative.log",
+      "negative_sha256": "08399b87344f6cbce683c718b887c5001ea0a0ec0a9c7716d193c4b9366c8279",
+      "corrected_log": "dist/launch-review-20261023/version-positive.log",
+      "corrected_sha256": "68ef188e593e4bfff18a966c0cd1b33cfb5fa24b67a9386cf13e6adb394dcd3b"
+    }
+  ],
+  "additional_local_receipts": {
+    "hooks.json": "48bfed33c41e466836dbd59b8d4b0e8edb26a35a76225a21f0b4f95f8e74ecaf",
+    "portable-frontmatter.json": "6b02b6ed4c9d5a1cdf098b80b3465eace799a06cb60fbb0fee3373ead37ae520",
+    "preservation.json": "51ccfcb6020d5392e40870bb2da64300840a4c66c5cc4e94f5667a8d859223f2",
+    "document-targets.json": "5a9b61d1d5a17128a339b78fbe9e381bc86e945210784009808274f5a298926f"
+  }
+}

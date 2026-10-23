@@ -1,11 +1,34 @@
 # Changelog
 
-All notable changes to Heimdall (formerly TheLoopSkill; renamed 1 Aug 2026) are documented here.
+All notable changes to Proof (formerly Heimdall and TheLoopSkill) are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Proof identity and architecture refresh
+
+- Add a new Proof-identity README banner and saved generation prompt; retain the original banner as a historical asset.
+- Refresh the overview, workflow, all 18 detailed architecture sources and their SVGs around inline work, authorized Workflow execution, 26 distinct skills and the reduced 22-skill path.
+- Correct engine authoring order, review barriers, execution-placement assumptions and artifact-versus-runtime labels; update the README and architecture guides together.
+- Pin the documentation renderer and deterministic SVG IDs. Record source identities, browser/visual checks and PNG alternatives separately from runtime or launch acceptance.
+
+### Framework documentation review
+
+- Add a complete 26-skill task catalog, documentation index, per-file review inventory and prioritized gap/overlap review.
+- Consolidate planning/execution policy and DORA definitions; distinguish proposal activity from delivery measurements.
+- Correct generated-test verification, scout/refactor boundaries, authoring-size claims, venture defaults, integration rollback, incident precedence and trace-check limits. These are candidate guidance changes, not measured quality or token gains.
+
+### Breaking — Proof 4 beta candidate
+- Rename all 26 active skills to the `proof-*` namespace, without legacy aliases, as requested by the owner. Update source references, normative routing inputs, templates and generated packs; retain historical release/study records.
+- Retire `THELOOPSKILL_ROOT`; use `PROOF_ROOT`. Old classifier labels/artifacts require explicit migration/retraining. No hidden old-name redirect is provided.
+- Candidate metadata is `4.0.0-beta.1` and MCP server metadata is `0.3.0-beta.1`; no release, tag or marketplace publication is implied.
+
+### Developer onboarding
+- Explain Proof as a skill framework, provide a plain-language first task, clarify host-specific invocation and add a migration guide and intentional-defect walkthrough.
+- Correct Codex pack paths to `.agents/skills`, omit Claude-only frontmatter in generated packs and qualify package-target versus installed-host claims.
+- Add clean-directory stdio/public-name and incomplete-install checks. Preserve original synthetic study data; the v4 training fixture records its identifier-only derivation.
 
 ### Added
 - A visual README, source-backed architecture overview, native SVG team workflow, and corrected architecture counts and execution-boundary documentation.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Never-end-red (skill-hooks.md Tier 1, loop-test row, adapted to this repo):
+# Never-end-red (skill-hooks.md Tier 1, proof-test row, adapted to this repo):
 # if the session leaves skills/mcp/scripts dirty, the validation gate must pass
 # before the session may stop. Clean tree -> instant exit; gate green -> exit 0;
 # gate red -> exit 2 with the failure lines, which blocks the stop and hands

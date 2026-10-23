@@ -61,14 +61,14 @@ skill's boundary clauses. When rules conflict, that ordering is the answer.
 **Verdict: reject the term.** Same single preprint. The surrounding spec-driven-development
 wave (GitHub Spec Kit, Amazon Kiro, Tessl) is real but never uses this vocabulary, and its
 "3–10× first-pass success" figures are vendor-reported.
-**How we adapt it:** `loop-skill` and the standards shelves already are our machine-readable
+**How we adapt it:** `proof-skill` and the standards shelves already are our machine-readable
 corpus. Nothing to add.
 
 ### 5. Harness engineering — permissions, retries, logs, state around one agent
 **Verdict: adopt.** Mitchell Hashimoto, Feb 2026; covered independently by Martin Fowler
 and Lilian Weng. The boundary line both state: **the harness is the car, the loop is the
 driver.**
-**How we use it:** this is `loop-harness`, and it is the layer *below* the loop — which is
+**How we use it:** this is `proof-harness`, and it is the layer *below* the loop — which is
 part of why the plugin name had to stop being pinned to "loop" alone.
 
 ### 6. Loop engineering — when to keep going, when to stop
@@ -110,7 +110,7 @@ single uncited Substack essay, not a school of thought.
   honest version of "graph engineering," and it is the engine's real gap.
 - **Searched topology.** AFlow (ICLR 2025), MaAS (ICML 2025 Oral) and ScoreFlow
   independently find learned topology beats hand-designed — AFlow at GPT-4o quality for
-  4.55% of the cost. Recorded in `loop-engine/references/standards.md` as an open
+  4.55% of the cost. Recorded in `proof-engine/references/standards.md` as an open
   question, not a migration: our templates are narrow-domain, where MetaGPT and ChatDev
   show fixed pipelines stay competitive, and no head-to-head on a shared benchmark exists.
 - **When to fan out at all.** LangChain's read/write split: breadth-first read-heavy work
@@ -122,7 +122,7 @@ single uncited Substack essay, not a school of thought.
 is the best-sourced document in the entire sweep. Mechanisms: ACE (generator/reflector/
 curator), MCE, ADAS/AFlow, Self-Harness/AHE.
 
-**How we adapt it — this is `loop-autopilot`, and the research mostly validated what was
+**How we adapt it — this is `proof-autopilot`, and the research mostly validated what was
 already built.** The held-out suite being invisible to the Act stage, AP6's diff-integrity
 refusal on protected paths, the impossible-test canary, the out-of-band false-accept
 tracker: all of that already answers the literature's central finding. **Both documented

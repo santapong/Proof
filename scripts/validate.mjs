@@ -27,7 +27,7 @@ import { spawnSync } from 'node:child_process'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SKILLS_DIR = path.join(ROOT, '.claude', 'skills')
-const MODES_DOC = path.join(SKILLS_DIR, 'loop-engine', 'references', 'execution-modes.md')
+const MODES_DOC = path.join(SKILLS_DIR, 'proof-engine', 'references', 'execution-modes.md')
 const VERBOSE = process.argv.includes('--verbose')
 const JSON_MODE = process.argv.includes('--json')
 
@@ -263,12 +263,12 @@ function checkSkills() {
         const target = path.resolve(skillDir, token)
         if (fs.existsSync(target)) continue
         // Prose routinely names a sibling skill and then quotes a path rooted in THAT skill —
-        // "the `loop-engine` skill (see its `templates/parallel.workflow.js`)". Accept the path if
+        // "the `proof-engine` skill (see its `templates/parallel.workflow.js`)". Accept the path if
         // it resolves under a skill named on the same line. `../`-rooted paths are explicit and
         // get no such latitude, so the ../ vs ../../ depth error from 0.4.0 is still caught.
         let ownerResolved = null
         if (!token.startsWith('../')) {
-          for (const om of ls[i].matchAll(/\b(loop-[a-z0-9-]+)\b/g)) {
+          for (const om of ls[i].matchAll(/\b(proof-[a-z0-9-]+)\b/g)) {
             const owner = om[1]
             if (owner === dir || !dirs.includes(owner)) continue
             if (fs.existsSync(path.resolve(SKILLS_DIR, owner, token))) { ownerResolved = owner; break }
