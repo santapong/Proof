@@ -1,35 +1,49 @@
 # Installing Proof
 
+Use the [documentation index](docs/README.md) and [26-skill catalog](docs/skills.md) to choose a task before installing more than you need.
+
+**Proof 4 beta candidate, 23 October 2026.** Use a checkout containing the
+`proof-*` directories. The public GitHub release is still v3.0.0; its old command
+names do not invoke this candidate. No legacy skill aliases are installed here.
+Start with [your first task](docs/getting-started.md) and read the
+[breaking-change migration](docs/migration-proof-4.md).
+
+For a candidate plugin session, open your consuming project and run
+`claude --plugin-dir /absolute/path/to/this-proof-checkout`. Plugin skills use
+`/proof:proof-guide` and `/proof:proof-review`; the unqualified `/proof-guide`
+form below applies to project/personal skill copies. Structural and clean-directory
+tool tests are distinct from a real installed-host session.
+
 Proof ships twenty-six Claude Code skills:
 
 | Skill | What it does |
 |---|---|
-| `loop-engine` | Author & run multi-agent Workflow scripts (pipeline/parallel/loop) governed by engineering policies and a lifecycle framework |
-| `loop-review` | Security + code-quality review (OWASP Top 10, CWE Top 25, ASVS; finder→verify orchestration) |
-| `loop-design` | System/architecture design: patterns, API, backend, frontend perf, deployment, NFRs, ADRs + C4 |
-| `loop-orchestrate` | Project-manager planning layer: decompose into a task DAG and assign the right model+effort per task |
-| `loop-research` | Multi-source research with adversarial fact-checking: search fan-out → deep-read → refute-first verify → cited synthesis |
-| `loop-experiment` | Empirical study whose evidence is generated, not gathered: falsifiable hypothesis → harness with independent ground truth → run → re-derivation, mutation and confound gate → adversarial review against the raw artifacts |
-| `loop-audit` | Change/impact audit → report: classify changes, trace blast radius, rate risk, check coverage (delegates security to loop-review) |
-| `loop-test` | Design + write tests matching the repo's stack; verify each runs and fails for the right reason |
-| `loop-debug` | Hypothesis-driven debugging: reproduce → localize → root-cause → fix → regression test |
-| `loop-docs` | Write + maintain docs (README, API, docstrings, ADRs) via the Diátaxis model, verified against code |
-| `loop-comprehend` | Understand an existing codebase: recover the as-built architecture, trace feature flows, build onboarding dossiers, reverse-engineer confidence-graded ADRs — every claim evidence-anchored |
-| `loop-guide` | The front door when you don't know which skill fits: short interview, justified routing verdict, delegated invocation with managed handoffs |
-| `loop-scout` | Prior-art / build-vs-buy check before building: search stdlib → registries → services → standards, evaluate, recommend reuse |
-| `loop-harness` | Set up a project's Claude Code harness: permissions, hooks, MCP (`.mcp.json`), and automation loops — from copy-paste scaffolds |
-| `loop-context` | Engineer agent context & state: budgets, placement, compaction with an addressable store, typed shared state, supersession, trace-invariant audits |
-| `loop-autopilot` | Autonomous engineering loop: read feedback (issues/PRs/CI), act as draft PRs with tests, research improvements when idle — propose-only, never merges |
-| `loop-algo` | The mechanism inside a component: algorithm and data-structure choice, complexity analysis, invariants, concurrency, benchmark-driven validation |
-| `loop-pattern` | Apply GoF patterns, Fowler refactorings, SOLID and language/framework idioms; remove the smells that motivate them — emits a diff |
-| `loop-integrate` | Third-party / cloud / SaaS integration: OAuth 2.0 + OIDC, webhook verification, idempotency keys, rate limits, retry and backoff, contract tests |
-| `loop-ship` | Get a change safely to production: rollout strategy (rolling/blue-green/canary), feature flags, expand-contract migrations, go/no-go, tested rollback, DORA |
-| `loop-operate` | Operate a running service in steady state: SLIs/SLOs/error budgets, burn-rate alerts, self-healing runbooks, SLO-gated auto-rollback |
-| `loop-incident` | Respond to a live, user-impacting failure: severity triage, comms, mitigate before diagnosing, reproduction harness, blameless postmortem |
-| `loop-skill` | Author a new skill for this plugin or bring an existing one up to contract — boundary, standards shelf, router, references, template, gate |
-| `loop-build` | Conduct a project brief to a shipped version one: multi-planner plan, delegated-law build across the fleet, gates with repair rounds, release + ledger |
-| `loop-venture` | Conduct a venture idea through the whole product lifecycle — discovery, vision/roadmap with a kill/pivot/proceed gate, GTM ∥ build-plan ∥ deploy-plan band, operate plan — as verified decision documents; ends with a loop-build-ready brief, never code |
-| `loop-frontend` | Luxury UI craft: motion choreography, easing and duration budgets, stagger, shared-element continuity, type scale, perceived performance — with the motion accessibility gates enforced |
+| `proof-engine` | Author & run multi-agent Workflow scripts (pipeline/parallel/loop) governed by engineering policies and a lifecycle framework |
+| `proof-review` | Security + code-quality review (OWASP Top 10, CWE Top 25, ASVS; finder→verify orchestration) |
+| `proof-design` | System/architecture design: patterns, API, backend, frontend perf, deployment, NFRs, ADRs + C4 |
+| `proof-orchestrate` | Project-manager planning layer: decompose into a task DAG and assign the right model+effort per task |
+| `proof-research` | Multi-source research with adversarial fact-checking: search fan-out → deep-read → refute-first verify → cited synthesis |
+| `proof-experiment` | Empirical study whose evidence is generated, not gathered: falsifiable hypothesis → harness with independent ground truth → run → re-derivation, mutation and confound gate → adversarial review against the raw artifacts |
+| `proof-audit` | Change/impact audit → report: classify changes, trace blast radius, rate risk, check coverage (delegates security to proof-review) |
+| `proof-test` | Design + write tests matching the repo's stack; verify each runs and fails for the right reason |
+| `proof-debug` | Hypothesis-driven debugging: reproduce → localize → root-cause → fix → regression test |
+| `proof-docs` | Write + maintain docs (README, API, docstrings, ADRs) via the Diátaxis model, verified against code |
+| `proof-comprehend` | Understand an existing codebase: recover the as-built architecture, trace feature flows, build onboarding dossiers, reverse-engineer confidence-graded ADRs — every claim evidence-anchored |
+| `proof-guide` | The front door when you don't know which skill fits: short interview, justified routing verdict, delegated invocation with managed handoffs |
+| `proof-scout` | Prior-art / build-vs-buy check before building: search stdlib → registries → services → standards, evaluate, recommend reuse |
+| `proof-harness` | Set up a project's Claude Code harness: permissions, hooks, MCP (`.mcp.json`), and automation loops — from copy-paste scaffolds |
+| `proof-context` | Engineer agent context & state: budgets, placement, compaction with an addressable store, typed shared state, supersession, trace-invariant audits |
+| `proof-autopilot` | Autonomous engineering loop: read feedback (issues/PRs/CI), act as draft PRs with tests, research improvements when idle — propose-only, never merges |
+| `proof-algo` | The mechanism inside a component: algorithm and data-structure choice, complexity analysis, invariants, concurrency, benchmark-driven validation |
+| `proof-pattern` | Apply GoF patterns, Fowler refactorings, SOLID and language/framework idioms; remove the smells that motivate them — emits a diff |
+| `proof-integrate` | Third-party / cloud / SaaS integration: OAuth 2.0 + OIDC, webhook verification, idempotency keys, rate limits, retry and backoff, contract tests |
+| `proof-ship` | Get a change safely to production: rollout strategy (rolling/blue-green/canary), feature flags, expand-contract migrations, go/no-go, tested rollback, DORA |
+| `proof-operate` | Operate a running service in steady state: SLIs/SLOs/error budgets, burn-rate alerts, self-healing runbooks, SLO-gated auto-rollback |
+| `proof-incident` | Respond to a live, user-impacting failure: severity triage, comms, mitigate before diagnosing, reproduction harness, blameless postmortem |
+| `proof-skill` | Author a new skill for this plugin or bring an existing one up to contract — boundary, standards shelf, router, references, template, gate |
+| `proof-build` | Conduct a project brief to a shipped version one: multi-planner plan, delegated-law build across the fleet, gates with repair rounds, release + ledger |
+| `proof-venture` | Conduct a venture idea through the whole product lifecycle — discovery, vision/roadmap with a kill/pivot/proceed gate, GTM ∥ build-plan ∥ deploy-plan band, operate plan — as verified decision documents; ends with a proof-build-ready brief, never code |
+| `proof-frontend` | Luxury UI craft: motion choreography, easing and duration budgets, stagger, shared-element continuity, type scale, perceived performance — with the motion accessibility gates enforced |
 
 The **canonical location** is `.claude/skills/<name>/` — a single source of truth that works for all three install paths below. The plugin references these same files via the `skills` field in `.claude-plugin/plugin.json`, so nothing is duplicated.
 
@@ -37,14 +51,19 @@ The **canonical location** is `.claude/skills/<name>/` — a single source of tr
 
 ## 1. Local (Claude Code CLI)
 
-**Option A — use this repo directly.** Open a Claude Code session anywhere inside the repo. Project skills under `.claude/skills/` are auto-discovered; type `/loop-engine`, `/loop-review`, etc. No enable step.
+**Option A — use this repo directly.** Open a Claude Code session anywhere inside the repo. Project skills under `.claude/skills/` are auto-discovered; type `/proof-engine`, `/proof-review`, etc. No enable step.
 
 The repo root also ships a project-scope `.mcp.json` that wires up `proof-mcp` — the `route_node` / `estimate_phase` / `boundary_lookup` / `standards_shelf` / `run_gate` tools and the read-only skill/doc resources described in `mcp/`. Claude Code shows a one-time workspace-trust prompt the first time a session opens this repo with an unapproved `.mcp.json`; approve it there (or `claude mcp get proof-mcp` / `claude mcp reset-project-choices` to inspect or reset the choice). **Do not** add `"enableAllProjectMcpServers": true` to `.claude/settings.json` to skip that prompt — it is a project-wide, silent auto-trust of every current *and future* project-scoped server for every teammate who opens the repo, which is a materially bigger grant than "trust this one server," and the prompt itself is the harness's own consent gate working as designed. If the prompt is a genuine friction point, the fix is a documented one-time `claude mcp` approval per teammate, not turning the gate off in a committed file.
 
 **Option B — copy into another project.** Copy the skill folders you want into that project's `.claude/skills/`:
 
+Use this only after checking the selected skill's sibling/reference dependencies.
+Copying a single engine folder does not copy its whole framework or configure
+MCP. New users should use the plugin path above; do not overwrite differing
+existing skills or host configuration.
+
 ```bash
-cp -r .claude/skills/loop-engine /path/to/your-project/.claude/skills/
+cp -r .claude/skills/proof-engine /path/to/your-project/.claude/skills/
 ```
 
 Commit them so your team gets them too.
@@ -52,7 +71,7 @@ Commit them so your team gets them too.
 **Option C — make them personal (all your projects).** Copy into your user skills dir:
 
 ```bash
-cp -r .claude/skills/loop-engine ~/.claude/skills/
+cp -r .claude/skills/proof-engine ~/.claude/skills/
 ```
 
 ---
@@ -75,9 +94,12 @@ Web sessions start from a **fresh clone and see only committed project files** �
 
 ---
 
-## 3. As a plugin (marketplace)
+## 3. Published plugin (marketplace)
 
-Install the bundle into any project or user scope via the plugin system.
+Install the released bundle into a project or user scope via the plugin system.
+As of this candidate review, these GitHub commands install v3.0.0, not Proof 4.
+They become the Proof 4 path only after an explicitly published release; use the
+documentation matching the installed version.
 
 ```
 # add this repo as a marketplace
@@ -124,13 +146,17 @@ known friction. In short:
 | Host | Skills → | MCP config → |
 |---|---|---|
 | **Cursor** | `.cursor/skills/` or `~/.cursor/skills/` | merge `mcp.json` into `.cursor/mcp.json` |
-| **OpenAI Codex CLI** | `.codex/skills/` or `~/.codex/skills/` | append `config.toml.fragment` to `~/.codex/config.toml` (or use `codex mcp add`) |
+| **OpenAI Codex CLI** | `.agents/skills/` or `~/.agents/skills/` | review/merge `config.toml.fragment` into `~/.codex/config.toml` (or use `codex mcp add`) |
 | **Antigravity** | `.agents/skills/` or `~/.gemini/config/skills/` | merge `mcp_config.json` into `~/.gemini/config/mcp_config.json` |
 
 Three things to know before you install one:
 
-- **A pack carries 22 of the 26 skills.** `loop-engine`, `loop-harness`, `loop-skill` and
-  `loop-autopilot` are Claude Code-native by subject and are held back ([ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md)).
+Generated packs remove Claude-only `argument-hint` frontmatter. Their package
+target is not evidence of live host discovery/tool access. Do not replace an
+existing host configuration wholesale or copy account authentication into a pack.
+
+- **A pack carries 22 of the 26 skills.** `proof-engine`, `proof-harness`, `proof-skill` and
+  `proof-autopilot` are Claude Code-native by subject and are held back ([ADR-0008 §C2](docs/design/ADR-0008-host-packaging-seam.md)).
 - **No multi-agent execution.** The 32 `*.workflow.js` templates are excluded and every affected
   skill says so in a generated host note. The judgment is intact; the fan-out is not.
 - **The MCP launch path is absolute and resolved at pack time**, because no other host expands
@@ -162,12 +188,12 @@ Proof/
 ├── .claude/
 │   ├── settings.json        # extraKnownMarketplaces + enabledPlugins (web)
 │   └── skills/
-│       ├── loop-engine/      loop-orchestrate/  loop-skill/
-│       ├── loop-design/      loop-algo/         loop-pattern/
-│       ├── loop-test/        loop-review/       loop-audit/       loop-debug/
-│       ├── loop-integrate/   loop-ship/
-│       ├── loop-operate/     loop-incident/
-│       └── loop-research/    loop-scout/        loop-docs/       loop-comprehend/  loop-guide/        loop-harness/   loop-autopilot/
+│       ├── proof-engine/      proof-orchestrate/  proof-skill/
+│       ├── proof-design/      proof-algo/         proof-pattern/
+│       ├── proof-test/        proof-review/       proof-audit/       proof-debug/
+│       ├── proof-integrate/   proof-ship/
+│       ├── proof-operate/     proof-incident/
+│       └── proof-research/    proof-scout/        proof-docs/       proof-comprehend/  proof-guide/        proof-harness/   proof-autopilot/
 ├── docs/
 │   ├── c4/                  # architecture: context, container, component, skill anatomy
 │   └── design/              # normative: the boundary audit

@@ -3,19 +3,19 @@ title: "Container diagram — inside any one skill"
 ---
 flowchart TB
     dev["<b>Developer</b><br/><i>«person»</i>"]
-    host["<b>Claude Code</b><br/><i>«external system»</i><br/>Selects the skill, loads context,<br/>runs the Workflow tool"]
+    host["<b>Claude Code</b><br/><i>«external system»</i><br/>Selects the skill, loads context,<br/>runs an authorized Workflow when needed"]
 
     subgraph skill["<b>A skill</b> — .claude/skills/&lt;name&gt;/ &nbsp;[SYSTEM]"]
-        router["<b>SKILL.md</b><br/><i>«container» Markdown + frontmatter, 6–13 KB</i><br/>Thin router; description = the selection API;<br/>loaded on EVERY invocation"]
-        refs["<b>references/*.md</b><br/><i>«container» 5–7 files, ~100 KB</i><br/>Deep knowledge + pinned standards.md;<br/>loaded ON DEMAND"]
-        tmpl["<b>templates/*.workflow.js</b><br/><i>«container» plain JavaScript</i><br/>EXECUTED by the Workflow tool,<br/>never read into context"]
+        router["<b>SKILL.md</b><br/><i>«container» Markdown + frontmatter, no size quota</i><br/>Thin router; description guides discovery;<br/>body loaded when invoked"]
+        refs["<b>references/*.md</b><br/><i>«container» Scoped references, no file quota</i><br/>Deep knowledge + pinned standards.md;<br/>loaded ON DEMAND"]
+        tmpl["<b>templates/*.workflow.js</b><br/><i>«container» plain JavaScript</i><br/>Read/adapted during authoring;<br/>EXECUTED by the Workflow tool"]
     end
 
     law["<b>Governance</b><br/><i>«external system»</i><br/>harness H1–H12 · loop L1–L8 · modes M1–M9"]
-    gate["<b>scripts/validate.mjs</b><br/><i>«external system» CI</i><br/>Fails the build on a contract breach"]
-    fleet["<b>Claude Model Fleet</b><br/><i>«external system»</i><br/>The agents the template spawns"]
+    gate["<b>scripts/validate.mjs</b><br/><i>«external system» CI</i><br/>Checks structure; not task quality"]
+    fleet["<b>Claude Model Fleet</b><br/><i>«external system»</i><br/>The agents an authorized workflow requests"]
 
-    dev -- "types /loop-&lt;name&gt;" --> host
+    dev -- "types /proof:proof-&lt;role&gt;" --> host
     host -- "matches on description,<br/>loads body" --> router
     router -- "reads only what<br/>this task needs" --> refs
     router -- "authors from" --> tmpl
@@ -25,10 +25,10 @@ flowchart TB
     gate -- "validates frontmatter,<br/>name, paths" --> router
     gate -- "validates H10 + ROUTES<br/>byte-identity" --> tmpl
 
-    classDef person fill:#1E3A8A,stroke:#172554,color:#fff
-    classDef container fill:#BFDBFE,stroke:#1D4ED8,color:#0C1B33
+    classDef person fill:#164E55,stroke:#102F35,color:#fff
+    classDef container fill:#D8F1EE,stroke:#0F766E,color:#102F35
     classDef ext fill:#E7E5E4,stroke:#78716C,color:#1C1917
     class dev person
     class router,refs,tmpl container
     class host,law,gate,fleet ext
-    style skill fill:#EFF6FF,stroke:#93C5FD
+    style skill fill:#F1F9F7,stroke:#8BC8C1

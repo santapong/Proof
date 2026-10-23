@@ -103,7 +103,7 @@ const PLANNER_VALUES = Object.freeze(['opus', 'fable']) // §M7a/§M7b — not e
 // process.cwd()." mcp/server.mjs sits ONE level above mcp/lib/, so this is one path.resolve(HERE,
 // '..') where every mcp/lib/*.mjs file itself does path.resolve(HERE, '..', '..') from mcp/lib/ —
 // same arithmetic, different depth, exactly as run_gate.mjs's own header comment predicted this
-// file would need. PROOF_ROOT overrides it (THELOOPSKILL_ROOT accepted as a deprecated alias) (the packaged-install escape hatch); none of the
+// file would need. PROOF_ROOT overrides it (legacy root settings are rejected) (the packaged-install escape hatch); none of the
 // mcp/lib/*.mjs files read that env var themselves (verified: no PROOF_ROOT or THELOOPSKILL_ROOT reference in any
 // of them), so this resolved ROOT is passed explicitly as { root: ROOT } on every handler call
 // below — omitting it would silently fall back to each handler's OWN independently-computed
@@ -114,16 +114,13 @@ const PLANNER_VALUES = Object.freeze(['opus', 'fable']) // §M7a/§M7b — not e
 
 const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/
 const DEFAULT_ROOT = path.resolve(HERE, '..') // repo root, one level up from mcp/
-// PROOF_ROOT is the name; THELOOPSKILL_ROOT is accepted one major as a deprecated
-// alias (renamed with proof-mcp 0.2.0) so existing wiring keeps booting — but it says
-// so on stderr, once, at startup (see below), rather than silently.
-const LEGACY_ROOT = process.env.THELOOPSKILL_ROOT
+// Proof 4 uses one public root setting. Legacy wiring is rejected explicitly.
 const ROOT = process.env.PROOF_ROOT
   ? path.resolve(process.env.PROOF_ROOT)
-  : LEGACY_ROOT ? path.resolve(LEGACY_ROOT) : DEFAULT_ROOT
+  : DEFAULT_ROOT
 
 const SERVER_NAME = 'proof-mcp'
-const SERVER_VERSION = '0.2.0' // mcp/runtime-pin.json serverInfo.version — must move together
+const SERVER_VERSION = '0.3.0-beta.1' // mcp/runtime-pin.json serverInfo.version — must move together
 const PROTOCOL_ADVERTISE = '2025-06-18' // mcp/runtime-pin.json protocol.advertise
 const SUPPORTED_PROTOCOL_VERSIONS = Object.freeze([
   '2025-11-25',
@@ -144,8 +141,9 @@ function stderrLine(text) {
   process.stderr.write(`proof-mcp: ${text}\n`)
 }
 
-if (!process.env.PROOF_ROOT && LEGACY_ROOT) {
-  stderrLine('THELOOPSKILL_ROOT is deprecated (server renamed proof-mcp in 0.2.0) — rename the variable to PROOF_ROOT; the alias will be dropped in the next major')
+if (process.env.THELOOPSKILL_ROOT) {
+  stderrLine('THELOOPSKILL_ROOT is no longer supported; configure PROOF_ROOT. No legacy alias is installed.')
+  process.exit(1)
 }
 
 // ADR-0002 §D2.4 C4 — the three exact literal strings. Reproduced verbatim (not paraphrased; the
@@ -484,7 +482,7 @@ const TOOL_REGISTRY = Object.freeze([
     name: 'route_node',
     title: 'Route a workflow node (§M3/§M8)',
     description:
-      'Resolve the model, effort, verifier width and dry-limit a workflow node gets under a given mode, parsed live from loop-engine/references/execution-modes.md §M3 and §M8, with the file, section and line range cited for every value. Authoring-time only: this explains what the canonical ROUTES block will compute at run time. It does NOT replace the block — a routed template must still carry §M8 verbatim, and scripts/validate.mjs check 5 fails any bare model:/effort: literal outside it.',
+      'Resolve the model, effort, verifier width and dry-limit a workflow node gets under a given mode, parsed live from proof-engine/references/execution-modes.md §M3 and §M8, with the file, section and line range cited for every value. Authoring-time only: this explains what the canonical ROUTES block will compute at run time. It does NOT replace the block — a routed template must still carry §M8 verbatim, and scripts/validate.mjs check 5 fails any bare model:/effort: literal outside it.',
     annotations: Object.freeze({ readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }),
     inputSchema: {
       type: 'object',
@@ -552,13 +550,13 @@ const TOOL_REGISTRY = Object.freeze([
     name: 'boundary_lookup',
     title: 'Look up a skill boundary (boundary-audit.json)',
     description:
-      "Answer 'which skill owns this, and what does it hand off to' from docs/design/boundary-audit.json — the 21-skill scope matrix, its rated overlaps with resolutions, and the approved description text — citing the RFC 6901 pointer and line range for every field. The audit outranks any plan or manifest (docs/design/README.md). Superseded per ADR-0007 §D7 relative to the original D3.6 wording: returns a ranked candidates[] shortlist under a speech-act rule (never a single scored 'owner' field), plus the required auditIntegrity summary of the audit file's own debt.",
+      "Answer 'which skill owns this, and what does it hand off to' from docs/design/boundary-audit.json — the current skill scope matrix, its rated overlaps with resolutions, and the approved description text — citing the RFC 6901 pointer and line range for every field. The audit outranks any plan or manifest (docs/design/README.md). Superseded per ADR-0007 §D7 relative to the original D3.6 wording: returns a ranked candidates[] shortlist under a speech-act rule (never a single scored 'owner' field), plus the required auditIntegrity summary of the audit file's own debt.",
     annotations: Object.freeze({ readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }),
     inputSchema: {
       type: 'object',
       additionalProperties: false,
       properties: {
-        skill: { type: 'string', description: 'A skill name as it appears in /matrix, e.g. loop-design.' },
+        skill: { type: 'string', description: 'A skill name as it appears in /matrix, e.g. proof-design.' },
         query: { type: 'string', description: 'Free text matched against scope, useInsteadWhen conditions, overlap risk and resolution.' },
         limit: { type: 'integer', minimum: 1, maximum: 21, default: 5 },
       },
@@ -571,13 +569,13 @@ const TOOL_REGISTRY = Object.freeze([
     name: 'standards_shelf',
     title: "Query a skill's standards shelf",
     description:
-      "Return what a skill's references/standards.md SAYS about a standard — body, edition, authority grade, role, and when the shelf last confirmed it — with the heading and line range cited. It never asserts that an edition is current: the shelves themselves warn they rot and must be re-checked on a cadence. Degrades to raw text with parsed:false for the shelves that carry no Markdown table (measured: loop-incident, loop-operate) rather than reporting them as having no standards.",
+      "Return what a skill's references/standards.md SAYS about a standard — body, edition, authority grade, role, and when the shelf last confirmed it — with the heading and line range cited. It never asserts that an edition is current: the shelves themselves warn they rot and must be re-checked on a cadence. Degrades to raw text with parsed:false for the shelves that carry no Markdown table (measured: proof-incident, proof-operate) rather than reporting them as having no standards.",
     annotations: Object.freeze({ readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }),
     inputSchema: {
       type: 'object',
       additionalProperties: false,
       properties: {
-        skill: { type: 'string', description: 'Omit to search all 21 shelves.' },
+        skill: { type: 'string', description: 'Omit to search all available shelves.' },
         query: { type: 'string', description: 'Case-insensitive match against standard name, body, and role text.' },
         grade: { type: 'string', enum: GRADE_VALUES, description: "The plugin's three authority grades." },
         limit: { type: 'integer', minimum: 1, maximum: 50, default: 10 },

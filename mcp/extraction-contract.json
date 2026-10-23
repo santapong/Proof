@@ -28,7 +28,7 @@
         "rule": "Returned verbatim as a cited text range with parsed:false. The fence carries Σ and prose clauses ('for a non-verify node') — it is pseudo-code, not JavaScript, and must NEVER be fed to the evaluator. Follows ADR-0003's standards_shelf precedent: a parser limitation surfaced is honest; the same limitation hidden reads as an absence of rules."
       },
       "routing rationale / worked example": {
-        "authority": "loop-orchestrate/references/model-routing.md",
+        "authority": "proof-orchestrate/references/model-routing.md",
         "method": "advisory-crosscheck-only",
         "rule": "NEVER an answer source. §M4:102 and model-routing.md:14 both already rule execution-modes.md the source and this file the defect on disagreement."
       }
@@ -37,12 +37,12 @@
 
   "D4_2_locator": {
     "rule": "A block is located by COORDINATE — (file, headingRegex, fenceLang, ordinal, firstLineRegex) — aborting at the next ^##\\s. A content search over the tree is FORBIDDEN.",
-    "measuredWhy": "A naive content search for a fence whose first line is '// Canonical ROUTES block' matches 29 sites in the tree: 27 *.workflow.js templates, execution-modes.md:306 (the one authority), and .claude/skills/loop-skill/references/template-contract.md:34 — which is STALE (its MODE line at :37 is the retired v1.1 two-mode definition, its WIDTH at :41 has no lite branch) and invisible to every gate, since validate.mjs:592 walks *.workflow.js only.",
+    "measuredWhy": "A naive content search for a fence whose first line is '// Canonical ROUTES block' matches 29 sites in the tree: 27 *.workflow.js templates, execution-modes.md:306 (the one authority), and .claude/skills/proof-skill/references/template-contract.md:34 — which is STALE (its MODE line at :37 is the retired v1.1 two-mode definition, its WIDTH at :41 has no lite branch) and invisible to every gate, since validate.mjs:592 walks *.workflow.js only.",
     "firstLineIsAnchorNotIdentifier": true,
     "reuses": "scripts/validate.mjs:446 canonicalBlock() — same walk, so check 5 and the server cannot diverge on what 'the block' is",
     "blocks": {
       "M8_ROUTES": {
-        "file": ".claude/skills/loop-engine/references/execution-modes.md",
+        "file": ".claude/skills/proof-engine/references/execution-modes.md",
         "headingRegex": "^##\\s+M8\\.",
         "fenceLang": "js",
         "ordinal": 1,
@@ -50,7 +50,7 @@
         "measured": { "startLine": 306, "endLine": 392, "blockLines": 87, "sha256": "7b0c1b7634e0a16d2dc56b9caa81488668fb5fda653afcc603088cf4feead975" }
       },
       "M5_DRY_LIMIT": {
-        "file": ".claude/skills/loop-engine/references/execution-modes.md",
+        "file": ".claude/skills/proof-engine/references/execution-modes.md",
         "headingRegex": "^##\\s+M5\\.",
         "fenceLang": "js",
         "ordinal": 1,
@@ -97,7 +97,7 @@
   },
 
   "D4_4_crosscheck": {
-    "source": { "file": ".claude/skills/loop-engine/references/execution-modes.md", "headingRegex": "^##\\s+M3\\.", "kind": "first markdown table under the heading", "measured": { "startLine": 81, "endLine": 89, "bodyRows": 7 } },
+    "source": { "file": ".claude/skills/proof-engine/references/execution-modes.md", "headingRegex": "^##\\s+M3\\.", "kind": "first markdown table under the heading", "measured": { "startLine": 81, "endLine": 89, "bodyRows": 7 } },
     "requiredColumns": ["lite", "balanced", "all-out"],
     "columnNormalization": "strip **, strip backticks, strip '(default)', trim",
     "labelNormalization": "take text before '<br/>', strip **, trim, split on '/'",
@@ -174,7 +174,7 @@
     "bothReadingsOfM5_156_wereFalse": "Read as a claim about the quoted MODE line, the quote is the retired v1.1 two-mode definition. Read as a claim about the DRY_LIMIT line in the fence above it, there is no DRY_LIMIT line in §M8 to be identical to.",
     "gatesAfterRepair": {
       "validate": "PASSED — 45252 assertions, 0 failures, 5 warnings",
-      "smoke": "26 of 27 — same pre-existing loop-build/v1-conductor planner failure recorded in mcp/runtime-pin.json.gateBaseline",
+      "smoke": "26 of 27 — same pre-existing proof-build/v1-conductor planner failure recorded in mcp/runtime-pin.json.gateBaseline",
       "identicalToBaselineIn": ["ADR-0001", "ADR-0002", "ADR-0003"],
       "whyTheRepairIsSafe": "smoke.mjs never opens execution-modes.md; validate.mjs reads only §M8 via MODES_DOC (:25). Neither gate reads §M5 or §M6 prose — which is exactly why the drift survived."
     }
@@ -223,7 +223,7 @@
   },
 
   "D4_8_advisoryThirdCopy": {
-    "file": ".claude/skills/loop-orchestrate/references/model-routing.md",
+    "file": ".claude/skills/proof-orchestrate/references/model-routing.md",
     "table": { "headingRegex": "^##\\s+Routing table", "measuredHeader": ["Node kind", "balanced model", "optimize effort", "all-out model", "full effort", "Rationale"], "liteColumnPresent": false },
     "headerIsHalfRenamed": "'optimize effort' means BALANCED effort; 'full effort' means ALL-OUT effort",
     "severity": "advisory — never ok:false",
@@ -238,7 +238,7 @@
       { "key": "implement", "mode": "all-out", "statedEffort": "high", "canonicalEffort": "xhigh", "statedModel": "claude-opus-5", "canonicalModel": "claude-opus-5" }
     ],
     "shrinkOnly": "A FOURTH disagreement fails the gate. Repairing any of these three ALSO fails the gate, forcing the pin to shrink rather than rot. Same property as E7's allowlist.",
-    "relatedUnfixed": { "file": ".claude/skills/loop-engine/references/execution-modes.md", "line": 221, "text": "a `scout` node moving Haiku 4.5 -> Opus 5 at `high`", "canonical": "§M8 all-out.scout effort is xhigh", "note": "same class of error, in §M6 prose; NOT repaired because D4 rules only on the optimize/balanced contradiction" }
+    "relatedUnfixed": { "file": ".claude/skills/proof-engine/references/execution-modes.md", "line": 221, "text": "a `scout` node moving Haiku 4.5 -> Opus 5 at `high`", "canonical": "§M8 all-out.scout effort is xhigh", "note": "same class of error, in §M6 prose; NOT repaired because D4 rules only on the optimize/balanced contradiction" }
   },
 
   "D4_9_gateAssertions": {

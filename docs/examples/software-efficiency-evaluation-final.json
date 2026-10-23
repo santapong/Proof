@@ -1,0 +1,2189 @@
+{
+  "schemaVersion": 1,
+  "study": "Independent frozen synthetic software skill retrieval evaluation; advisory output only",
+  "status": "measured; no activation or efficiency improvement inferred",
+  "startedAt": "2026-09-09T04:09:05.631Z",
+  "baselineStartedAt": "2026-09-09T04:09:05.631Z",
+  "baselineCompletedAt": "2026-09-09T04:09:06.580Z",
+  "trainingStartedAt": "2026-09-09T04:09:06.597Z",
+  "trainingCompletedAt": "2026-09-09T04:09:06.604Z",
+  "learnedCompletedAt": "2026-09-09T04:09:08.328Z",
+  "environment": {
+    "node": "v26.8.1",
+    "platform": "linux",
+    "baseCommit": "20214370a94722a1c62ca636f4b52f61a72ce618"
+  },
+  "provenance": {
+    "fixturePath": "docs/examples/software-routing-eval.jsonl",
+    "fixtureSha256": "edfcc0de2d4572a112ccacfb075736887125a2fc994b16955e35e41b95b46d19",
+    "freezeSha256": "74079fa78c9bd2f25e90fe739b530bffdb4cb59255fca0bae2d8f1888cfa1c6b",
+    "normativeSourceSha256": "cca7b45cee003f6c1f25144b36f7a8dbdb5803e4bb85e8e355013cd51e15a7c5",
+    "trainingPath": "docs/examples/software-routing-train.jsonl",
+    "trainingSha256": "33f5efd8c52bbe8433002142126a147ac84101f2a49099c2731c8d9f3acefc28",
+    "trainingRows": 24,
+    "trainedSkills": [
+      "loop-comprehend",
+      "loop-debug",
+      "loop-design",
+      "loop-docs",
+      "loop-incident",
+      "loop-review",
+      "loop-ship",
+      "loop-test"
+    ],
+    "modelPath": "/tmp/proof-software-evaluation-N4zaq9/model.json",
+    "modelSha256": "c4b245123555886c52a1ec8fd3235b044feb1aeb5b1057bc7a54c244b75aaa19",
+    "sourceSha256": "1f6f225108b7eb2889b7360c5b45cbd9bcae802cb3f72b8603c82c7fb68bd7c4",
+    "implementationSha256": {
+      "scripts/software-context.mjs": "467890551ae4f693e0f3155df757b8a896d291860ce35183dd28a13ee2d40b92",
+      "scripts/lib/software-context.mjs": "17fcc2dc0ff55cb67e1160f1cd5112c6486f9ffec26baa5057c5b146b26652b6",
+      "scripts/evaluate-software-context.mjs": "9b417f84a5c038f5f25b942f2bdcbdd5f1be775fed7b04bd58c17e58412c43b1"
+    }
+  },
+  "controls": {
+    "baselineRanBeforeTraining": true,
+    "learnedDisabledInBaseline": true,
+    "lexicalOutputUnchangedWhenModelEnabled": true,
+    "overallOutcomeUnchangedWhenModelEnabled": true,
+    "exactIdOrNormalizedTaskOverlap": [],
+    "trigramJaccardAtLeastPointEight": [],
+    "maximumTrigramJaccard": 0.03333333333333333,
+    "leakageLimit": "No exact or high trigram overlap is not proof of semantic independence. Both corpora are synthetic software intents and share normative skill boundaries; future claims require fresh independently labeled team tasks.",
+    "noLabelsOrThresholdsTunedToOutcomes": true,
+    "noLiveProviderCallsOrSkillDispatch": true
+  },
+  "metrics": {
+    "overall": {
+      "lexical": {
+        "top1Accuracy": {
+          "numerator": 29,
+          "denominator": 40,
+          "rate": 0.725
+        },
+        "top3CandidateRecall": {
+          "numerator": 36,
+          "denominator": 40,
+          "rate": 0.9
+        },
+        "nonAbstainedCoverage": {
+          "numerator": 39,
+          "denominator": 40,
+          "rate": 0.975
+        },
+        "conditionalTop1Accuracy": {
+          "numerator": 29,
+          "denominator": 39,
+          "rate": 0.7435897435897436
+        },
+        "requiredAbstentionAccuracy": {
+          "numerator": 5,
+          "denominator": 8,
+          "rate": 0.625
+        },
+        "falsePositiveSuggestions": [
+          "eval-abstain-02",
+          "eval-abstain-04",
+          "eval-abstain-06"
+        ]
+      },
+      "learned": {
+        "top1Accuracy": {
+          "numerator": 23,
+          "denominator": 40,
+          "rate": 0.575
+        },
+        "top3CandidateRecall": {
+          "numerator": 26,
+          "denominator": 40,
+          "rate": 0.65
+        },
+        "nonAbstainedCoverage": {
+          "numerator": 31,
+          "denominator": 40,
+          "rate": 0.775
+        },
+        "conditionalTop1Accuracy": {
+          "numerator": 23,
+          "denominator": 31,
+          "rate": 0.7419354838709677
+        },
+        "requiredAbstentionAccuracy": {
+          "numerator": 8,
+          "denominator": 8,
+          "rate": 1
+        },
+        "falsePositiveSuggestions": []
+      }
+    },
+    "core": {
+      "lexical": {
+        "top1Accuracy": {
+          "numerator": 21,
+          "denominator": 32,
+          "rate": 0.65625
+        },
+        "top3CandidateRecall": {
+          "numerator": 28,
+          "denominator": 32,
+          "rate": 0.875
+        },
+        "nonAbstainedCoverage": {
+          "numerator": 31,
+          "denominator": 32,
+          "rate": 0.96875
+        },
+        "conditionalTop1Accuracy": {
+          "numerator": 21,
+          "denominator": 31,
+          "rate": 0.6774193548387096
+        },
+        "requiredAbstentionAccuracy": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "falsePositiveSuggestions": []
+      },
+      "learned": {
+        "top1Accuracy": {
+          "numerator": 23,
+          "denominator": 32,
+          "rate": 0.71875
+        },
+        "top3CandidateRecall": {
+          "numerator": 26,
+          "denominator": 32,
+          "rate": 0.8125
+        },
+        "nonAbstainedCoverage": {
+          "numerator": 26,
+          "denominator": 32,
+          "rate": 0.8125
+        },
+        "conditionalTop1Accuracy": {
+          "numerator": 23,
+          "denominator": 26,
+          "rate": 0.8846153846153846
+        },
+        "requiredAbstentionAccuracy": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "falsePositiveSuggestions": []
+      }
+    },
+    "neighbor": {
+      "lexical": {
+        "top1Accuracy": {
+          "numerator": 8,
+          "denominator": 8,
+          "rate": 1
+        },
+        "top3CandidateRecall": {
+          "numerator": 8,
+          "denominator": 8,
+          "rate": 1
+        },
+        "nonAbstainedCoverage": {
+          "numerator": 8,
+          "denominator": 8,
+          "rate": 1
+        },
+        "conditionalTop1Accuracy": {
+          "numerator": 8,
+          "denominator": 8,
+          "rate": 1
+        },
+        "requiredAbstentionAccuracy": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "falsePositiveSuggestions": []
+      },
+      "learned": {
+        "top1Accuracy": {
+          "numerator": 0,
+          "denominator": 8,
+          "rate": 0
+        },
+        "top3CandidateRecall": {
+          "numerator": 0,
+          "denominator": 8,
+          "rate": 0
+        },
+        "nonAbstainedCoverage": {
+          "numerator": 5,
+          "denominator": 8,
+          "rate": 0.625
+        },
+        "conditionalTop1Accuracy": {
+          "numerator": 0,
+          "denominator": 5,
+          "rate": 0
+        },
+        "requiredAbstentionAccuracy": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "falsePositiveSuggestions": []
+      }
+    },
+    "ambiguous": {
+      "lexical": {
+        "top1Accuracy": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "top3CandidateRecall": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "nonAbstainedCoverage": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "conditionalTop1Accuracy": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "requiredAbstentionAccuracy": {
+          "numerator": 2,
+          "denominator": 4,
+          "rate": 0.5
+        },
+        "falsePositiveSuggestions": [
+          "eval-abstain-02",
+          "eval-abstain-04"
+        ]
+      },
+      "learned": {
+        "top1Accuracy": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "top3CandidateRecall": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "nonAbstainedCoverage": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "conditionalTop1Accuracy": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "requiredAbstentionAccuracy": {
+          "numerator": 4,
+          "denominator": 4,
+          "rate": 1
+        },
+        "falsePositiveSuggestions": []
+      }
+    },
+    "outOfDomain": {
+      "lexical": {
+        "top1Accuracy": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "top3CandidateRecall": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "nonAbstainedCoverage": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "conditionalTop1Accuracy": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "requiredAbstentionAccuracy": {
+          "numerator": 3,
+          "denominator": 4,
+          "rate": 0.75
+        },
+        "falsePositiveSuggestions": [
+          "eval-abstain-06"
+        ]
+      },
+      "learned": {
+        "top1Accuracy": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "top3CandidateRecall": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "nonAbstainedCoverage": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "conditionalTop1Accuracy": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null
+        },
+        "requiredAbstentionAccuracy": {
+          "numerator": 4,
+          "denominator": 4,
+          "rate": 1
+        },
+        "falsePositiveSuggestions": []
+      }
+    },
+    "top1PairedChanges": {
+      "learnedWins": [
+        "eval-review-01",
+        "eval-review-03",
+        "eval-test-02",
+        "eval-test-04",
+        "eval-incident-04",
+        "eval-comprehend-03",
+        "eval-docs-04"
+      ],
+      "learnedLosses": [
+        "eval-design-04",
+        "eval-ship-03",
+        "eval-incident-02",
+        "eval-comprehend-04",
+        "eval-docs-02",
+        "eval-neighbor-01",
+        "eval-neighbor-02",
+        "eval-neighbor-03",
+        "eval-neighbor-04",
+        "eval-neighbor-05",
+        "eval-neighbor-06",
+        "eval-neighbor-07",
+        "eval-neighbor-08"
+      ]
+    }
+  },
+  "contextProxy": {
+    "responseSerialization": "compact JSON plus trailing newline; matches final CLI. Initial evidence used the earlier pretty-printed CLI serialization and is retained unchanged.",
+    "baselineMeanCandidateEntrypointCharacters": 26593.854166666668,
+    "optionalModelMeanUnionEntrypointCharacters": 37442.4375,
+    "allEntrypointCharacters": 268189,
+    "baselineMeanResponseCharacters": 8181,
+    "optionalModelMeanResponseCharacters": 10241.833333333334,
+    "interpretation": "Static context inventory only. Comparing selected entrypoints with eagerly loading every entrypoint is not a measured task or host baseline. Required references, adjudication, retrieval output, and actual tokenizer/provider usage can dominate or erase any reduction. No real token or cost savings measured."
+  },
+  "limitations": [
+    "One independently authored 48-case synthetic fixture; no real software-team distribution or deployment evidence.",
+    "Top-3 recall measures candidate inclusion and never successful route selection or domain work.",
+    "The learned arm is a separate advisory hint; its metrics do not change the lexical outcome or prove end-to-end dispatch quality.",
+    "Abstention is assessed separately from accuracy to expose unnecessary suggestions on ambiguous or unrelated tasks.",
+    "The frozen fixture becomes a regression set once outcomes inform implementation changes; use a new hidden evaluation set for another improvement claim.",
+    "No language-model behavior, real token consumption, latency, task completion, or post-deployment incident response was measured by this runner."
+  ],
+  "perCase": [
+    {
+      "id": "eval-debug-01",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-debug"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-debug",
+          "loop-ship",
+          "loop-build"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-debug",
+          "loop-ship",
+          "loop-incident"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 24804,
+        "optionalModelUnionEntrypointCharacters": 38155,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8312,
+        "optionalModelResponseCharacters": 10472,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-debug-02",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-debug"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-build",
+          "loop-research",
+          "loop-audit"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 21580,
+        "optionalModelUnionEntrypointCharacters": 21580,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7473,
+        "optionalModelResponseCharacters": 7960,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-debug-03",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-debug"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-debug",
+          "loop-experiment",
+          "loop-guide"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-debug",
+          "loop-incident",
+          "loop-docs"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 24281,
+        "optionalModelUnionEntrypointCharacters": 46489,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7901,
+        "optionalModelResponseCharacters": 11268,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-debug-04",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-debug"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-test",
+          "loop-debug",
+          "loop-audit"
+        ],
+        "top1Correct": false,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 25467,
+        "optionalModelUnionEntrypointCharacters": 25467,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7412,
+        "optionalModelResponseCharacters": 7903,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-review-01",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-review"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-autopilot",
+          "loop-review",
+          "loop-audit"
+        ],
+        "top1Correct": false,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-review",
+          "loop-debug",
+          "loop-comprehend"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 31421,
+        "optionalModelUnionEntrypointCharacters": 47285,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7700,
+        "optionalModelResponseCharacters": 11011,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-review-02",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-review"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-review",
+          "loop-debug",
+          "loop-incident"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-review",
+          "loop-docs",
+          "loop-design"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 30690,
+        "optionalModelUnionEntrypointCharacters": 53226,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8620,
+        "optionalModelResponseCharacters": 12234,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-review-03",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-review"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-comprehend",
+          "loop-review",
+          "loop-pattern"
+        ],
+        "top1Correct": false,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-review",
+          "loop-debug",
+          "loop-comprehend"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 27407,
+        "optionalModelUnionEntrypointCharacters": 35671,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8480,
+        "optionalModelResponseCharacters": 10941,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-review-04",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-review"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-pattern",
+          "loop-autopilot",
+          "loop-incident"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 37656,
+        "optionalModelUnionEntrypointCharacters": 37656,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8351,
+        "optionalModelResponseCharacters": 8829,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-test-01",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-test"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-test",
+          "loop-pattern",
+          "loop-scout"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-test",
+          "loop-ship",
+          "loop-comprehend"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 26175,
+        "optionalModelUnionEntrypointCharacters": 44256,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8449,
+        "optionalModelResponseCharacters": 11278,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-test-02",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-test"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-debug",
+          "loop-test",
+          "loop-comprehend"
+        ],
+        "top1Correct": false,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-test",
+          "loop-debug",
+          "loop-review"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 24294,
+        "optionalModelUnionEntrypointCharacters": 33369,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8747,
+        "optionalModelResponseCharacters": 10728,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-test-03",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-test"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-test",
+          "loop-guide",
+          "loop-ship"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-test",
+          "loop-comprehend",
+          "loop-docs"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 25102,
+        "optionalModelUnionEntrypointCharacters": 41559,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 6884,
+        "optionalModelResponseCharacters": 10251,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-test-04",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-test"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-pattern",
+          "loop-debug",
+          "loop-test"
+        ],
+        "top1Correct": false,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-test",
+          "loop-ship",
+          "loop-docs"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 27426,
+        "optionalModelUnionEntrypointCharacters": 46764,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7967,
+        "optionalModelResponseCharacters": 10647,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-design-01",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-design"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-design",
+          "loop-comprehend",
+          "loop-algo"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-design",
+          "loop-comprehend",
+          "loop-debug"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 35355,
+        "optionalModelUnionEntrypointCharacters": 43619,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 9308,
+        "optionalModelResponseCharacters": 11721,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-design-02",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-design"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-design",
+          "loop-scout",
+          "loop-algo"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-design",
+          "loop-comprehend",
+          "loop-docs"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 34768,
+        "optionalModelUnionEntrypointCharacters": 51225,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8660,
+        "optionalModelResponseCharacters": 12110,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-design-03",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-design"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-experiment",
+          "loop-scout",
+          "loop-design"
+        ],
+        "top1Correct": false,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 30518,
+        "optionalModelUnionEntrypointCharacters": 30518,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8238,
+        "optionalModelResponseCharacters": 8716,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-design-04",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-design"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-design",
+          "loop-ship",
+          "loop-autopilot"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 37733,
+        "optionalModelUnionEntrypointCharacters": 37733,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 9620,
+        "optionalModelResponseCharacters": 10135,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-ship-01",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-ship"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-ship",
+          "loop-audit",
+          "loop-build"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-ship",
+          "loop-docs",
+          "loop-incident"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 25313,
+        "optionalModelUnionEntrypointCharacters": 47521,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 9086,
+        "optionalModelResponseCharacters": 12084,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-ship-02",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-ship"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-ship",
+          "loop-audit",
+          "loop-build"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-ship",
+          "loop-review",
+          "loop-docs"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 25313,
+        "optionalModelUnionEntrypointCharacters": 43245,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8786,
+        "optionalModelResponseCharacters": 11523,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-ship-03",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-ship"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-ship",
+          "loop-build",
+          "loop-scout"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-comprehend",
+          "loop-ship",
+          "loop-debug"
+        ],
+        "top1Correct": false,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 23553,
+        "optionalModelUnionEntrypointCharacters": 39417,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 9485,
+        "optionalModelResponseCharacters": 12644,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-ship-04",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-ship"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-ship",
+          "loop-build",
+          "loop-audit"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-ship",
+          "loop-incident",
+          "loop-docs"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 25313,
+        "optionalModelUnionEntrypointCharacters": 47521,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8638,
+        "optionalModelResponseCharacters": 12296,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-incident-01",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-incident"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-incident",
+          "loop-operate",
+          "loop-debug"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-incident",
+          "loop-docs",
+          "loop-design"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 36712,
+        "optionalModelUnionEntrypointCharacters": 59248,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 9105,
+        "optionalModelResponseCharacters": 12591,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-incident-02",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-incident"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-incident",
+          "loop-ship",
+          "loop-build"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-ship",
+          "loop-incident",
+          "loop-design"
+        ],
+        "top1Correct": false,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 29891,
+        "optionalModelUnionEntrypointCharacters": 43570,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8811,
+        "optionalModelResponseCharacters": 11082,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-incident-03",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-incident"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-incident",
+          "loop-operate",
+          "loop-autopilot"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-incident",
+          "loop-docs",
+          "loop-test"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 42021,
+        "optionalModelUnionEntrypointCharacters": 59308,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 10517,
+        "optionalModelResponseCharacters": 13223,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-incident-04",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-incident"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-operate",
+          "loop-incident",
+          "loop-scout"
+        ],
+        "top1Correct": false,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-incident",
+          "loop-debug",
+          "loop-docs"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 35461,
+        "optionalModelUnionEntrypointCharacters": 52582,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8481,
+        "optionalModelResponseCharacters": 11736,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-comprehend-01",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-comprehend"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-comprehend",
+          "loop-docs",
+          "loop-autopilot"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-comprehend",
+          "loop-docs",
+          "loop-incident"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 30030,
+        "optionalModelUnionEntrypointCharacters": 43381,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8711,
+        "optionalModelResponseCharacters": 10620,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-comprehend-02",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-comprehend"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-comprehend",
+          "loop-design",
+          "loop-scout"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-comprehend",
+          "loop-review",
+          "loop-design"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 28292,
+        "optionalModelUnionEntrypointCharacters": 37367,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8690,
+        "optionalModelResponseCharacters": 10448,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-comprehend-03",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-comprehend"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-ship",
+          "loop-audit",
+          "loop-research"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-comprehend",
+          "loop-ship",
+          "loop-review"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 26002,
+        "optionalModelUnionEntrypointCharacters": 42677,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7929,
+        "optionalModelResponseCharacters": 10725,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-comprehend-04",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-comprehend"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-comprehend",
+          "loop-venture",
+          "loop-research"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 22970,
+        "optionalModelUnionEntrypointCharacters": 22970,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7837,
+        "optionalModelResponseCharacters": 8340,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-docs-01",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-docs"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-docs",
+          "loop-skill",
+          "loop-experiment"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-docs",
+          "loop-incident",
+          "loop-design"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 26841,
+        "optionalModelUnionEntrypointCharacters": 53871,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7792,
+        "optionalModelResponseCharacters": 10926,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-docs-02",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-docs"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-docs",
+          "loop-scout",
+          "loop-research"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-design",
+          "loop-comprehend",
+          "loop-docs"
+        ],
+        "top1Correct": false,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 22618,
+        "optionalModelUnionEntrypointCharacters": 43897,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8217,
+        "optionalModelResponseCharacters": 11945,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-docs-03",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-docs"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-docs",
+          "loop-build",
+          "loop-ship"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-docs",
+          "loop-design",
+          "loop-ship"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 25397,
+        "optionalModelUnionEntrypointCharacters": 39076,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8358,
+        "optionalModelResponseCharacters": 11168,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-docs-04",
+      "group": "core",
+      "acceptableSkills": [
+        "loop-docs"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": true,
+        "candidates": [
+          "loop-comprehend",
+          "loop-build",
+          "loop-guide"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-docs",
+          "loop-review",
+          "loop-comprehend"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 6191,
+        "optionalModelUnionEntrypointCharacters": 6191,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7499,
+        "optionalModelResponseCharacters": 9833,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-neighbor-01",
+      "group": "neighbor",
+      "acceptableSkills": [
+        "loop-operate"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-operate",
+          "loop-incident",
+          "loop-ship"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 38929,
+        "optionalModelUnionEntrypointCharacters": 38929,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 10458,
+        "optionalModelResponseCharacters": 10980,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-neighbor-02",
+      "group": "neighbor",
+      "acceptableSkills": [
+        "loop-algo"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-algo",
+          "loop-guide",
+          "loop-debug"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-debug",
+          "loop-comprehend",
+          "loop-docs"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 28531,
+        "optionalModelUnionEntrypointCharacters": 44988,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8436,
+        "optionalModelResponseCharacters": 11743,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-neighbor-03",
+      "group": "neighbor",
+      "acceptableSkills": [
+        "loop-integrate"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-integrate",
+          "loop-build",
+          "loop-comprehend"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 25348,
+        "optionalModelUnionEntrypointCharacters": 25348,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7874,
+        "optionalModelResponseCharacters": 8352,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-neighbor-04",
+      "group": "neighbor",
+      "acceptableSkills": [
+        "loop-audit"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-audit",
+          "loop-ship",
+          "loop-review"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-ship",
+          "loop-test",
+          "loop-review"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 28329,
+        "optionalModelUnionEntrypointCharacters": 36759,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 10425,
+        "optionalModelResponseCharacters": 12131,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-neighbor-05",
+      "group": "neighbor",
+      "acceptableSkills": [
+        "loop-pattern"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-pattern",
+          "loop-autopilot",
+          "loop-test"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-comprehend",
+          "loop-debug",
+          "loop-test"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 32735,
+        "optionalModelUnionEntrypointCharacters": 48599,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 8168,
+        "optionalModelResponseCharacters": 11449,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-neighbor-06",
+      "group": "neighbor",
+      "acceptableSkills": [
+        "loop-orchestrate"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-orchestrate",
+          "loop-engine",
+          "loop-build"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 39852,
+        "optionalModelUnionEntrypointCharacters": 39852,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 10240,
+        "optionalModelResponseCharacters": 10716,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-neighbor-07",
+      "group": "neighbor",
+      "acceptableSkills": [
+        "loop-context"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-context",
+          "loop-experiment",
+          "loop-orchestrate"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-comprehend",
+          "loop-design",
+          "loop-incident"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 39350,
+        "optionalModelUnionEntrypointCharacters": 73980,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7740,
+        "optionalModelResponseCharacters": 11869,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-neighbor-08",
+      "group": "neighbor",
+      "acceptableSkills": [
+        "loop-experiment"
+      ],
+      "mustAbstain": false,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-experiment",
+          "loop-context",
+          "loop-engine"
+        ],
+        "top1Correct": true,
+        "top3Recall": true,
+        "abstentionCorrect": null
+      },
+      "learned": {
+        "abstained": false,
+        "candidates": [
+          "loop-review",
+          "loop-comprehend",
+          "loop-docs"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": null
+      },
+      "learnedStatus": "candidates",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 29841,
+        "optionalModelUnionEntrypointCharacters": 55373,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7941,
+        "optionalModelResponseCharacters": 11852,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-abstain-01",
+      "group": "ambiguous",
+      "acceptableSkills": [],
+      "mustAbstain": true,
+      "lexical": {
+        "abstained": true,
+        "candidates": [
+          "loop-research",
+          "loop-debug",
+          "loop-design"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 6191,
+        "optionalModelUnionEntrypointCharacters": 6191,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 6112,
+        "optionalModelResponseCharacters": 6582,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-abstain-02",
+      "group": "ambiguous",
+      "acceptableSkills": [],
+      "mustAbstain": true,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-scout",
+          "loop-research",
+          "loop-operate"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": false
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 28858,
+        "optionalModelUnionEntrypointCharacters": 28858,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7028,
+        "optionalModelResponseCharacters": 7507,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-abstain-03",
+      "group": "ambiguous",
+      "acceptableSkills": [],
+      "mustAbstain": true,
+      "lexical": {
+        "abstained": true,
+        "candidates": [
+          "loop-pattern",
+          "loop-review",
+          "loop-algo"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 6191,
+        "optionalModelUnionEntrypointCharacters": 6191,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 5805,
+        "optionalModelResponseCharacters": 6275,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-abstain-04",
+      "group": "ambiguous",
+      "acceptableSkills": [],
+      "mustAbstain": true,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-scout",
+          "loop-review",
+          "loop-context"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": false
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 23961,
+        "optionalModelUnionEntrypointCharacters": 23961,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 6237,
+        "optionalModelResponseCharacters": 6719,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-abstain-05",
+      "group": "out-of-domain",
+      "acceptableSkills": [],
+      "mustAbstain": true,
+      "lexical": {
+        "abstained": true,
+        "candidates": [
+          "loop-build",
+          "loop-context",
+          "loop-venture"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 6191,
+        "optionalModelUnionEntrypointCharacters": 6191,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 6084,
+        "optionalModelResponseCharacters": 6554,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-abstain-06",
+      "group": "out-of-domain",
+      "acceptableSkills": [],
+      "mustAbstain": true,
+      "lexical": {
+        "abstained": false,
+        "candidates": [
+          "loop-guide",
+          "loop-design",
+          "loop-incident"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": false
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 33221,
+        "optionalModelUnionEntrypointCharacters": 33221,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 7331,
+        "optionalModelResponseCharacters": 7806,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-abstain-07",
+      "group": "out-of-domain",
+      "acceptableSkills": [],
+      "mustAbstain": true,
+      "lexical": {
+        "abstained": true,
+        "candidates": [
+          "loop-scout",
+          "loop-test",
+          "loop-build"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 6191,
+        "optionalModelUnionEntrypointCharacters": 6191,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 5886,
+        "optionalModelResponseCharacters": 6356,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    },
+    {
+      "id": "eval-abstain-08",
+      "group": "out-of-domain",
+      "acceptableSkills": [],
+      "mustAbstain": true,
+      "lexical": {
+        "abstained": true,
+        "candidates": [
+          "loop-research",
+          "loop-scout",
+          "loop-algo"
+        ],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learned": {
+        "abstained": true,
+        "candidates": [],
+        "top1Correct": false,
+        "top3Recall": false,
+        "abstentionCorrect": true
+      },
+      "learnedStatus": "abstain",
+      "proxy": {
+        "baselineCandidateEntrypointCharacters": 6191,
+        "optionalModelUnionEntrypointCharacters": 6191,
+        "allEntrypointCharacters": 268189,
+        "baselineResponseCharacters": 6859,
+        "optionalModelResponseCharacters": 7329,
+        "label": "UTF-16 character counts; entrypoints exclude required references, boundaries, task evidence, host discovery, and runtime usage. Response counts use compact JSON plus newline, matching the final CLI serialization."
+      }
+    }
+  ]
+}

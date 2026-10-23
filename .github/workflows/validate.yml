@@ -5,8 +5,28 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+
+permissions:
+  contents: read
 
 jobs:
+  branch-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test branch policy
+        run: node scripts/test-branch-policy.mjs
+      - name: Check pull request source and target
+        if: github.event_name == 'pull_request'
+        env:
+          PROOF_HEAD_REF: ${{ github.head_ref }}
+          PROOF_BASE_REF: ${{ github.base_ref }}
+        run: node scripts/check-branch-policy.mjs --head "$PROOF_HEAD_REF" --base "$PROOF_BASE_REF"
+
   validate:
     runs-on: ubuntu-latest
     steps:
@@ -32,9 +52,18 @@ jobs:
       - name: Smoke-test workflow templates
         run: node scripts/smoke.mjs
 
+      - name: Check routing-block extraction parity
+        run: node scripts/check-modes-extraction-parity.mjs
+
+      - name: Test local context advisor
+        run: node scripts/test-software-context.mjs
+
       # ADR-0008 §D8.8. Packs every host twice and asserts the pack is deterministic, holds back
       # the four Claude Code-native skills, ships no *.workflow.js, leaves no ${CLAUDE_*} expansion
       # behind, and states its degradation wherever a template was dropped. Residual host-specific
       # prose is reported, not failed — that report is how the next rewrite rule gets found.
       - name: Check per-host skill packs
         run: node scripts/check-host-packs.mjs
+
+      - name: Check canonical names and clean-directory tools
+        run: node scripts/test-public-names.mjs

@@ -1,0 +1,434 @@
+{
+  "schema": 1,
+  "checked_at_utc": "2026-10-22T19:41:15.737317+00:00",
+  "client_date_asia_bangkok": "2026-10-23",
+  "candidate": "Proof4 beta; local documentation/identity refresh",
+  "source_facts_revision": "5ff9786a9ef8eae9440fd2b547f522880a0f1396",
+  "overview": {
+    "specification": {
+      "sha256": "568aa251370c323970144e3ae687b25ba57d04516af3f24f0a8f15845355a64a",
+      "bytes": 5198
+    },
+    "artifact": {
+      "sha256": "e5d6594a19268179259957769603856ea92eea2909b08ac4764fe76fe7d6a726",
+      "bytes": 712661
+    },
+    "local_git_source_references": 15,
+    "validation": {
+      "checksPassed": 9,
+      "checkCount": 9,
+      "compositionProfile": "showcase",
+      "compositionStatus": "pass",
+      "errors": 0,
+      "warnings": 0
+    },
+    "browser_evidence": "passed",
+    "browser_copy_binding": "Byte-identical HTML copy in ignored run storage; same SHA-256 as delivered artifact",
+    "viewport_containment": [
+      {
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440,
+        "scrollHeight": 900,
+        "ok": true
+      },
+      {
+        "width": 1600,
+        "height": 1000,
+        "scrollWidth": 1600,
+        "scrollHeight": 1000,
+        "ok": true
+      },
+      {
+        "width": 1920,
+        "height": 1080,
+        "scrollWidth": 1920,
+        "scrollHeight": 1080,
+        "ok": true
+      },
+      {
+        "width": 2048,
+        "height": 1320,
+        "scrollWidth": 2048,
+        "scrollHeight": 1320,
+        "ok": true
+      }
+    ],
+    "endpoint_theme_captures": [
+      "1440x900 light",
+      "1440x900 dark",
+      "2048x1320 light",
+      "2048x1320 dark"
+    ],
+    "source_link_scope": "Local Git blobs verified; GitHub links require publication of the pinned commit."
+  },
+  "banner": {
+    "tool": "built-in image_gen",
+    "path": "docs/assets/proof-banner-v4.png",
+    "prompt": "docs/assets/proof-banner-v4-prompt.md",
+    "prompt_sha256": "831ac8d69264e85e332efc7f93ace358b75f635ba207d5d048131270666dfcca",
+    "original_generated_bytes_unchanged": true,
+    "width": 1942,
+    "height": 809,
+    "sha256": "c2de5789e05b199c2cbb465c2c16422a2565ca8a8565a7cda6dda5d7b4df9f1f",
+    "bytes": 2021336
+  },
+  "companion_files": {
+    "docs/assets/proof-architecture.svg": "8f5a13fc2460700afa24f2bd42431b0273619ac43c28ca354f38d65e09b1ee5f",
+    "docs/assets/proof-workflow.svg": "921573cdc1b4b228bdde22bf89d0183968a30be045a6128cc6eed497cbc74a2b",
+    "docs/assets/proof-architecture.png": "363ffeb77dae49251fd2b1768a2beec9de460f90042046542ec3e9e879518e87",
+    "docs/assets/proof-workflow.png": "e23edec2e8f6a62d6dde5e46e1925e4547d23c9f2f986a4e98540defbff076bc"
+  },
+  "raster_alternatives": {
+    "proof-architecture.png": {
+      "width": 1030,
+      "height": 504,
+      "sha256": "363ffeb77dae49251fd2b1768a2beec9de460f90042046542ec3e9e879518e87",
+      "bytes": 52380
+    },
+    "proof-workflow.png": {
+      "width": 1120,
+      "height": 370,
+      "sha256": "e23edec2e8f6a62d6dde5e46e1925e4547d23c9f2f986a4e98540defbff076bc",
+      "bytes": 68074
+    }
+  },
+  "detailed_views": [
+    {
+      "source": "docs/c4/diagrams/src/autonomy-ladder.mmd",
+      "source_sha256": "85b4b44cdf00cb2c987a64c58dfec8f43dd35784a49aaaadc06f22fe4c7a102d",
+      "svg": "docs/c4/diagrams/autonomy-ladder.svg",
+      "svg_sha256": "56b92ff586d18bab2e207344a8f998a1bb9ce5d480b1685261ac9a08e7ca6746",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/component-engine.mmd",
+      "source_sha256": "8e0886423658a60542937f23c16167e7ccb6cf54ab9b3794024d2b3fdb17557c",
+      "svg": "docs/c4/diagrams/component-engine.svg",
+      "svg_sha256": "35b24a6a5ab46cc64c700cb14f156034692258f9fa11902f54514840418afb8c",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/container.mmd",
+      "source_sha256": "d1e58a983e11452b1dfd622088e0ff6930520dc3c60ca4b73ce5cfff18252cd3",
+      "svg": "docs/c4/diagrams/container.svg",
+      "svg_sha256": "63ca56f588938d597785fe2c2344203b5170d437f4396ef378ffdd729ce75c13",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/context-glance.mmd",
+      "source_sha256": "df26ff28b43ea4ef868b4aa074b2688acf324cd98759390bc07b9445f755723a",
+      "svg": "docs/c4/diagrams/context-glance.svg",
+      "svg_sha256": "2799d79a57642e56c7e7d5be36e372497b9f799aa7f0dbd045665dae2873ad3a",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/context.mmd",
+      "source_sha256": "913087fc39a298a580ba7a4b0c631eb42a3be5380cd975b04ec954397078eeb0",
+      "svg": "docs/c4/diagrams/context.svg",
+      "svg_sha256": "e0ef9bafaf1349179be5d4a4486211ef24ff302d140f564d82a375bfad45b97a",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/skill-composition.mmd",
+      "source_sha256": "c36bd671fe40bd4f2e098ad579c2041de6171964226809310204ecc00e3fdb01",
+      "svg": "docs/c4/diagrams/skill-composition.svg",
+      "svg_sha256": "00e7409aac5de537fa99738b650feaf6029fbfbde56c13e7c1345c0c3578c10c",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/skill-container-view.mmd",
+      "source_sha256": "5f2c965f69b743569df2ef3e632f16c57b409dca1d34532ba98fb2069c463fc1",
+      "svg": "docs/c4/diagrams/skill-container-view.svg",
+      "svg_sha256": "154af584ca959046f5708efa5014d3d978d7db2f4e0324f27782f6df5f13ee7b",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/skills-build-verify.mmd",
+      "source_sha256": "74b3835f84acb01c0fbed38c537311f30c0e91065e42c860f8f156813c6dc013",
+      "svg": "docs/c4/diagrams/skills-build-verify.svg",
+      "svg_sha256": "30c342007f76b2e99b5a8cb130859a3afc609c819510848970e770aa9b9b3251",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/skills-design-mechanism.mmd",
+      "source_sha256": "2da12a30a5c26f89546e2329392c79798f4eb89c4e869531b74411647b8cf165",
+      "svg": "docs/c4/diagrams/skills-design-mechanism.svg",
+      "svg_sha256": "0eec54c3d423315c86df4739fbf1cbde5cafaa9307470f74dfa0957632b6f6b1",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/skills-engine-planning.mmd",
+      "source_sha256": "8bce86b38af497756562b8e72b840568db11bd754d0a1ed828d659ffe0f4dc2e",
+      "svg": "docs/c4/diagrams/skills-engine-planning.svg",
+      "svg_sha256": "fbdd78604fa0a02df9e3ecbc3d2a272ef9abae2579a11e61c32a76f8dd377f65",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/skills-integrate-ship.mmd",
+      "source_sha256": "154bd84b055aecbea70995871e2b87aac3a70772458cb925f725329cb9475c1e",
+      "svg": "docs/c4/diagrams/skills-integrate-ship.svg",
+      "svg_sha256": "c48744fb6d5d226040ab253d054b9fde8f5cb4eb52328210f2fa3ec5f6d31b61",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/skills-knowledge-automation.mmd",
+      "source_sha256": "d3bcc4dba21515d2ff6b03e1c61e837425870ea13e55b2224eddfc1fdcd8b1a1",
+      "svg": "docs/c4/diagrams/skills-knowledge-automation.svg",
+      "svg_sha256": "20c6e6865b740d1c98e3a615d2ab689aca8e946f747c3ea5115a9561af7ab89a",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/skills-run-respond.mmd",
+      "source_sha256": "c332fe900ed4469d458cfe8ffcfb627caf4a3e6639f8af7936c7b62770a84739",
+      "svg": "docs/c4/diagrams/skills-run-respond.svg",
+      "svg_sha256": "f91a7c3a08a0052d1feccfe1649e59370be4cbc34ddac9a8890356325cd7c36d",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/view-development.mmd",
+      "source_sha256": "9697f765ddeee129bcf968821ff664df38667f776e1867154852b42cd0a3e9f0",
+      "svg": "docs/c4/diagrams/view-development.svg",
+      "svg_sha256": "193f9ba22febfe69a29f34e5eeb6801cad61c7a2f99463aa5ba149d0fd49b77b",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/view-logical.mmd",
+      "source_sha256": "f98babe313772bfbdf2ed9f898b035bafd39e90829b547aca764cfbc590c6dce",
+      "svg": "docs/c4/diagrams/view-logical.svg",
+      "svg_sha256": "de4875f71cce80df61c24ab27c7e323066dbefe135565e9fe05e4940d0756a4f",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/view-physical.mmd",
+      "source_sha256": "77ecb88da937ca16c9f6cafb4dc0d1a85166ef5630b9df9003dc083c7f864323",
+      "svg": "docs/c4/diagrams/view-physical.svg",
+      "svg_sha256": "f3005afa1d3bbc9fb1bedbcdb40a49543d16d1be990a32389cbb15ff01606bcd",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/view-process.mmd",
+      "source_sha256": "a95020db0bf5fcbd54eb3ca546c334ca65bf28112b981612091fccb1ed805d45",
+      "svg": "docs/c4/diagrams/view-process.svg",
+      "svg_sha256": "591d12ef0b1a1c8667261776d14a17b180b9dcf1bb977da738b36df69cbaf698",
+      "repeat_identical": true
+    },
+    {
+      "source": "docs/c4/diagrams/src/view-scenarios.mmd",
+      "source_sha256": "f4cd98718e65eb8e8fbb6628312f697d28cb95a005feeda1dc03fff3d6fc429a",
+      "svg": "docs/c4/diagrams/view-scenarios.svg",
+      "svg_sha256": "56b6b946677bc98f28651db737b46faf686553126fe3952811db0cdb498f2bf2",
+      "repeat_identical": true
+    }
+  ],
+  "svg_browser_bounds": {
+    "count": 20,
+    "text_outside_root_bounds": 0,
+    "scope": "Actual rendered text/foreignObject bounds; not a general graph or accessibility certification"
+  },
+  "visual_review": {
+    "status": "passed",
+    "reviewer": "image-capable assistant",
+    "scope": [
+      "New banner text/identity/composition",
+      "All20 SVGs at contact-sheet scale",
+      "Dense engine/container/composition/process/placement/scenario views separately",
+      "Native README SVGs in both themes",
+      "Archify endpoint desktop captures in both themes"
+    ],
+    "limits": "Dense maps need full-size viewing; no mobile readability or owner-comprehension study. Owner acceptance pending."
+  },
+  "engineering_gates": [
+    {
+      "name": "validate",
+      "command": [
+        "node",
+        "scripts/validate.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 5.151534093000009,
+      "at_utc": "2026-10-22T19:28:55.853908+00:00",
+      "log": "dist/identity-architecture-20261023/validate.log",
+      "log_sha256": "6e28c9d28511710eff3b038e28a64b68316a5c7ea8c454bffb3358c3b8cc0af9",
+      "tail": [
+        "",
+        "PASSED — 55325 assertions, 0 failures, 3 warning(s)."
+      ]
+    },
+    {
+      "name": "smoke",
+      "command": [
+        "node",
+        "scripts/smoke.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5528692380012217,
+      "at_utc": "2026-10-22T19:28:56.406865+00:00",
+      "log": "dist/identity-architecture-20261023/smoke.log",
+      "log_sha256": "4968f696d2ae3064b25d1f86d21b81df25bdb99e2e8df8a2831e118da43e4d56",
+      "tail": [
+        "32 templates executed — 32 passed, 0 failed"
+      ]
+    },
+    {
+      "name": "routing-parity",
+      "command": [
+        "node",
+        "scripts/check-modes-extraction-parity.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.14598970500082942,
+      "at_utc": "2026-10-22T19:28:56.552975+00:00",
+      "log": "dist/identity-architecture-20261023/routing-parity.log",
+      "log_sha256": "442bdee7ed885383333332a683faf4d65fdb70a9251ccc289a244db4460970ab",
+      "tail": [
+        "PARITY OK — both locators agree: 87 lines, doc line 308, byte-identical block text."
+      ]
+    },
+    {
+      "name": "host-packs",
+      "command": [
+        "node",
+        "scripts/check-host-packs.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 5.055743274000633,
+      "at_utc": "2026-10-22T19:29:01.612845+00:00",
+      "log": "dist/identity-architecture-20261023/host-packs.log",
+      "log_sha256": "8d317014ed8d073501e7d95eee6c8dc5622becf7f7edcf8cd0483bac5fc10db0",
+      "tail": [
+        "",
+        "host packs OK — 3 host(s) checked, 15 residual-prose warning(s)."
+      ]
+    },
+    {
+      "name": "context",
+      "command": [
+        "node",
+        "scripts/test-software-context.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 2.250842556000862,
+      "at_utc": "2026-10-22T19:29:03.863780+00:00",
+      "log": "dist/identity-architecture-20261023/context.log",
+      "log_sha256": "8ea145464259c218bac55f5307a3675be0bbcf7d78c564a0daed45b1467d4925",
+      "tail": [
+        "software-context: 62 behavioral checks passed; no provider calls."
+      ]
+    },
+    {
+      "name": "branch-policy",
+      "command": [
+        "node",
+        "scripts/test-branch-policy.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5749074609993841,
+      "at_utc": "2026-10-22T19:29:04.439977+00:00",
+      "log": "dist/identity-architecture-20261023/branch-policy.log",
+      "log_sha256": "961155026ef9039c2bfbd088c14d68aab761da2dfc0e0631676be632972130ec",
+      "tail": [
+        "Branch policy: 58 checks passed"
+      ]
+    },
+    {
+      "name": "public-names",
+      "command": [
+        "node",
+        "scripts/test-public-names.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 1.8221116500008065,
+      "at_utc": "2026-10-22T19:29:06.265357+00:00",
+      "log": "dist/identity-architecture-20261023/public-names.log",
+      "log_sha256": "68ef188e593e4bfff18a966c0cd1b33cfb5fa24b67a9386cf13e6adb394dcd3b",
+      "tail": [
+        "public-names: 12 clean-directory/protocol checks passed; no host model or marketplace validation claimed."
+      ]
+    },
+    {
+      "name": "plugin",
+      "command": [
+        "claude",
+        "plugin",
+        "validate",
+        ".",
+        "--strict"
+      ],
+      "exit_code": 0,
+      "seconds": 1.9645881239994196,
+      "at_utc": "2026-10-22T19:29:08.239714+00:00",
+      "log": "dist/identity-architecture-20261023/plugin.log",
+      "log_sha256": "f1a96154361dc55938f654ff194ca163b242d1005842a76bef7bfa07bf69242a",
+      "tail": [
+        "",
+        "✔ Validation passed"
+      ]
+    }
+  ],
+  "history_preservation": {
+    "paths": [
+      "docs/assets/proof-architecture-verification.json",
+      "docs/assets/proof-banner-prompt.md",
+      "docs/assets/proof-banner.png",
+      "docs/design/ADR-0002-dependency-seam-and-boot-contract.md",
+      "docs/design/ADR-0003-tool-contracts-and-call-sites.md",
+      "docs/design/ADR-0004-extraction-strategy-and-failure-semantics.md",
+      "docs/design/ADR-0005-correctness-invariant-no-silent-default.md",
+      "docs/design/ADR-0006-width-shape-band-coverage-and-flag-selected-rows.md",
+      "docs/design/ADR-0007-boundary-lookup-matching-and-speech-act.md",
+      "docs/design/ADR-0008-host-packaging-seam.md",
+      "docs/design/ADR-0011-software-context-advisor.md",
+      "docs/design/host-tier-c-discovery.md",
+      "docs/examples/routing-study-2026-09-01.md",
+      "docs/examples/software-efficiency-evaluation-final.json",
+      "docs/examples/software-efficiency-evaluation-final.md",
+      "docs/examples/software-efficiency-evaluation.json",
+      "docs/examples/software-efficiency-evaluation.md",
+      "docs/examples/software-prose-forward-evaluation.json",
+      "docs/examples/software-prose-forward-evaluation.md",
+      "docs/examples/software-routing-eval.freeze.json",
+      "docs/examples/software-routing-eval.jsonl",
+      "docs/examples/software-routing-train-proof-v4.jsonl",
+      "docs/examples/software-routing-train-proof-v4.provenance.json",
+      "docs/examples/software-routing-train.jsonl",
+      "docs/examples/software-team-source-manifest-2026-09-09.json",
+      "docs/examples/software-team-validation-2026-09-09.md",
+      "docs/examples/venture-p1-lite-run.md",
+      "docs/plans/v1.0.0.md",
+      "docs/reviews/developer-launch-2026-10-23.md",
+      "docs/reviews/developer-launch-checks-2026-10-23.json",
+      "docs/reviews/documentation-inventory-2026-10-23.json",
+      "docs/reviews/framework-review-2026-10-23.md",
+      "mcp/ADR-0001-runtime-and-dependency.md"
+    ],
+    "released_changelog_sections_unchanged": true,
+    "original_banner_and_prompt_unchanged": true
+  },
+  "corrections": {
+    "artifact_label_repairs": 2,
+    "overview_viewport_repairs": 1,
+    "mermaid_sequence": "Two unquoted semicolons parsed as delimiters; label breaks corrected.",
+    "repeatability": "Stadium curve variation reproduced; labeled rectangle retained semantics and produced identical renders.",
+    "scenario_layout": "Explicit subgraph directions and layout-only invisible links produce four ordered panels."
+  },
+  "raw_evidence": "dist/identity-architecture-20261023/",
+  "publication": {
+    "push": false,
+    "merge": false,
+    "release": false,
+    "installed_skill_update": false,
+    "service_change": false
+  },
+  "limits": [
+    "No native host-model workflow or provider migration executed.",
+    "No quality, resource-benefit, unattended-safety or Agensi acceptance claim.",
+    "The banner is an illustration; geometry/packaging checks are not execution evidence."
+  ],
+  "full_current_render_script_check": {
+    "exit_code": 0,
+    "current_views": 18,
+    "byte_identical_repeat": true,
+    "different": []
+  }
+}

@@ -20,7 +20,7 @@
 //
 // READ LIVE, NEVER SNAPSHOT. Every exported function re-reads and re-JSON.parses
 // docs/design/boundary-audit.json on every call (ADR-0005 §D5.3.7 rules out caching for exactly this
-// reason: loop-skill/SKILL.md step 3 requires a NEW skill to add rows to this file, so a cached copy
+// reason: proof-skill/SKILL.md step 3 requires a NEW skill to add rows to this file, so a cached copy
 // goes stale the moment the tool's own governing skill is used as intended). No module-level state
 // holds parsed content across calls.
 //
@@ -642,7 +642,7 @@ function rankCandidates(root, query, { limit = 5 } = {}) {
     notes,
     authority: AUTHORITY,
     ...(outcome === 'unowned'
-      ? { decompositionSmell: 'No row of the matrix matches this ask on two or more discriminating terms. Per .claude/skills/loop-build/SKILL.md:31, a task with no owning skill is a decomposition smell: split the task until each part has an owner, or record deliberately that it falls outside the fleet. Do not assign the highest-scoring row by default.' }
+      ? { decompositionSmell: 'No row of the matrix matches this ask on two or more discriminating terms. Per .claude/skills/proof-build/SKILL.md:31, a task with no owning skill is a decomposition smell: split the task until each part has an owner, or record deliberately that it falls outside the fleet. Do not assign the highest-scoring row by default.' }
       : {}),
   }
 }
@@ -650,13 +650,13 @@ function rankCandidates(root, query, { limit = 5 } = {}) {
 // ---------------------------------------------------------------------------
 // Public: exactLookup — §D7.9. `skill:` alone is an exact key lookup: not_found when absent from the
 // matrix, outcome:'exact' when present. Never runs the scorer, never returns 'unowned' — the absence
-// of a KEY is a different fact from the absence of an OWNER (a decomposition smell), and loop-build's
+// of a KEY is a different fact from the absence of an OWNER (a decomposition smell), and proof-build's
 // roster sweep must be able to tell them apart.
 // ---------------------------------------------------------------------------
 
 function exactLookup(root, skill) {
   if (typeof skill !== 'string' || skill.trim() === '') {
-    return { ok: false, code: 'invalid_argument', error: 'skill must be a non-empty string', fix: 'Pass skill as a skill name exactly as it appears in /matrix, e.g. "loop-design".' }
+    return { ok: false, code: 'invalid_argument', error: 'skill must be a non-empty string', fix: 'Pass skill as a skill name exactly as it appears in /matrix, e.g. "proof-design".' }
   }
   const read = readBoundaryAudit(root)
   if (!read.ok) return read

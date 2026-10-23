@@ -7,8 +7,8 @@
     "head": "4dd461a",
     "gateBaseline": {
       "validate": "PASSED — 45252 assertions, 0 failures, 5 warnings (exit 0)",
-      "smoke": "26 of 27 — the pre-existing loop-build v1-conductor planner failure recorded in mcp/runtime-pin.json gateBaseline; unrelated to and untouched by D7",
-      "gitDiffStat": "only .claude/skills/loop-engine/references/execution-modes.md, from D4 and D6; D7 modified no existing file"
+      "smoke": "26 of 27 — the pre-existing proof-build v1-conductor planner failure recorded in mcp/runtime-pin.json gateBaseline; unrelated to and untouched by D7",
+      "gitDiffStat": "only .claude/skills/proof-engine/references/execution-modes.md, from D4 and D6; D7 modified no existing file"
     }
   },
 
@@ -51,46 +51,46 @@
       "reciprocalEdges": 54,
       "oneWayEdges": 22,
       "oneWayList": [
-        "loop-engine->loop-autopilot", "loop-orchestrate->loop-design", "loop-harness->loop-operate",
-        "loop-research->loop-algo", "loop-pattern->loop-design", "loop-integrate->loop-review",
-        "loop-integrate->loop-debug", "loop-test->loop-integrate", "loop-test->loop-debug",
-        "loop-test->loop-incident", "loop-docs->loop-design", "loop-docs->loop-operate",
-        "loop-docs->loop-incident", "loop-debug->loop-operate", "loop-skill->loop-harness",
-        "loop-skill->loop-docs", "loop-skill->loop-design", "loop-skill->loop-pattern",
-        "loop-frontend->loop-design", "loop-frontend->loop-pattern", "loop-frontend->loop-scout",
-        "loop-frontend->loop-algo"
+        "proof-engine->proof-autopilot", "proof-orchestrate->proof-design", "proof-harness->proof-operate",
+        "proof-research->proof-algo", "proof-pattern->proof-design", "proof-integrate->proof-review",
+        "proof-integrate->proof-debug", "proof-test->proof-integrate", "proof-test->proof-debug",
+        "proof-test->proof-incident", "proof-docs->proof-design", "proof-docs->proof-operate",
+        "proof-docs->proof-incident", "proof-debug->proof-operate", "proof-skill->proof-harness",
+        "proof-skill->proof-docs", "proof-skill->proof-design", "proof-skill->proof-pattern",
+        "proof-frontend->proof-design", "proof-frontend->proof-pattern", "proof-frontend->proof-scout",
+        "proof-frontend->proof-algo"
       ],
-      "zeroInDegreeSkills": ["loop-skill", "loop-frontend"],
+      "zeroInDegreeSkills": ["proof-skill", "proof-frontend"],
       "unorderedPairsTotal": 210,
       "unorderedPairsWithAtLeastOneEdge": 49,
       "unorderedPairsWithNoStoredDiscriminator": 161,
       "ratedOverlapsTwoWayInMatrix": 19,
       "ratedOverlapsOneWayInMatrix": 9,
       "ratedOverlapsOneWayList": [
-        { "index": 13, "pair": "loop-integrate|loop-test", "severity": "medium", "storedOnlyOn": "loop-test" },
-        { "index": 18, "pair": "loop-docs|loop-operate", "severity": "medium", "storedOnlyOn": "loop-docs" },
-        { "index": 19, "pair": "loop-docs|loop-incident", "severity": "low", "storedOnlyOn": "loop-docs" },
-        { "index": 22, "pair": "loop-harness|loop-operate", "severity": "low", "storedOnlyOn": "loop-harness" },
-        { "index": 23, "pair": "loop-skill|loop-harness", "severity": "medium", "storedOnlyOn": "loop-skill" },
-        { "index": 24, "pair": "loop-skill|loop-docs", "severity": "medium", "storedOnlyOn": "loop-skill" },
-        { "index": 25, "pair": "loop-frontend|loop-design", "severity": "high", "storedOnlyOn": "loop-frontend" },
-        { "index": 26, "pair": "loop-frontend|loop-scout", "severity": "medium", "storedOnlyOn": "loop-frontend" },
-        { "index": 27, "pair": "loop-frontend|loop-pattern", "severity": "medium", "storedOnlyOn": "loop-frontend" }
+        { "index": 13, "pair": "proof-integrate|proof-test", "severity": "medium", "storedOnlyOn": "proof-test" },
+        { "index": 18, "pair": "proof-docs|proof-operate", "severity": "medium", "storedOnlyOn": "proof-docs" },
+        { "index": 19, "pair": "proof-docs|proof-incident", "severity": "low", "storedOnlyOn": "proof-docs" },
+        { "index": 22, "pair": "proof-harness|proof-operate", "severity": "low", "storedOnlyOn": "proof-harness" },
+        { "index": 23, "pair": "proof-skill|proof-harness", "severity": "medium", "storedOnlyOn": "proof-skill" },
+        { "index": 24, "pair": "proof-skill|proof-docs", "severity": "medium", "storedOnlyOn": "proof-skill" },
+        { "index": 25, "pair": "proof-frontend|proof-design", "severity": "high", "storedOnlyOn": "proof-frontend" },
+        { "index": 26, "pair": "proof-frontend|proof-scout", "severity": "medium", "storedOnlyOn": "proof-frontend" },
+        { "index": 27, "pair": "proof-frontend|proof-pattern", "severity": "medium", "storedOnlyOn": "proof-frontend" }
       ],
       "ratedOverlapsAbsentFromMatrixBothWays": 0,
-      "skillsWithNoRatedOverlap": ["loop-build"],
-      "skillsWithNoApprovedDescription": ["loop-skill", "loop-frontend", "loop-build"],
+      "skillsWithNoRatedOverlap": ["proof-build"],
+      "skillsWithNoApprovedDescription": ["proof-skill", "proof-frontend", "proof-build"],
       "approvedVsLiveDescription": {
         "current": 16,
         "drifted": [
-          { "skill": "loop-algo", "liveChars": 845, "approvedChars": 753, "delta": "live adds the loop-debug clause 'or that used to be fast and is not any more … an unexplained regression is a defect, not a mechanism choice'" },
-          { "skill": "loop-operate", "liveChars": 839, "approvedChars": 699, "delta": "live adds a whole loop-ship pointer sentence absent from the approved text" }
+          { "skill": "proof-algo", "liveChars": 845, "approvedChars": 753, "delta": "live adds the proof-debug clause 'or that used to be fast and is not any more … an unexplained regression is a defect, not a mechanism choice'" },
+          { "skill": "proof-operate", "liveChars": 839, "approvedChars": 699, "delta": "live adds a whole proof-ship pointer sentence absent from the approved text" }
         ],
-        "unrecorded": ["loop-skill", "loop-frontend", "loop-build"]
+        "unrecorded": ["proof-skill", "proof-frontend", "proof-build"]
       }
     },
     "citationMechanics": {
-      "lineSpanRule": "Brace-depth scan upward to the enclosing object's `{` line, then forward to depth 0. Measured: the loop-design matrix row is lines 111..132.",
+      "lineSpanRule": "Brace-depth scan upward to the enclosing object's `{` line, then forward to depth 0. Measured: the proof-design matrix row is lines 111..132.",
       "excerptIsAFragment": "MEASURED — the cited span ends in `},` and does NOT JSON.parse standalone. The citation is a byte range plus an RFC 6901 pointer; a caller must not treat the excerpt as a JSON document. sha256 is over the LF-normalised raw lines, per ADR-0003 D3.2."
     }
   },
@@ -114,7 +114,7 @@
   "D7_2_corpus": {
     "scoredFields": [
       { "field": "scope", "pointer": "/matrix/{i}/scope", "weight": [3, 5] },
-      { "field": "description", "pointer": "/descriptionRewrites/{k}/newDescription", "weight": [2, 5], "presentOn": 18, "absentOn": ["loop-skill", "loop-frontend", "loop-build"] }
+      { "field": "description", "pointer": "/descriptionRewrites/{k}/newDescription", "weight": [2, 5], "presentOn": 18, "absentOn": ["proof-skill", "proof-frontend", "proof-build"] }
     ],
     "neverScored": [
       "matrix[].useInsteadWhen[].condition — see D7_2_diversion",
@@ -127,12 +127,12 @@
       "rule": "A query hit inside matrix[i].useInsteadWhen[j].condition is reported as divertedBy[] on row i, naming otherSkill. It is NOT added to row i's score, and NOT added to otherSkill's score either.",
       "measuredWhyNotOwnRow": {
         "query": "plan a whole project into phases with a task DAG and per-node model routing",
-        "correct": "loop-orchestrate",
-        "allFieldsTop3": [["loop-engine", 24.66], ["loop-build", 17.65], ["loop-orchestrate", 15.36]],
-        "ownFieldsTop3": [["loop-orchestrate", 15.36], ["loop-engine", 14.92], ["loop-docs", 4.83]],
-        "cause": "/matrix/0/useInsteadWhen/0 reads 'The unit of work is a whole project needing phase decomposition, a task DAG, and per-node model/effort routing before any script is written.' -> use loop-orchestrate. The best evidence for loop-engine is a sentence that disclaims loop-engine."
+        "correct": "proof-orchestrate",
+        "allFieldsTop3": [["proof-engine", 24.66], ["proof-build", 17.65], ["proof-orchestrate", 15.36]],
+        "ownFieldsTop3": [["proof-orchestrate", 15.36], ["proof-engine", 14.92], ["proof-docs", 4.83]],
+        "cause": "/matrix/0/useInsteadWhen/0 reads 'The unit of work is a whole project needing phase decomposition, a task DAG, and per-node model/effort routing before any script is written.' -> use proof-orchestrate. The best evidence for proof-engine is a sentence that disclaims proof-engine."
       },
-      "measuredWhyNotTransferToTarget": "An additive transfer to otherSkill widened that margin from 2.9% to 28% but demoted loop-skill from rank 1 to rank 5 on its own query, because the bonus is an in-degree popularity term and loop-skill has in-degree 0."
+      "measuredWhyNotTransferToTarget": "An additive transfer to otherSkill widened that margin from 2.9% to 28% but demoted proof-skill from rank 1 to rank 5 on its own query, because the bonus is an in-degree popularity term and proof-skill has in-degree 0."
     }
   },
 
@@ -163,7 +163,7 @@
       "renormalisation": "Weights are renormalised over the fields ACTUALLY PRESENT. For the 3 rows with no approved description, scope carries weight 1 and fieldsScored records ['scope'].",
       "noLengthNormalisation": {
         "b": 0,
-        "measured": "b=0.75 lifts the three description-less rows from mean rank 15.67 to 12.00 on a query none of them own (loop-skill 14->8, loop-build 12->7). A scorer that pays a row for absent data is a silent default in ADR-0005's sense."
+        "measured": "b=0.75 lifts the three description-less rows from mean rank 15.67 to 12.00 on a query none of them own (proof-skill 14->8, proof-build 12->7). A scorer that pays a row for absent data is a silent default in ADR-0005's sense."
       }
     },
     "arithmetic": {
@@ -185,7 +185,7 @@
     "DF_MAX": "floor(N/4) — 5 at N=21, read from the live matrix size",
     "MIN_DISCRIMINATING": 2,
     "measuredScoreFloorDoesNotExist": {
-      "experiment": "20 on-fleet queries (one per skill, loop-ship twice) vs 12 deliberately off-fleet queries, top candidate only",
+      "experiment": "20 on-fleet queries (one per skill, proof-ship twice) vs 12 deliberately off-fleet queries, top candidate only",
       "normalisedCoverage": { "onFleetMin": 0.183, "offFleetMax": 1.571, "separates": false },
       "absoluteMatchedIdfMass": { "onFleetMin": 4.059, "offFleetMax": 2.914, "separates": true, "rejectedBecause": "scales with query length; a long off-fleet query accumulates mass and crosses it" },
       "distinctMatchedTerms": { "onFleetMin": 2, "offFleetMax": 3, "separates": false },
@@ -196,7 +196,7 @@
       { "dfMax": 4, "offFleetWronglyOwned": "0/12", "onFleetWronglyUnowned": "0/20" },
       { "dfMax": 5, "offFleetWronglyOwned": "0/12", "onFleetWronglyUnowned": "0/20", "chosen": true },
       { "dfMax": 6, "offFleetWronglyOwned": "0/12", "onFleetWronglyUnowned": "0/20" },
-      { "dfMax": 7, "offFleetWronglyOwned": "2/12", "onFleetWronglyUnowned": "0/20", "failures": ["'translate this paragraph into French' -> loop-design on {this,into}", "'summarise this legal contract' -> loop-integrate on {this,contract}"] },
+      { "dfMax": 7, "offFleetWronglyOwned": "2/12", "onFleetWronglyUnowned": "0/20", "failures": ["'translate this paragraph into French' -> proof-design on {this,into}", "'summarise this legal contract' -> proof-integrate on {this,contract}"] },
       { "dfMax": 10, "offFleetWronglyOwned": "2/12", "onFleetWronglyUnowned": "0/20" }
     ],
     "minDiscriminatingCalibration": [
@@ -208,18 +208,18 @@
     "answerShape": {
       "ok": true,
       "isError": false,
-      "neverNotFound": "not_found is for an unknown KEY (D7_9). The absence of an owner is a different fact from the absence of a key; collapsing them would leave loop-build's roster sweep unable to tell a typo from a decomposition smell.",
+      "neverNotFound": "not_found is for an unknown KEY (D7_9). The absence of an owner is a different fact from the absence of a key; collapsing them would leave proof-build's roster sweep unable to tell a typo from a decomposition smell.",
       "neverEmpty": "candidates[] is still populated with the top 3, each carrying its score and its zero-or-one discriminating terms, so the caller can see HOW nothing matched. An empty array is indistinguishable from a broken parse.",
       "requiredFields": ["queryDiscriminatingTerms", "topDiscriminatingCount", "decompositionSmell"],
-      "decompositionSmell": "No row of the 21-skill matrix matches this ask on two or more discriminating terms. Per .claude/skills/loop-build/SKILL.md:31, a task with no owning skill is a decomposition smell: split the task until each part has an owner, or record deliberately that it falls outside the fleet. Do not assign the highest-scoring row by default."
+      "decompositionSmell": "No row of the 21-skill matrix matches this ask on two or more discriminating terms. Per .claude/skills/proof-build/SKILL.md:31, a task with no owning skill is a decomposition smell: split the task until each part has an owner, or record deliberately that it falls outside the fleet. Do not assign the highest-scoring row by default."
     }
   },
 
   "D7_5_bothDirections": {
     "rule": "Every candidate returns BOTH its outbound edges and every inbound edge pointing at it.",
     "law": [
-      ".claude/skills/loop-skill/SKILL.md:47 — 'for every rated overlap, on *both* sides. A one-way pointer leaves the boundary decidable from one direction only.'",
-      ".claude/skills/loop-skill/references/authoring.md:69 — check the description 'against every neighbour's reciprocal pointer'",
+      ".claude/skills/proof-skill/SKILL.md:47 — 'for every rated overlap, on *both* sides. A one-way pointer leaves the boundary decidable from one direction only.'",
+      ".claude/skills/proof-skill/references/authoring.md:69 — check the description 'against every neighbour's reciprocal pointer'",
       "docs/design/README.md:18 — 'A description that stops encoding its half of an overlap makes that boundary one-way.'"
     ],
     "fields": {
@@ -227,7 +227,7 @@
       "pointedAtBy": "SYNTHESISED by scanning all N rows for edges targeting this skill. Each entry carries the pointer to where it is ACTUALLY stored — /matrix/{k}/useInsteadWhen/{m} — so the citation is real and not invented. Each is marked direction:'inbound'.",
       "reciprocity": "{ outDegree, inDegree, oneWayOut[], oneWayIn[] } — per candidate"
     },
-    "measuredNecessity": "22 of 76 edges are one-way today, and loop-skill and loop-frontend have in-degree 0 — nothing in the file ever says 'use loop-skill instead'. A caller who lands on loop-design and is never told loop-frontend diverts to it has been handed a boundary that is only half decidable.",
+    "measuredNecessity": "22 of 76 edges are one-way today, and proof-skill and proof-frontend have in-degree 0 — nothing in the file ever says 'use proof-skill instead'. A caller who lands on proof-design and is never told proof-frontend diverts to it has been handed a boundary that is only half decidable.",
     "cost": "A full N-row scan per candidate: 441 edge comparisons at N=21, inside the 1.45 ms. At 100 skills this is the first thing to index."
   },
 
@@ -246,7 +246,7 @@
     },
     "noParaphrase": "The proposition is the stored condition byte-for-byte. No model call, no rewriting, no synonym expansion, no interrogative transformation beyond the fixed ifTrue/ifFalse frame. The tool presents the file's sentence; it does not author one.",
     "nullBranchIsRequired": {
-      "rule": "Where no edge exists in either direction: storedDiscriminator:false, propositions:[], plus a notes[] entry naming the gap against loop-skill/SKILL.md:47.",
+      "rule": "Where no edge exists in either direction: storedDiscriminator:false, propositions:[], plus a notes[] entry naming the gap against proof-skill/SKILL.md:47.",
       "measuredFrequency": "161 of 210 unordered pairs have no stored discriminator. On the 20-query set the #1/#2 pair had both directions on 9, one direction on 4, and NONE on 7.",
       "why": "Fabricating a question for those 7 is the only genuinely dishonest act available to this tool."
     },
@@ -261,9 +261,9 @@
     },
     "theVindicatingMeasurement": {
       "query": "what is in this release and how risky is it",
-      "correct": "loop-audit",
-      "ranking": "WRONG — loop-ship 0.534, loop-audit 0.343 (margin 36%, outside any usable band)",
-      "returnedProposition": "[loop-ship] 'The ask is what is in the release and how risky it is, not how it reaches production.' -> if TRUE use loop-audit",
+      "correct": "proof-audit",
+      "ranking": "WRONG — proof-ship 0.534, proof-audit 0.343 (margin 36%, outside any usable band)",
+      "returnedProposition": "[proof-ship] 'The ask is what is in the release and how risky it is, not how it reaches production.' -> if TRUE use proof-audit",
       "conclusion": "The stored question is a near-verbatim restatement of the query. A caller who reads it gets the right answer from a wrong ranking. The ranking is a retrieval device for the question; the question is the answer."
     }
   },
@@ -276,7 +276,7 @@
       "from": { "type": "boolean" },
       "to": { "type": "string", "enum": ["current", "drifted", "unrecorded"] },
       "why": "A boolean cannot honestly describe the 3 rows with no approved text. `false` there asserts 'the live text matches what was approved' when nothing was approved — a silent default in ADR-0005's sense.",
-      "measuredToday": { "current": 16, "drifted": ["loop-algo", "loop-operate"], "unrecorded": ["loop-skill", "loop-frontend", "loop-build"] },
+      "measuredToday": { "current": 16, "drifted": ["proof-algo", "proof-operate"], "unrecorded": ["proof-skill", "proof-frontend", "proof-build"] },
       "notApplied": "tool-contracts.json is D3's deliverable from this same phase. Queued here alongside D5's unknown_task_kind and D6's width_undetermined / mode_not_priceable."
     }
   },
@@ -290,12 +290,12 @@
     ],
     "valuesToday": {
       "matrixSize": 21, "edgeCount": 76, "reciprocalEdges": 54, "oneWayEdges": 22,
-      "zeroInDegreeSkills": ["loop-skill", "loop-frontend"],
+      "zeroInDegreeSkills": ["proof-skill", "proof-frontend"],
       "overlapCount": 28, "ratedOverlapsOneWayInMatrix": 9,
-      "skillsWithNoApprovedDescription": ["loop-skill", "loop-frontend", "loop-build"],
-      "skillsWithNoRatedOverlap": ["loop-build"],
+      "skillsWithNoApprovedDescription": ["proof-skill", "proof-frontend", "proof-build"],
+      "skillsWithNoRatedOverlap": ["proof-build"],
       "pairsWithNoStoredDiscriminator": 161,
-      "descriptionDrift": ["loop-algo", "loop-operate"]
+      "descriptionDrift": ["proof-algo", "proof-operate"]
     },
     "why": "docs/design/README.md:19 says adding a skill means re-checking every overlap it touches, and :18 says a description that stops encoding its half of an overlap makes the boundary one-way. Both are currently unmet. A tool that reads the file that outranks the build manifest and reports none of this launders the debt into a confident-looking ranking.",
     "acceptedRisk": "It will be non-zero on every call until someone repairs the file, and may become wallpaper. It is REQUIRED rather than optional precisely so a repair commit visibly zeroes it."
@@ -304,17 +304,17 @@
   "D7_9_exactLookup": {
     "rule": "`skill:` alone is an exact key lookup. outcome:'exact'. The scorer never runs and `unowned` is never returned.",
     "absentKey": "not_found per mcp/tool-contracts.json D3.5_errorEnvelope — 'boundary_lookup on a skill absent from the 21-entry matrix'",
-    "why": "The absence of a KEY (a typo, a renamed skill, a stale plan) is a different fact from the absence of an OWNER (a decomposition smell). loop-build's roster sweep must be able to tell them apart."
+    "why": "The absence of a KEY (a typo, a renamed skill, a stale plan) is a different fact from the absence of an OWNER (a decomposition smell). proof-build's roster sweep must be able to tell them apart."
   },
 
   "D7_10_measuredQuality": {
-    "harness": "20 on-fleet queries (one per skill, loop-ship twice) + 12 deliberately off-fleet queries, run against the live docs/design/boundary-audit.json",
+    "harness": "20 on-fleet queries (one per skill, proof-ship twice) + 12 deliberately off-fleet queries, run against the live docs/design/boundary-audit.json",
     "onFleet": { "top1": "18/20", "top3": "19/20", "recallAt5": "20/20", "MRR": 0.935, "falselyUnowned": "0/20" },
     "offFleet": { "falselyOwned": "0/12" },
     "cost": { "ranking": "1.453 ms/call over 21 rows", "sourceReadAndParse": "1.478 ms/call for 71 KB", "cachingRuledOutBy": "ADR-0005 D5.3.7" },
     "determinism": "two identical calls return byte-identical structuredContent (19,265 bytes for a 5-candidate answer)",
     "knownCeiling": {
-      "case": "'why does this throw a null pointer on the second call' ranks loop-debug FIFTH",
+      "case": "'why does this throw a null pointer on the second call' ranks proof-debug FIFTH",
       "cause": "the query shares no discriminating term with an approved description written around 'a bug, a failing test, an exception or stack trace, a crash'",
       "consequence": "inside limit:5, outcome still 'candidates', top entry WRONG. This is the ceiling of a no-model no-embedding design.",
       "mitigation": "the speech act never claims the top entry is the owner, and the D3.8 fallback ('read docs/design/boundary-audit.json') is present in every answer"
@@ -328,19 +328,19 @@
     "G7.4 No float appears in the comparison path: the ranking function's reachable source contains no Math.log, no Math.pow, no `/` on Numbers used for ordering — static scan, same technique as ADR-0005 G5.7.",
     "G7.5 Determinism: the same query twice returns byte-identical structuredContent; and the ranking is invariant under shuffling the in-memory row array, since the final tie-break is the matrix index.",
     "G7.6 The 12 off-fleet queries in D7_4 all return outcome:'unowned'; the 20 on-fleet queries all return outcome:'candidates' with the expected skill inside limit:5.",
-    "G7.7 useInsteadWhen text is not scored: assert that a query built ONLY from /matrix/0/useInsteadWhen/0's condition does not rank loop-engine above loop-orchestrate.",
+    "G7.7 useInsteadWhen text is not scored: assert that a query built ONLY from /matrix/0/useInsteadWhen/0's condition does not rank proof-engine above proof-orchestrate.",
     "G7.8 For every candidate, pointedAtBy is complete — recompute the inbound edge set independently and assert set equality; and every pointedAtBy entry's pointer resolves to the asserted condition string in the file.",
     "G7.9 Every adjacent pair in the shortlist carries a separation object; where storedDiscriminator is true every proposition string is byte-identical to the file at its pointer; where false, propositions is [] and a notes[] entry names the gap.",
     "G7.10 A contrived query whose top-2 pair is one of the 161 pairs with no stored discriminator returns storedDiscriminator:false — assert the null branch actually executes rather than being dead code.",
     "G7.11 auditIntegrity is computed live: plant a synthetic 22nd matrix row in a SCRATCH COPY of the tree and assert matrixSize becomes 22 and DF_MAX becomes 5 (floor(22/4)); never mutate the repo.",
-    "G7.12 descriptionIsStale returns 'unrecorded' for loop-skill, loop-frontend and loop-build, 'drifted' for loop-algo and loop-operate, 'current' for the other 16.",
+    "G7.12 descriptionIsStale returns 'unrecorded' for proof-skill, proof-frontend and proof-build, 'drifted' for proof-algo and proof-operate, 'current' for the other 16.",
     "G7.13 Citation round-trip (inherits ADR-0003 D3.9): every citation's sha256 recomputes over the LF-normalised line range, and the excerpt is asserted NOT to JSON.parse standalone for a matrix row, since it is a fragment.",
     "G7.14 boundary_lookup with skill:'loop-nonexistent' returns ok:false code 'not_found' — never outcome:'unowned'.",
     "G7.15 The verdict string is never parsed: assert no result field is derived from /verdict other than a citation whose line range is exactly 742..742."
   ],
 
   "D7_12_notRuledHere": [
-    "Repairing the audit's 22 one-way edges, 9 one-way rated overlaps, 2 zero-in-degree skills, 3 missing approved descriptions, 2 drifted descriptions or loop-build's absent overlap rows. D7 rules on the TOOL, not the file; every one of these is reported by auditIntegrity and owned by nobody.",
+    "Repairing the audit's 22 one-way edges, 9 one-way rated overlaps, 2 zero-in-degree skills, 3 missing approved descriptions, 2 drifted descriptions or proof-build's absent overlap rows. D7 rules on the TOOL, not the file; every one of these is reported by auditIntegrity and owned by nobody.",
     "The wording of any consumer-router edit. ADR-0003 D3.8 keys fallbacks to call sites; D7 adds outcome:'unowned', which D3.8's table has no row for.",
     "Whether boundary_lookup should also read the live SKILL.md descriptions as a SECOND ranked corpus, since docs/c4/README.md:33 makes those the actual selector. D7 rules one authority in the ranking; a second, separately-reported ranking is a coherent future option and is not decided here.",
     "Synonym or stem handling. The tokenizer does no stemming; 'tests' and 'testing' are distinct terms. Measured impact was not isolated.",

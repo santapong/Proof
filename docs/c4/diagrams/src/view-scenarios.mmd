@@ -1,36 +1,30 @@
 ---
-title: "4+1 · Scenarios — the +1 view that ties the other four together"
+title: "4+1 · Scenarios — useful outcomes and their evidence"
 ---
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 35, "rankSpacing": 50}, "themeVariables": {"fontFamily": "Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "13px"}}}%%
 flowchart LR
-    subgraph s1["<b>S1 · Review a diff</b> — the everyday path"]
+    subgraph s1["<b>S1 · Review a diff</b>"]
         direction TB
-        a1["invoke /loop-review"] --> a2["router + 2 references load<br/><i>logical</i>"] --> a3["finders fan out,<br/>verifiers refute<br/><i>process</i>"] --> a4["gate: findings + ledger<br/><i>process</i>"]
+        a1["/proof:proof-review"] --> a2["Pin source scope<br/>and load needed references"] --> a3["Inline if sufficient;<br/>authorized Workflow for justified breadth"] --> a4["Supported findings + check scope;<br/>read-only review"]
     end
-
-    subgraph s2["<b>S2 · Add a skill</b> — the contributor path"]
+    subgraph s2["<b>S2 · Extend the framework</b>"]
         direction TB
-        b1["/loop-skill authors it"] --> b2["boundary audit updated<br/><i>logical</i>"] --> b3["3 gates run in CI<br/><i>development</i>"] --> b4["red on a dangling pointer<br/>into a held-back skill<br/><i>development</i>"]
+        b1["/proof:proof-skill"] --> b2["Boundary and neighbor review"] --> b3["Source + package gates"] --> b4["Local evidence;<br/>CI after an authorized push"]
     end
-
-    subgraph s3["<b>S3 · Run unattended</b> — the autonomy path"]
+    subgraph s3["<b>S3 · Maintain a repository</b>"]
         direction TB
-        c1["Routine fires on a schedule<br/><i>physical</i>"] --> c2["reads issues, PRs, CI<br/><i>logical</i>"] --> c3["opens a draft PR<br/>with tests"] --> c4["a human merges — or does not<br/><i>process</i>"]
+        c1["Configured, authorized runner"] --> c2["Bounded feedback intake"] --> c3["Dry proposals by default;<br/>remote drafts only when authorized"] --> c4["Human review / merge decision;<br/>no automatic promotion"]
     end
-
-    subgraph s4["<b>S4 · Install on another host</b> — the portability path"]
+    subgraph s4["<b>S4 · Install a reduced pack</b>"]
         direction TB
-        d1["pack-host.mjs generates<br/>dist/cursor/<br/><i>development</i>"] --> d2["copied into .cursor/skills/<br/><i>physical</i>"] --> d3["21 of 25 skills route;<br/>MCP tools answer<br/><i>logical</i>"] --> d4["no fan-out — the host note<br/>says so<br/><i>process</i>"]
+        d1["Generate 22 knowledge skills<br/>and MCP configuration fragment"] --> d2["Review source paths / settings;<br/>install in the target host"] --> d3["Sequential knowledge path;<br/>Workflow executor excluded"] --> d4["Qualify native discovery,<br/>MCP and an actual task"]
     end
-
-    classDef step fill:#BFDBFE,stroke:#1D4ED8,stroke-width:2px,color:#0C1B33
-    classDef gatestep fill:#FDE68A,stroke:#B45309,stroke-width:2px,color:#000
-    classDef planned fill:#FAFAF9,stroke:#A8A29E,stroke-width:2px,stroke-dasharray:6 4,color:#57534E
-    class a1,a2,a3,b1,b2,b3,c1,c2,c3 step
-    class a4,b4,c4 gatestep
-    class d1,d2,d3,d4 planned
-    style s1 fill:#EFF6FF,stroke:#93C5FD,stroke-width:2px
-    style s2 fill:#EFF6FF,stroke:#93C5FD,stroke-width:2px
-    style s3 fill:#EFF6FF,stroke:#93C5FD,stroke-width:2px
-    style s4 fill:#FAFAF9,stroke:#A8A29E,stroke-width:2px,stroke-dasharray:6 4
-    linkStyle default stroke:#5F5F5F,stroke-width:1.5px,color:#57534E
+    %% Invisible edges order independent scenario panels; they are not task dependencies.
+    s1 ~~~ s2 ~~~ s3 ~~~ s4
+    classDef step fill:#D8F1EE,stroke:#0F766E,color:#102F35
+    classDef gate fill:#FEF3C7,stroke:#B45309,color:#422006
+    class a1,a2,a3,b1,b2,b3,c1,c2,c3,d1,d2,d3 step
+    class a4,b4,c4,d4 gate
+    style s1 fill:#F1F9F7,stroke:#8BC8C1
+    style s2 fill:#F1F9F7,stroke:#8BC8C1
+    style s3 fill:#F1F9F7,stroke:#8BC8C1
+    style s4 fill:#FAFAF9,stroke:#A8A29E,stroke-dasharray:6 4

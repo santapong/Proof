@@ -79,8 +79,8 @@ import {
 
 const HERE = path.dirname(fileURLToPath(import.meta.url)) // mcp/lib
 const DEFAULT_ROOT = path.resolve(HERE, '..', '..') // repo root, two levels up from mcp/lib
-const MODES_DOC_REL = path.join('.claude', 'skills', 'loop-engine', 'references', 'execution-modes.md')
-const SERVER_VERSION = '0.2.0'
+const MODES_DOC_REL = path.join('.claude', 'skills', 'proof-engine', 'references', 'execution-modes.md')
+const SERVER_VERSION = '0.3.0-beta.1'
 
 function resolveRoot(root) {
   return root ? path.resolve(root) : DEFAULT_ROOT
@@ -310,7 +310,7 @@ const DEPRECATION_MESSAGE =
   'The v1.1 mode names are a deprecated compatibility shim (§M9.6). Prefer lite|balanced|all-out; the aliases are removed in the next major.'
 
 const FALLBACK_TEXT =
-  'Read .claude/skills/loop-engine/references/execution-modes.md §M3 (:77) for the routing table and §M5 (:126) for width, and copy the §M8 block (:303) verbatim. This is the instruction those two files already carry; the tool changes nothing about it.'
+  'Read .claude/skills/proof-engine/references/execution-modes.md §M3 (:77) for the routing table and §M5 (:126) for width, and copy the §M8 block (:303) verbatim. This is the instruction those two files already carry; the tool changes nothing about it.'
 
 const PLANNER_VALUES = Object.freeze(['opus', 'fable'])
 
@@ -457,7 +457,7 @@ function routeNode(rawInput, options = {}) {
       internalResult: cross,
       citations: crossCitations.length ? dedupeCitations(crossCitations) : [withResourceUri(m8.citation)],
       fixText: cross.fix,
-      fallbackText: 'Do not trust either file in isolation until this is fixed. Read .claude/skills/loop-engine/references/execution-modes.md §M3 (:77) AND §M8 (:303) and compare them by hand.',
+      fallbackText: 'Do not trust either file in isolation until this is fixed. Read .claude/skills/proof-engine/references/execution-modes.md §M3 (:77) AND §M8 (:303) and compare them by hand.',
     })
   }
 
@@ -478,7 +478,7 @@ function routeNode(rawInput, options = {}) {
         code: 'unknown_mode',
         message: modeResult.error,
         fix: `pass one of ${modeResult.valid.join(', ')} (or omit mode for the balanced default)`,
-        fallback: 'Read .claude/skills/loop-engine/references/execution-modes.md §M2:59 for the mode grammar.',
+        fallback: 'Read .claude/skills/proof-engine/references/execution-modes.md §M2:59 for the mode grammar.',
       },
     }
   }
@@ -503,7 +503,7 @@ function routeNode(rawInput, options = {}) {
         code: 'unknown_task_kind',
         message: routeResult.error,
         fix: `pass one of ${routeResult.valid.join(', ')}`,
-        fallback: 'Read .claude/skills/loop-engine/references/execution-modes.md §M3 (:77) for the ten node kinds.',
+        fallback: 'Read .claude/skills/proof-engine/references/execution-modes.md §M3 (:77) for the ten node kinds.',
       },
     }
   }
@@ -568,7 +568,7 @@ function routeNode(rawInput, options = {}) {
             message: wm6.error,
             fix: 'pass askIsThorough:true or askIsThorough:false',
             details: [{ field: 'askIsThorough', issue: wm6.error }],
-            fallback: 'Read .claude/skills/loop-engine/references/execution-modes.md §M6:188-191 and decide by hand whether the ask is thorough / audit / comprehensive.',
+            fallback: 'Read .claude/skills/proof-engine/references/execution-modes.md §M6:188-191 and decide by hand whether the ask is thorough / audit / comprehensive.',
           },
         }
       }
@@ -592,7 +592,7 @@ function routeNode(rawInput, options = {}) {
 
   if (!agreesWithM8) {
     notes.push(
-      `width disagrees with the literal §M8 WIDTH('${input.taskType}') under mode '${mode}': the §M5/§M6-correct width is ${widthValue} (width.value), but the ROUTES block's own WIDTH() function would compute ${m8WidthResult.width} (width.m8WidthWouldSay). This is a KNOWN, disclosed gap, not a bug in this answer — ADR-0006 §C1/§C2: WIDTH's domain is adversarial-verify nodes only and it is wrong when called outside that domain, which is exactly what four live template call sites do today (loop-orchestrate/templates/project-plan.workflow.js:290,420 and loop-build/templates/v1-conductor.workflow.js:208,332, both in their cast-ledger and JSON-ledger rows). This tool reports the §M5/§M6-correct value in width.value and the literal block's answer in width.m8WidthWouldSay precisely so the two can be told apart.`
+      `width disagrees with the literal §M8 WIDTH('${input.taskType}') under mode '${mode}': the §M5/§M6-correct width is ${widthValue} (width.value), but the ROUTES block's own WIDTH() function would compute ${m8WidthResult.width} (width.m8WidthWouldSay). This is a KNOWN, disclosed gap, not a bug in this answer — ADR-0006 §C1/§C2: WIDTH's domain is adversarial-verify nodes only and it is wrong when called outside that domain, which is exactly what four live template call sites do today (proof-orchestrate/templates/project-plan.workflow.js:290,420 and proof-build/templates/v1-conductor.workflow.js:208,332, both in their cast-ledger and JSON-ledger rows). This tool reports the §M5/§M6-correct value in width.value and the literal block's answer in width.m8WidthWouldSay precisely so the two can be told apart.`
     )
   }
 

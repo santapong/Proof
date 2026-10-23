@@ -7,7 +7,7 @@
     "name": "proof-mcp",
     "version": "0.2.0",
     "toolNamePrefix": "mcp__proof-mcp__",
-    "toolNamePrefixSource": ".claude/skills/loop-harness/references/permissions.md:51 — `mcp__<server>__<tool>`; wildcards are for deny/ask only, so an allow-list must enumerate all five",
+    "toolNamePrefixSource": ".claude/skills/proof-harness/references/permissions.md:51 — `mcp__<server>__<tool>`; wildcards are for deny/ask only, so an allow-list must enumerate all five",
     "capabilities": { "tools": {}, "resources": {} },
     "capabilitiesNote": "resources declares neither `subscribe` nor `listChanged` — the surface is read-only and static for the process lifetime. No prompts, no sampling, no elicitation, no completions (deferred by D1)."
   },
@@ -15,7 +15,7 @@
   "D3.0_scopeRule": {
     "authoringTimeOnly": true,
     "statement": "All five tools are authoring-time aids consumed by the orchestrating session while it WRITES a workflow template or a skill. None is reachable from inside a running workflow script.",
-    "why": "H10 (.claude/skills/loop-engine/references/harness-policy.md:76-81) — `No filesystem or Node.js API access inside scripts`. The sandbox exposes ambient globals and nothing else; there is no MCP client, no fetch, no require, no import.",
+    "why": "H10 (.claude/skills/proof-engine/references/harness-policy.md:76-81) — `No filesystem or Node.js API access inside scripts`. The sandbox exposes ambient globals and nothing else; there is no MCP client, no fetch, no require, no import.",
     "measuredGlobals": ["agent", "parallel", "pipeline", "log", "phase", "budget", "args", "console"],
     "measuredGlobalsSource": "scripts/smoke.mjs:79 — new AsyncFunction('agent','parallel','pipeline','log','phase','budget','args','console', src)",
     "measuredGlobalsCaveat": "smoke.mjs is a STUB of the Workflow runtime, so this is evidence of what templates consume, not a published spec of what the runtime provides. No identifier `workflow` appears anywhere in the repo as a callable global. The unreachability conclusion does not depend on the exact list: H10 removes the filesystem and the module system, which removes every transport an MCP client could use.",
@@ -63,7 +63,7 @@
       "additionalProperties": false,
       "required": ["file", "section", "startLine", "endLine", "sha256", "resourceUri"],
       "properties": {
-        "file": { "type": "string", "description": "Repo-relative POSIX path, e.g. .claude/skills/loop-engine/references/execution-modes.md" },
+        "file": { "type": "string", "description": "Repo-relative POSIX path, e.g. .claude/skills/proof-engine/references/execution-modes.md" },
         "section": { "type": "string", "description": "Markdown: the nearest enclosing ATX heading, verbatim, e.g. '## M8. Mapping mode to `agent()` opts — the canonical `ROUTES` block'. JSON: the RFC 6901 pointer to the cited node, e.g. '/matrix/3/scope'." },
         "startLine": { "type": "integer", "minimum": 1, "description": "1-indexed, inclusive." },
         "endLine": { "type": "integer", "minimum": 1, "description": "1-indexed, inclusive. For a JSON source, bounds the smallest enclosing object." },
@@ -124,7 +124,7 @@
 
   "D3.5_errorEnvelope": {
     "rule": "ONE error envelope for all five tools. A domain failure is a SUCCESSFUL tools/call result carrying isError:true — never a JSON-RPC error object. (mcp/runtime-pin.json protocol.domainFailureShape.)",
-    "houseStyle": "Follows .claude/skills/loop-design/references/api-design.md:99-113 — one shape everywhere, machine-readable `code`, human `message`, optional per-field `details`. Two deltas, both deliberate: `request_id` is dropped (JSON-RPC already carries a correlating `id` at the transport layer, and inventing a second identifier that correlates with nothing is cargo), and `fix` is added to match the imperative-fix shape ADR-0002 §D2.4 pinned for boot failures, so a user reads the same `what failed — value · fix: imperative` grammar on stderr and in band.",
+    "houseStyle": "Follows .claude/skills/proof-design/references/api-design.md:99-113 — one shape everywhere, machine-readable `code`, human `message`, optional per-field `details`. Two deltas, both deliberate: `request_id` is dropped (JSON-RPC already carries a correlating `id` at the transport layer, and inventing a second identifier that correlates with nothing is cargo), and `fix` is added to match the imperative-fix shape ADR-0002 §D2.4 pinned for boot failures, so a user reads the same `what failed — value · fix: imperative` grammar on stderr and in band.",
     "protocolSeam": {
       "jsonRpcMinus32602": "Reserved for SHAPE violations the schema itself rejects: unknown property under additionalProperties:false, wrong JSON type, missing required property. Analogous to api-design.md's 400.",
       "isErrorEnvelope": "Everything semantic: shape-valid input the server cannot answer. Analogous to api-design.md's 422. This includes an unknown skill name, an unreadable source doc, and a gate that would not start.",
@@ -169,12 +169,12 @@
     {
       "name": "route_node",
       "title": "Route a workflow node (§M3/§M8)",
-      "description": "Resolve the model, effort, verifier width and dry-limit a workflow node gets under a given mode, parsed live from loop-engine/references/execution-modes.md §M3 and §M8, with the file, section and line range cited for every value. Authoring-time only: this explains what the canonical ROUTES block will compute at run time. It does NOT replace the block — a routed template must still carry §M8 verbatim, and scripts/validate.mjs check 5 fails any bare model:/effort: literal outside it.",
+      "description": "Resolve the model, effort, verifier width and dry-limit a workflow node gets under a given mode, parsed live from proof-engine/references/execution-modes.md §M3 and §M8, with the file, section and line range cited for every value. Authoring-time only: this explains what the canonical ROUTES block will compute at run time. It does NOT replace the block — a routed template must still carry §M8 verbatim, and scripts/validate.mjs check 5 fails any bare model:/effort: literal outside it.",
       "annotations": { "readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false },
       "sources": [
-        { "file": ".claude/skills/loop-engine/references/execution-modes.md", "section": "§M3", "atLine": 77, "for": "the per-node-kind routing table" },
-        { "file": ".claude/skills/loop-engine/references/execution-modes.md", "section": "§M5", "atLine": 126, "for": "width and DRY_LIMIT" },
-        { "file": ".claude/skills/loop-engine/references/execution-modes.md", "section": "§M8", "atLine": 303, "for": "the canonical ROUTES block; extracted with the same algorithm as scripts/validate.mjs:446 canonicalBlock()" }
+        { "file": ".claude/skills/proof-engine/references/execution-modes.md", "section": "§M3", "atLine": 77, "for": "the per-node-kind routing table" },
+        { "file": ".claude/skills/proof-engine/references/execution-modes.md", "section": "§M5", "atLine": 126, "for": "width and DRY_LIMIT" },
+        { "file": ".claude/skills/proof-engine/references/execution-modes.md", "section": "§M8", "atLine": 303, "for": "the canonical ROUTES block; extracted with the same algorithm as scripts/validate.mjs:446 canonicalBlock()" }
       ],
       "inputSchema": {
         "type": "object",
@@ -251,7 +251,7 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "skill": { "type": "string", "description": "A skill name as it appears in /matrix, e.g. loop-design." },
+          "skill": { "type": "string", "description": "A skill name as it appears in /matrix, e.g. proof-design." },
           "against": { "type": "string", "description": "Restrict overlaps to the pair (skill, against)." },
           "query": { "type": "string", "description": "Free text matched case-insensitively against scope, useInsteadWhen conditions, overlap risk and resolution." },
           "include": {
@@ -298,9 +298,9 @@
       "description": "Run §M6's deterministic pre-flight arithmetic over an authored DAG: agents per node, the low-high output-token band, the same DAG priced at the comparison mode, the ≤15-agent split check and the --budget refusal check. Returns the four-part table and the exact confirmation sentence. It does NOT ask the human and it cannot: the question belongs to the orchestrating session, and no agent may spawn before the answer.",
       "annotations": { "readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false },
       "sources": [
-        { "file": ".claude/skills/loop-engine/references/execution-modes.md", "section": "§M6", "atLine": 164, "for": "the pre-flight contract, the formula, the confirmation sentence" },
-        { "file": ".claude/skills/loop-engine/references/execution-modes.md", "section": "§M6 BAND table", "atLine": 209, "for": "per-agent output-token bands, both columns" },
-        { "file": ".claude/skills/loop-engine/references/execution-modes.md", "section": "§M6 SIZE", "atLine": 225, "for": "compact x0.4, standard x1, long-form x3" }
+        { "file": ".claude/skills/proof-engine/references/execution-modes.md", "section": "§M6", "atLine": 164, "for": "the pre-flight contract, the formula, the confirmation sentence" },
+        { "file": ".claude/skills/proof-engine/references/execution-modes.md", "section": "§M6 BAND table", "atLine": 209, "for": "per-agent output-token bands, both columns" },
+        { "file": ".claude/skills/proof-engine/references/execution-modes.md", "section": "§M6 SIZE", "atLine": 225, "for": "compact x0.4, standard x1, long-form x3" }
       ],
       "inputSchema": {
         "type": "object",
@@ -437,7 +437,7 @@
               "newFailures": { "type": "array", "items": { "type": "string" }, "description": "Failures NOT in the recorded baseline — the only ones the caller caused." },
               "citation": { "$ref": "#/D3.2_citation/schema" }
             },
-            "description": "REQUIRED. smoke.mjs is red on develop @ 4dd461a for a pre-existing reason recorded in runtime-pin.json (loop-build v1-conductor: declares a planner node but --planner fable never routed to claude-fable-5). Without this field every caller rediscovers that failure and misattributes it to their own change."
+            "description": "REQUIRED. smoke.mjs is red on develop @ 4dd461a for a pre-existing reason recorded in runtime-pin.json (proof-build v1-conductor: declares a planner node but --planner fable never routed to claude-fable-5). Without this field every caller rediscovers that failure and misattributes it to their own change."
           }
         }
       },
@@ -452,12 +452,12 @@
       "sources": [{ "file": ".claude/skills/*/references/standards.md", "count": 21, "for": "one shelf per skill" }],
       "measuredHeterogeneity": {
         "note": "MEASURED at head 4dd461a, not assumed. The 21 shelves are NOT uniformly structured, so this tool must degrade rather than promise rows it cannot produce.",
-        "shelvesWithZeroMarkdownTableRows": ["loop-incident", "loop-operate"],
-        "shelvesLackingTheThreeGradeVocabulary": ["loop-algo", "loop-frontend", "loop-integrate", "loop-ship", "loop-skill", "loop-build"],
+        "shelvesWithZeroMarkdownTableRows": ["proof-incident", "proof-operate"],
+        "shelvesLackingTheThreeGradeVocabulary": ["proof-algo", "proof-frontend", "proof-integrate", "proof-ship", "proof-skill", "proof-build"],
         "gradeVocabularyPresentIn": "15 of 21",
         "confirmationLogPresentIn": "21 of 21",
-        "smallestShelf": "loop-build — 17 lines, 6 table rows, 1 H2 heading",
-        "consequence": "A table-row parser returns NOTHING for loop-incident and loop-operate, whose shelves are prose under H2 headings. So the contract is: parse Markdown table rows where they exist; otherwise return the H2 section's raw text with parsed:false. Never guess a row out of prose, and never report an empty shelf as an empty SHELF when it is an unparsed one."
+        "smallestShelf": "proof-build — 17 lines, 6 table rows, 1 H2 heading",
+        "consequence": "A table-row parser returns NOTHING for proof-incident and proof-operate, whose shelves are prose under H2 headings. So the contract is: parse Markdown table rows where they exist; otherwise return the H2 section's raw text with parsed:false. Never guess a row out of prose, and never report an empty shelf as an empty SHELF when it is an unparsed one."
       },
       "inputSchema": {
         "type": "object",
@@ -486,7 +486,7 @@
                 "section": { "type": "string", "description": "The H2 heading verbatim." },
                 "parsed": { "type": "boolean", "description": "true = a Markdown table row was parsed into fields. false = the section is prose and rawText carries it." },
                 "standard": { "type": "string" }, "body": { "type": "string" },
-                "edition": { "type": "string", "description": "Verbatim as written. Includes 'unconfirmed as of <date>' when that is what the shelf says — loop-skill SKILL.md step 4 requires that form rather than an asserted edition." },
+                "edition": { "type": "string", "description": "Verbatim as written. Includes 'unconfirmed as of <date>' when that is what the shelf says — proof-skill SKILL.md step 4 requires that form rather than an asserted edition." },
                 "grade": { "type": "string", "enum": ["yes", "draft", "no", "unstated"] },
                 "role": { "type": "string" },
                 "rawText": { "type": "string", "description": "Present when parsed is false." },
@@ -497,7 +497,7 @@
           "unparsedSections": { "type": "array", "items": { "type": "object", "required": ["skill", "section", "reason"], "properties": { "skill": { "type": "string" }, "section": { "type": "string" }, "reason": { "type": "string" } }, "additionalProperties": false }, "description": "REQUIRED. What the parser could not turn into rows. Omitting this turns a parser limitation into an apparent absence of standards." },
           "shelfConfirmation": { "type": "object", "additionalProperties": false, "properties": { "confirmedOn": { "type": "string" }, "recheckCadence": { "type": "string" }, "openItems": { "type": "array", "items": { "type": "string" } }, "citation": { "$ref": "#/D3.2_citation/schema" } }, "description": "The shelf's own confirmation log — present on 21 of 21." },
           "shelvesSearched": { "type": "integer" },
-          "authorityNote": { "type": "string", "const": "This reports what the shelf SAYS and when the shelf last checked, never what is true today. Editions rot; the shelves say so and set a re-check cadence. Confirm against a primary source before citing an edition in a deliverable — loop-skill SKILL.md step 4: confirm every version, edition, licence and date against a primary source, not from memory." }
+          "authorityNote": { "type": "string", "const": "This reports what the shelf SAYS and when the shelf last checked, never what is true today. Editions rot; the shelves say so and set a re-check cadence. Confirm against a primary source before citing an edition in a deliverable — proof-skill SKILL.md step 4: confirm every version, edition, licence and date against a primary source, not from memory." }
         }
       }
     }
@@ -531,7 +531,7 @@
 
   "D3.8_callSitesAndFallbacks": {
     "rule": "NON-NEGOTIABLE (task requirement 3). Every call site states its fallback, because NOT CONNECTED is the default state, not the edge case.",
-    "why": "A project .mcp.json requires a workspace-trust approval the first time a repo is opened (.claude/skills/loop-harness/references/mcp.md:55). A fresh checkout therefore has the server present in the file and absent from the session until a human approves it. There is also no .mcp.json in the repo at head 4dd461a, so today the answer is always 'absent'.",
+    "why": "A project .mcp.json requires a workspace-trust approval the first time a repo is opened (.claude/skills/proof-harness/references/mcp.md:55). A fresh checkout therefore has the server present in the file and absent from the session until a human approves it. There is also no .mcp.json in the repo at head 4dd461a, so today the answer is always 'absent'.",
     "bindingConstraints": [
       "Every router edit is ADDITIVE and CONDITIONAL: 'if proof-mcp is connected, X; otherwise Y'. Y must be the instruction that is there today, unchanged.",
       "No router may make a tool call mandatory, and no step may be reachable only through a tool.",
@@ -541,38 +541,38 @@
     "sites": [
       {
         "tool": "route_node",
-        "callSites": [".claude/skills/loop-engine/SKILL.md step 2 (:32-36) and the authoring steps", ".claude/skills/loop-orchestrate/SKILL.md step 2 item 3 (:43)"],
-        "fallback": "Read .claude/skills/loop-engine/references/execution-modes.md §M3 (:77) for the routing table and §M5 (:126) for width, and copy the §M8 block (:303) verbatim. This is the instruction those two files already carry; the tool changes nothing about it.",
+        "callSites": [".claude/skills/proof-engine/SKILL.md step 2 (:32-36) and the authoring steps", ".claude/skills/proof-orchestrate/SKILL.md step 2 item 3 (:43)"],
+        "fallback": "Read .claude/skills/proof-engine/references/execution-modes.md §M3 (:77) for the routing table and §M5 (:126) for width, and copy the §M8 block (:303) verbatim. This is the instruction those two files already carry; the tool changes nothing about it.",
         "degradation": "None of substance. The tool saves reading a 439-line file and adds a line-cited answer; it removes no capability."
       },
       {
         "tool": "estimate_phase",
-        "callSites": [".claude/skills/loop-engine/SKILL.md:82-86", ".claude/skills/loop-orchestrate/SKILL.md:134-138"],
+        "callSites": [".claude/skills/proof-engine/SKILL.md:82-86", ".claude/skills/proof-orchestrate/SKILL.md:134-138"],
         "fallback": "Do §M6's arithmetic by hand against the BAND table (:209) and SIZE (:225). This is the status quo and it is fully specified — §M6 is deliberately pure arithmetic over literals precisely so it can be done without tooling.",
         "degradation": "Arithmetic done by a language model by hand is the error-prone part, so this is the tool with the largest real benefit and it is still only an accuracy improvement, never a capability."
       },
       {
         "tool": "boundary_lookup",
-        "callSites": [".claude/skills/loop-skill/SKILL.md step 3 (:40)", ".claude/skills/loop-build/SKILL.md step 3 (:20) — the roster sweep already says to walk ../../../docs/design/boundary-audit.json"],
+        "callSites": [".claude/skills/proof-skill/SKILL.md step 3 (:40)", ".claude/skills/proof-build/SKILL.md step 3 (:20) — the roster sweep already says to walk ../../../docs/design/boundary-audit.json"],
         "fallback": "Read docs/design/boundary-audit.json. It is 743 lines of JSON and grep-friendly.",
-        "degradation": "Real for loop-build's roster sweep, which walks all 21 entries — that is a lot of context to pull in whole. The fallback is correct but expensive."
+        "degradation": "Real for proof-build's roster sweep, which walks all 21 entries — that is a lot of context to pull in whole. The fallback is correct but expensive."
       },
       {
         "tool": "run_gate",
-        "callSites": [".claude/skills/loop-skill/SKILL.md step 6 (:70-78)"],
+        "callSites": [".claude/skills/proof-skill/SKILL.md step 6 (:70-78)"],
         "fallback": "Run `node scripts/validate.mjs` in Bash. Identical result.",
         "degradation": "Essentially none — which makes run_gate the weakest of the five on value. It earns its place on the parsed verdict and the baseline comparison, not on access."
       },
       {
         "tool": "standards_shelf",
-        "callSites": [".claude/skills/loop-skill/SKILL.md step 4 (:54-60)"],
+        "callSites": [".claude/skills/proof-skill/SKILL.md step 4 (:54-60)"],
         "fallback": "Read .claude/skills/<skill>/references/standards.md.",
         "degradation": "None, and given the measured heterogeneity of the 21 shelves the fallback is frequently BETTER than the tool — prose sections come back as raw text either way, and a human reading the file loses nothing."
       }
     ],
     "consumerRouterCount": {
-      "four": ["loop-engine", "loop-orchestrate", "loop-skill", "loop-build"],
-      "derivation": "These are the four skills whose steps already read the five source documents: loop-engine and loop-orchestrate are the only two flag parsers and the only two that run the §M6 pre-flight (§M2:63); loop-skill owns boundary registration, the standards shelf and the validate gate (its steps 3, 4 and 6); loop-build walks boundary-audit.json for the roster sweep (:20). No other skill has a step that reads these files.",
+      "four": ["proof-engine", "proof-orchestrate", "proof-skill", "proof-build"],
+      "derivation": "These are the four skills whose steps already read the five source documents: proof-engine and proof-orchestrate are the only two flag parsers and the only two that run the §M6 pre-flight (§M2:63); proof-skill owns boundary registration, the standards shelf and the validate gate (its steps 3, 4 and 6); proof-build walks boundary-audit.json for the roster sweep (:20). No other skill has a step that reads these files.",
       "status": "DERIVED, not previously ruled. If the approved v1 line meant a different four, this is the set to correct."
     }
   },

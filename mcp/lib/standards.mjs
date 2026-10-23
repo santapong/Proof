@@ -5,15 +5,15 @@
 // collapsing into 6 families (bold paragraph, bold bullet, H2 heading, "Re-check cadence and
 // confirmation log" heading, a numbered list item, and four shelves that point at "the foot" from a
 // preamble line rather than announcing the log where they name it), two shelves with zero Markdown
-// table rows (loop-incident, loop-operate — prose under bold field labels instead of a table), and at
-// least one shelf (loop-engine) that is a mapping table plus six prose sections, none of them carrying
+// table rows (proof-incident, proof-operate — prose under bold field labels instead of a table), and at
+// least one shelf (proof-engine) that is a mapping table plus six prose sections, none of them carrying
 // a per-row Authoritative column at all.
 //
 // Zero MCP types live here, same discipline as mcp/lib/modes.mjs, mcp/lib/estimate.mjs and
 // mcp/lib/boundary.mjs: this module knows nothing about JSON-RPC, tool schemas or envelopes — it
 // locates and parses 21 Markdown files and hands back plain data. Testable with `node -e` alone:
 //
-//   node -e 'import("./mcp/lib/standards.mjs").then(m => console.log(m.readStandardsShelf(undefined, "loop-build").ok))'
+//   node -e 'import("./mcp/lib/standards.mjs").then(m => console.log(m.readStandardsShelf(undefined, "proof-build").ok))'
 //
 // (double-quoted specifier above deliberately, so this doc comment does not itself match
 // ADR-0002 §D2.3.6's assertNoDependencies() grep for a single-quoted import(...) specifier)
@@ -33,13 +33,13 @@
 // parsed, and the section comes back with parsed:true entries; or NONE of it does, and the section
 // comes back as one raw-text entry in unparsedSections naming the reason. "Half a table is the worst
 // possible answer" — a caller cannot distinguish "this shelf has four standards" from "this shelf has
-// nine and five rows failed a regex." This is also exactly how loop-engine's lineage table (a mapping
+// nine and five rows failed a regex." This is also exactly how proof-engine's lineage table (a mapping
 // table with no Standard-name or Authoritative column) and its six prose sub-sections are handled —
 // they are returned as sections, never forced into a row shape they do not have.
 //
 // The confirmation-log extractor below is a coordinate-plus-content walk, not a per-file special case:
-// it tries an H2 heading whose text contains "confirmation log" (catches loop-build's bare "## Confirmation
-// log" and loop-design's "## Re-check cadence and confirmation log") first, because a heading changes
+// it tries an H2 heading whose text contains "confirmation log" (catches proof-build's bare "## Confirmation
+// log" and proof-design's "## Re-check cadence and confirmation log") first, because a heading changes
 // what content to return (the whole section) rather than one line; failing that, it scans the WHOLE
 // document for a line beginning (optionally after a `-` bullet or `N.` numbered marker) with the bold
 // token `**Confirmation log`, and takes the LAST such match — "at the foot" in every shelf that phrases
@@ -138,7 +138,7 @@ function citeSpan(relFile, lines, section, startLine, endLine) {
 
 function locateStandardsDoc(root, skill) {
   if (typeof skill !== 'string' || skill.trim() === '') {
-    return { ok: false, code: 'invalid_argument', error: 'skill must be a non-empty string', fix: 'Pass skill as a directory name under .claude/skills, e.g. "loop-design".' }
+    return { ok: false, code: 'invalid_argument', error: 'skill must be a non-empty string', fix: 'Pass skill as a directory name under .claude/skills, e.g. "proof-design".' }
   }
   const file = standardsDocPath(root, skill)
   const relFile = relPosix(root, file)
@@ -264,7 +264,7 @@ function classifyColumn(normalizedLabel) {
 // normalizeGradeCell — strict. Strips markdown, takes the leading token, maps it to the D3.6 enum
 // {yes, draft, no}, or returns null if the cell does not cleanly say one of those (ADR-0005: never
 // guess). Handles both vocabularies measured across the 21 shelves: "**Yes**" / "**Draft**" / "**No**"
-// (the prose-legend form) and "**true**" / "**false**" (loop-algo's/loop-pattern's `authoritative: true`
+// (the prose-legend form) and "**true**" / "**false**" (proof-algo's/proof-pattern's `authoritative: true`
 // flag form — no shelf uses a bare `draft` boolean, which is consistent with every shelf's own claim
 // that "no entry on this shelf carries this grade" wherever it applies).
 function normalizeGradeCell(cell) {
@@ -320,8 +320,8 @@ function parseStandardsTable(table) {
 // Public: parseSection — the atomic unit (ADR-0005 §D5.3.5). Tries the section's first table; on
 // success returns { parsed:true, entries:[...] } with one citation per row; on failure (no table, or
 // a table that fails the grade-column requirement) returns { parsed:false, rawText, reason } for the
-// WHOLE section — this is the "return sections rather than failing" behavior loop-engine's lineage
-// table and six prose sub-sections both exercise, and the same path loop-incident/loop-operate's
+// WHOLE section — this is the "return sections rather than failing" behavior proof-engine's lineage
+// table and six prose sub-sections both exercise, and the same path proof-incident/proof-operate's
 // zero-table-row prose sections take.
 // ---------------------------------------------------------------------------
 
@@ -379,7 +379,7 @@ const CONFIRMATION_INLINE_RE = /^(?:-\s+|\d+\.\s+)?\*\*Confirmation log\b/
 const CONFIRMED_ON_INLINE_RE = /Confirmation log\s*[—-]\s*(\d{4}-\d{2}-\d{2})/i
 const CONFIRMED_ON_HEADING_RE = /confirmed[^.\n]*?\bon\s+(\d{4}-\d{2}-\d{2})/i
 // Each pattern tolerates a bold marker (`**`) landing between two words of the phrase itself — e.g.
-// loop-integrate's "**not** independently re-confirmed" bolds only the first word — by allowing an
+// proof-integrate's "**not** independently re-confirmed" bolds only the first word — by allowing an
 // optional `\*{0,2}\s*` between tokens rather than requiring the caveat phrase to be one contiguous
 // unmarked run of text.
 const OPEN_ITEM_MARKER_PATTERNS = [
@@ -403,8 +403,8 @@ function lineHasOpenItemMarker(line) {
   return findOpenItemMarker(line) !== -1
 }
 
-// Public: locateConfirmationLog — try the H2-heading shape first (loop-build's bare "## Confirmation
-// log", loop-design's "## Re-check cadence and confirmation log"), then the inline shape (bold
+// Public: locateConfirmationLog — try the H2-heading shape first (proof-build's bare "## Confirmation
+// log", proof-design's "## Re-check cadence and confirmation log"), then the inline shape (bold
 // paragraph / bold bullet / numbered item — every other shelf, including the four that also carry a
 // "see the foot" preamble sentence, which never matches CONFIRMATION_INLINE_RE because it is not
 // itself bold). Returns { found:false, reason } — never an ok:false error — when a shelf's file reads
@@ -445,7 +445,7 @@ function locateConfirmationLog(relFile, lines, skill) {
   const line = lines[matchLineIdx]
   // confirmedOn — try the tight "Confirmation log — DATE" adjacency first (true for the large
   // majority of shelves); when the date is further into the same opening bold clause instead (e.g.
-  // loop-integrate's "**Confirmation log — every pin ... verified ... on 2026-07-26.**"), fall back to
+  // proof-integrate's "**Confirmation log — every pin ... verified ... on 2026-07-26.**"), fall back to
   // the first date found anywhere inside that SAME bold clause — still a bounded, coordinate-anchored
   // search (the opening `**...**` span this line already matched on), never a scan of the whole line.
   let dateMatch = CONFIRMED_ON_INLINE_RE.exec(line)
@@ -471,7 +471,7 @@ function locateConfirmationLog(relFile, lines, skill) {
   const sectionLabel = enclosing ? enclosing.headingText : '(no enclosing H2 heading)'
   const sectionEndLine = enclosing ? enclosing.endLine : lines.length // 1-indexed, inclusive
 
-  // loop-docs's shape: the "Not (independently) re-confirmed" caveat is its OWN paragraph, one blank
+  // proof-docs's shape: the "Not (independently) re-confirmed" caveat is its OWN paragraph, one blank
   // line after the "**Confirmation log —" paragraph, rather than folded into the same sentence every
   // other shelf uses. Look one non-blank line ahead, bounded to the same section (never past a `##`
   // heading) — a single bounded lookahead, not an open-ended scan, so it cannot accidentally absorb
@@ -626,7 +626,7 @@ function searchStandards(root, { skill, query, grade, limit } = {}) {
 
 // D3.6_tools standards_shelf.resultSchema.authorityNote — const, quoted verbatim from
 // mcp/tool-contracts.json so the tool layer does not need a second copy of this sentence.
-const AUTHORITY_NOTE = 'This reports what the shelf SAYS and when the shelf last checked, never what is true today. Editions rot; the shelves say so and set a re-check cadence. Confirm against a primary source before citing an edition in a deliverable — loop-skill SKILL.md step 4: confirm every version, edition, licence and date against a primary source, not from memory.'
+const AUTHORITY_NOTE = 'This reports what the shelf SAYS and when the shelf last checked, never what is true today. Editions rot; the shelves say so and set a re-check cadence. Confirm against a primary source before citing an edition in a deliverable — proof-skill SKILL.md step 4: confirm every version, edition, licence and date against a primary source, not from memory.'
 
 // ---------------------------------------------------------------------------
 // Not implemented here (recorded, not silently dropped — same convention as mcp/lib/boundary.mjs's

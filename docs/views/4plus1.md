@@ -1,153 +1,88 @@
 # The 4+1 views — Proof
 
-C4 answers *what is this made of*, one altitude at a time. It is a **structural** model, and it is
-deliberately bad at three questions this system keeps raising: what runs at the same time and where
-it blocks, what a contributor edits and what gate catches them, and what process actually executes
-on whose machine.
+These complementary views explain the same source framework from different
+questions. They are source-backed documentation, not evidence that every host,
+provider or unattended scenario has run successfully.
 
-Those are the questions Kruchten's **4+1 view model** (1995) was built for. Four views, each for a
-different reader, plus a fifth that ties them together by walking real scenarios through all four:
-
-| View | Answers | Reader | Its blind spot |
-|---|---|---|---|
-| **[Logical](#1--logical-view)** | What are the functional parts, and how do they depend on each other? | Anyone reasoning about behaviour | Says nothing about time or machines |
-| **[Process](#2--process-view)** | What runs concurrently, what serialises, where does it block? | Anyone debugging a slow or stuck run | Says nothing about files |
-| **[Development](#3--development-view)** | What does a contributor edit, and what gate catches a mistake? | Contributors | Says nothing about runtime |
-| **[Physical](#4--physical-view)** | What process runs where, and what crosses a network? | Anyone installing or operating it | Says nothing about *why* |
-| **[+1 Scenarios](#1--scenarios)** | Do the other four actually agree with each other? | Reviewers of this document | It is the test, not the design |
-
-**How this relates to the [C4 docs](../c4/README.md).** They overlap on purpose and disagree
-nowhere. C4's Context and Container levels *are* a coarse logical + physical view; the 4+1 set adds
-the process and development views C4 has no level for, and forces the scenario walk that catches
-drift between them. Where both describe the same thing, C4 is the more detailed one and wins:
-
-| 4+1 view | Nearest C4 artifact | What 4+1 adds |
-|---|---|---|
-| Logical | [Container](../c4/container.md), [the skill fleet](../c4/skills.md) | Groups the 25 skills by *role* rather than by loading regime |
-| Process | [Component](../c4/component.md) — partly | Concurrency, barriers, and the blocking human gate |
-| Development | — *(no C4 level)* | The repo's module structure and the three gates |
-| Physical | [Context](../c4/context.md) — partly | Processes, machine boundaries, what is a network hop |
-| Scenarios | The [mechanism trace](../c4/README.md#the-mechanism-end-to-end) | Four paths, not one, including the failure ones |
-
-Diagram sources live with the C4 ones in [`../c4/diagrams/src/`](../c4/diagrams/src/) — one render
-pipeline for the whole repo (`node scripts/render-diagrams.mjs`). Edit the `.mmd`, never the `.svg`.
-
----
+| View | Reader question |
+| --- | --- |
+| [Logical](#1--logical-view) | Which responsibilities exist, and who owns them? |
+| [Process](#2--process-view) | What can run concurrently, and where must work wait? |
+| [Development](#3--development-view) | Which source modules, builders and checks change together? |
+| [Physical](#4--physical-view) | Which execution placement is known, and which belongs to the host? |
+| [Scenarios](#1--scenarios) | Do the other views support an actual task without inventing a capability? |
 
 ## 1 · Logical view
 
-**What the system is made of, functionally — and what constrains what.**
+![Proof logical responsibilities](../c4/diagrams/view-logical.svg)
 
-![Logical view](../c4/diagrams/view-logical.svg)
+The 26 skills are grouped into seven engine/planning roles, eighteen domain
+roles and one repository-maintenance role. These are explanatory groups, not
+separate services. The [skill catalog](../skills.md) owns the reader-facing task
+map; the [boundary matrix](../design/boundary-audit.json) owns selection contracts.
 
-Four layers, and the arrows between them are the whole architecture in one sentence: **governance
-constrains the engine, the engine executes the domain skills, the domain skills hand back at every
-gate, and autonomy composes the lot on a schedule.**
-
-- **Governance** — `harness-policy` (H1–H12), `loop-policy` (L1–L8), `execution-modes` (M1–M9) and
-  three lifecycle frameworks. Read by every skill, modified by none. This layer is why 25 skills
-  share one orchestration discipline instead of inventing 22 dialects.
-- **Engine & planning (5)** — `loop-engine` runs one workflow; `loop-orchestrate` plans a project
-  into a DAG before it; `loop-context` decides what agents carry between phases; `loop-build`
-  conducts a whole v1; `loop-skill` authors new members of the fleet.
-- **Domain skills (16)** — grouped by lifecycle role, not by technology. Each owns one
-  mutually-exclusive scope line in the [boundary audit](../design/boundary-audit.json), which is
-  normative precisely because selection happens on `description` alone.
-- **Autonomy (1)** — `loop-autopilot` is the only skill that composes others unattended, and it is
-  propose-only by construction.
-
-**What this view is not for.** It shows no timing, no machine, and no file. A skill "depending on"
-governance here means *reads it before authoring*, not *calls it at runtime*.
-
----
+Shared workflow policy constrains authoring and execution. Guide routes an
+unclear task; orchestrate plans named work; build conducts an agreed brief;
+engine executes an authorized Workflow. Inline specialists need no Workflow.
+The autonomy loop is dry/propose-only by default and does not grant itself a
+schedule, remote writes or a promotion.
 
 ## 2 · Process view
 
-**What runs at the same time, and where a human stops it.**
+![A large authorized review](../c4/diagrams/view-process.svg)
 
-![Process view](../c4/diagrams/view-process.svg)
+This is a large-review example, not the mandatory route for a two-file diff.
+MCP advice is optional and happens during authoring. Under all-out, the session
+shows the shared estimate and waits for the required answer before execution.
 
-The important part of this diagram is what is *not* parallel:
-
-- **Authoring is sequential and in-context.** Flag parsing, framework mapping, shape selection and
-  the pre-flight estimate all happen in the main session before any agent exists. This is what makes
-  an interactive pre-flight possible at all — a sandboxed script cannot prompt a human, but the
-  session can.
-- **Fan-out is capped and pipelined.** `pipeline()` is the default: item 1 can be in verify while
-  item *n* is still in find. A barrier (`parallel()`) is a cost that must be *earned* by a genuine
-  cross-item dependency — that is loop-policy L1, and it exists because the naive shape idles fast
-  workers behind the slowest one.
-- **The gate blocks, and it blocks on a person.** The arrow that matters most in this system is the
-  one where a human answers. Everything upstream is a proposal.
-- **`proof-mcp` is a separate process** with its own lifecycle — spawned by the host over stdio,
-  answering with facts parsed live from the same documents the skills read. That shared source is
-  why a tool answer and a skill answer cannot drift.
-
----
+The review template gathers finder results, deduplicates at a real barrier, then
+verifies surviving candidates. Same-model verification bursts are staggered as
+the source policy specifies. Missing/dead verdicts stay unknown. A dry-run or a
+declined run returns a plan/estimate with no workflow agents.
 
 ## 3 · Development view
 
-**What a contributor edits, and which gate catches them when it is wrong.**
+![Proof source and development checks](../c4/diagrams/view-development.svg)
 
-![Development view](../c4/diagrams/view-development.svg)
+Canonical source is under `.claude/skills/`, `mcp/`, `docs/` and `scripts/`.
+Validation checks skill structure and ROUTES; smoke executes templates under
+stubs; package checks build deterministic reduced packs; clean-copy stdio checks
+exercise MCP identity and public names. These are different checks with different
+coverage. Skill validation alone does not test the MCP server or model quality.
 
-One rule dominates: **`.claude/skills/` is the only place a skill is edited.** Everything else in
-the output column is generated — the plugin manifest points at the source, `dist/<host>/` is packed
-from it, the `.svg`s are rendered from `.mmd`.
-
-Three gates, each catching a class the others cannot see:
-
-| Gate | Catches | Blind to |
-|---|---|---|
-| `validate.mjs` | Invalid frontmatter, `name`/directory mismatch, dangling reference paths, `ROUTES` drift against §M8 | Whether a template *runs* |
-| `smoke.mjs` | A template that parses but routes wrong — mode-inert nodes, a planner flag that reaches nothing | Anything outside `*.workflow.js` |
-| `check-host-packs.mjs` | Non-deterministic packing, a held-back skill leaking, a pointer that dangles once four skills are removed | Anything Claude Code-only |
-
-The third one is the newest and the least obvious: a cross-reference that is perfectly valid in
-`.claude/skills/` can be **broken in a pack**, because [ADR-0008](../design/ADR-0008-host-packaging-seam.md)
-holds four skills back. Green locally, red in CI, and the fix is a `carryFiles` entry rather than an
-edit to generated output.
-
----
+Editable `.mmd` sources generate committed SVGs through the pinned rendering
+script. The overview separately uses Archify JSON/HTML plus the native README
+SVG generator. CI runs the checked-in workflow after a push; actual GitHub
+protection/settings must be verified separately.
 
 ## 4 · Physical view
 
-**What process runs where, and what crosses a network.**
+![Known execution placement and host boundaries](../c4/diagrams/view-physical.svg)
 
-![Physical view](../c4/diagrams/view-physical.svg)
+The local agent session, Proof source checkout, target project and Node stdio
+MCP process are distinct. The source checkout supplies policies and resources;
+the target project contains the code being developed. The diagram does not
+assert that host Workflow internals run in-process or in a particular cloud.
 
-- **Almost everything is local.** Claude Code runs the Workflow sandbox in-process; `proof-mcp`
-  is a child process on the same machine, speaking stdio, dying with the session. There is no
-  server, no port, no daemon.
-- **Exactly one hop leaves the machine at run time** — the model calls. Per agent node. That is
-  what the cost ledger is counting.
-- **CI is the second machine**: an ephemeral ubuntu runner with Node 22 that re-runs all three
-  gates on every push and PR to `main`/`develop`.
-- **The dashed box is honest.** Another developer's machine running Cursor, Codex or Antigravity is
-  a *target*, not a deployment: packs are generated here, copied by hand, and no pack has yet been
-  installed into a real session of any of the three ([ROADMAP](../../ROADMAP.md) H1/H3/H4). Note
-  what that host still has to do — spawn its *own* `node server.mjs`, at an absolute path resolved
-  when the pack was built.
-
----
+A reduced-pack installation needs its own configured MCP process and a retained
+complete source checkout at a resolvable path. It does not call another user's
+local MCP process. Repository pins and generated configuration are not native
+host acceptance evidence. Remote model calls, GitHub and provider integrations
+follow the configured task and authorized scope, not a diagram's authority.
 
 ## +1 · Scenarios
 
-**Four paths through the other four views. If a view contradicts a scenario, the view is wrong.**
+![Proof scenarios and qualification boundaries](../c4/diagrams/view-scenarios.svg)
 
-![Scenarios](../c4/diagrams/view-scenarios.svg)
+- **Review:** pin the diff, read needed references, work inline or use an
+  authorized Workflow, then report supported findings and actual scope.
+- **Extend:** justify a new capability, register its boundary, author source and
+  run relevant gates. Local evidence precedes any separately authorized push.
+- **Maintain:** qualify a compatible runner and branch policy; produce dry
+  proposals by default. Remote drafts and a human merge decision remain separate.
+- **Port:** generate the knowledge pack, review paths/settings, install it and
+  qualify discovery, MCP connection and one bounded task. The pack excludes the
+  Workflow executor; it does not define all capabilities of the target host.
 
-- **S1 · Review a diff** — the everyday path, and the one the whole design is shaped around:
-  select → disclose progressively → fan out → refute → gate.
-- **S2 · Add a skill** — the contributor path, ending deliberately on a *failure*: a new pointer
-  into a held-back skill passes locally and fails in CI. A scenario that only shows the happy path
-  is decoration.
-- **S3 · Run unattended** — the autonomy path. The only one that starts without a human, and it
-  still ends at one.
-- **S4 · Install on another host** — the portability path, drawn dashed because it is unproven:
-  21 of 25 skills route, the MCP tools answer, and there is no fan-out, which the generated host
-  note states rather than hides.
-
----
-
-**See also:** [C4 architecture docs](../c4/README.md) · [design records and ADRs](../design/README.md) · [ROADMAP](../../ROADMAP.md)
+[Architecture index](../c4/README.md) · [Current review](../reviews/framework-review-2026-10-23.md)
+· [Roadmap](../../ROADMAP.md).

@@ -1,81 +1,152 @@
 # Proof
 
-> Run real engineering work as governed, multi-agent workflows — a Claude Code plugin of **26 composable skills** covering the whole lifecycle, from understanding and design through shipping, operating, and autonomous self-improvement.
+![Proof — a skill framework for building better software](docs/assets/proof-banner-v4.png)
 
-> _Formerly **Heimdall**, and **TheLoopSkill** before that. Skill names (`loop-*`) are unchanged._
+**A skill framework for building better software with AI agents.**
+
+Proof gives a coding agent **26 composable engineering skills**: understand the
+problem, plan a bounded change, build, test, review and prepare delivery with
+evidence. Start by describing what you want in plain language; choose individual
+skills as you become familiar with the framework. Claude Code is the full plugin
+target. Generated packs provide a reduced knowledge/tool path for other hosts.
+
+**Proof 4 beta candidate:** this checkout uses only `proof-*` skill names, with no
+legacy aliases. Published `main` is still v3.0.0. Package/protocol checks do not
+establish a native installed-agent session or marketplace approval.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Skills: 24](https://img.shields.io/badge/skills-24-6f42c1.svg)](#the-skills)
-[![Plugin: marketplace](https://img.shields.io/badge/plugin-marketplace-2ea44f.svg)](#installation)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](CONTRIBUTING.md)
+[![Skills: 26](https://img.shields.io/badge/skills-26-6f42c1.svg)](#the-skills)
+[![Validation](https://github.com/santapong/Proof/actions/workflows/validate.yml/badge.svg?branch=develop)](https://github.com/santapong/Proof/actions/workflows/validate.yml)
 
-Proof turns a task into a multi-agent workflow — pipeline by default, parallel fan-out where it is earned, loops for unknown-size discovery — governed by explicit engineering policies, with every node routed to the model tier that matches the job. Findings must survive an adversarial refutation attempt before they are reported, and a human gates every lifecycle phase.
+[Docs](docs/README.md) · [All 26 skills](docs/skills.md) · [First task](docs/getting-started.md) · [Quick start](#quick-start) · [Architecture](#architecture) · [Team workflow](#software-team-workflow) · [Skills](#the-skills) · [Migration](docs/migration-proof-4.md) · [Contributing](#contributing)
 
-## Installation
+_Formerly Heimdall and TheLoopSkill. Those are historical product names, not aliases._
 
-```
-/plugin marketplace add santapong/Proof
-/plugin install proof@proof
-```
+## Quick start
 
-Then start anywhere:
+For this candidate, use its local checkout from a project you want to work on:
 
-```
-/loop-guide I inherited this repo and the payments flow is a mystery
-/loop-review the changes on this branch
-/loop-engine find all flaky tests --dry-run
+```sh
+cd /path/to/your-project
+claude --plugin-dir /absolute/path/to/this-proof-checkout
 ```
 
-Other install paths (project-local, Claude Code on the web, other hosts) are in **[INSTALL.md](INSTALL.md)**.
+Choose a concrete task:
 
-## Where to start
+```text
+/proof:proof-guide I want a small app to track workshop supplies. Help me define a first useful version.
+/proof:proof-review the changes on this branch; report evidence and do not edit files
+```
 
-**Don't know which skill fits? `/loop-guide` interviews you, names the skill with the reason, and drives it.** Or find your situation:
+Claude Code namespaces plugin skills as `/<plugin>:<skill>`. Project/personal
+copies use `/proof-guide`; Codex packs use `$proof-guide`. Follow the
+[first-task guide](docs/getting-started.md) for setup, inputs, expected results
+and troubleshooting. The normal GitHub marketplace install still delivers the
+published release; use its matching documentation until Proof 4 is released.
 
-| You have… | Reach for |
-|---|---|
-| An idea and nothing else | `loop-venture` (validate + decide the whole venture) · `loop-build` (build it) · `loop-design` (just the architecture) |
-| An unfamiliar codebase, or decisions nobody recorded | `loop-comprehend` |
-| Code that is wrong, and you can run it | `loop-debug` |
-| Code that works but is slow, messy, or unidiomatic | `loop-algo` (mechanism) · `loop-pattern` (shape) |
-| A diff, PR, or repo to judge without changing it | `loop-review` (defects) · `loop-audit` (impact & risk) |
-| A change ready for production / a live outage | `loop-ship` / `loop-incident` |
-| A big job to split across many agents | `loop-orchestrate` to plan, `loop-engine` to run |
-| A repo that should improve itself on a schedule | `loop-autopilot` |
+Use `proof-guide` when you need help choosing a skill. Go directly to the relevant
+skill when the task is already clear. See [INSTALL.md](INSTALL.md) for local
+installation and other hosts, and the [software-team guide](docs/software-team.md)
+for intake, handoffs, and context advice.
+
+## Architecture
+
+![Proof architecture: 26 skills support scoped agent work and checked evidence; shared policies and MCP assist authoring; the host Workflow is optional and authorized; reduced packs contain 22 knowledge skills.](docs/assets/proof-architecture.svg)
+
+The **agent session** reads a skill and the references needed for the task.
+Small work stays inline; when a supported, authorized Workflow is useful,
+`proof-engine` authors the script and the host executes it. `proof-mcp` supplies
+source-backed authoring advice. Report the artifact, actual checks and remaining
+gaps, then follow the applicable next step or human gate.
+
+| Part | Responsibility |
+| --- | --- |
+| Skills and references | Thin `SKILL.md` entrypoints; deeper guidance loaded when needed |
+| Shared policies | Workflow shape, canonical `ROUTES`, lifecycle phases, and gates |
+| Workflow templates | Pipelines, justified parallel barriers, and bounded discovery loops |
+| `proof-mcp` | Routing explanation, boundary lookup, estimation, validation, and standards lookup |
+| Repository checks | Structural validation, executable template smoke checks, routing parity, host packs, and local helper checks |
+
+Explore the [architecture guide](docs/c4/README.md),
+[detailed skill composition](docs/c4/diagrams/skill-composition.svg), or
+[runtime and development views](docs/views/4plus1.md). The [artwork guide](docs/assets/README.md) records the editable sources, PNG alternatives and visual-check scope.
+
+## Software-team workflow
+
+![Four stages: scope the task, do bounded work, verify evidence, and choose the authorized next step.](docs/assets/proof-workflow.svg)
+
+Start with the task, repository state, constraints, and acceptance evidence.
+Read the relevant references, run the phase, and hand back changed paths, check
+results, and unresolved findings. `proof-review` reviews a diff; `proof-test`
+produces tests; `proof-debug` investigates a reproducible failure. Keep those
+responsibilities explicit in a handoff.
+
+The execution dial is `--mode lite | balanced | all-out` where the selected skill
+supports it. `balanced` is the default; `all-out` adds a pre-flight estimate before
+execution. Exact model tiers and verification widths live in
+[execution-modes.md](.claude/skills/proof-engine/references/execution-modes.md).
+The autonomous improvement workflow remains **propose-only**: it drafts changes
+and PRs for review.
 
 ## The skills
 
-Every skill is invoked as `/loop-<name> <target>` and accepts `--mode <lite|balanced|all-out>` unless noted. Full descriptions: [INSTALL.md](INSTALL.md); the normative scope boundaries: [`docs/design/boundary-audit.json`](docs/design/boundary-audit.json).
+| Need | Start here |
+| --- | --- |
+| Choose a skill or understand an unfamiliar repo | `proof-guide`, `proof-comprehend` |
+| Assess an idea, find prior art, or research a question | `proof-venture`, `proof-scout`, `proof-research` |
+| Plan work and manage its context | `proof-orchestrate`, `proof-context` |
+| Design a system, interface, or algorithm | `proof-design`, `proof-frontend`, `proof-algo` |
+| Build and improve an implementation | `proof-build`, `proof-engine`, `proof-pattern` |
+| Diagnose, test, review, or evaluate | `proof-debug`, `proof-test`, `proof-review`, `proof-audit`, `proof-experiment` |
+| Integrate and prepare a release | `proof-integrate`, `proof-ship` |
+| Operate a service or investigate an incident | `proof-operate`, `proof-incident` |
+| Document and improve the workflow itself | `proof-docs`, `proof-skill`, `proof-harness`, `proof-autopilot` |
 
-| Group | Skills |
-|---|---|
-| **Front door** | `loop-guide` — interview → routing verdict → managed dispatch |
-| **Engine & planning** | `loop-engine` · `loop-orchestrate` · `loop-build` · `loop-venture` · `loop-context` · `loop-skill` |
-| **Design & mechanism** | `loop-design` · `loop-algo` · `loop-pattern` · `loop-frontend` |
-| **Build & verify** | `loop-test` · `loop-review` · `loop-audit` · `loop-debug` · `loop-experiment` |
-| **Integrate & ship** | `loop-integrate` · `loop-ship` |
-| **Run & respond** | `loop-operate` · `loop-incident` |
-| **Knowledge** | `loop-comprehend` · `loop-research` · `loop-scout` · `loop-docs` |
-| **Automation** | `loop-harness` · `loop-autopilot` (propose-only — drafts PRs, never merges) |
+See the [complete task catalog](docs/skills.md), the [framework review](docs/reviews/framework-review-2026-10-23.md), and the [skill atlas](docs/c4/skills.md) for visual groupings and
+[boundary audit](docs/design/boundary-audit.json) for the separating questions
+between overlapping skills. Flags are specific to each skill's entrypoint.
 
-![Component diagram — how the twenty-six skills compose](docs/c4/diagrams/skill-composition.svg)
+## Optional local ML
 
-## How it works
+The source checkout includes a **local context advisor**. Its default lexical
+matcher suggests candidate skills and a reading plan. An opt-in Naive Bayes
+classifier can add learned suggestions; both paths use Node's standard library
+and make no provider calls.
 
-- **One engine, governed.** Skills author workflow scripts against `loop-engine`, under two policy documents — [harness](.claude/skills/loop-engine/references/harness-policy.md) (orchestration shape, earned barriers, verification width) and [loop](.claude/skills/loop-engine/references/loop-policy.md) (convergence, runaway prevention) — and a pluggable lifecycle framework (default AIDLC, human gates between phases).
-- **One cost dial.** `--mode lite | balanced | all-out` routes every node to a matching model and effort tier; gating and planning nodes stay pinned to the strongest model in every mode. `all-out` prices the run and asks once before spending. Full contract: [execution-modes.md](.claude/skills/loop-engine/references/execution-modes.md).
-- **Standards, not vibes.** Every skill carries a version-pinned `references/standards.md` (OWASP/CWE/ASVS for review, C4/ISO for design, Google SRE for operations, …) with each authority's provenance graded.
-- **Enforced contracts.** CI runs the validation gate, a behavioral smoke of every template, and the routing-block parity check on every push. The 25-skill boundary matrix is a committed, normative artifact.
+```sh
+# Default: no training or model file required.
+node scripts/software-context.mjs rank --task "Review this branch for defects"
 
-The full architecture is documented with the [C4 model](docs/c4/README.md) and the [4+1 views](docs/views/4plus1.md); the deep tour — the autonomy ladder, the engine walkthrough, the mode table, branch-per-task discipline, repository layout — is in **[docs/overview.md](docs/overview.md)**.
+# Experimental: train locally, then request learned suggestions.
+node scripts/software-context.mjs train --data docs/examples/software-routing-train-proof-v4.jsonl --out /tmp/proof-routing.json
+node scripts/software-context.mjs rank --task "Review this branch for defects" --model /tmp/proof-routing.json
+```
 
-## Beyond Claude Code
+Choose a fresh output path for each training run. The classifier cannot change
+permissions, verification gates, or execution-model choices. On the published
+40-request synthetic routing set, its first candidate was correct on **23/40**,
+versus **29/40** for lexical matching. It remains experimental; actual token and
+cost savings are unmeasured. [Training guide](docs/software-team.md) ·
+[Evaluation and limitations](docs/examples/software-efficiency-evaluation-final.md).
 
-`.claude/skills/` is the single source of truth; generated packs for **Cursor, OpenAI Codex, and Antigravity** build under `dist/<host>/` and pass their own gate (22 of 26 skills; multi-agent execution stays Claude Code-only). Status and per-host detail: **[ROADMAP.md](ROADMAP.md)**, install steps: [INSTALL §4](INSTALL.md).
+## Other hosts
+
+Generated packs carry **22 of the 26 skills** to **Cursor, OpenAI Codex, and
+Antigravity**. They preserve portable guidance and references while excluding
+Claude-specific workflow scripts and four native skills. This is a packaging
+boundary, not a claim of equivalent multi-agent execution in every host.
+
+[Install a host pack](INSTALL.md) ·
+[Packaging design](docs/design/ADR-0008-host-packaging-seam.md) · [Host status](ROADMAP.md).
 
 ## Contributing
 
-New skills, deeper reference standards, and more frameworks are welcome — see **[CONTRIBUTING.md](CONTRIBUTING.md)** for the conventions and the gates a change must pass. Version history: [CHANGELOG.md](CHANGELOG.md).
+Ordinary work branches from and targets **`develop`**; **`main`** carries releases.
+Use a focused `feat/*`, `fix/*`, `docs/*`, or other documented branch and remove it
+after verified integration. See the [branch policy](docs/branch-policy.md).
+
+[Contributing and checks](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) ·
+[Architecture sources](docs/c4/README.md#diagram-sources-and-rendering) · [Proof identity](docs/identity.md).
 
 ## License
 

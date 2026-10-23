@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "executedAt": "2026-09-09T04:11:28.582Z",
+  "evaluator": "Independent agent manually applying software-team and context skill prose",
+  "fixtureKind": "Evaluator-authored synthetic files; transparent forward walkthrough, not blind language-model benchmark",
+  "fixtureDirectory": "/tmp/proof-software-forward-gzW8xX",
+  "node": "v26.8.1",
+  "skillHashes": {
+    ".claude/skills/loop-guide/SKILL.md": "ae49d6e276437c7855c824dd993b1352beeaee3ab3eb516ed0eedd17241ae9e9",
+    ".claude/skills/loop-guide/references/software-team.md": "de6f699c17609bebd55b0077da9d3a053287f80f802bdc3a29f0178cdda077e8",
+    ".claude/skills/loop-context/SKILL.md": "8533b11332003a174954d0e1bcbeb757a48b5cde3e319cdb29887c9ea9ddf5be",
+    ".claude/skills/loop-context/references/software-efficiency.md": "9f86c09ad945fab1042a3fab88e932012f603fae533b8a12a6414fd1f62dde31",
+    ".claude/skills/loop-context/references/shared-state.md": "f84eb34c2eb167f8dc752ed6820b894fafb435c69228f1c1f239b65835d7162f",
+    ".claude/skills/loop-review/SKILL.md": "cf05fb06457661dfa0f1822c14da8ebcd36eeda750db6026cf0b0e9c18896257"
+  },
+  "scenarios": [
+    {
+      "id": "review-only",
+      "request": "Review the staged download handler for concrete security defects. Leave source unchanged and report reachable findings only.",
+      "rawArtifacts": [
+        "src/download.mjs",
+        "public/readme.txt",
+        "publicity/marker.txt"
+      ],
+      "route": {
+        "skill": "loop-review",
+        "because": "A staged source assessment with reachable findings is requested; implementation changes are explicitly excluded.",
+        "classifierCandidates": [
+          "loop-review",
+          "loop-autopilot",
+          "loop-audit"
+        ],
+        "authority": "docs/design/boundary-audit.json /matrix/11"
+      },
+      "observedActions": [
+        "Inspected staged diff and complete request-to-filesystem flow",
+        "Executed the handler against only benign local fixture data",
+        "Checked source and staged diff hashes after review"
+      ],
+      "finding": {
+        "severity": "MEDIUM",
+        "confidence": 1,
+        "location": "src/download.mjs:5",
+        "rule": "CWE-22",
+        "evidence": {
+          "request": {
+            "query": {
+              "name": "../publicity/marker.txt"
+            }
+          },
+          "resolvedCandidate": "/tmp/proof-software-forward-gzW8xX/publicity/marker.txt",
+          "relativeToAllowedRoot": "../publicity/marker.txt",
+          "returned": "benign synthetic marker outside intended download root\n"
+        },
+        "message": "The string-prefix check accepts a sibling whose name starts with the root name; the handler returns a file outside public/.",
+        "remediation": "Use path-component containment after canonicalization and a file-opening policy that handles symlinks/races for the real deployment."
+      },
+      "preservation": {
+        "sourceSha256Before": "9eb4740be2f861ac1b1249a022e115c177dde1d97556c8e903faedccf36c3dc5",
+        "sourceSha256After": "9eb4740be2f861ac1b1249a022e115c177dde1d97556c8e903faedccf36c3dc5",
+        "stagedDiffSha256Before": "d12d9bb03677ee3c7404b0c0b96973d8c8feebd67e623bfa57301b5e4d6452ff",
+        "stagedDiffSha256After": "d12d9bb03677ee3c7404b0c0b96973d8c8feebd67e623bfa57301b5e4d6452ff"
+      },
+      "limit": "A manually followed small-diff skill walkthrough on a synthetic handler; no actual application vulnerability or general review recall claim."
+    },
+    {
+      "id": "dirty-handoff",
+      "request": "Hand the verified retry change to the next reviewer without sending the full transcript, and recheck the saved result when the source changes.",
+      "route": {
+        "skill": "loop-context",
+        "because": "The task concerns runtime handoff information and superseding stale evidence, not product behavior design."
+      },
+      "observedActions": [
+        "Captured source hash, dirty status, absent commit, acceptance command, actual green output, and addressable evidence pointers",
+        "Changed only the synthetic fixture source to simulate a later edit",
+        "Dereferenced the checkpoint source pointer and observed a hash mismatch",
+        "Reran the unchanged acceptance check; exit 1 superseded earlier exit 0 with an appended record"
+      ],
+      "checkpointPointer": "/tmp/proof-software-forward-gzW8xX/evidence/checkpoint-before.json",
+      "deltaPointer": "/tmp/proof-software-forward-gzW8xX/evidence/checkpoint-after.json",
+      "beforeExitCode": 0,
+      "afterExitCode": 1,
+      "sourceHashBefore": "45896cfc40c40708c4a2909c99bb67e4f9a2b7e02eb17ce27112a4551742946b",
+      "sourceHashAfter": "018a970559bfd0d02e0ae12a79b54ae825b691b7888801015b5c0c288d35769c",
+      "paraphraseProbes": {
+        "whichCommitIdentifiesThisTree": "No commit: unborn repository; dirty changes and source hashes identify this fixture",
+        "canPriorGreenApproveCurrentSource": false,
+        "whereCanTheEarlierRawResultBeRecovered": "/tmp/proof-software-forward-gzW8xX/evidence/check-before.json"
+      },
+      "limit": "One manually followed synthetic handoff. This shows observable checks in this walkthrough, not installed automatic freshness enforcement or a measured compaction benefit."
+    }
+  ],
+  "outputOnlyComparison": {
+    "all48CasePredictionsAndMetricsUnchanged": true,
+    "initialMeanResponseCharacters": 33901.895833333336,
+    "finalMeanResponseCharacters": 8181,
+    "serializationChange": "Initial CLI used pretty JSON; final CLI uses compact JSON plus compact audit-debt pointers. The figures include both changes.",
+    "sameRequest": {
+      "task": "Review the staged authentication changes for concrete security defects without editing files.",
+      "nativeBoundaryLookupCompactJsonCharacters": 98862,
+      "helperCompactJsonCharacters": 7738,
+      "helperCliMatchesMeasuredSerialization": true
+    },
+    "interpretation": "Reduced retrieval-response characters only. Native output exposes fuller audit detail and is not semantically identical; compact helper retains summary debt and pointers. No total prompt, token, cache, latency, price, or delivery improvement measured."
+  },
+  "limitations": [
+    "No paid/live provider or workflow engine invoked",
+    "No global settings, git commits, production files, external messages, or service mutations",
+    "No general code-review accuracy, incident recovery, or skill-benefit claim from two synthetic walkthroughs",
+    "Provider-reported usage was unavailable and stays unknown"
+  ],
+  "reviewReferenceCorrection": {
+    "checkedAt": "2026-09-09T04:13:06.753610+00:00",
+    "source": ".claude/skills/loop-review/references/vulnerability-playbooks.md",
+    "sourceSha256": "f94cbc8df83bf9ba7c806d7b1e337e2f3a44e3cf08a82ac11548533689591244",
+    "pythonVersion": "3.14.6",
+    "observedProblem": "Inherited GREEN examples treated string-prefix matching as directory containment. The independent synthetic review demonstrated the sibling-directory bypass.",
+    "appliedBy": "Root agent changed the reference; independent evaluator reread it and reran the Python containment expressions.",
+    "outcomes": [
+      {
+        "input": "ok.txt",
+        "oldPrefixAccepts": true,
+        "revisedContainmentAccepts": true,
+        "expectedContainment": true
+      },
+      {
+        "input": "../publicity/marker.txt",
+        "oldPrefixAccepts": true,
+        "revisedContainmentAccepts": false,
+        "expectedContainment": false
+      },
+      {
+        "input": "outside-link",
+        "oldPrefixAccepts": true,
+        "revisedContainmentAccepts": false,
+        "expectedContainment": false
+      }
+    ],
+    "scope": "Existing static tree; no concurrent check/open mutation. Go rooted APIs are guidance only; Go execution was not performed.",
+    "result": "Inside path accepted; sibling-prefix and resolved symlink escape rejected. No broader security-correctness claim."
+  },
+  "rawFixtureFiles": {
+    "package.json": "{\"name\":\"software-forward-fixture\",\"private\":true,\"type\":\"module\"}\n",
+    "src/download.mjs": "import { resolve } from 'node:path';\nimport { readFileSync } from 'node:fs';\nexport function download(request, base) {\n  const candidate = resolve(base, request.query.name);\n  if (!candidate.startsWith(resolve(base))) throw new Error('forbidden');\n  return readFileSync(candidate, 'utf8');\n}\n",
+    "test/contract.test.mjs": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport {maxAttempts} from '../src/contract.mjs';\ntest('contract allows exactly three attempts',()=>assert.equal(maxAttempts,3));\n",
+    "public/readme.txt": "public fixture\n",
+    "publicity/marker.txt": "benign synthetic marker outside intended download root\n",
+    "evidence/check-before.json": "{\n  \"command\": [\n    \"node\",\n    \"--test\",\n    \"test/contract.test.mjs\"\n  ],\n  \"exitCode\": 0,\n  \"stdout\": \"\u2714 contract allows exactly three attempts (0.960997ms)\\n\u2139 tests 1\\n\u2139 suites 0\\n\u2139 pass 1\\n\u2139 fail 0\\n\u2139 cancelled 0\\n\u2139 skipped 0\\n\u2139 todo 0\\n\u2139 duration_ms 81.093729\\n\",\n  \"stderr\": \"\"\n}\n",
+    "evidence/check-after.json": "{\n  \"command\": [\n    \"node\",\n    \"--test\",\n    \"test/contract.test.mjs\"\n  ],\n  \"exitCode\": 1,\n  \"stdout\": \"\u2716 contract allows exactly three attempts (2.500044ms)\\n\u2139 tests 1\\n\u2139 suites 0\\n\u2139 pass 0\\n\u2139 fail 1\\n\u2139 cancelled 0\\n\u2139 skipped 0\\n\u2139 todo 0\\n\u2139 duration_ms 83.337552\\n\\n\u2716 failing tests:\\n\\ntest at test/contract.test.mjs:4:1\\n\u2716 contract allows exactly three attempts (2.500044ms)\\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\\n  \\n  4 !== 3\\n  \\n      at TestContext.<anonymous> (file:///tmp/proof-software-forward-gzW8xX/test/contract.test.mjs:4:58)\\n      at Test.runInAsyncScope (node:async_hooks:226:14)\\n      at Test.run (node:internal/test_runner/test:1402:25)\\n      at Test.start (node:internal/test_runner/test:1262:17)\\n      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {\\n    generatedMessage: true,\\n    code: 'ERR_ASSERTION',\\n    actual: 4,\\n    expected: 3,\\n    operator: 'strictEqual',\\n    diff: 'simple'\\n  }\\n\",\n  \"stderr\": \"\"\n}\n",
+    "evidence/checkpoint-before.json": "{\n  \"schemaVersion\": 1,\n  \"task\": \"Preserve the retry acceptance evidence at handoff\",\n  \"owner\": \"next reviewer\",\n  \"repository\": {\n    \"path\": \"/tmp/proof-software-forward-gzW8xX\",\n    \"branch\": \"review-fixture\",\n    \"commit\": null,\n    \"commitState\": \"unborn; no commit exists\",\n    \"dirtyStatus\": \"A  package.json\\nA  public/readme.txt\\nA  publicity/marker.txt\\nA  src/contract.mjs\\nA  src/download.mjs\\nA  test/contract.test.mjs\\n\"\n  },\n  \"acceptance\": {\n    \"criterion\": \"The fixture permits exactly three attempts\",\n    \"command\": [\n      \"node\",\n      \"--test\",\n      \"test/contract.test.mjs\"\n    ],\n    \"observedExitCode\": 0,\n    \"evidencePointer\": \"/tmp/proof-software-forward-gzW8xX/evidence/check-before.json\"\n  },\n  \"source\": {\n    \"pointer\": \"/tmp/proof-software-forward-gzW8xX/src/contract.mjs\",\n    \"sha256\": \"45896cfc40c40708c4a2909c99bb67e4f9a2b7e02eb17ce27112a4551742946b\"\n  },\n  \"freshnessChecks\": [\n    \"Recheck source SHA-256 before reusing test evidence\",\n    \"Recheck branch/commit and relevant dirty changes\"\n  ],\n  \"validAt\": \"2026-09-09T04:11:28.279Z\",\n  \"recordedAt\": \"2026-09-09T04:11:28.280Z\",\n  \"unmeasured\": {\n    \"providerTokens\": null,\n    \"cachedTokens\": null,\n    \"latencySavings\": null\n  }\n}\n",
+    "evidence/checkpoint-after.json": "{\n  \"schemaVersion\": 1,\n  \"supersedes\": \"/tmp/proof-software-forward-gzW8xX/evidence/checkpoint-before.json\",\n  \"validAt\": \"2026-09-09T04:11:28.406Z\",\n  \"recordedAt\": \"2026-09-09T04:11:28.406Z\",\n  \"source\": {\n    \"pointer\": \"/tmp/proof-software-forward-gzW8xX/src/contract.mjs\",\n    \"sha256\": \"018a970559bfd0d02e0ae12a79b54ae825b691b7888801015b5c0c288d35769c\"\n  },\n  \"acceptance\": {\n    \"criterion\": \"The fixture permits exactly three attempts\",\n    \"observedExitCode\": 1,\n    \"evidencePointer\": \"/tmp/proof-software-forward-gzW8xX/evidence/check-after.json\",\n    \"status\": \"fails on current source; earlier green is historical\"\n  },\n  \"repository\": {\n    \"path\": \"/tmp/proof-software-forward-gzW8xX\",\n    \"branch\": \"review-fixture\",\n    \"commit\": null,\n    \"commitState\": \"unborn; no commit exists\",\n    \"dirtyStatus\": \"A  package.json\\nA  public/readme.txt\\nA  publicity/marker.txt\\nAM src/contract.mjs\\nA  src/download.mjs\\nA  test/contract.test.mjs\\n?? evidence/\\n\"\n  },\n  \"nextAction\": \"Repair the changed contract or explicitly revise acceptance under existing authority; do not carry old green as current.\"\n}\n"
+  },
+  "rawFixtureFilesNote": "Raw files captured after the walkthrough; download source stayed identical. Contract source changed from maxAttempts=3 to 4 as the explicit stale-evidence probe; before/after checkpoint hashes identify those revisions."
+}
